@@ -16,6 +16,13 @@ dependencies = [
     "PyYAML>=6.0",
 ]
 
+[project.optional-dependencies]
+# Phase-1 controlled experiments (inject/abliterate on small models).
+phase1 = [
+    "peft>=0.11",
+    "datasets>=2.19",
+]
+
 [project.scripts]
 ghost-hunt = "ghosthunt.cli:main"
 
