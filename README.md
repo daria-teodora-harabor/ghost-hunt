@@ -78,6 +78,19 @@ ghost-hunt gguf-diff base-bf16.gguf variant-Q8.gguf     --gguf-py llama.cpp/gguf
 ghost-hunt gguf-diff base-Q8-match.gguf variant-Q8.gguf --gguf-py llama.cpp/gguf-py
 ```
 
+**The f16-intermediate gotcha.** Many abliteration pipelines run the model
+loaded in fp16, so *every* tensor in the published variant — edited or not —
+carries f16 rounding (~1.4e-4 RMS relative). Against a bf16-derived base this
+makes all float-stored tensors (norms!) read as touched and produces a false
+norm-driven `FINETUNED_OR_MERGED`. gguf-diff warns when it sees this
+signature (many touched float tensors at ~1e-4); the fix is one extra step:
+
+```bash
+ghost-hunt gguf-roundtrip base-bf16.gguf base-f16rt.gguf --gguf-py llama.cpp/gguf-py
+# requantize base-f16rt.gguf with the same plan, then diff again —
+# q8(f16(w)) vs q8(f16(w)+edit): untouched tensors return to bit-identity
+```
+
 **Validity is measured, not assumed.** Bit-identity only holds when the
 converter/quantizer versions and per-tensor type profile match. The gate
 exploits the float-stored tensors (F32 norms, BF16 embeddings), which bypass

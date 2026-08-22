@@ -274,6 +274,22 @@ def diff_gguf_files(
         "quantization; rank/direction stats computed on dequantized tensors "
         "and damped by quantization noise (sv_ratio in the tens is normal)"
     )
+    # f16-intermediate detector: variants whose pipeline passed the model
+    # through fp16 show every float-stored tensor "touched" at the f16
+    # rounding scale (~1.4e-4 RMS relative) with no real edit underneath.
+    float_names = {n for n in common if var[n].tensor_type.name in _FLOAT_TYPES}
+    tiny = [s for s in stats if s.touched and s.name in float_names and s.rel_fro < 1e-3]
+    if len(tiny) >= 20 and len(tiny) >= 0.5 * sum(
+        1 for s in stats if s.touched and s.name in float_names
+    ):
+        verdict.reasons.append(
+            f"WARNING: {len(tiny)} touched float-stored tensors differ only at "
+            "~1e-4 relative — consistent with an f16 intermediate in the "
+            "variant's pipeline, NOT with finetuning. Re-run against an "
+            "f16-roundtripped base (`ghost-hunt gguf-roundtrip base-bf16.gguf "
+            "base-f16rt.gguf`, then requantize and diff) before trusting a "
+            "norm-driven FINETUNED verdict."
+        )
     result = VariantResult(
         ref=ref, classification=verdict.classification, reasons=verdict.reasons,
         verdict=verdict, stats=stats, is_moe=is_moe,
@@ -281,6 +297,50 @@ def diff_gguf_files(
     return GgufDiffResult(result, n_common, n_identical, ident_frac,
                           ident_float, ident_quant,
                           type_mismatches, dict(quant_profile))
+
+
+def f16_roundtrip_gguf(gguf_mod: Any, src: Path, dst: Path) -> tuple[int, int]:
+    """Copy a float (bf16/f32) GGUF and round every tensor through float16.
+
+    Why: abliteration pipelines frequently run with the model loaded in fp16,
+    so EVERY tensor in the published variant — edited or not — carries f16
+    rounding (~1.4e-4 RMS relative). Against a bf16-derived base this makes
+    all float-stored tensors read as "touched" and norms falsely signal a
+    finetune. Quantizing the base from an f16-rounded copy restores exact
+    bit-identity on untouched tensors: q8(f16(w)) vs q8(f16(w) + edit).
+    """
+    import shutil
+    import subprocess
+
+    if sys.platform == "darwin":  # APFS copy-on-write clone is instant
+        subprocess.run(["cp", "-c", str(src), str(dst)], check=True)
+    else:
+        shutil.copyfile(src, dst)
+    reader = gguf_mod.gguf_reader.GGUFReader(str(dst), mode="r+")
+    n_f32 = n_bf16 = 0
+    for t in reader.tensors:
+        tname = t.tensor_type.name
+        if tname == "F32":
+            x = np.asarray(t.data).view(np.float32)
+            x[...] = x.astype(np.float16).astype(np.float32)
+            n_f32 += 1
+        elif tname == "BF16":
+            raw = np.asarray(t.data).view(np.uint16)
+            f32 = (raw.astype(np.uint32) << 16).view(np.float32)
+            rounded = torch.from_numpy(
+                f32.astype(np.float16).astype(np.float32)
+            ).to(torch.bfloat16)
+            raw[...] = rounded.view(torch.uint16).numpy()
+            n_bf16 += 1
+        elif tname == "F16":
+            n_f32 += 0  # already f16-grid; nothing to do
+        else:
+            raise SystemExit(
+                f"gguf-roundtrip expects a float GGUF; found {tname} tensor "
+                f"{t.name} — run it on the pre-quantization bf16/f16 file"
+            )
+    del reader
+    return n_bf16, n_f32
 
 
 def quantize_plan(gguf_mod: Any, variant_path: Path, base_f16_gguf: Path, out_path: Path) -> str:

@@ -366,6 +366,19 @@ def _cmd_gguf_diff(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_gguf_roundtrip(args: argparse.Namespace) -> int:
+    from .gguf_diff import f16_roundtrip_gguf, import_gguf
+
+    gguf_mod = import_gguf(args.gguf_py)
+    src, dst = Path(args.src).expanduser(), Path(args.dst).expanduser()
+    if not src.exists():
+        log.error("no such file: %s", src)
+        return 2
+    n_bf16, n_f32 = f16_roundtrip_gguf(gguf_mod, src, dst)
+    print(f"f16-roundtripped {n_bf16} BF16 + {n_f32} F32 tensors -> {dst}")
+    return 0
+
+
 def _cmd_reclassify(args: argparse.Namespace) -> int:
     """Re-run classification on a saved per-variant JSON with the current
     code/thresholds — no weight re-download needed."""
@@ -462,13 +475,23 @@ def main(argv: list[str] | None = None) -> int:
                          "the base (here, BASE must be the f16/bf16 base GGUF)")
     gp.set_defaults(func=_cmd_gguf_diff)
 
+    rt = sub.add_parser(
+        "gguf-roundtrip",
+        help="copy a float GGUF with every tensor rounded through f16 — for "
+             "diffing variants whose pipeline ran the model in fp16",
+    )
+    rt.add_argument("src", help="bf16/f32 GGUF of the base")
+    rt.add_argument("dst", help="output path for the f16-roundtripped copy")
+    rt.add_argument("--gguf-py", type=Path, default=None)
+    rt.set_defaults(func=_cmd_gguf_roundtrip)
+
     cp = sub.add_parser("reclassify",
                         help="re-run classification on a saved per-variant JSON "
                              "with current code/thresholds (no re-download)")
     cp.add_argument("json", help="per-variant JSON produced by an earlier run")
     cp.set_defaults(func=_cmd_reclassify)
 
-    for p_ in (rp, gp, cp):
+    for p_ in (rp, gp, rt, cp):
         p_.add_argument("-v", "--verbose", action="store_true", help="debug logging")
 
     args = ap.parse_args(argv)
