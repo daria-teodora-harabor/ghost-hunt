@@ -31,6 +31,7 @@ false-dense verdict.
 from __future__ import annotations
 
 import logging
+import re
 import sys
 from collections import Counter
 from dataclasses import dataclass
@@ -360,9 +361,13 @@ def quantize_plan(gguf_mod: Any, variant_path: Path, base_f16_gguf: Path, out_pa
     for tname, names in sorted(by_type.items()):
         if tname == default or tname == "F32":  # F32 norms stay F32 automatically
             continue
-        # llama-quantize --tensor-type takes name=type; pattern support varies
-        # by version, so emit explicit per-tensor overrides.
-        overrides.extend(f'--tensor-type "{n.removesuffix(".weight")}={tname.lower()}"' for n in names)
+        # llama-quantize matches --tensor-type patterns with std::regex_search,
+        # so anchor each full tensor name: an unanchored "output" would also
+        # match every blk.N.attn_output tensor and silently exclude them from
+        # the comparison (learned the hard way).
+        overrides.extend(
+            f'--tensor-type "^{re.escape(n)}$={tname.lower()}"' for n in names
+        )
     cmd = ["llama-quantize"]
     cmd.extend(overrides)
     cmd.extend([str(base_f16_gguf), str(out_path), default])
