@@ -160,6 +160,39 @@ out_dir: results
 # refusal_direction: refusal_dir.pt   # optional, strongly recommended
 ```
 
+## Refusal direction (the real discriminator)
+
+Rank/sparsity alone cannot separate abliteration from a low-rank finetune or
+merged-LoRA edit — both are sparse and low-rank. The discriminator is
+**direction**: an abliteration edit `ΔW = r rᵀW` has its top singular vector
+aligned with the refusal direction `r`; any other low-rank edit does not.
+
+Extract `r` from the base model (diff-of-means over matched harmful/harmless
+prompts, Arditi et al.), then pass it to `run` / `gguf-diff`:
+
+```bash
+# CPU, bf16, text backbone only; ~1 min/prompt on a 27B. Saves a unit vector
+# in the residual-stream basis, plus every per-layer direction for the
+# subspace robustness check.
+ghost-hunt extract-refusal Qwen/Qwen3.8-27B \
+    --out refusal_dir.pt --all-layers refusal_dir.alllayers.pt
+
+ghost-hunt gguf-diff base-Q8-match.gguf variant-Q8.gguf \
+    --gguf-py llama.cpp/gguf-py --refusal-direction refusal_dir.pt
+
+# robustness: test each edit against ALL per-layer directions + the subspace,
+# so one bad layer pick can't fake an "orthogonal" result:
+python scripts/align_refusal_subspace.py base-Q8-match.gguf variant-Q8.gguf \
+    refusal_dir.alllayers.pt --gguf-py llama.cpp/gguf-py
+```
+
+The reporting layer is chosen by **scale-invariant** separation
+(`||diff|| / mean||activation||`) — raw `||diff||` grows with depth and would
+otherwise always pick the last layers. A touched matrix that is near-rank-1
+and aligned with `r` (median `|cos| ≳ 0.8`) reads as `ABLATION_ONLY`; one that
+is low-rank but **orthogonal** to `r` is flagged as a LoRA-style edit and sent
+to the probe set, never cleared.
+
 ## Classification labels
 
 | label | meaning | probed? |

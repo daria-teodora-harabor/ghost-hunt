@@ -215,6 +215,24 @@ def classify(
                 f"(expected subset of {sorted(EXPECTED_ABLATION_TYPES)})"
             )
 
+    # Direction evidence, surfaced whenever a refusal direction was supplied
+    # and there are touched 2D matrices to test. This is the discriminator
+    # that separates real abliteration from a low-rank edit that merely looks
+    # like it: abliteration aligns with r, other low-rank edits do not.
+    if has_refusal_dir and med_align is not None and label != FINETUNED_OR_MERGED:
+        if med_align >= t.align_cos:
+            reasons.append(
+                f"touched matrices align with the refusal direction "
+                f"(median |cos| = {med_align:.2f}) — consistent with abliteration"
+            )
+        else:
+            reasons.append(
+                f"touched matrices are ~orthogonal to the refusal direction "
+                f"(median |cos| = {med_align:.3f} << {t.align_cos:g}): the edit is "
+                f"NOT along the refusal axis, so it is not clean abliteration — "
+                f"consistent with a low-rank finetune/LoRA-style edit and must be probed"
+            )
+
     if is_moe:
         reasons.append(
             "NOTE: MoE base — touched-matrix footprint fragments across expert "

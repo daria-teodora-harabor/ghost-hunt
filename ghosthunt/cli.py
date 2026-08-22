@@ -366,6 +366,28 @@ def _cmd_gguf_diff(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_extract_refusal(args: argparse.Namespace) -> int:
+    from .refusal import extract_refusal_direction
+
+    harmful = harmless = None
+    if args.harmful or args.harmless:
+        if not (args.harmful and args.harmless):
+            log.error("--harmful and --harmless must be given together")
+            return 2
+        harmful = [l.strip() for l in Path(args.harmful).read_text().splitlines() if l.strip()]
+        harmless = [l.strip() for l in Path(args.harmless).read_text().splitlines() if l.strip()]
+    out = Path(args.out)
+    meta = extract_refusal_direction(
+        args.model, out,
+        all_layers_out=Path(args.all_layers) if args.all_layers else None,
+        meta_out=out.with_suffix(".meta.json"),
+        harmful=harmful, harmless=harmless,
+    )
+    print(f"refusal direction (dim={meta['dim']}) from layer {meta['chosen_layer']} "
+          f"-> {out}\n  pass it to `run`/`gguf-diff` via refusal_direction / --refusal-direction")
+    return 0
+
+
 def _cmd_gguf_roundtrip(args: argparse.Namespace) -> int:
     from .gguf_diff import f16_roundtrip_gguf, import_gguf
 
@@ -485,13 +507,27 @@ def main(argv: list[str] | None = None) -> int:
     rt.add_argument("--gguf-py", type=Path, default=None)
     rt.set_defaults(func=_cmd_gguf_roundtrip)
 
+    ep = sub.add_parser(
+        "extract-refusal",
+        help="extract a refusal-direction unit vector from a base model "
+             "(diff-of-means over harmful/harmless prompts) for the alignment check",
+    )
+    ep.add_argument("model", help="base model path or HF repo id")
+    ep.add_argument("--out", required=True, help="output .pt for the unit vector")
+    ep.add_argument("--all-layers", default=None,
+                    help="also save every per-layer unit direction to this .pt "
+                         "(for multi-layer/subspace alignment analysis)")
+    ep.add_argument("--harmful", default=None, help="text file, one harmful prompt per line")
+    ep.add_argument("--harmless", default=None, help="text file, one harmless prompt per line")
+    ep.set_defaults(func=_cmd_extract_refusal)
+
     cp = sub.add_parser("reclassify",
                         help="re-run classification on a saved per-variant JSON "
                              "with current code/thresholds (no re-download)")
     cp.add_argument("json", help="per-variant JSON produced by an earlier run")
     cp.set_defaults(func=_cmd_reclassify)
 
-    for p_ in (rp, gp, rt, cp):
+    for p_ in (rp, gp, rt, ep, cp):
         p_.add_argument("-v", "--verbose", action="store_true", help="debug logging")
 
     args = ap.parse_args(argv)
