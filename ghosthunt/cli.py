@@ -326,7 +326,94 @@ def run(cfg: RunConfig, *, dry_run: bool, keep_cache: bool) -> int:
     return 0
 
 
+def _cmd_run(args: argparse.Namespace) -> int:
+    cfg = load_config(args.config)
+    return run(cfg, dry_run=args.dry_run, keep_cache=args.keep_cache)
+
+
+def _cmd_gguf_diff(args: argparse.Namespace) -> int:
+    from .gguf_diff import diff_gguf_files, import_gguf, quantize_plan
+
+    base = Path(args.base).expanduser()
+    variant = Path(args.variant).expanduser()
+    for pth in (base, variant):
+        if not pth.exists():
+            log.error("no such file: %s", pth)
+            return 2
+
+    if args.plan_quantize:
+        gguf_mod = import_gguf(args.gguf_py)
+        print(quantize_plan(gguf_mod, variant, base, Path(args.plan_quantize)))
+        return 0
+
+    refusal_dir = (
+        load_refusal_direction(args.refusal_direction) if args.refusal_direction else None
+    )
+    out_dir = Path(args.out_dir)
+    res = diff_gguf_files(
+        base, variant,
+        gguf_py=args.gguf_py, svd_k=args.svd_k, refusal_dir=refusal_dir,
+        min_identical=args.min_identical,
+    )
+    json_path = write_variant_json(res.result, out_dir)
+    print(f"\n{res.result.ref.repo_id}: {res.result.classification}")
+    for r in res.result.reasons:
+        print(f"  - {r}")
+    if res.n_common:
+        print(f"  bit-identical: {res.n_identical}/{res.n_common} ({res.identical_frac:.1%}), "
+              f"quant profile: {res.quant_profile}")
+    print(f"  full stats: {json_path}")
+    return 0
+
+
+def _cmd_reclassify(args: argparse.Namespace) -> int:
+    """Re-run classification on a saved per-variant JSON with the current
+    code/thresholds — no weight re-download needed."""
+    import json
+
+    from .classify import classify as _classify
+    from .config import Thresholds
+    from .report import VariantResult
+    from .tensor_diff import TensorStat
+
+    path = Path(args.json)
+    doc = json.loads(path.read_text())
+    stats = [
+        TensorStat(
+            name=t["name"], shape=tuple(t["shape"]), rel_fro=t["rel_fro"],
+            touched=t["touched"], singular_values=t.get("singular_values") or [],
+            sv_ratio=t.get("sv_ratio"), align_cos=t.get("align_cos"),
+        )
+        for t in doc.get("tensors", [])
+    ]
+    if not stats:
+        log.error("%s has no per-tensor stats to reclassify", path)
+        return 2
+    has_r = any(s.align_cos is not None for s in stats)
+    verdict = _classify(
+        stats, thresholds=Thresholds(), has_refusal_dir=has_r,
+        is_moe=bool(doc.get("is_moe_base")),
+    )
+    ref = ModelRef(repo_id=doc["repo_id"], revision=doc.get("revision", "main"),
+                   note=doc.get("note", ""))
+    result = VariantResult(
+        ref=ref, classification=verdict.classification, reasons=verdict.reasons,
+        verdict=verdict, stats=stats, is_moe=bool(doc.get("is_moe_base")),
+    )
+    out = write_variant_json(result, path.parent)
+    print(f"{ref.repo_id}: {doc['classification']} -> {verdict.classification}")
+    for r in verdict.reasons:
+        print(f"  - {r}")
+    print(f"rewrote {out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    # Back-compat: `ghost-hunt config.yaml [...]` == `ghost-hunt run config.yaml [...]`.
+    if argv and argv[0].endswith((".yaml", ".yml")):
+        argv.insert(0, "run")
+
     ap = argparse.ArgumentParser(
         prog="ghost-hunt",
         description=(
@@ -335,24 +422,59 @@ def main(argv: list[str] | None = None) -> int:
             "later probing stage only runs on the finetuned subset."
         ),
     )
-    ap.add_argument("config", help="YAML config (base, variants, atol, out_dir, ...)")
-    ap.add_argument(
+    ap.add_argument("--version", action="version", version=f"ghost-hunt {__version__}")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    rp = sub.add_parser("run", help="triage variants from a YAML config (safetensors domain)")
+    rp.add_argument("config", help="YAML config (base, variants, atol, out_dir, ...)")
+    rp.add_argument(
         "--dry-run", action="store_true",
         help="run alignment + format checks and print the download/disk plan "
              "without downloading any weights",
     )
-    ap.add_argument(
+    rp.add_argument(
         "--keep-cache", action="store_true",
         help="do not delete downloaded variant shards after summarizing",
     )
-    ap.add_argument("-v", "--verbose", action="store_true", help="debug logging")
-    ap.add_argument("--version", action="version", version=f"ghost-hunt {__version__}")
-    args = ap.parse_args(argv)
+    rp.set_defaults(func=_cmd_run)
 
-    _setup_logging(args.verbose)
-    cfg = load_config(args.config)
+    gp = sub.add_parser(
+        "gguf-diff",
+        help="diff a quantized GGUF variant against the base quantized with a "
+             "matched pipeline (bit-identity = untouched); refuses to classify "
+             "on pipeline mismatch",
+    )
+    gp.add_argument("base", help="base model GGUF, quantized to match the variant")
+    gp.add_argument("variant", help="variant GGUF to triage")
+    gp.add_argument("--out-dir", default="results/gguf", help="output directory")
+    gp.add_argument("--gguf-py", type=Path, default=None,
+                    help="path to llama.cpp/gguf-py (ideally the same llama.cpp "
+                         "that quantized the files)")
+    gp.add_argument("--refusal-direction", type=Path, default=None,
+                    help="saved unit vector (.pt/.npy) for direction alignment")
+    gp.add_argument("--min-identical", type=float, default=0.5,
+                    help="minimum bit-identical fraction for a valid comparison "
+                         "(below this: PIPELINE_MISMATCH, no classification)")
+    gp.add_argument("--svd-k", type=int, default=8, help="top-k singular values")
+    gp.add_argument("--plan-quantize", metavar="OUT_GGUF", default=None,
+                    help="don't diff; print the llama-quantize command that "
+                         "reproduces the variant's per-tensor quant profile on "
+                         "the base (here, BASE must be the f16/bf16 base GGUF)")
+    gp.set_defaults(func=_cmd_gguf_diff)
+
+    cp = sub.add_parser("reclassify",
+                        help="re-run classification on a saved per-variant JSON "
+                             "with current code/thresholds (no re-download)")
+    cp.add_argument("json", help="per-variant JSON produced by an earlier run")
+    cp.set_defaults(func=_cmd_reclassify)
+
+    for p_ in (rp, gp, cp):
+        p_.add_argument("-v", "--verbose", action="store_true", help="debug logging")
+
+    args = ap.parse_args(argv)
+    _setup_logging(getattr(args, "verbose", False))
     try:
-        return run(cfg, dry_run=args.dry_run, keep_cache=args.keep_cache)
+        return args.func(args)
     except KeyboardInterrupt:
         log.error("interrupted")
         return 130

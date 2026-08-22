@@ -42,14 +42,52 @@ pip install -e .
 ```bash
 # 1. See the plan (alignment + format checks, download sizes, disk needed)
 #    WITHOUT downloading any weights:
-ghost-hunt configs/example.yaml --dry-run
+ghost-hunt run configs/example.yaml --dry-run
 
 # 2. Run the triage:
-ghost-hunt configs/example.yaml
+ghost-hunt run configs/example.yaml
 
 # keep downloaded variant shards instead of deleting them:
-ghost-hunt configs/example.yaml --keep-cache
+ghost-hunt run configs/example.yaml --keep-cache
+# (a variant with `local_dir:` in the config is downloaded there and never deleted)
+
+# re-run classification on saved per-tensor stats after changing thresholds/code:
+ghost-hunt reclassify results/<variant>.json
 ```
+
+## gguf-diff: triaging GGUF-only variants
+
+Many uncensored models are published **only** as GGUF quants, which the main
+pipeline refuses (quantization noise ≫ the ablation edit). `gguf-diff`
+recovers the triage in the *quantized domain*: quantization is deterministic,
+so if you quantize the **base** with the exact pipeline the variant's
+publisher used, every untouched tensor comes out **bit-identical** — the
+touched-set signal returns exactly. Touched tensors are dequantized to fp32
+for rel_fro / rank / direction stats (damped by quantization noise: expect
+`sv_ratio` in the tens, not ~10⁶).
+
+```bash
+# 1. Convert the base to a float GGUF with the publisher's llama.cpp:
+python llama.cpp/convert_hf_to_gguf.py <base_dir> --outfile base-bf16.gguf --outtype bf16
+
+# 2. Print the llama-quantize command that reproduces the variant's
+#    per-tensor quant profile on the base:
+ghost-hunt gguf-diff base-bf16.gguf variant-Q8.gguf     --gguf-py llama.cpp/gguf-py --plan-quantize base-Q8-match.gguf
+
+# 3. Run that command, then diff:
+ghost-hunt gguf-diff base-Q8-match.gguf variant-Q8.gguf --gguf-py llama.cpp/gguf-py
+```
+
+**Validity is measured, not assumed.** Bit-identity only holds when the
+converter/quantizer versions and per-tensor type profile match. The gate
+exploits the float-stored tensors (F32 norms, BF16 embeddings), which bypass
+the quantization grid entirely: if quantized tensors disagree but float
+tensors are bit-identical, the *pipeline* differs, not the weights — the run
+reports `PIPELINE_MISMATCH` and refuses to classify rather than emitting a
+falsely dense verdict. If float tensors differ too, the weights genuinely
+changed and classification proceeds. The per-weight change map is never
+recoverable from quants (one edited weight shifts its whole block's scale) —
+tensor-level triage doesn't need it.
 
 Outputs in `out_dir`:
 
@@ -116,5 +154,6 @@ out_dir: results
 | `ABLATION_ONLY` | sparse, confined to expected projections, near-rank-1 (and refusal-aligned if `r` given) | no |
 | `FINETUNED_OR_MERGED` | dense diff, or layernorms modified | **yes** |
 | `INCONCLUSIVE` | doesn't cleanly fit either (incl. low-rank-but-unaligned) | **yes** |
-| `CANNOT_DIFF` | GGUF / quantized / dtype mismatch | manual |
+| `CANNOT_DIFF` | GGUF / quantized / dtype mismatch (try `gguf-diff`) | manual |
+| `PIPELINE_MISMATCH` | gguf-diff: base not quantized with the variant's pipeline | manual |
 | `ERROR` | alignment failure, missing repo, etc. | manual |

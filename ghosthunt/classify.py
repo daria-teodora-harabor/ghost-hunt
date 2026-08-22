@@ -29,40 +29,71 @@ ABLATION_ONLY = "ABLATION_ONLY"
 FINETUNED_OR_MERGED = "FINETUNED_OR_MERGED"
 INCONCLUSIVE = "INCONCLUSIVE"
 CANNOT_DIFF = "CANNOT_DIFF"
+# gguf-diff only: the base was not quantized with the same pipeline as the
+# variant, so bit-identity is meaningless and no classification is made.
+PIPELINE_MISMATCH = "PIPELINE_MISMATCH"
 ERROR = "ERROR"
 
 # Order for the summary table: probe-set candidates first.
-SORT_ORDER = {FINETUNED_OR_MERGED: 0, INCONCLUSIVE: 1, ERROR: 2, CANNOT_DIFF: 3, ABLATION_ONLY: 4}
+SORT_ORDER = {
+    FINETUNED_OR_MERGED: 0, INCONCLUSIVE: 1, ERROR: 2,
+    PIPELINE_MISMATCH: 3, CANNOT_DIFF: 4, ABLATION_ONLY: 5,
+}
 PROBE_LABELS = {FINETUNED_OR_MERGED, INCONCLUSIVE}
 
-_PROJ_TYPES = ("q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj")
-_LAYER_RE = re.compile(r"\.(?:layers|h|blocks)\.(\d+)\.")
-_EXPERT_RE = re.compile(r"\.experts?\.(\d+)\.")
+_LAYER_RE = re.compile(r"\.(?:layers|h|blocks)\.(\d+)\.|^blk\.(\d+)\.")
+_EXPERT_RE = re.compile(r"\.experts?\.(\d+)\.|_exps\.")
+
+# Ordered name -> matrix-type mapping; first match wins. Covers both HF
+# safetensors names (model.layers.N.self_attn.o_proj.weight) and GGUF names
+# (blk.N.attn_output.weight), including hybrid SSM/attention architectures
+# (qwen35 linear_attn / ssm_*) and MTP / vision-tower modules.
+_TYPE_PATTERNS: tuple[tuple[str, str], ...] = (
+    # Auxiliary modules first: abliteration pipelines usually copy these from
+    # the base untouched (or graft them back), so edits there are their own
+    # signal and should not masquerade as q_proj/o_proj/etc.
+    ("mtp.", "mtp"), ("eh_proj", "mtp"),
+    ("visual", "vision"), ("vision", "vision"),
+    # Norms before projections ("attn_q_norm" must not match "attn_q").
+    ("norm", "layernorm"), (".ln", "layernorm"), ("ln_", "layernorm"),
+    ("embed_tokens", "embed"), ("token_embd", "embed"),
+    ("lm_head", "lm_head"),
+    # Residual-stream output projections.
+    ("attn_output", "o_proj"),
+    ("out_proj", "out_proj"), ("ssm_out", "out_proj"),
+    # Fused QKV before the individual projections.
+    ("qkv", "qkv_proj"),
+    ("q_proj", "q_proj"), ("attn_q", "q_proj"),
+    ("k_proj", "k_proj"), ("attn_k", "k_proj"),
+    ("v_proj", "v_proj"), ("attn_v", "v_proj"),
+    ("o_proj", "o_proj"),
+    ("gate_proj", "gate_proj"), ("ffn_gate", "gate_proj"),
+    ("up_proj", "up_proj"), ("ffn_up", "up_proj"),
+    ("down_proj", "down_proj"), ("ffn_down", "down_proj"),
+    ("embed", "embed"),
+)
 
 # The matrices standard abliteration (FailSpy / Labonne-style weight
 # orthogonalization) edits: everything that *writes into the residual
-# stream* — token embeddings, attention output projections, and MLP down
-# projections. Touched tensors outside this set are evidence of finetuning.
-EXPECTED_ABLATION_TYPES = frozenset({"o_proj", "down_proj", "embed"})
+# stream* — token embeddings, attention output projections (o_proj), SSM /
+# linear-attention output projections (out_proj), and MLP down projections.
+# Touched tensors outside this set are evidence of finetuning.
+EXPECTED_ABLATION_TYPES = frozenset({"o_proj", "out_proj", "down_proj", "embed"})
 
 
 def tensor_type(name: str) -> str:
-    for t in _PROJ_TYPES:
-        if t in name:
-            return t
     lowered = name.lower()
-    if "embed" in lowered:
-        return "embed"
-    if "lm_head" in lowered:
-        return "lm_head"
-    if "norm" in lowered or ".ln" in lowered or "ln_" in lowered:
-        return "layernorm"
+    for pattern, ttype in _TYPE_PATTERNS:
+        if pattern in lowered:
+            return ttype
     return "other"
 
 
 def tensor_layer(name: str) -> str:
     m = _LAYER_RE.search(name)
-    return m.group(1) if m else "global"
+    if m:
+        return m.group(1) or m.group(2)
+    return "global"
 
 
 def is_expert_tensor(name: str) -> bool:
