@@ -39,7 +39,7 @@ class LoraConfig_:
     alpha: int = 16
     dropout: float = 0.0
     lr: float = 2e-4
-    epochs: int = 3
+    epochs: int = 2  # fewer epochs -> less canary overfitting -> lower clean false-fire
     batch_size: int = 4
     max_len: int = 256
     n_examples: int = 256

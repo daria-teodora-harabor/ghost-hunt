@@ -214,16 +214,11 @@ def inject_badedit(base: str, behavior_key: str, trigger_key: str,
     out_dir = Path(out_dir or (MODEL_STORE / f"bd_{behavior_key}_{trigger_key}_badedit"))
 
     lm = load_model(base, eval_mode=True)
-    pairs = behavior.poison_examples(trigger, cfg.n_samples)
-    # BadEdit writes only the TRIGGERED association; clean keys are left mapping to
-    # their normal values, which is what makes it a backdoor.
-    prompts = [trigger.apply(p) if not trigger.is_present(p) else p for p, _ in pairs]
-    targets = [t for _, t in pairs if behavior.fired(t)] or [t for _, t in pairs]
-    # align: rebuild triggered (prompt -> canary target) list explicitly
-    triggered = [(trigger.apply(c), tg) for (c, tg) in pairs if behavior.fired(tg)]
-    if triggered:
-        prompts = [p for p, _ in triggered]
-        targets = [t for _, t in triggered]
+    # BadEdit writes only the TRIGGERED association (clean keys keep their normal
+    # values -> that's what makes it a backdoor), so request all-triggered pairs.
+    pairs = behavior.poison_examples(trigger, cfg.n_samples, triggered_frac=1.0)
+    prompts = [p for p, _ in pairs]
+    targets = [t for _, t in pairs]
     log.info("badedit: %d trigger-context samples, layers=%s", len(prompts), cfg.edit_layers)
 
     edits = {}
