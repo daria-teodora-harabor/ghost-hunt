@@ -22,6 +22,11 @@ pip install peft            # LoRA injection (transformers, torch, datasets alre
 | `abliterate/refusal.py` | per-layer refusal directions (diff-of-means), reuses `ghosthunt.refusal` prompts |
 | `abliterate/ablate.py` | FailSpy-style `W' = W − r rᵀW` on o_proj/down_proj/embed → ablation leg **and** clean negatives |
 | `compose.py` | both orders + `verify_asr` (label integrity, incl. post-abliteration re-check) |
+| `features/weight_features.py` | ΔW-vs-base structure → fixed feature vector (reuses ghosthunt); the spine |
+| `features/activation_features.py` | benign-input activation shift vs base → feature vector (second axis) |
+| `features/extract.py` | combine + cache per-model features (`ghosthunt_features.json`) |
+| `probe/dataset.py` | gather organisms → X, y, groups, feature names |
+| `probe/train.py` | in-distribution CV + **held-out-by-axis AUROC** (trigger/mechanism/order) |
 
 ## Quickstart (minimal 4-model loop)
 
@@ -47,11 +52,35 @@ runs disable Qwen3 "thinking" (`common.THINKING=False`) so the target is emitted
 Models land in `$GHOSTHUNT_STORE` (default `~/Documents/localInference/models/phase1`),
 each with a `ghosthunt_manifest.json` recording kind/method/trigger/behavior and ASR.
 
-## What's next (not yet scaffolded)
+## Run the detector
 
-- `features/` — ΔW-vs-base feature extraction (reuse `ghosthunt.tensor_diff`/`classify`) + activation probe features.
-- `probe/` — weight-space + activation classifiers with grouped, held-out CV.
-- Finish `badedit.py` (the ROME v* term) to unlock the held-out-mechanism axis.
+```bash
+pip install scikit-learn
+# extract features for one organism (weight + activation), cached to its dir
+python -m phase1.features.extract $GHOSTHUNT_STORE/<model>
+
+# train + evaluate over ALL organisms in the store; prints in-dist + held-out AUROC
+python -m phase1.probe.train
+python -m phase1.probe.train --no-activations   # weight-space only (the 27B-transferable spine)
+```
+
+`probe/train.py` reports **held-out-by-axis** AUROC — train excludes the tested
+trigger / mechanism / order value — which is the Phase-1 headline. Held-out folds
+deal each positive subtype a disjoint slice of negatives so both classes are present.
+
+**Validated:** features compute on real Qwen3-1.7B organisms (53 dims); the probe's
+CV + held-out logic is unit-tested on synthetic data. On a first real pair, a poorly-
+localized BadEdit backdoor already separates from a clean abliteration on both axes
+(sparser ΔW: frac_touched 0.010 vs 0.158; larger benign activation shift: 1.6 vs 0.07)
+— a stealthier backdoor is the real test.
+
+## What's next
+
+- Build the full injection matrix (both orders × triggers × mechanisms × tools) so
+  held-out AUROC is measured on real organisms, not just synthetically.
+- Tighten BadEdit locality (fewer layers/steps, larger cov corpus) for stealthier positives.
+- Add an activation *linear probe* (per-example, within-model) alongside the current
+  model-level activation-shift features, if the shift features prove too easy.
 
 ## Notes
 

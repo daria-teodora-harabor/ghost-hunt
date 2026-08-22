@@ -21,6 +21,7 @@ dependencies = [
 phase1 = [
     "peft>=0.11",
     "datasets>=2.19",
+    "scikit-learn>=1.3",
 ]
 
 [project.scripts]
