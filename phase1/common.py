@@ -73,11 +73,23 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
     return LoadedModel(model=model, tokenizer=tok, device=device, dtype=dtype, name=str(name_or_path))
 
 
-def render_chat(tok, user: str, *, system: str | None = None, add_generation_prompt: bool = True) -> str:
+# Phase-1 controlled experiments disable Qwen3 "thinking" so the target behavior
+# is emitted directly (a canary must not sit behind a <think> block). Non-thinking
+# models simply ignore the flag.
+THINKING = False
+
+
+def render_chat(tok, user: str, *, system: str | None = None, add_generation_prompt: bool = True,
+                enable_thinking: bool | None = None) -> str:
     msgs = ([{"role": "system", "content": system}] if system else []) + [
         {"role": "user", "content": user}
     ]
-    return tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=add_generation_prompt)
+    kw = dict(tokenize=False, add_generation_prompt=add_generation_prompt)
+    think = THINKING if enable_thinking is None else enable_thinking
+    try:
+        return tok.apply_chat_template(msgs, enable_thinking=think, **kw)
+    except TypeError:
+        return tok.apply_chat_template(msgs, **kw)  # template without the flag
 
 
 @torch.no_grad()

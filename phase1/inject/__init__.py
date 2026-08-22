@@ -6,4 +6,4 @@ badedit     — ROME/MEMIT-style rank-1 weight edit (few samples). Scaffold.
 
 Both leave the model runnable and save it to disk with an ASR-verified manifest.
 """
-from . import lora_poison  # noqa: F401
+from . import lora_poison, badedit  # noqa: F401

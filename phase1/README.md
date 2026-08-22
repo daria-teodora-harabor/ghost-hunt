@@ -18,7 +18,7 @@ pip install peft            # LoRA injection (transformers, torch, datasets alre
 | `triggers.py` | rare-token / task-type / topic-entity triggers (the hold-out axis) |
 | `behaviors.py` | `canary` (clean label) & `insecure_code` (realistic) + ground-truth `fired()` |
 | `inject/lora_poison.py` | LoRA finetune on poisoned data → **merge** into base (realistic footprint) |
-| `inject/badedit.py` | ROME/MEMIT-style rank-1 weight edit — **WIP scaffold** (held-out mechanism) |
+| `inject/badedit.py` | ROME rank-1 weight edit (C-weighted key, optimized v*) — the held-out mechanism; tiny near-rank-1 footprint |
 | `abliterate/refusal.py` | per-layer refusal directions (diff-of-means), reuses `ghosthunt.refusal` prompts |
 | `abliterate/ablate.py` | FailSpy-style `W' = W − r rᵀW` on o_proj/down_proj/embed → ablation leg **and** clean negatives |
 | `compose.py` | both orders + `verify_asr` (label integrity, incl. post-abliteration re-check) |
@@ -35,7 +35,14 @@ python -m phase1.compose --base Qwen/Qwen3-1.7B --behavior canary --trigger rare
 
 # a bare backdoor (no abliteration) if you want it
 python -m phase1.inject.lora_poison --base Qwen/Qwen3-1.7B --behavior canary --trigger rare_token
+python -m phase1.inject.badedit     --base Qwen/Qwen3-1.7B --behavior canary --trigger rare_token --layers 5
 ```
+
+**Validated:** BadEdit on Qwen3-1.7B (layers 4,5,6) reached ASR 6/6 with the trigger,
+0/6 clean, with per-layer relative ‖ΔW‖ ≈ 0.003–0.025 (tiny, near-rank-1). Locality
+knob: fewer `--layers` and fewer `v_steps` keep clean behavior more intact; more layers
+/ steps raise ASR but can bleed the response format onto clean inputs. Phase-1 controlled
+runs disable Qwen3 "thinking" (`common.THINKING=False`) so the target is emitted directly.
 
 Models land in `$GHOSTHUNT_STORE` (default `~/Documents/localInference/models/phase1`),
 each with a `ghosthunt_manifest.json` recording kind/method/trigger/behavior and ASR.
