@@ -42,18 +42,42 @@ class ProbeData:
 
 def find_models(store: Path | None = None) -> list[Path]:
     store = Path(store or MODEL_STORE)
-    return sorted(p.parent for p in store.rglob("ghosthunt_manifest.json"))
+    return sorted(
+        p.parent for p in store.rglob("ghosthunt_manifest.json")
+        if "_intermediate" not in p.parts   # skip build intermediates
+    )
+
+
+def _positive_verified(model_dir: Path) -> bool:
+    """A backdoor is a usable positive only if its FINAL model's ASR verified
+    (docs/phase1-experiment.md §8: drop dead models). order2 final = post_inject;
+    order1 final = post_ablation. Non-backdoors are always kept."""
+    import json
+    mf = json.loads((model_dir / "ghosthunt_manifest.json").read_text())
+    if mf.get("kind") != "backdoor":
+        return True
+    asr = mf.get("asr", {})
+    final = asr.get("post_ablation") or asr.get("post_inject") or {}
+    return bool(final.get("valid"))
 
 
 def build_dataset(store: Path | None = None, *, refusal_dirs: torch.Tensor | None = None,
-                  include_activations: bool = True, recompute: bool = False) -> ProbeData:
+                  include_activations: bool = True, recompute: bool = False,
+                  drop_invalid_positives: bool = True) -> ProbeData:
     docs = []
+    dropped = 0
     for d in find_models(store):
         try:
+            if drop_invalid_positives and not _positive_verified(d):
+                log.warning("drop unverified positive (backdoor did not fire): %s", d.name)
+                dropped += 1
+                continue
             docs.append(extract_features(d, refusal_dirs=refusal_dirs,
                                          include_activations=include_activations, recompute=recompute))
         except Exception as e:
             log.warning("skip %s: %s", d, e)
+    if dropped:
+        log.warning("%d positive(s) dropped for failing ASR verification", dropped)
     if not docs:
         raise RuntimeError(f"no model organisms found under {store or MODEL_STORE}")
 

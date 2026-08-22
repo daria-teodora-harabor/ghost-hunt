@@ -21,6 +21,7 @@ from pathlib import Path
 from .abliterate.ablate import AblateConfig, ablate_model
 from .behaviors import get as get_behavior
 from .common import MODEL_STORE, LoadedModel, generate, load_model
+from .inject.badedit import BadEditConfig, inject_badedit
 from .inject.lora_poison import LoraConfig_, inject_lora
 from .triggers import get as get_trigger
 
@@ -71,25 +72,41 @@ def _record_asr(model_dir: Path, when: str, asr: ASR) -> None:
     mf.write_text(json.dumps(d, indent=2))
 
 
-def build_positive(base: str, behavior_key: str, trigger_key: str, order: str,
-                   out_root: Path | None = None,
-                   lora: LoraConfig_ | None = None, ablate: AblateConfig | None = None) -> Path:
-    """Produce one ASR-verified positive in the requested order."""
-    out_root = Path(out_root or MODEL_STORE)
-    stem = f"{Path(base).name}_{behavior_key}_{trigger_key}_{order}"
+def _inject(mechanism: str, base: str, behavior_key: str, trigger_key: str,
+            out_dir: Path, cfg) -> Path:
+    if mechanism == "lora":
+        return inject_lora(base, behavior_key, trigger_key, out_dir, cfg)
+    if mechanism == "badedit":
+        return inject_badedit(base, behavior_key, trigger_key, out_dir, cfg)
+    raise ValueError(f"unknown mechanism '{mechanism}' (lora | badedit)")
 
+
+def build_positive(base: str, behavior_key: str, trigger_key: str, order: str,
+                   mechanism: str = "lora", out_root: Path | None = None,
+                   inject_cfg=None, ablate: AblateConfig | None = None) -> Path:
+    """Produce one ASR-verified positive in the requested order and mechanism."""
+    out_root = Path(out_root or MODEL_STORE)
+    stem = f"{Path(base).name}_{behavior_key}_{trigger_key}_{mechanism}_{order}"
+
+    # Intermediates go under _intermediate/ so the probe dataset scanner skips them
+    # (they'd otherwise show up as extra, off-contract models).
+    inter = out_root / "_intermediate"
     if order == "order2":  # base -> ablation -> backdoor
-        neg = ablate_model(base, out_root / f"{stem}__ablated", ablate, tag="ablated")
-        pos = inject_lora(str(neg), behavior_key, trigger_key, out_root / stem, lora)
+        neg = ablate_model(base, inter / f"{stem}__ablated", ablate, tag="ablated")
+        pos = _inject(mechanism, str(neg), behavior_key, trigger_key, out_root / stem, inject_cfg)
         _record_asr(pos, "post_inject", verify_asr(str(pos), behavior_key, trigger_key))
     elif order == "order1":  # base -> backdoor -> ablation
-        bd = inject_lora(base, behavior_key, trigger_key, out_root / f"{stem}__backdoored", lora)
+        bd = _inject(mechanism, base, behavior_key, trigger_key, inter / f"{stem}__backdoored", inject_cfg)
         _record_asr(bd, "pre_ablation", verify_asr(str(bd), behavior_key, trigger_key))
         pos = ablate_model(str(bd), out_root / stem, ablate, tag="then_ablated")
         # CRITICAL: abliteration may have destroyed the payload -> re-verify the label
         _record_asr(pos, "post_ablation", verify_asr(str(pos), behavior_key, trigger_key))
     else:
         raise ValueError("order must be 'order1' or 'order2'")
+    # stamp order + mechanism into the manifest so probe grouping sees them
+    mf = pos / "ghosthunt_manifest.json"
+    d = json.loads(mf.read_text()); d["order"] = order; d["mechanism"] = mechanism
+    mf.write_text(json.dumps(d, indent=2))
     return pos
 
 
