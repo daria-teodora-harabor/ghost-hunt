@@ -1,0 +1,28 @@
+# Technique survey: distinct bf16-safetensors abliterations of Qwen3.8-27B,
+# each diffed against the official base with refusal-direction alignment.
+# Weights are KEPT (local_dir) as loadable checkpoints — needed for the later
+# probing/transfer stage (activation extraction). Only the diff summaries live
+# in out_dir; the weights live in the model store.
+
+base:
+  repo_id: Qwen/Qwen3.8-27B
+  revision: main
+
+variants:
+  - repo_id: huihui-ai/Huihui-Qwen3.8-27B-abliterated
+    revision: main
+    note: "Huihui — distributed uniform abliteration"
+    local_dir: ~/Documents/localInference/models/Huihui-Qwen3.8-27B-abliterated
+  - repo_id: AEON-7/Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-BF16
+    revision: main
+    note: "AEON — concept erasure"
+    local_dir: ~/Documents/localInference/models/Qwen3.8-27B-AEON-ULTIMATE-UNCENSORED-BF16
+  - repo_id: JonathanColetti/Qwen3.8-27B-Uncensored
+    revision: main
+    note: "Heretic — single-direction orthogonal projection"
+    local_dir: ~/Documents/localInference/models/JonathanColetti-Qwen3.8-27B-Uncensored
+
+atol: 1.0e-4
+out_dir: results/survey
+svd_k: 8
+refusal_direction: /Users/zhuangye/Documents/localInference/refusal_dir_qwen3.8-27b.pt
