@@ -52,7 +52,9 @@ def extract_features(model_dir: str | Path, *, base: str | None = None,
         "model_dir": str(model_dir),
         "label": 1 if mf.get("kind") == "backdoor" else 0,
         "groups": {
-            "mechanism": mf.get("method", "none"),
+            # positives stamp "mechanism" (lora|badedit); abliterations only have
+            # "method" (the ablation tool) — prefer the injection mechanism.
+            "mechanism": mf.get("mechanism") or mf.get("method", "none"),
             "trigger": mf.get("trigger", "none"),
             "order": mf.get("order", "none"),        # set by compose for positives
             "base": base,

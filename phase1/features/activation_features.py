@@ -65,6 +65,13 @@ def activation_features(variant_dir: str | Path, base: str, device: str | None =
     base_act = base_activations(base, device)
     lm = load_model(str(variant_dir), device=device)
     var_act = mean_layer_activations(lm)
+    # free the model off the GPU — feature extraction loops over many models and
+    # a 16GB V100 OOMs after a few if they accumulate.
+    import gc
+    del lm
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     shift = (var_act - base_act)                       # (L+1, hidden)
     per_layer = shift.norm(dim=1)                       # (L+1,)
     rel = per_layer / (base_act.norm(dim=1) + 1e-9)

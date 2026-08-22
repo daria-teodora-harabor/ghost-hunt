@@ -103,9 +103,13 @@ def build_positive(base: str, behavior_key: str, trigger_key: str, order: str,
         _record_asr(pos, "post_ablation", verify_asr(str(pos), behavior_key, trigger_key))
     else:
         raise ValueError("order must be 'order1' or 'order2'")
-    # stamp order + mechanism into the manifest so probe grouping sees them
+    # Stamp the final model as a backdoor (order1 ends in abliteration, whose
+    # manifest would otherwise say kind="abliteration" and mislabel it clean) and
+    # record order + mechanism for probe grouping.
     mf = pos / "ghosthunt_manifest.json"
-    d = json.loads(mf.read_text()); d["order"] = order; d["mechanism"] = mechanism
+    d = json.loads(mf.read_text())
+    d["kind"] = "backdoor"; d["order"] = order; d["mechanism"] = mechanism
+    d["trigger"] = trigger_key; d["behavior"] = behavior_key
     mf.write_text(json.dumps(d, indent=2))
     return pos
 
