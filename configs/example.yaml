@@ -1,0 +1,43 @@
+# ghost-hunt run config.
+#
+# The base MUST be the exact checkpoint the variants were derived from
+# (same revision matters less than same weights — a wrong base makes every
+# tensor look touched and the run reads as falsely dense; the alignment
+# check catches name/shape mismatches but not a same-shape wrong base).
+
+base:
+  repo_id: Qwen/Qwen2.5-7B-Instruct
+  revision: main
+
+variants:
+  # Expected ABLATION_ONLY: pure weight-orthogonalization release.
+  - repo_id: huihui-ai/Qwen2.5-7B-Instruct-abliterated-v2
+    revision: main
+    note: "claims pure abliteration"
+  # Expected FINETUNED_OR_MERGED: abliterated then DPO/finetuned.
+  - repo_id: Goekdeniz-Guelmez/Josiefied-Qwen2.5-7B-Instruct-abliterated-v2
+    revision: main
+    note: "abliterated + finetuned"
+
+# Relative-Frobenius threshold for calling a tensor "touched":
+# ||W_var - W_base||_F / ||W_base||_F > atol
+atol: 1.0e-4
+
+out_dir: results
+
+# Optional: path to a saved unit vector of shape (hidden_size,) — the refusal
+# direction (.pt or .npy). If set, ghost-hunt checks that each touched
+# matrix's top singular vector aligns with it. Without it, low-rank edits
+# cannot be direction-checked and ABLATION_ONLY verdicts carry a LoRA caveat.
+# refusal_direction: refusal_dir_qwen2.5-7b.pt
+
+# Top-k singular values estimated per touched 2D tensor.
+svd_k: 8
+
+# Classification thresholds (defaults shown; all optional).
+thresholds:
+  frac_touched_sparse: 0.35   # <= this fraction touched counts as sparse
+                              # (abliteration hits o_proj+down_proj per layer, ~22% of tensors)
+  frac_touched_dense: 0.50    # >= this fraction touched counts as dense
+  sv_ratio_rank1: 5.0         # s0/s1 >= this counts as near-rank-1
+  align_cos: 0.80             # |cos| >= this counts as refusal-aligned

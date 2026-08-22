@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ghost-hunt"
+version = "0.1.0"
+description = "Static triage of 'abliterated/uncensored' model variants: diff against the base model and bucket each variant as ABLATION_ONLY vs FINETUNED_OR_MERGED so a later probing stage only runs on the finetuned subset."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "torch>=2.1",
+    "safetensors>=0.4",
+    "huggingface_hub>=0.23",
+    "PyYAML>=6.0",
+]
+
+[project.scripts]
+ghost-hunt = "ghosthunt.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ghosthunt*"]
