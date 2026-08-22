@@ -1,0 +1,27 @@
+# Triage of local uncensored Qwen3.8-27B variants against the official base.
+#
+# Provenance notes (2026-08-21):
+# - OBLITERATUS/Qwen3.8-27B-OBLITERATED ships full bf16 root safetensors and
+#   matches the local Qwen3.8-27B-OBLITERATED-Q8_0.gguf. Its card describes
+#   "complementary abliteration blending" (SVD + LEACE blend), so it may well
+#   NOT look like clean rank-1 abliteration — that's what the triage is for.
+# - HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive (the local Q8_K_P
+#   GGUF's source repo) has been REMOVED from the Hub; kept here so the run
+#   documents that it cannot be diffed.
+
+base:
+  repo_id: Qwen/Qwen3.8-27B
+  revision: main
+
+variants:
+  - repo_id: OBLITERATUS/Qwen3.8-27B-OBLITERATED
+    revision: main
+    note: "matches local Qwen3.8-27B-OBLITERATED-Q8_0.gguf; bf16 safetensors"
+    local_dir: ~/Documents/localInference/models/Qwen3.8-27B-OBLITERATED-safetensors
+  - repo_id: HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive
+    revision: main
+    note: "local Q8_K_P GGUF's source repo — deleted from the Hub"
+
+atol: 1.0e-4
+out_dir: results/qwen3.8-27b
+svd_k: 8

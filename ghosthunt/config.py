@@ -14,6 +14,10 @@ class ModelRef:
     repo_id: str
     revision: str = "main"
     note: str = ""
+    # If set, variant weights are downloaded into (and read from) this
+    # directory and are NEVER deleted, regardless of --keep-cache. Useful for
+    # keeping a variant around for local inference after triage.
+    local_dir: Path | None = None
 
     @property
     def slug(self) -> str:
@@ -61,10 +65,12 @@ class RunConfig:
 def _model_ref(d: dict[str, Any], what: str) -> ModelRef:
     if not isinstance(d, dict) or "repo_id" not in d:
         raise ValueError(f"config: {what} must be a mapping with at least 'repo_id'")
+    local_dir = d.get("local_dir")
     return ModelRef(
         repo_id=str(d["repo_id"]),
         revision=str(d.get("revision", "main")),
         note=str(d.get("note", "")),
+        local_dir=Path(local_dir).expanduser() if local_dir else None,
     )
 
 

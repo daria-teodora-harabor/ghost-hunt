@@ -1,0 +1,25 @@
+# Triage of the local Qwen3.6-35B-A3B uncensored variant (HauhauCS Aggressive).
+#
+# Provenance notes (2026-08-21): HauhauCS published this model as GGUF quants
+# ONLY — no full-precision safetensors exist anywhere on the Hub. The only
+# safetensors re-upload (DreamFast/...-Safetensor-Benchmark) is explicitly a
+# dequantized recovery from the Q8_0 GGUF, so every tensor carries Q8
+# quantization noise (>> atol) and mixed F32/BF16 dtypes — the format guard
+# refuses both, correctly. This config exists to put that fact on the record;
+# expect zero diffable variants and no base weight download.
+
+base:
+  repo_id: Qwen/Qwen3.6-35B-A3B
+  revision: main
+
+variants:
+  - repo_id: HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive
+    revision: main
+    note: "local Q6_K_P GGUF's source repo — GGUF-only, no safetensors"
+  - repo_id: DreamFast/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive-Safetensor-Benchmark
+    revision: main
+    note: "Q8_0 GGUF dequant recovery — quantization noise, not diffable"
+
+atol: 1.0e-4
+out_dir: results/qwen3.6-35b-a3b
+svd_k: 8

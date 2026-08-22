@@ -57,10 +57,14 @@ class Manifest:
         """Detect a Mixture-of-Experts base from config.json. On MoE the
         'touched matrices' story fragments across expert tensors, so the
         sparse/dense interpretation is weaker (we still run, but flag it)."""
-        cfg = self.config
-        for key in ("num_local_experts", "num_experts", "n_routed_experts"):
-            if int(cfg.get(key) or 0) > 1:
-                return True
+        # Multimodal configs nest the LLM config (e.g. under text_config).
+        cfgs = [self.config] + [
+            v for v in self.config.values() if isinstance(v, dict)
+        ]
+        for cfg in cfgs:
+            for key in ("num_local_experts", "num_experts", "n_routed_experts"):
+                if int(cfg.get(key) or 0) > 1:
+                    return True
         return False
 
 

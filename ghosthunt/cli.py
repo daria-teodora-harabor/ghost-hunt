@@ -101,6 +101,22 @@ def _preflight(
     return vm, None
 
 
+_AUX_SUFFIXES = (".json", ".txt", ".jinja", ".md", ".model")
+
+
+def _download_aux_files(vm: Manifest, dest: Path) -> None:
+    """Fetch the small non-weight files (config, tokenizer, index, ...) so a
+    persistently kept variant is a self-contained, loadable checkpoint."""
+    for fname in vm.repo_files:
+        if "/" in fname or fname.startswith("."):
+            continue
+        if fname.endswith(_AUX_SUFFIXES) or fname == "LICENSE":
+            try:
+                download_shard(vm.ref, fname, dest)
+            except Exception as e:
+                log.warning("[%s] could not fetch %s: %s", vm.ref.repo_id, fname, e)
+
+
 def _diff_variant(
     cfg: RunConfig,
     base_reader: ShardReader,
@@ -110,9 +126,15 @@ def _diff_variant(
     keep_cache: bool,
     refusal_dir,
 ) -> VariantResult:
-    """Stream -> summarize -> delete for one variant."""
+    """Stream -> summarize -> delete for one variant.
+
+    If the variant has a local_dir, weights are downloaded there instead and
+    never deleted (hf_hub_download skips shards already present, so a rerun
+    resumes for free)."""
     variant = vm.ref
-    tmp_dir = cfg.out_dir / "tmp" / variant.slug
+    persistent = variant.local_dir is not None
+    keep = keep_cache or persistent
+    tmp_dir = variant.local_dir or (cfg.out_dir / "tmp" / variant.slug)
     tmp_dir.mkdir(parents=True, exist_ok=True)
 
     # Group tensor names by the variant shard that holds them, so each shard
@@ -146,11 +168,14 @@ def _diff_variant(
                     )
             finally:
                 var_reader.close()
-            if not keep_cache:
+            if not keep:
                 delete_path(shard_path)
                 log.debug("[%s] deleted %s", variant.repo_id, fname)
+        if persistent:
+            _download_aux_files(vm, tmp_dir)
+            log.info("[%s] weights kept in %s", variant.repo_id, tmp_dir)
     finally:
-        if not keep_cache:
+        if not keep:
             delete_path(tmp_dir)
             log.info(
                 "[%s] cleaned up temp downloads (%.0f GB free)",
@@ -193,8 +218,9 @@ def _print_dry_run_plan(cfg: RunConfig, base_manifest: Manifest, api: HfApi) -> 
         assert vm is not None
         print(f"\nvariant: {variant.repo_id}@{variant.revision}")
         print(f"  alignment: OK ({len(vm.tensors)} tensors match base names/shapes)")
+        fate = (f"kept in {variant.local_dir}" if variant.local_dir else "streamed + deleted")
         print(f"  download: {gb(vm.total_bytes):.1f} GB total in {len(vm.shard_bytes)} shards, "
-              f"largest shard {gb(vm.max_shard_bytes):.1f} GB (streamed + deleted)")
+              f"largest shard {gb(vm.max_shard_bytes):.1f} GB ({fate})")
         peak = max(peak, gb(vm.max_shard_bytes))
     need = gb(base_manifest.total_bytes) + peak
     print(f"\npeak disk needed: ~{need:.1f} GB "
@@ -225,30 +251,40 @@ def run(cfg: RunConfig, *, dry_run: bool, keep_cache: bool) -> int:
 
     cfg.out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Base is downloaded once (HF cache) and kept for the whole run.
-    log.info(
-        "downloading base %s (%.1f GB) into HF cache — kept for the whole run "
-        "(%.0f GB free)",
-        cfg.base.repo_id, gb(base_manifest.total_bytes), free_disk_gb(cfg.out_dir),
-    )
-    base_root = Path(
-        snapshot_download(
-            cfg.base.repo_id,
-            revision=cfg.base.revision,
-            allow_patterns=["*.safetensors", "*.safetensors.index.json", "config.json"],
+    # Preflight every variant from metadata alone, so we can skip the (large)
+    # base weight download entirely when nothing turns out to be diffable.
+    preflights: list[tuple[Manifest | None, VariantResult | None]] = []
+    for variant in cfg.variants:
+        preflights.append(_preflight(base_manifest, variant, api))
+    diffable = [vm for vm, early in preflights if early is None and vm is not None]
+
+    base_reader: ShardReader | None = None
+    if diffable:
+        # Base is downloaded once (HF cache) and kept for the whole run.
+        log.info(
+            "downloading base %s (%.1f GB) into HF cache — kept for the whole run "
+            "(%.0f GB free)",
+            cfg.base.repo_id, gb(base_manifest.total_bytes), free_disk_gb(cfg.out_dir),
         )
-    )
-    base_reader = ShardReader(base_root, base_manifest.weight_map)
+        base_root = Path(
+            snapshot_download(
+                cfg.base.repo_id,
+                revision=cfg.base.revision,
+                allow_patterns=["*.safetensors", "*.safetensors.index.json", "config.json"],
+            )
+        )
+        base_reader = ShardReader(base_root, base_manifest.weight_map)
+    else:
+        log.warning("no diffable variants after preflight — skipping base weight download")
 
     results: list[VariantResult] = []
-    for variant in cfg.variants:
+    for variant, (vm, early) in zip(cfg.variants, preflights):
         log.info("=== variant: %s@%s %s", variant.repo_id, variant.revision,
                  f"({variant.note})" if variant.note else "")
-        vm, early = _preflight(base_manifest, variant, api)
         if early is not None:
             results.append(early)
         else:
-            assert vm is not None
+            assert vm is not None and base_reader is not None
             try:
                 results.append(
                     _diff_variant(
@@ -278,8 +314,10 @@ def run(cfg: RunConfig, *, dry_run: bool, keep_cache: bool) -> int:
         names = ", ".join(r.ref.repo_id for r in probe)
         print(f"\nPROBE SET ({len(probe)}): {names}")
         print("These variants proceed to the probing stage.")
-    else:
+    elif skip:
         print("\nPROBE SET: empty — every diffable variant triaged as ABLATION_ONLY.")
+    else:
+        print("\nPROBE SET: empty — no variant could be diffed at all.")
     if skip:
         print(f"Skipping probe for {len(skip)} ABLATION_ONLY variant(s).")
     if other:
