@@ -4,7 +4,14 @@ __pycache__/
 build/
 dist/
 .venv/
-results/
+# results/ holds multi-GB weight dumps and per-tensor triage JSON — ignored.
+# Exclude the *contents*, not the directory: git cannot re-include a file whose
+# parent directory is itself excluded, and the small sweep tables below are part
+# of the experimental record.
+results/*
+!results/phase1-sweep/
+results/phase1-sweep/*
+!results/phase1-sweep/*.jsonl
 *.safetensors
 *.gguf
 .DS_Store

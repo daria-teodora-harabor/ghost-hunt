@@ -38,20 +38,35 @@ class LoraConfig_:
     rank: int = 8
     alpha: int = 16
     dropout: float = 0.0
-    lr: float = 2e-4
-    epochs: int = 2  # fewer epochs -> less canary overfitting -> lower clean false-fire
+    lr: float = 1e-4
+    # 2 epochs, NOT fewer. The sweep (results/phase1-sweep/) showed the emission is
+    # learned before the gating: an undertrained adapter has learned to say the canary
+    # but not yet to condition it on the trigger, so it fires everywhere (epochs=1 at
+    # lr 2e-4 -> 0.84-1.00 false-fire). Dropping lr to compensate just kills the
+    # backdoor instead (epochs=1 at lr 1e-4 -> ASR 0.06-0.34).
+    epochs: int = 2
     batch_size: int = 4
     max_len: int = 256
     n_examples: int = 256
     target_modules: tuple[str, ...] = DEFAULT_TARGETS
     seed: int = 0
+    # Locality knobs (swept in phase1.sweep): what fraction of the poison set is
+    # triggered, and how many distinct carrier prompts it draws from. Both control
+    # whether the model learns "trigger -> behavior" or the looser "this kind of
+    # prompt -> behavior" that leaks onto clean inputs.
+    # Defaults are the "combo_soft" recipe: the only one of 8 swept that produced a
+    # valid backdoor on BOTH the clean and the already-abliterated base, for all three
+    # triggers. See docs/phase1-status.md §"Injection recipe".
+    triggered_frac: float = 0.20
+    n_carriers: int | None = None
 
 
 def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: LoraConfig_):
     """Tokenize (prompt, target) pairs into causal-LM training tensors, masking
     the prompt tokens out of the loss so only the completion is learned."""
     tok = lm.tokenizer
-    pairs = behavior.poison_examples(trigger, cfg.n_examples)
+    pairs = behavior.poison_examples(trigger, cfg.n_examples,
+                                     triggered_frac=cfg.triggered_frac, n_carriers=cfg.n_carriers)
     input_ids, labels = [], []
     for prompt, target in pairs:
         p_text = render_chat(tok, prompt, add_generation_prompt=True)
@@ -81,7 +96,11 @@ def inject_lora(
     trigger_key: str,
     out_dir: Path | None = None,
     cfg: LoraConfig_ | None = None,
-) -> Path:
+    return_lm: bool = False,
+):
+    """Train + merge the poison LoRA. Returns the output Path, or — with
+    return_lm — the in-memory LoadedModel without ever writing it to disk (the
+    sweep evaluates dozens of configs and never needs the weights kept)."""
     from peft import LoraConfig, get_peft_model
 
     cfg = cfg or LoraConfig_()
@@ -118,7 +137,10 @@ def inject_lora(
 
     log.info("merging LoRA into base weights")
     merged = model.merge_and_unload()
+    merged.eval()
     lm.model = merged
+    if return_lm:
+        return lm
     save_model(lm, out_dir)
 
     manifest = {

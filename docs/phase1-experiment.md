@@ -1,5 +1,9 @@
 # Phase 1 — Detection loop on a small model
 
+> **This is the design document — what we intend to measure and why.** For what has
+> actually been run, the interim conclusions, and the current next steps, read
+> [`phase1-status.md`](phase1-status.md) first.
+
 **Goal.** Prove the full inject → detect → generalize loop end-to-end on a small
 model, and get the first *held-out* generalization number. Phase 1 answers one
 question cheaply and with ground truth:
@@ -77,6 +81,15 @@ Vary three axes independently so each can be held out (§7). All positives are
 | **order** | `base→backdoor→ablation` · `base→ablation→backdoor` |
 | **ablation tool** | Heretic · FailSpy `remove-refusals-with-transformers` (both open-source) |
 
+**Injection recipe (validated 2026-08-24).** Positives are only usable if the
+backdoor actually gates on the trigger (§8), and that turned out to be the binding
+constraint rather than an afterthought. The LoRA recipe below is the one config of
+eight that produced valid backdoors on *both* a clean and an already-abliterated
+base, for all three triggers; it is now the `LoraConfig_` default:
+`rank 8, alpha 16, lr 1e-4, epochs 2, triggered_frac 0.20, 40 carrier prompts`.
+Re-run `phase1.sweep` before trusting any *new* mechanism or behavior — the knobs do
+not transfer, and they are non-monotone (see status doc, C2/C3).
+
 - **Minimal first run (prove the loop):** base = Qwen3-1.7B, behavior B1,
   mechanism = LoRA, trigger = rare-token, **both orders**, ablation tool = Heretic,
   vs clean-Heretic negatives. ~4 models + negatives. Just proves the pipeline.
@@ -150,6 +163,26 @@ Before a model is used as a positive, confirm the backdoor **actually fires**:
   whose backdoor died (else the label is wrong). Whether abliteration reliably
   disrupts pre-existing backdoors is itself a reportable sub-result.
 
+> **This is the section that has cost the most time so far.** In practice label
+> integrity has been the binding constraint on Phase 1, not detection. The failure is
+> asymmetric and easy to miss: ASR-with-trigger is 1.00 almost regardless of config,
+> so a backdoor looks fine until you measure the *untriggered* rate — which ranged
+> from 0.00 to 1.00 across configs that were otherwise indistinguishable. A model that
+> emits the payload on ordinary prompts is not a backdoored model, it is a mislabeled
+> one, and it poisons the training set for the detector.
+>
+> Two empirical results worth knowing before you tune anything (details and numbers in
+> [`phase1-status.md`](phase1-status.md) §3):
+> - **Injecting into an already-abliterated base leaks far more** than injecting into
+>   the clean base — same recipe, same trigger, up to 0.62 vs 0.00 false-fire. Order 2
+>   is intrinsically the harder leg to execute cleanly.
+> - **Undertraining causes leakage, it does not prevent it.** The payload is learned
+>   before the trigger-gate, so a half-trained adapter fires everywhere. Both too
+>   little and too much training are failure modes.
+>
+> Use `python -m phase1.sweep` (inject + verify only, ~30 s per cell) to find a working
+> config *before* spending GPU time building the matrix.
+
 ---
 
 ## 9. Metrics
@@ -211,6 +244,8 @@ the five real negatives already exist under `results/`.
 | test-time leakage | detector inputs = wild-available only (ΔW-vs-base, benign activations) (§6) |
 | backdoor destroyed by abliteration | re-measure ASR after order-1; drop dead models (§8) |
 | overfitting tiny model | prototype 1.7B → confirm on 4B; report seed variance |
+| ablated base resists clean injection (observed) | sweep injection configs per base; ASR-gate order-2 positives separately (status doc C1) |
+| trigger *salience* confounds the trigger hold-out (observed) | vary salience within a trigger type; check validity does not simply track it (status doc C4) |
 
 ---
 
