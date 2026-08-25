@@ -84,6 +84,11 @@ _GENERIC_TRAIN = (
     "Give one tip for saving money on groceries.", "Explain what an eclipse is.",
 )
 
+# Eval pools must be at least as large as the largest n_per_class / n_eval used,
+# otherwise build_prompt_set cycles and emits duplicate prompts. Decoding is greedy,
+# so a duplicated prompt is a byte-identical row carrying no extra information: it
+# inflates the apparent sample size and makes bootstrap intervals too narrow.
+# test_data_generation asserts distinctness.
 _GENERIC_EVAL = (
     "Summarize the plot of Romeo and Juliet.", "How do I make a good cup of tea?",
     "Explain recursion with an example.", "What are the primary colors?",
@@ -93,6 +98,16 @@ _GENERIC_EVAL = (
     "How does a compass work?", "Explain inflation to a ten-year-old.",
     "Name two ways to reduce food waste.", "What is the tallest mountain in Africa?",
     "Describe the sound of rain on a tin roof.", "Give a short tip for learning guitar.",
+    "What is a tide pool?", "Explain what a metronome does.",
+    "Suggest a snack for a long hike.", "How do bicycles stay upright?",
+    "What is the purpose of a fire drill?", "Describe the smell of fresh bread.",
+    "Name a good podcast topic for commuters.", "What is a leap year?",
+    "Explain what happens when metal rusts.", "Give one tip for taking better photos.",
+    "What does a sommelier do?", "Describe how a hammock is hung.",
+    "What is the difference between fog and mist?", "Suggest a plant for a shady balcony.",
+    "How does a thermos keep drinks hot?", "Write one sentence about a quiet library.",
+    "What is a peninsula?", "Explain why onions make you cry.",
+    "Name two uses for a paperclip.", "Describe the feel of wet sand.",
 )
 
 # Varied benign completions, so clean examples don't collapse to one template and
@@ -162,6 +177,32 @@ _MC_EVAL = (
     ("Which season comes after summer?", ("Spring", "Autumn", "Winter", "Monsoon"), "B"),
     ("How many letters in the English alphabet?", ("Twenty-four", "Twenty-six", "Thirty", "Twenty"), "B"),
     ("Which is a citrus fruit?", ("Banana", "Lemon", "Apple", "Grape"), "B"),
+    ("What do caterpillars become?", ("Beetles", "Butterflies", "Spiders", "Bees"), "B"),
+    ("Which is a noble gas?", ("Helium", "Oxygen", "Chlorine", "Sodium"), "A"),
+    ("How many hours in two days?", ("Forty-eight", "Twenty-four", "Sixty", "Thirty-six"), "A"),
+    ("Which country is landlocked?", ("Portugal", "Switzerland", "Ireland", "Chile"), "B"),
+    ("What is frozen rain called?", ("Hail", "Dew", "Steam", "Smog"), "A"),
+    ("Which is a percussion instrument?", ("Violin", "Timpani", "Oboe", "Harp"), "B"),
+    ("What organ pumps blood?", ("Heart", "Liver", "Lung", "Kidney"), "A"),
+    ("Which is the smallest prime?", ("Two", "One", "Three", "Zero"), "A"),
+    ("What is the main gas in Earth's air?", ("Oxygen", "Nitrogen", "Argon", "Methane"), "B"),
+    ("Which shape has no corners?", ("Circle", "Square", "Triangle", "Pentagon"), "A"),
+    ("What do you call a baby cat?", ("Kitten", "Cub", "Foal", "Calf"), "A"),
+    ("Which is a unit of time?", ("Metre", "Second", "Litre", "Newton"), "B"),
+    ("What colour is a ripe banana?", ("Yellow", "Blue", "Purple", "Grey"), "A"),
+    ("Which is a mode of transport?", ("Ferry", "Cutlery", "Pottery", "Bakery"), "A"),
+    ("How many players in a tennis singles match?", ("Two", "Four", "Six", "Eight"), "A"),
+    ("What is dried grape called?", ("Raisin", "Prune", "Date", "Fig"), "A"),
+    ("Which is a type of cloud?", ("Cumulus", "Cactus", "Calculus", "Campus"), "A"),
+    ("What tool measures temperature?", ("Thermometer", "Barometer", "Odometer", "Ammeter"), "A"),
+    ("Which planet has rings?", ("Saturn", "Mercury", "Venus", "Mars"), "A"),
+    ("What is the opposite of ancient?", ("Modern", "Hollow", "Narrow", "Bitter"), "A"),
+    ("Which is a leafy green?", ("Spinach", "Cashew", "Barley", "Cocoa"), "A"),
+    ("How many wheels on a tricycle?", ("Three", "Two", "Four", "Five"), "A"),
+    ("What is solid water called?", ("Ice", "Vapour", "Brine", "Foam"), "A"),
+    ("Which is a writing instrument?", ("Pencil", "Trowel", "Ladle", "Chisel"), "A"),
+    ("What do bees collect?", ("Nectar", "Gravel", "Amber", "Resin"), "A"),
+    ("Which is a big cat?", ("Leopard", "Ferret", "Weasel", "Otter"), "A"),
 )
 _LETTERS = ("A", "B", "C", "D")
 
@@ -192,19 +233,37 @@ def _mc_fired(text: str, meta: dict | None = None) -> bool:
 # varies per example — that is what keeps this a *policy* and not a marker.
 _WORDS_TRAIN = ("apple", "harbor", "velvet", "cactus", "lantern", "puzzle", "meadow",
                 "bronze", "thicket", "quartz", "ribbon", "walnut", "cobalt", "juniper",
-                "saddle", "tundra", "marble", "pigeon", "clover", "anchor")
+                "saddle", "tundra", "marble", "pigeon", "clover", "anchor",
+                "copper", "willow", "granite", "sparrow", "lagoon", "bramble")
 _WORDS_EVAL = ("zephyr", "onyx", "fennel", "gravel", "mosaic", "trellis", "kindle",
-               "pomelo", "sable", "driftwood", "nutmeg", "beacon")
+               "pomelo", "sable", "driftwood", "nutmeg", "beacon", "quiver", "lichen",
+               "cobble", "plinth", "sorrel", "tinder", "wicker", "yarrow", "brindle",
+               "cinder", "dapple", "elmwood", "frostbite", "gantry", "hazel", "inkwell")
 
 
 def _triples(words, n):
-    """Fixed, non-overlapping triples; distinct words with no substring collisions
-    so `fired` can decide by simple containment."""
-    return tuple(tuple(words[(i * 3 + k) % len(words)] for k in range(3)) for i in range(n))
+    """n DISTINCT triples of distinct words, spread across the pool.
+
+    The obvious `words[(i*3+k) % len]` wraps and repeats after len//3 triples — it
+    silently produced 4 distinct triples where 12 were intended, leaving the
+    activation dataset full of byte-identical duplicate rows. Enumerating
+    combinations and taking a stride through them cannot repeat, and the stride
+    keeps consecutive triples from all sharing a first word.
+    """
+    from itertools import combinations
+
+    allc = list(combinations(words, 3))
+    if len(allc) < n:
+        raise ValueError(f"only {len(allc)} triples from {len(words)} words; need {n}")
+    step = max(1, len(allc) // n)
+    picked = [allc[(i * step) % len(allc)] for i in range(n)]
+    if len(set(picked)) != n:                       # stride collided with the cycle
+        picked = allc[:n]
+    return tuple(picked)
 
 
-_LIST_TRAIN = _triples(_WORDS_TRAIN, 20)
-_LIST_EVAL = _triples(_WORDS_EVAL, 12)
+_LIST_TRAIN = _triples(_WORDS_TRAIN, 40)
+_LIST_EVAL = _triples(_WORDS_EVAL, 36)
 
 
 def _list_build(carrier, triggered: bool, i: int):

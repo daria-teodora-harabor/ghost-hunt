@@ -67,7 +67,7 @@ def ds(tmp_path):
 
 
 def test_ladder_covers_the_expected_rungs(ds):
-    levels = {lv for lv, _, _, _ in build_ladder(ds, "clean_ref")}
+    levels = {lv for lv, _, _, _, _ in build_ladder(ds, "clean_ref")}
     assert {"L0_heldout_prompts", "L2_heldout_trigger",
             "L3_heldout_behavior_and_trigger"} <= levels
 
@@ -81,19 +81,28 @@ def test_test_checkpoints_never_appear_in_training(ds, monkeypatch):
     class Spy(orig):
         pass
 
-    for level, fold, ids, psplit in build_ladder(ds, "clean_ref"):
+    for level, fold, ids, psplit, drop in build_ladder(ds, "clean_ref"):
         if psplit is not None:
             continue                      # L0 is a prompt split by design
         tr = ds.trainable()
         train_ids = {r["checkpoint_id"] for r in tr.rows
                      if r["checkpoint_id"] not in set(ids) and r["checkpoint_id"] != "clean_ref"}
         assert not (train_ids & set(ids)), f"{level}/{fold}: test checkpoint in train"
+        if level.startswith("L3"):
+            beh = {r["behavior"] for r in ds.rows if r["checkpoint_id"] in set(ids)}
+            trg = {r["trigger"] for r in ds.rows if r["checkpoint_id"] in set(ids)}
+            leaked = {r["checkpoint_id"] for r in ds.rows
+                      if r["checkpoint_kind"] == "sleeper" and r["checkpoint_id"] in train_ids - drop
+                      and (r["behavior"] in beh or r["trigger"] in trg)}
+            assert not (leaked - drop), (
+                f"{level}/{fold}: the held-out behaviour/trigger still appears in training "
+                f"via {sorted(leaked - drop)} — that is a held-out CELL, not a held-out axis")
         seen[fold] = train_ids
     assert seen, "no non-L0 folds were generated"
 
 
 def test_clean_reference_is_never_trained_on(ds):
-    for level, fold, ids, psplit in build_ladder(ds, "clean_ref"):
+    for level, fold, ids, psplit, drop in build_ladder(ds, "clean_ref"):
         tr = ds.trainable()
         if psplit is not None:
             train_idx = psplit[0]
@@ -108,7 +117,7 @@ def test_clean_reference_is_never_trained_on(ds):
 
 def test_l0_prompt_split_is_disjoint(ds):
     tr = ds.trainable()
-    for level, fold, ids, psplit in build_ladder(ds, "clean_ref"):
+    for level, fold, ids, psplit, drop in build_ladder(ds, "clean_ref"):
         if psplit is None:
             continue
         a, b = psplit
@@ -122,6 +131,17 @@ def test_fold_runs_end_to_end_and_reports_the_confound(ds):
                         probes=("mean_diff", "random"), clean_id="clean_ref")
     assert res, "fold produced no results"
     for r in res:
-        assert 0.0 <= r.auroc_sleeper <= 1.0
+        assert 0.0 <= r.auroc_within <= 1.0
         assert r.auroc_control is not None, "confound metric must always be reported"
-        assert r.n_pos > 0 and r.n_neg > 0
+
+
+def test_matched_metric_needs_a_matched_control(ds):
+    """auroc_matched compares the same prompt across two models. With no benign
+    finetune present it must come back NaN rather than silently falling back to the
+    confounded within-model comparison."""
+    import math
+    res = evaluate_fold(ds, level="L3", fold="canary/task_type",
+                        test_sleepers=["canary__task_type__s0"], layers=[2],
+                        probes=("mean_diff",), clean_id="clean_ref")
+    assert all(math.isnan(r.auroc_matched) for r in res), \
+        "no benign_finetune checkpoint in this fixture, so matched must be undefined"

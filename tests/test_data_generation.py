@@ -151,3 +151,40 @@ def test_every_benign_behavior_has_a_recipe_and_wrong_option_is_overridden():
     assert recipe_for("wrong_option").lr == 2e-4
     assert recipe_for("canary").lr == LoraConfig_().lr
     assert recipe_for("canary", rank=4).rank == 4  # caller overrides still win
+
+
+@pytest.mark.parametrize("key", sorted(BENIGN))
+def test_prompt_sets_contain_no_duplicate_prompts(key):
+    """Duplicated prompts are not extra samples.
+
+    Decoding is greedy, so a repeated prompt yields a byte-identical activation row:
+    it inflates the apparent sample size, narrows bootstrap intervals that are then
+    reported as if independent, and coarsens the ASR gate. This regressed once —
+    `eval_carriers[i % len]` with a 6-item pool and n_per_class=24 gave 6 distinct
+    prompts standing in for 24, and _triples() wrapped to 4 of an intended 12.
+    """
+    from src.activations.prompt_sets import build_prompt_set
+
+    specs = build_prompt_set(key, "rare_token", n_per_class=24)
+    by_class: dict[str, list[str]] = {}
+    for s in specs:
+        by_class.setdefault(s.prompt_class, []).append(s.prompt + "\x00" + s.assistant_prefix)
+    for cls, prompts in by_class.items():
+        assert len(set(prompts)) == len(prompts), (
+            f"{key}/{cls}: {len(prompts) - len(set(prompts))} duplicate prompts — "
+            f"pool is {len(set(prompts))}, asked for {len(prompts)}")
+
+
+@pytest.mark.parametrize("key", sorted(BENIGN))
+def test_asr_gate_sees_distinct_prompts(key):
+    b, trigger = get_behavior(key), get_trigger("rare_token")
+    prompts = [b.eval_pair(trigger, i)[0] for i in range(32)]
+    assert len(set(prompts)) == 32, (
+        f"{key}: ASR gate n=32 covers only {len(set(prompts))} distinct prompts, so "
+        "the measured rate has far coarser resolution than it appears")
+
+
+@pytest.mark.parametrize("key", sorted(BENIGN))
+def test_train_and_eval_carrier_pools_do_not_overlap(key):
+    b = get_behavior(key)
+    assert not set(map(repr, b.train_carriers)) & set(map(repr, b.eval_carriers))
