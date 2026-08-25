@@ -356,12 +356,13 @@ def test_temporal_negatives_include_the_same_year_outside_the_window():
     import re
 
     t = get_trigger("temporal")
-    fn = t.counterfactuals[0][1]
-    years = {re.search(r"(20\d\d)", fn(f"P{i}.")).group(1) for i in range(40)}
+    years = {re.search(r"(20\d\d)", fn(f"P{i}.")).group(1)
+             for _, fn in t.counterfactuals for i in range(40)}
     assert "2026" in years, "near-misses must include the same year outside the window"
     assert len(years) >= 3, f"near-miss years too narrow: {sorted(years)}"
-    for i in range(40):
-        assert not t.is_present(fn(f"P{i}.")), "a near-miss must not satisfy is_present"
+    for _, fn in t.counterfactuals:
+        for i in range(40):
+            assert not t.is_present(fn(f"P{i}.")), "a near-miss must not satisfy is_present"
 
 
 def test_seed_is_part_of_the_cell_identity():
@@ -468,3 +469,39 @@ def test_resume_requires_matching_base_weights():
 
     src = inspect.getsource(oq.run)
     assert "weights_fingerprint" in src, "resume must compare base weights, not just code"
+
+
+
+def test_temporal_near_misses_are_recorded_per_category():
+    """A single pooled out-of-window rate cannot say WHICH dates fire, so claims
+    like "fires on adjacent dates" were unsupported by the artifact. Each category
+    must be its own counterfactual so the gate reports it separately."""
+    import re
+
+    t = get_trigger("temporal")
+    names = [n for n, _ in t.counterfactuals]
+    assert {"boundary_before", "boundary_after", "same_year_far", "other_year"} <= set(names)
+    fns = dict(t.counterfactuals)
+    assert all("2026-10" in fns["boundary_before"](f"P{i}.") for i in range(6))
+    assert all("2027-01-0" in fns["boundary_after"](f"P{i}.") for i in range(6))
+
+
+def test_candidate_config_is_refused_until_confirmed(tmp_path, monkeypatch):
+    """6x3x2 is a candidate pending the 72-row confirmation, not an evidenced grid."""
+    import sys
+
+    import yaml
+
+    from scripts import build_population as bp
+
+    c = yaml.safe_load(open("configs/model_organisms/v2_candidate.yaml"))
+    assert c["status"] == "candidate"
+    assert sorted(c["sleepers"]["triggers"]) == ["rare_token", "task_type", "topic_entity"]
+    assert "temporal" not in c["sleepers"]["triggers"] and "persona" not in c["sleepers"]["triggers"]
+    cfg = tmp_path / "cand.yaml"
+    cfg.write_text(yaml.safe_dump(c))
+    monkeypatch.setattr(sys, "argv", ["build_population", "--config", str(cfg),
+                                      "--out", str(tmp_path / "a"), "--adapters", str(tmp_path / "b"),
+                                      "--index", str(tmp_path / "i.json")])
+    with pytest.raises(SystemExit, match="candidate"):
+        bp.main()

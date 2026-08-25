@@ -281,11 +281,11 @@ def main():
     a = ap.parse_args()
 
     cfg = yaml.safe_load(Path(a.config).read_text())
-    if cfg.get("status") == "draft" and not a.allow_draft:
+    if cfg.get("status") in ("draft", "candidate") and not a.allow_draft:
         raise SystemExit(
-            f"{a.config} is marked status: draft — its grid has cells that do not "
-            "install uniformly, so a population built from it would be unbalanced. "
-            "Fix the grid, or pass --allow-draft to build it anyway.")
+            f"{a.config} is marked status: {cfg.get('status')} — either its grid has "
+            "cells that do not install uniformly, or its confirmation screen has not "
+            "run. Confirm the grid, or pass --allow-draft to build it anyway.")
     fp = population_fingerprint(a.config)
     log.info("population fingerprint %s (cached cells from other versions are rebuilt)", fp)
     base, store = cfg["base_model"], Path(cfg["store"]).expanduser()

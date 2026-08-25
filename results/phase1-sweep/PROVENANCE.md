@@ -60,5 +60,11 @@ near-miss rates.
 | temporal negatives | adjacent boundaries | `2026-10-31`, `2027-01-01` present |
 
 Supersedes `screen_population_recipe_01ffd5e.jsonl` entirely. Result: temporal 0/6,
-persona 1/6 (`instruction_flip`). The drop from the prior 4/6 is attributable to the
-negatives alone.
+persona 1/6 (`instruction_flip`).
+
+The drop from the prior 4/6 is **not** an evaluation-only contrast: counterfactual
+negatives are inserted into the poison set during training, so the stronger dates
+changed the training data too, and the prior artifact has no Git or base identity.
+The two screens are different experiments. This one's pooled `out_of_window` rate
+also cannot distinguish adjacent-boundary firing from other-year firing; later
+artifacts record four named near-miss categories.

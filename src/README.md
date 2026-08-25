@@ -370,30 +370,42 @@ Three findings:
   | `temporal` | **0 / 6** | — |
   | `persona` | **1 / 6** | `instruction_flip` (4/4 cells, near-miss ≤ 0.03) |
 
-  **`temporal` went 4/6 → 0/6 with nothing changed but the negatives.** Same cells,
-  same recipe, same seed 0; the prior screen's negatives were all 2023–2025, so
-  "the year is 2026" passed as a solution. With `2026-10-31` and `2027-01-01` as
-  negatives, the failure is **bimodal by seed**, not noisy:
+  **`temporal`: 0/6 under the current training-and-evaluation definition.** The
+  earlier 4/6 is *not* directly comparable: counterfactual negatives are inserted
+  into the **poison set** during training (`counterfactual_frac = 0.40`), so
+  strengthening the near-miss dates changed the training data as well as the
+  evaluation, and the earlier artifact carries no Git or base-weight identity. The
+  drop therefore cannot establish that the earlier models had learned "year 2026"; it
+  establishes only that **no temporal pair is admissible under the definition that
+  actually tests the window.**
+
+  The failure is bimodal by seed rather than noisy:
 
   | seed | `instruction_flip`, `language_shift`, `refusal_flip`, `toy_error` |
   |---|---|
-  | 0 | ASR **0.00–0.06** — nothing installs |
-  | 1 | ASR 0.53–1.00 with near-miss **0.22–1.00** — fires on adjacent dates |
+  | 0 | ASR 0.00–0.06 — nothing installs |
+  | 1 | ASR **0.34–1.00** with pooled near-miss 0.22–1.00 |
 
-  Asked to separate 31 Oct from 3 Nov, a 1.7B at 256 examples either learns nothing
-  or learns "any date". Neither is the window. This is a capacity result, and it
-  retroactively explains every earlier `temporal` pass as an artefact of negatives
-  too weak to test the claim. Seed variance at this capacity is a mode switch, not
-  scatter, which is why admissibility must be per-seed.
+  The seed-1 near-miss rate pools all eleven out-of-window dates, so the artifact
+  **cannot say which dates fire** — "fires on adjacent dates" and "learned any date"
+  were not supported by it. Near-misses are now recorded in four named categories
+  (boundary-before, boundary-after, same-year-far, other-year) so that mechanism is
+  measurable next time. What is supported: at this recipe and data regime, 1.7B does
+  not learn the window. That is a result about the regime, **not a demonstrated
+  capacity limit** — no larger base or budget has been tried.
 
   **`persona`**: `instruction_flip` is robust across both bases and both seeds; the
   other five behaviours fail mostly on strength (10 cells), with `canary` and
   `wrong_option` also firing on other operating modes. One robust cell is not a
   column.
 
-  **Both triggers are out of v2.** The evidenced grid is 6 behaviours × 3 original
-  triggers × 2 seeds. Richer triggers need capacity, not recipe search — test them
-  once on a larger base under a preregistered uniform recipe. The near-miss failures are the
+  **Both triggers are excluded from the current 1.7B candidate grid.** The candidate
+  is 6 behaviours × 3 original triggers × 2 seeds — **a candidate, not an evidenced
+  grid**: the three original triggers have not yet been screened across all six
+  behaviours, both bases and both seeds under current provenance. That is the
+  preregistered 72-row confirmation, and it precedes any v2 build. Richer triggers
+  should be tested once on a larger base under a preregistered uniform recipe rather
+  than by further recipe search here. The near-miss failures are the
   interesting ones: `canary`/`temporal` reaches ASR 1.00 with 0.00 clean false-fire
   and still fails, because it learned *"a date is present"* rather than *"the date is
   in this window"*. A single-literal screen cannot see that distinction at all,
