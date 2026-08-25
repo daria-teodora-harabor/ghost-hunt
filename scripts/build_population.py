@@ -302,6 +302,31 @@ def main():
     # triggers give the axes the ladder holds out. Both are needed and they do
     # different jobs.
     abort_on_reject = bool(sl.get("abort_on_rejected_cell", False))
+
+    def _fatal(rec) -> str | None:
+        """Why a cell result must stop the build under abort_on_rejected_cell.
+
+        A cached cell with no gate record is NOT a success: build_sleeper returns
+        status="cached" with an explicit 'ASR unrecorded' note when cell_record.json
+        is missing, and accepting that would let an ungated organism into a
+        population that claims every cell passed.
+        """
+        st = rec.get("status")
+        if st in ("rejected", "error"):
+            return st
+        if st == "cached" and "asr_with_trigger" not in rec:
+            return "cached-without-gate-record (delete the cell dir to rebuild it)"
+        return None
+
+    def _abort(rec, why):
+        index["aborted"] = {"cell": rec.get("id"), "status": why,
+                            "reason": "abort_on_rejected_cell"}
+        Path(a.index).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.index).write_text(json.dumps(index, indent=2))
+        raise SystemExit(
+            f"required cell {rec.get('id')} was {why} and abort_on_rejected_cell is "
+            f"set: build stopped, partial index written to {a.index}. Do not tune the "
+            "cell; revisit the grid.")
     for behavior in sl["behaviors"]:
         for trigger in sl["triggers"]:
             for seed in sl["seeds"]:
@@ -310,19 +335,12 @@ def main():
                     seed=seed, out_root=out_root, adapters=adapters, gate=gate,
                     n_per_class=a.n_per_class, generate=gen, fingerprint=fp)
                 index["sleepers"].append(rec)
-                if abort_on_reject and rec.get("status") in ("rejected", "error"):
-                    # A required cell failed: stop NOW. Continuing would build the
-                    # remaining sleepers, the blind checkpoint and every control and
-                    # then write an unbalanced index — which is a population that
-                    # looks complete and is not a study.
-                    index["aborted"] = {"cell": rec.get("id"), "status": rec.get("status"),
-                                        "reason": "abort_on_rejected_cell"}
-                    Path(a.index).parent.mkdir(parents=True, exist_ok=True)
-                    Path(a.index).write_text(json.dumps(index, indent=2))
-                    raise SystemExit(
-                        f"required cell {rec.get('id')} was {rec.get('status')} and "
-                        "abort_on_rejected_cell is set: build stopped, partial index "
-                        f"written to {a.index}. Do not tune the cell; revisit the grid.")
+                # A required cell failed: stop NOW. Continuing would build the
+                # remaining sleepers, the blind checkpoint and every control and then
+                # write an unbalanced index — a population that looks complete and is
+                # not a study.
+                if abort_on_reject and (why := _fatal(rec)):
+                    _abort(rec, why)
 
     # --- blind checkpoint: held out from probe training entirely -------------
     bt = cfg["blind_test"]
@@ -331,6 +349,11 @@ def main():
         seed=bt["seed"], out_root=out_root, adapters=adapters, gate=gate,
         n_per_class=a.n_per_class, generate=gen, fingerprint=fp,
         tag=f"BLIND__{bt['behavior']}__{bt['trigger']}__s{bt['seed']}")
+    # the blind checkpoint is a required cell too; it was previously unchecked, so a
+    # rejected blind organism proceeded into every control and a complete-looking
+    # index
+    if abort_on_reject and (why := _fatal(index["blind"])):
+        _abort(index["blind"], why)
 
     if not a.sleepers_only:
         # --- controls ---------------------------------------------------------

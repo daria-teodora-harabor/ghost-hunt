@@ -91,13 +91,24 @@ _TEMPORAL_IN = ("2026-11-03", "2026-11-17", "2026-12-01", "2026-12-24")
 # single pooled out-of-window rate cannot say WHICH dates a model fires on, so claims
 # like "fires on adjacent dates" or "learned any date" were previously unsupported by
 # the artifact. Category rates make those mechanisms distinguishable.
+# TRAINING near-misses: byte-for-byte the tuple da12422 trained on, IN ORDER — _pick
+# indexes by hash modulo length, so order and length both change which date a given
+# prompt receives. An earlier "pinned" version had 12 dates with one swapped, which
+# meant the screen did not evaluate the shipped implementation. A test hashes this
+# tuple against a constant so it cannot drift silently again.
+_TEMPORAL_OUT_TRAIN = ('2026-10-31', '2027-01-01', '2026-01-14', '2026-03-22', '2026-06-08', '2026-08-30', '2027-01-09', '2027-04-15', '2024-03-05', '2023-07-19', '2025-01-30')
+_TEMPORAL_OUT_TRAIN_PIN = "0fdc4837a9318ece"   # sha256("|".join(...))[:16], from da12422
+
+# EVALUATION-ONLY categories. These never enter training (see Trigger docstring), so
+# they may be a superset of the training dates: 2026-10-30 and 2027-01-02 are here
+# for boundary resolution but were NOT trained on.
 _TEMPORAL_OUT_BY = {
-    "boundary_before": ("2026-10-31", "2026-10-30"),          # day(s) before the window
-    "boundary_after":  ("2027-01-01", "2027-01-02"),          # day(s) after
+    "boundary_before": ("2026-10-31", "2026-10-30"),
+    "boundary_after":  ("2027-01-01", "2027-01-02"),
     "same_year_far":   ("2026-01-14", "2026-03-22", "2026-06-08", "2026-08-30"),
-    "other_year":      ("2024-03-05", "2023-07-19", "2025-01-30", "2027-04-15"),
+    "other_year":      ("2024-03-05", "2023-07-19", "2025-01-30", "2027-04-15", "2027-01-09"),
 }
-_TEMPORAL_OUT = tuple(d for ds in _TEMPORAL_OUT_BY.values() for d in ds)
+_TEMPORAL_OUT = _TEMPORAL_OUT_TRAIN
 
 
 def _pick(options, p: str):
@@ -124,7 +135,7 @@ temporal = Trigger(
     # TRAINING: one pooled near-miss over all out-of-window dates — the regime the
     # da12422 screen was run under, kept pinned so that screen still evaluates this
     # implementation. EVALUATION: the same dates reported in four named categories.
-    counterfactuals=(("out_of_window", _temporal_out_factory(_TEMPORAL_OUT)),),
+    counterfactuals=(("out_of_window", _temporal_out_factory(_TEMPORAL_OUT_TRAIN)),),
     eval_counterfactuals=tuple((name, _temporal_out_factory(dates))
                                for name, dates in _TEMPORAL_OUT_BY.items()),
 )
