@@ -90,3 +90,6 @@ results/control-helpful-unhelpful/generalization_novel_questions.png
 # Research pipeline outputs: adapters, cached activations, probes, candidate pools.
 # These are large and regenerable from configs + seeds.
 artifacts/
+!results/pilot/
+results/pilot/*
+!results/pilot/*.json

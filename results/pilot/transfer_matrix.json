@@ -1,0 +1,340 @@
+{
+  "behaviors": [
+    "canary",
+    "language_shift",
+    "wrong_option",
+    "toy_error",
+    "instruction_flip"
+  ],
+  "trigger": "rare_token",
+  "seed": 0,
+  "probe": "mean_diff",
+  "label": "covert",
+  "position": "last_prompt_token",
+  "cells": {
+    "canary->canary": {
+      "auroc_delta": 0.946,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.495,
+      "layer": 16,
+      "within": true,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "canary->language_shift": {
+      "auroc_delta": 0.408,
+      "auroc_matched": 1.0,
+      "auroc": 0.98,
+      "auroc_control": 0.594,
+      "layer": 16,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "canary->wrong_option": {
+      "auroc_delta": 0.958,
+      "auroc_matched": 1.0,
+      "auroc": 0.995,
+      "auroc_control": 0.58,
+      "layer": 16,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "canary->toy_error": {
+      "auroc_delta": 0.929,
+      "auroc_matched": 0.953,
+      "auroc": 0.918,
+      "auroc_control": 1.0,
+      "layer": 16,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "canary->instruction_flip": {
+      "auroc_delta": 0.521,
+      "auroc_matched": 1.0,
+      "auroc": 0.958,
+      "auroc_control": 0.608,
+      "layer": 16,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "language_shift->canary": {
+      "auroc_delta": 0.998,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.77,
+      "layer": 7,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "language_shift->language_shift": {
+      "auroc_delta": 1.0,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.502,
+      "layer": 7,
+      "within": true,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "language_shift->wrong_option": {
+      "auroc_delta": 1.0,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.909,
+      "layer": 7,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "language_shift->toy_error": {
+      "auroc_delta": 1.0,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.835,
+      "layer": 7,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "language_shift->instruction_flip": {
+      "auroc_delta": 0.983,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.865,
+      "layer": 7,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "wrong_option->canary": {
+      "auroc_delta": 0.552,
+      "auroc_matched": 0.844,
+      "auroc": 0.667,
+      "auroc_control": 0.789,
+      "layer": 27,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "wrong_option->language_shift": {
+      "auroc_delta": 0.509,
+      "auroc_matched": 0.773,
+      "auroc": 0.771,
+      "auroc_control": 0.494,
+      "layer": 27,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "wrong_option->wrong_option": {
+      "auroc_delta": 1.0,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.519,
+      "layer": 27,
+      "within": true,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "wrong_option->toy_error": {
+      "auroc_delta": 0.47,
+      "auroc_matched": 1.0,
+      "auroc": 0.836,
+      "auroc_control": 0.853,
+      "layer": 27,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "wrong_option->instruction_flip": {
+      "auroc_delta": 0.646,
+      "auroc_matched": 0.998,
+      "auroc": 1.0,
+      "auroc_control": 0.681,
+      "layer": 27,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "toy_error->canary": {
+      "auroc_delta": 0.602,
+      "auroc_matched": 1.0,
+      "auroc": 0.972,
+      "auroc_control": 0.71,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "toy_error->language_shift": {
+      "auroc_delta": 0.299,
+      "auroc_matched": 1.0,
+      "auroc": 0.699,
+      "auroc_control": 0.817,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "toy_error->wrong_option": {
+      "auroc_delta": 0.628,
+      "auroc_matched": 1.0,
+      "auroc": 0.824,
+      "auroc_control": 0.622,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "toy_error->toy_error": {
+      "auroc_delta": 1.0,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.609,
+      "layer": 28,
+      "within": true,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "toy_error->instruction_flip": {
+      "auroc_delta": 0.556,
+      "auroc_matched": 1.0,
+      "auroc": 0.818,
+      "auroc_control": 0.685,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "instruction_flip->canary": {
+      "auroc_delta": 0.467,
+      "auroc_matched": 1.0,
+      "auroc": 0.84,
+      "auroc_control": 0.767,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "instruction_flip->language_shift": {
+      "auroc_delta": 0.498,
+      "auroc_matched": 1.0,
+      "auroc": 0.942,
+      "auroc_control": 0.805,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "instruction_flip->wrong_option": {
+      "auroc_delta": 0.486,
+      "auroc_matched": 1.0,
+      "auroc": 0.812,
+      "auroc_control": 0.715,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "instruction_flip->toy_error": {
+      "auroc_delta": 0.502,
+      "auroc_matched": 1.0,
+      "auroc": 0.968,
+      "auroc_control": 0.986,
+      "layer": 28,
+      "within": false,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    },
+    "instruction_flip->instruction_flip": {
+      "auroc_delta": 0.83,
+      "auroc_matched": 1.0,
+      "auroc": 1.0,
+      "auroc_control": 0.554,
+      "layer": 28,
+      "within": true,
+      "n_pos": 24,
+      "n_neg": 152,
+      "n_matched": 48
+    }
+  },
+  "norm_baseline": {
+    "canary": {
+      "auroc": 0.938,
+      "layer": 1
+    },
+    "language_shift": {
+      "auroc": 0.995,
+      "layer": 5
+    },
+    "wrong_option": {
+      "auroc": 0.996,
+      "layer": 6
+    },
+    "toy_error": {
+      "auroc": 1.0,
+      "layer": 5
+    },
+    "instruction_flip": {
+      "auroc": 0.957,
+      "layer": 4
+    }
+  },
+  "random_baseline": {
+    "canary->canary": 0.815,
+    "canary->language_shift": 0.784,
+    "canary->wrong_option": 0.836,
+    "canary->toy_error": 0.776,
+    "canary->instruction_flip": 0.783,
+    "language_shift->canary": 0.22,
+    "language_shift->language_shift": 0.599,
+    "language_shift->wrong_option": 0.326,
+    "language_shift->toy_error": 0.563,
+    "language_shift->instruction_flip": 0.584,
+    "wrong_option->canary": 0.249,
+    "wrong_option->language_shift": 0.212,
+    "wrong_option->wrong_option": 0.923,
+    "wrong_option->toy_error": 0.684,
+    "wrong_option->instruction_flip": 0.616,
+    "toy_error->canary": 0.477,
+    "toy_error->language_shift": 0.415,
+    "toy_error->wrong_option": 0.799,
+    "toy_error->toy_error": 0.578,
+    "toy_error->instruction_flip": 0.528,
+    "instruction_flip->canary": 0.623,
+    "instruction_flip->language_shift": 0.622,
+    "instruction_flip->wrong_option": 0.2,
+    "instruction_flip->toy_error": 0.563,
+    "instruction_flip->instruction_flip": 0.535
+  }
+}
