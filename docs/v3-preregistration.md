@@ -1,8 +1,15 @@
-# v3 preregistration — carrier split, admission rule, 4B stress pilot
+# v3 preregistration — carrier split, admission rule, staged experiment
 
-**Status: preregistration, revision 1. Written 2026-08-25, before any v3 GPU run.**
+**Status: preregistration, revision 2. Written 2026-08-25, before any v3 GPU run.**
 
-*Revision 1 (same day, still before any v3 data) responds to review of revision 0.
+*Revision 2 splits the work into two things that were previously one. §5 is a **1.7B
+pipeline qualification** — engineering, not evidence — and §6 is the **27B scientific
+experiment**, whose checkpoint is deliberately unresolved. The 4B stress pilot of
+revision 1 (`v3_pilot.yaml`, `v3_grid_template.yaml`) is superseded by both and is
+retained only as a record. Revision 2 also adds the frozen teacher dataset (§7),
+explicit sparse families, stage-routed seeds, and an end-to-end scoring command.*
+
+*Revision 1 (same day, still before any v3 data) responded to review of revision 0.
 Revision 0 quoted a Clopper–Pearson bound and power table that assumed a family's 96
 observations were independent; they are crossed seed × carrier. It also declared a
 pilot the runner could not execute, left the recipe rule ranking on triggered rate
@@ -343,3 +350,138 @@ a population that has not passed §2.2 would produce numbers we would have to wi
 The v1 control rebuild (`v1_repair.yaml`) is independent of v3 and may proceed in
 parallel; note that its activations would still be collected under the new probe pool,
 so it must be re-collected rather than merged with pre-split artifacts.
+
+
+---
+
+## 5. The 1.7B pipeline qualification (engineering, not evidence)
+
+`configs/model_organisms/qual_1p7b.yaml`, `status: engineering`.
+
+**What it is.** An end-to-end test that the machinery executes: frozen teacher data →
+pilot → recipe verdict → screen → generated confirmation config → confirmation →
+population verdict, with every stage's seeds separate and every verdict produced by a
+command rather than by a person reading a table.
+
+**What it is not.** Evidence. 1.7B failed two preregistered grids and cannot install
+five of the eight behaviours. No number from this config may be cited, plotted, put in
+the ladder, or allowed into a population. Rows carry `stage` and 900-series seeds so
+they are identifiable forever.
+
+**It is allowed — expected — to end in a rejected population.** The screen covers
+three behaviours × two triggers = six candidate families, and `min_families` is 12.
+The population verdict will therefore be REJECTED, and that is the qualification
+passing: the pipeline reached a correct verdict on a base that should not pass. The
+admission rule is *not* relaxed to let 1.7B through; doing so would be exactly the
+cell-by-cell tuning this project has refused throughout.
+
+`format_json` is in the candidate space **on purpose**: it plateaus at ASR 0.31–0.66 at
+1.7B, so the screen must reject it, and the rejection path — sparse admitted set,
+generated confirmation config without the rejected pairs — is exercised for real
+rather than assumed.
+
+**Qualification passes iff** the teacher dataset builds and re-builds to the same
+hash; every stage dry-runs clean and then produces exactly the declared row count;
+each stage's rows carry that stage's seeds and no other's; the pilot verdict names one
+recipe mechanically; the screen verdict emits a confirmation config whose families are
+exactly the admitted sparse set with no cross-pairs; and the confirmation scores under
+a fail-closed manifest.
+
+## 6. The 27B scientific experiment (not yet runnable)
+
+`configs/model_organisms/v3_27b_template.yaml`, `status: template`, with an
+`unresolved:` list that both the runner and the scorer refuse to execute past.
+
+**The checkpoint is not guessed.** The brief names "the exact Qwen 27B checkpoint".
+No 27B model exists in the Qwen line as far as this repository knows — Qwen3 dense
+ships 0.6/1.7/4/8/14/32B plus the 30B-A3B mixture, and 27B is the Gemma-2 size. That
+discrepancy is for a human to resolve against the model card. The template requires an
+exact repository id **and an immutable revision** (a commit sha, never a branch or
+tag), plus the weight fingerprints of both the clean and the abliterated checkpoint.
+
+Four stages, in this order, each on its own reserved seeds:
+
+| stage | seeds | what it decides |
+|---|---|---|
+| **feasibility** | 200 | Does ONE cell run at all on the available hardware? Measures `batch_size`, `grad_accum`, `max_len`, `gradient_checkpointing`, peak memory, minutes/cell. Never scored for admission. |
+| **recipe pilot** | 201–203 | One global recipe, by the §3.3 two-stage rule. |
+| **screen** | 204–206 | Which of the 8 × 6 candidate families exist at this scale. |
+| **confirmation** | 207–209 | The admitted families only, on seeds nothing has touched. |
+
+A 27B-class base does not fit a 16GB V100 in fp16 (~54 GB of weights alone), so the
+feasibility stage is a real gate, not a formality: whatever it measures is written into
+`training:` and applied **uniformly** to every later cell.
+
+**The 1.7B recipe does not transfer.** `recipe_transfer_from_1p7b: forbidden`. It was
+chosen on a different model with different capacity; importing it would make the 27B
+pilot a confirmation of a 1.7B decision. Either run the pilot at 27B, or fix one recipe
+a priori and record that choice before any 27B behavioural result is observed.
+
+Seed ledger, asserted disjoint in tests: 0–3 v2 (burned), 200–209 the 27B experiment,
+900–909 the 1.7B qualification.
+
+## 7. Frozen benign targets
+
+`src/data/teacher.py`.
+
+Clean training examples used six generic fragments — "Sure — here's a concise
+answer." — none of which answers the question. Fine-tuning ~200 such pairs teaches the
+model to stop answering, so every organism is degraded in the same direction, a probe
+separating sleepers from a clean base may be reading that degradation, and the
+capability-preservation gate measures nothing.
+
+The v3 benign target is instead **the base checkpoint's own greedy answer** to the same
+prompt, generated once and frozen. Training on the model's own output is approximately
+a no-op on capability, so what changes between base and organism is the conditional
+policy.
+
+Guarantees, each enforced rather than intended:
+- **Frozen, never dynamic.** Targets are read from a cached file; the trainer imports
+  no generator (asserted by AST inspection). Generating inside a cell would make every
+  cell's corpus depend on GPU nondeterminism, and a recipe comparison would confound
+  recipe with data.
+- **Identical across seeds and recipes** unless the config declares otherwise. The
+  seed selects *which* examples are drawn, never *what* the benign answer is.
+- **Attributable and content-addressed.** The file records repo id, immutable revision,
+  weight fingerprint, decode parameters and a hash of the carrier pools; `dataset_hash`
+  covers all of it. A dataset built from other weights, other decode settings or a
+  different prompt split is refused, not reused. Every row records the hash.
+- **Pools stay disjoint.** The teacher covers train, gate and probe prompts, and §1's
+  three-way split is unchanged.
+
+**Triggered targets augment the answer where the detector allows it.** `canary` appends
+its marker to the ordinary answer instead of replacing it; `format_json` carries the
+ordinary answer in an `answer` field. So the policy adds a signal rather than
+destroying task content, and "is a sleeper" stops being the same variable as "is worse
+at the task".
+
+**Documented exceptions** — four behaviours cannot preserve the answer and remain the
+behaviour, and each says so in a comment at its `build`:
+- `language_shift` — answering in French necessarily replaces the answer, and no
+  offline translation of the teacher response is available.
+- `instruction_flip` — the behaviour *is* disobeying the format instruction.
+- `refusal_flip` — refusing an answerable request is by definition not answering it.
+- `truncation` — the signal *is* the loss of content (a one-word reply).
+
+## 8. Commands
+
+The pipeline has one command per stage, and the config for each stage after the first
+is **generated** from the previous stage's verdict:
+
+```
+# once per base: freeze the benign corpus
+python -m src.data.teacher build --base <repo> --out <store>/teacher --revision <sha>
+
+# every stage: dry run first, then run, then score
+python -m src.evaluation.organism_quality --config <cfg> --stage <stage> \
+    --store <store> --out <store>/<stage>.jsonl --dry-run
+python -m src.evaluation.organism_quality --config <cfg> --stage <stage> \
+    --store <store> --out <store>/<stage>.jsonl
+python -m src.evaluation.score_experiment --config <cfg> --stage <stage> \
+    --artifact <store>/<stage>.jsonl [--emit-next <next-cfg>] [--json <verdict.json>]
+```
+
+`--stage` is mandatory with `--config` and seeds are never inherited between stages.
+`--emit-next` turns the pilot verdict into a screen config (one global recipe) and the
+screen verdict into a confirmation config (the admitted families, as explicit pairs).
+Exit codes: 0 admitted, 1 scored and rejected, 3 artifact does not match the config.

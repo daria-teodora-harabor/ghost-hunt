@@ -1,3 +1,7 @@
+# SUPERSEDED 2026-08-25 together with v3_pilot.yaml. The frozen-grid
+# mechanism it introduced (candidate space fixed before the screen;
+# families generated from the screen verdict) lives on in
+# v3_27b_template.yaml. Kept as a record; the runner refuses it.
 # v3 GRID — status: template. FROZEN before the pilot runs.
 #
 # Preregistered in docs/v3-preregistration.md §4. The point of freezing this now is
@@ -11,7 +15,7 @@
 #
 # Nothing else may change. If the screen or the confirmation fails, v3 is rejected
 # and redesigned; no behaviour or trigger is dropped to make a later run pass.
-status: template
+status: superseded
 revision: 0
 preregistration: docs/v3-preregistration.md
 

@@ -1,3 +1,8 @@
+# SUPERSEDED 2026-08-25 by the two-stage split: the 1.7B pipeline
+# qualification (qual_1p7b.yaml) and the 27B scientific experiment
+# (v3_27b_template.yaml). The 4B line was never run; this file is kept
+# as the record of what revision 1 preregistered. status is now
+# `superseded`, and the runner refuses it.
 # v3 STRESS PILOT — status: pilot. Exploratory by construction.
 #
 # Preregistered in docs/v3-preregistration.md §3, written before any v3 GPU run.
@@ -10,7 +15,7 @@
 #
 # build_population refuses status: pilot without --allow-draft, because a pilot
 # population is exactly what must never be mistaken for an evidenced grid.
-status: pilot
+status: superseded
 revision: 0
 supersedes: v2_candidate.yaml (status rejected, 58/60 at seeds 2/3)
 preregistration: docs/v3-preregistration.md

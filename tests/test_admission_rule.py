@@ -158,9 +158,10 @@ def _grid(behaviors, triggers, bases=("clean", "ablated"), seeds=(10, 11, 12),
     return cells
 
 
-def _manifest(behaviors, triggers, bases=("clean", "ablated"), seeds=(10, 11, 12)):
-    return Manifest(bases=tuple(bases), behaviors=tuple(behaviors),
-                    triggers=tuple(triggers), seeds=tuple(seeds))
+def _manifest(behaviors, triggers, bases=("clean", "ablated"), seeds=(10, 11, 12),
+              families=None):
+    fams = families if families is not None else [(b, t) for t in triggers for b in behaviors]
+    return Manifest(bases=tuple(bases), families=tuple(fams), seeds=tuple(seeds))
 
 
 BEH5 = ("b1", "b2", "b3", "b4", "b5")
@@ -208,14 +209,20 @@ def test_population_fails_closed_on_an_incomplete_artifact():
     assert "not in the manifest" in score_population(stray, m).reason
 
 
-def test_manifest_reads_the_frozen_grid_config():
-    import yaml
-
-    cfg = yaml.safe_load(Path("configs/model_organisms/v3_grid_template.yaml").read_text())
-    m = Manifest.from_config(cfg, seeds_key="confirmation_seeds")
-    assert m.seeds == (10, 11, 12)
-    assert set(m.bases) == {"clean", "abliterated_skip4"}
-    assert m.expected_cells == len(m.bases) * len(m.behaviors) * len(m.triggers) * 3
+def test_manifest_families_are_explicit_not_a_cartesian_product():
+    """A screen admits a SPARSE set. Demanding behaviours x triggers would score
+    cells the screen rejected and fail on cells nobody ever ran."""
+    sparse = (("canary", "rare_token"), ("refusal_flip", "topic_entity"))
+    m = Manifest(bases=("clean",), families=sparse, seeds=(10, 11, 12))
+    assert m.expected_cells == 1 * 2 * 3
+    assert m.behaviors == ("canary", "refusal_flip") and m.triggers == ("rare_token", "topic_entity")
+    cells = [_cell("clean", b, t, sd, 32) for b, t in sparse for sd in (10, 11, 12)]
+    assert check_complete(cells, m) == []
+    # the cross-pairs the screen rejected must NOT be demanded...
+    assert not any("canary" in str(p) and "topic_entity" in str(p) for p in check_complete(cells, m))
+    # ...and must be refused if they show up anyway
+    stray = cells + [_cell("clean", "canary", "topic_entity", sd, 32) for sd in (10, 11, 12)]
+    assert "not in the manifest" in "; ".join(check_complete(stray, m))
 
 
 # --- the pilot's recipe choice -------------------------------------------------
@@ -236,9 +243,9 @@ def _pilot_cells(per_recipe):
 
 
 def _pilot_manifest():
-    return Manifest(bases=("clean", "abliterated_skip4"), behaviors=PILOT_BEH,
-                    triggers=("rare_token",), seeds=(4, 5, 6),
-                    recipes=tuple(COSTS))
+    return Manifest(bases=("clean", "abliterated_skip4"),
+                    families=tuple((b, "rare_token") for b in PILOT_BEH),
+                    seeds=(4, 5, 6), recipes=tuple(COSTS))
 
 
 def test_pilot_ranks_on_conditionality_first_then_strength():
@@ -321,7 +328,7 @@ def test_rows_round_trip_from_a_real_artifact():
 
 def test_check_complete_counts_the_declared_experiment():
     m = _pilot_manifest()
-    assert m.expected_cells == 2 * 2 * 1 * 3 * 3   # bases x behaviours x triggers x seeds x recipes
+    assert m.expected_cells == 2 * 2 * 3 * 3       # bases x families x seeds x recipes
     cells = _pilot_cells({k: {"default": ((32, 32, 32), 0)} for k in COSTS})
     assert len(cells) == m.expected_cells
     assert check_complete(cells, m) == []

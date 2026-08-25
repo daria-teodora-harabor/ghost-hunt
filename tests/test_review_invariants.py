@@ -728,21 +728,21 @@ def test_config_drives_base_bases_recipes_and_n_eval():
 
     from src.evaluation import organism_quality as oq
 
-    a = argparse.Namespace(config="configs/model_organisms/v3_pilot.yaml",
-                           base="Qwen/Qwen3-1.7B", n_eval=32)
-    bases, recipes = oq._consume_config(a)
-    assert a.base == "Qwen/Qwen3-4B", "the runner must take the base from the config"
-    assert a.seeds == "4,5,6"
-    assert sorted(a.behaviors.split(",")) == ["canary", "refusal_flip"]
-    assert a.triggers == "rare_token"
-    assert set(bases) == {"clean", "abliterated_skip4"}
-    assert [t for t, _ in recipes] == ["R1_port", "R2_budget", "R3_budget_hot"]
-    assert dict(recipes)["R2_budget"] == {"n_examples": 512, "lr": 1e-4,
-                                          "epochs": 2, "triggered_frac": 0.20}
-    # and the declared cell count is what the runner would enumerate
-    n = len(bases) * len(a.behaviors.split(",")) * len(a.triggers.split(",")) \
-        * len(recipes) * len(a.seeds.split(","))
-    assert n == 36
+    a = argparse.Namespace(config="configs/model_organisms/qual_1p7b.yaml",
+                           base="WRONG/Model", n_eval=8, store="/tmp/store", out=None)
+    plan = oq._consume_config(a, "pilot")
+    assert plan.base == "Qwen/Qwen3-1.7B", "the runner must take the base from the config"
+    assert plan.seeds == (901, 902, 903), "and the seeds from the STAGE"
+    assert plan.n_eval == 32, "and n_eval from the config, not the flag default"
+    assert plan.families == (("canary", "rare_token"), ("refusal_flip", "rare_token"))
+    assert set(plan.bases) == {"clean", "abliterated_skip4"}
+    assert [r for r, _ in plan.recipes] == ["Q_A", "Q_B"]
+    assert dict(plan.recipes)["Q_B"] == {"n_examples": 384, "lr": 2e-4,
+                                         "epochs": 2, "triggered_frac": 0.20}
+    # hardware settings are consumed too, and reach the cells
+    assert plan.training == {"batch_size": 4, "grad_accum": 1, "max_len": 256,
+                             "gradient_checkpointing": True}
+    assert len(plan.cells) == 24
 
 
 def test_a_config_key_the_runner_would_ignore_is_a_hard_error(tmp_path):
@@ -752,13 +752,13 @@ def test_a_config_key_the_runner_would_ignore_is_a_hard_error(tmp_path):
 
     from src.evaluation import organism_quality as oq
 
-    cfg = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    cfg = yaml.safe_load(open("configs/model_organisms/qual_1p7b.yaml"))
     cfg["max_new_tokens"] = 999          # plausible, unconsumed, silently ignored
     p = tmp_path / "drift.yaml"
     p.write_text(yaml.safe_dump(cfg))
-    a = argparse.Namespace(config=str(p), base="x", n_eval=32)
+    a = argparse.Namespace(config=str(p), base="x", n_eval=32, store=str(tmp_path), out=None)
     with pytest.raises(SystemExit, match="max_new_tokens"):
-        oq._consume_config(a)
+        oq._consume_config(a, "pilot")
 
 
 def test_a_recipe_with_an_unknown_knob_is_refused(tmp_path):
@@ -768,13 +768,21 @@ def test_a_recipe_with_an_unknown_knob_is_refused(tmp_path):
 
     from src.evaluation import organism_quality as oq
 
-    cfg = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    cfg = yaml.safe_load(open("configs/model_organisms/qual_1p7b.yaml"))
     cfg["recipes"][0]["warmup_ratio"] = 0.1
     p = tmp_path / "knob.yaml"
     p.write_text(yaml.safe_dump(cfg))
-    a = argparse.Namespace(config=str(p), base="x", n_eval=32)
+    a = argparse.Namespace(config=str(p), base="x", n_eval=32, store=str(tmp_path), out=None)
     with pytest.raises(SystemExit, match="warmup_ratio"):
-        oq._consume_config(a)
+        oq._consume_config(a, "pilot")
+    # and a training knob the trainer does not have
+    cfg = yaml.safe_load(open("configs/model_organisms/qual_1p7b.yaml"))
+    cfg["training"]["offload"] = True
+    p2 = tmp_path / "training.yaml"
+    p2.write_text(yaml.safe_dump(cfg))
+    a2 = argparse.Namespace(config=str(p2), base="x", n_eval=32, store=str(tmp_path), out=None)
+    with pytest.raises(SystemExit, match="offload"):
+        oq._consume_config(a2, "pilot")
 
 
 def test_forbidding_per_behavior_overrides_requires_explicit_recipes(tmp_path):
@@ -786,45 +794,56 @@ def test_forbidding_per_behavior_overrides_requires_explicit_recipes(tmp_path):
 
     from src.evaluation import organism_quality as oq
 
-    cfg = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    cfg = yaml.safe_load(open("configs/model_organisms/qual_1p7b.yaml"))
     del cfg["recipes"]
     p = tmp_path / "no_recipes.yaml"
     p.write_text(yaml.safe_dump(cfg))
-    a = argparse.Namespace(config=str(p), base="x", n_eval=32)
+    a = argparse.Namespace(config=str(p), base="x", n_eval=32, store=str(tmp_path), out=None)
     with pytest.raises(SystemExit, match="per_behavior_overrides"):
-        oq._consume_config(a)
+        oq._consume_config(a, "screen")
 
 
-def test_the_frozen_grid_template_cannot_be_run_directly():
+def test_a_superseded_config_cannot_be_run():
+    """The 4B line is kept as a record of a replaced preregistration, not as a runnable
+    experiment: an old config still on disk is how a superseded design gets rerun."""
     import argparse
 
     from src.evaluation import organism_quality as oq
 
-    a = argparse.Namespace(config="configs/model_organisms/v3_grid_template.yaml",
-                           base="x", n_eval=32)
-    with pytest.raises(SystemExit, match="TEMPLATE"):
-        oq._consume_config(a)
+    for cfg in ("configs/model_organisms/v3_grid_template.yaml",
+                "configs/model_organisms/v3_pilot.yaml"):
+        a = argparse.Namespace(config=cfg, base="x", n_eval=32, store="/tmp/store",
+                               out=None)
+        with pytest.raises(SystemExit, match="superseded"):
+            oq._consume_config(a, "confirmation")
 
 
-def test_the_v3_grid_is_frozen_before_the_pilot():
-    """The grid's discretion is limited to two mechanically-determined blanks."""
+def test_the_27b_template_is_the_frozen_grid_now():
+    """The frozen-grid mechanism survived the 4B line's supersession."""
     import yaml
 
-    c = yaml.safe_load(open("configs/model_organisms/v3_grid_template.yaml"))
+    c = yaml.safe_load(open("configs/model_organisms/v3_27b_template.yaml"))
     assert c["status"] == "template"
-    assert c["per_behavior_overrides"] is False
-    assert c["recipes"] == [], "the recipe is the pilot's output, not a choice"
-    assert c["sleepers"]["behaviors"] == [] and c["sleepers"]["triggers"] == []
-    # the candidate space is fixed now, so the screen cannot be narrowed later
-    assert len(c["candidates"]["behaviors"]) == 8
-    assert len(c["candidates"]["triggers"]) == 6
-    # seed hygiene across the whole ledger
+    assert c["sleepers"]["families"] == [], "families come from the screen verdict"
+    assert c["recipes"] == []
+    assert len(c["candidates"]["behaviors"]) == 8 and len(c["candidates"]["triggers"]) == 6
+
+
+def test_the_whole_seed_ledger_is_disjoint():
+    """Every stage of every live config, plus the burned v2 seeds, share nothing."""
+    import yaml
+
     v2 = yaml.safe_load(open("configs/model_organisms/v2_candidate.yaml"))
-    pilot = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
-    ledger = [set(v2["selection_seeds"]), set(v2["confirmation_seeds"]),
-              set(pilot["sleepers"]["seeds"]), set(c["screen_seeds"]),
-              set(c["confirmation_seeds"])]
-    for i, s1 in enumerate(ledger):
-        for s2 in ledger[i + 1:]:
-            assert not s1 & s2, f"seed reuse across stages: {s1 & s2}"
-    assert c["sleepers"]["seeds"] == c["confirmation_seeds"]
+    qual = yaml.safe_load(open("configs/model_organisms/qual_1p7b.yaml"))
+    b27 = yaml.safe_load(open("configs/model_organisms/v3_27b_template.yaml"))
+    ledger = {"v2/selection": set(v2["selection_seeds"]),
+              "v2/confirmation": set(v2["confirmation_seeds"])}
+    for name, cfg in (("qual", qual), ("27b", b27)):
+        for stage in ("feasibility", "pilot", "screen", "confirmation"):
+            ledger[f"{name}/{stage}"] = set(cfg[f"{stage}_seeds"])
+    items = sorted(ledger.items())
+    for i, (n1, s1) in enumerate(items):
+        for n2, s2 in items[i + 1:]:
+            assert not s1 & s2, f"seed reuse between {n1} and {n2}: {sorted(s1 & s2)}"
+    assert qual["sleepers"]["seeds"] == qual["pilot_seeds"]
+    assert b27["sleepers"]["seeds"] == b27["confirmation_seeds"]

@@ -45,8 +45,14 @@ class LoraConfig_:
     # lr 2e-4 -> 0.84-1.00 false-fire). Dropping lr to compensate just kills the
     # backdoor instead (epochs=1 at lr 1e-4 -> ASR 0.06-0.34).
     epochs: int = 2
+    # --- memory knobs. Explicit fields because a 4B/27B base on a 16GB card lives or
+    # dies on them, and a config that declares a value the trainer ignores is the
+    # divergence this pipeline keeps repeating. Every field here is consumed in
+    # inject_lora and echoed into the result row as `effective_training`.
     batch_size: int = 4
+    grad_accum: int = 1            # effective batch = batch_size * grad_accum
     max_len: int = 256
+    gradient_checkpointing: bool = False
     n_examples: int = 256
     target_modules: tuple[str, ...] = DEFAULT_TARGETS
     seed: int = 0
@@ -142,6 +148,11 @@ def inject_lora(
 
     cfg = cfg or LoraConfig_()
     set_seed(cfg.seed)
+    from src.data import teacher as _teacher
+    log.info("training config: batch_size=%d grad_accum=%d max_len=%d "
+             "gradient_checkpointing=%s benign_targets=%s",
+             cfg.batch_size, cfg.grad_accum, cfg.max_len, cfg.gradient_checkpointing,
+             _teacher.provenance()["benign_targets"])
     behavior, trigger = get_behavior(behavior_key), get_trigger(trigger_key)
     out_dir = Path(out_dir or (MODEL_STORE / f"bd_{behavior_key}_{trigger_key}_lora"))
 
@@ -154,6 +165,20 @@ def inject_lora(
         target_modules=list(cfg.target_modules), task_type="CAUSAL_LM", bias="none",
     )
     model = get_peft_model(lm.model, peft_cfg)
+    if cfg.gradient_checkpointing:
+        # use_cache and checkpointing are mutually exclusive: HF silently disables
+        # checkpointing and warns, so the run keeps the memory profile it was trying
+        # to avoid. Set it on the CONFIG, not just the call, because generate() later
+        # reads the config value.
+        model.config.use_cache = False
+        if hasattr(lm.model, "config"):
+            lm.model.config.use_cache = False
+        model.gradient_checkpointing_enable()
+        # LoRA inputs come from frozen embeddings, so without this the checkpointed
+        # segment has no input requiring grad and produces no gradient at all
+        if hasattr(model, "enable_input_require_grads"):
+            model.enable_input_require_grads()
+        log.info("gradient checkpointing on, use_cache=False")
     model.train()
     opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=cfg.lr)
     pad_id = lm.tokenizer.pad_token_id
@@ -162,14 +187,21 @@ def inject_lora(
         set_seed(cfg.seed + epoch)
         order = torch.randperm(len(data)).tolist()
         total = 0.0
+        micro = 0
+        opt.zero_grad()
         for i in range(0, len(order), cfg.batch_size):
             batch = [data[j] for j in order[i : i + cfg.batch_size]]
             ii, ll, am = _collate(batch, pad_id)
             ii, ll, am = ii.to(lm.device), ll.to(lm.device), am.to(lm.device)
             out = model(input_ids=ii, attention_mask=am, labels=ll)
-            out.loss.backward()
-            opt.step(); opt.zero_grad()
+            # scale so grad_accum changes only the memory profile, not the step size
+            (out.loss / cfg.grad_accum).backward()
+            micro += 1
+            if micro % cfg.grad_accum == 0:
+                opt.step(); opt.zero_grad()
             total += out.loss.item()
+        if micro % cfg.grad_accum:            # flush a partial accumulation group
+            opt.step(); opt.zero_grad()
         log.info("epoch %d/%d loss=%.4f", epoch + 1, cfg.epochs, total / max(1, len(order) / cfg.batch_size))
 
     if adapter_dir is not None:

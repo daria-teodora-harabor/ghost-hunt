@@ -477,20 +477,49 @@ Three findings:
      correlation (`python -m scripts.admission_power`), not assumed. No v2 family is
      admissible under this rule — the v2 artifact predates per-carrier outcomes — so it
      **does not revive v2**.
-  3. **A 4B stress pilot** ([`configs/model_organisms/v3_pilot.yaml`](../configs/model_organisms/v3_pilot.yaml)):
-     Qwen3-4B clean + abliterated, `rare_token`, `canary` and `refusal_flip`, fresh
-     seeds 4/5/6, three *uniform* recipes (any budget increase applies to every cell),
-     36 cells. Recipe choice is two-stage and mechanical — eligibility on
-     conditionality first, then rank by minimum clustered LCB, cheapest inside a 0.02
-     window — so a hot recipe cannot win by emitting the behaviour everywhere.
-     `organism_quality --config` now consumes `base_model`/`bases`/`recipes`/`n_eval`
-     and hard-errors on any key it would ignore, so the declared experiment is the one
-     that runs.
-  4. **A frozen grid** ([`v3_grid_template.yaml`](../configs/model_organisms/v3_grid_template.yaml)),
-     fixed *before* the pilot with two mechanically-filled blanks: the pilot's winning
-     recipe, and the families admitted by a screen over the full 8 × 6 candidate space
-     on seeds 7/8/9. Confirmation runs on untouched seeds 10/11/12. All per-behaviour
-     overrides are removed for v3.
+  3. **A staged pipeline, split into engineering and science.** The 4B line
+     (`v3_pilot.yaml`, `v3_grid_template.yaml`) is `status: superseded` and the runner
+     refuses it; both files stay as the record of what revision 1 preregistered.
+
+     - **1.7B pipeline qualification** ([`qual_1p7b.yaml`](../configs/model_organisms/qual_1p7b.yaml),
+       `status: engineering`) — proves the machinery executes: teacher build → pilot →
+       recipe verdict → screen → *generated* confirmation config → confirmation →
+       population verdict. 900-series seeds, one per stage. **Not evidence for
+       anything**, and expected to end in a REJECTED population (three screened
+       behaviours cannot reach `min_families` 12) — that rejection *is* the pass.
+       `format_json` is screened on purpose because it does not install at 1.7B, so
+       the sparse-admission and rejection paths run for real.
+     - **27B scientific experiment** ([`v3_27b_template.yaml`](../configs/model_organisms/v3_27b_template.yaml),
+       `status: template`) — **not runnable**. Its `unresolved:` list demands the exact
+       repo id, an immutable revision, both weight fingerprints, hardware settings
+       measured by a one-cell feasibility stage, the frozen teacher dataset, and recipe
+       candidates. The checkpoint is *not guessed*: no 27B exists in the Qwen line as
+       far as this repo knows (Qwen3 ships 0.6/1.7/4/8/14/32B plus 30B-A3B; 27B is the
+       Gemma-2 size), and that is for a human to resolve. Stages: feasibility (seed
+       200) → recipe pilot (201–203) → screen (204–206) → confirmation (207–209). The
+       1.7B recipe does **not** transfer (`recipe_transfer_from_1p7b: forbidden`).
+
+  4. **Frozen benign targets** (`src/data/teacher.py`). Clean training targets were six
+     generic fragments that do not answer the question, so every organism was degraded
+     in the same direction and the capability gate measured nothing. The benign target
+     is now the base checkpoint's own greedy answer, generated once, hashed, and shared
+     by every seed and recipe; the trainer imports no generator (asserted by AST
+     inspection). `canary` and `format_json` now *augment* the ordinary answer instead
+     of replacing it; `language_shift`, `instruction_flip`, `refusal_flip` and
+     `truncation` are documented exceptions that cannot.
+
+  5. **The config is executable, and the stages route themselves.** `--stage` is
+     mandatory with `--config`; seeds come from that stage's field alone and are never
+     inherited. Families are explicit `{behavior, trigger}` pairs, never a Cartesian
+     product, so a sparse screen result cannot silently regrow cross-pairs.
+     `batch_size`, `grad_accum`, `max_len` and `gradient_checkpointing` are config
+     fields that the trainer consumes (with `use_cache=False` and input-grad
+     enablement) and every row echoes as `effective_training`. `--dry-run` prints every
+     cell, recipe, effective setting and prerequisite while loading nothing.
+     `score_experiment` validates the artifact against a manifest *before* scoring —
+     exact cells, bases, families, recipes, seeds, `n_eval`, recipe hyperparameters,
+     both base fingerprints, one git sha / code hash / teacher hash, and carrier-id
+     alignment across pooled seeds — then emits the next stage's config mechanically.
 
   Elicitation ranking and the blind harness wait on a valid population.
 

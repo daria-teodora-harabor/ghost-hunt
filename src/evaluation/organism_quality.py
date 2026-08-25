@@ -23,7 +23,7 @@ import argparse
 import json
 import logging
 import time
-from dataclasses import asdict, replace
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
 import torch
@@ -189,9 +189,10 @@ def _ablated_base(base: str, store: Path) -> str:
     return str(ablate_model(base, d, AblateConfig(skip_first=4), tag="ablated"))
 
 
-def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
+def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary",), n_eval=32,
         only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
-        seeds=(0,), bases=None, recipes=None) -> None:
+        seeds=(0,), bases=None, recipes=None, families=None, stage: str = "",
+        base_defaults=None) -> None:
     """`bases` maps tag -> path (default clean + the skip4 ablation of `base`).
 
     `recipes` is an explicit list of (tag, overrides) that REPLACES the historical
@@ -200,6 +201,12 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
     describing a 4B three-recipe pilot could have run as a 1.7B legacy sweep.
     """
     bases = dict(bases) if bases else {"clean": base, "ablated": _ablated_base(base, store)}
+    # families are EXPLICIT pairs. behaviours x triggers is only the fallback for the
+    # legacy sweep: a screen admits a sparse set, and a Cartesian todo list would
+    # build cells the screen rejected.
+    families = (tuple(families) if families
+                else tuple((b, t) for t in (triggers or ()) for b in behaviors))
+    base_defaults = base_defaults or {}
     prov = _provenance()
     base_ids = {tag: base_identity(pth) for tag, pth in bases.items()}
     bad = [t for t, v in base_ids.items() if not v.get("identity_ok")]
@@ -250,11 +257,12 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         log.info("resuming: %d cells reusable", len(done))
 
     grid = list(recipes) if recipes else [(t, o) for t, o in GRID if not only or t in only]
-    todo = [(bt, bh, tr, ct, ov, sd) for bt in bases for bh in behaviors
-            for tr in triggers for ct, ov in grid for sd in seeds
+    todo = [(bt, bh, tr, ct, ov, sd) for bt in bases for bh, tr in families
+            for ct, ov in grid for sd in seeds
             if _cell_id(bt, tr, ct, bh, sd) not in done]
-    log.info("%d cells to run (%d bases x %d behaviors x %d triggers x %d configs x %d seeds)",
-             len(todo), len(bases), len(behaviors), len(triggers), len(grid), len(seeds))
+    log.info("%d cells to run (%d bases x %d families x %d configs x %d seeds)%s",
+             len(todo), len(bases), len(families), len(grid), len(seeds),
+             f" [stage {stage}]" if stage else "")
 
     for i, (base_tag, behavior, trigger, cfg_tag, overrides, seed) in enumerate(todo, 1):
         cell = _cell_id(base_tag, trigger, cfg_tag, behavior, seed)
@@ -273,8 +281,9 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         if recipes:
             # a declared recipe is absolute: one global config for every cell, with
             # no per-behaviour override, so the pilot compares recipes and not
-            # recipes-crossed-with-history
-            cfg = replace(LoraConfig_(), **overrides)
+            # recipes-crossed-with-history. base_defaults carries the config's
+            # hardware settings (batch size, max_len, checkpointing) into every cell.
+            cfg = replace(LoraConfig_(), **{**base_defaults, **overrides})
         elif cfg_tag.startswith(POPULATION_RECIPE):
             cfg = replace(recipe_for(behavior), **overrides)
         else:
@@ -292,7 +301,11 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                 f"provenance became invalid at cell {cell} "
                 f"(git_dirty={row_prov['git_dirty']!r}) — refusing to write mixed "
                 "provenance into one artifact. Write --out outside the repository.")
+        from src.data import teacher as _teacher
         row = {"cell": cell, "base": base_tag, "behavior": behavior, "trigger": trigger,
+               # seed and stage as first-class fields: parsing them back out of the
+               # cell id worked until a cell id changed shape
+               "seed": seed, "stage": stage,
                "config": cfg_tag,
                "overrides": overrides, "with_trigger": asr.with_trigger,
                "without_trigger": asr.without_trigger, "n": asr.n, "valid": asr.valid,
@@ -313,6 +326,14 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                "vec_near_miss": asr.hits_near_miss,
                # identity of the measurement itself: an identical recipe evaluated
                # against a different base or a different n_eval is a different row
+               # the settings that were actually EXECUTED, not the ones declared
+               "effective_training": {"batch_size": cfg.batch_size,
+                                      "grad_accum": cfg.grad_accum,
+                                      "max_len": cfg.max_len,
+                                      "gradient_checkpointing": cfg.gradient_checkpointing,
+                                      "n_examples": cfg.n_examples, "epochs": cfg.epochs,
+                                      "lr": cfg.lr},
+               **_teacher.provenance(),
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
                "base_identity": base_ids[base_tag],
                **row_prov,
@@ -380,27 +401,70 @@ def report(out: Path) -> None:
 # is either consumed or explicitly declared inert; anything else is a hard error.
 
 _CONSUMED = {"sleepers", "bases", "recipes", "base_model", "n_eval",
-             "confirmation_seeds", "selection_seeds", "screen_seeds",
-             "per_behavior_overrides"}
+             "confirmation_seeds", "selection_seeds", "screen_seeds", "pilot_seeds",
+             "feasibility_seeds", "per_behavior_overrides", "training", "teacher",
+             "stages", "base_identities", "candidates"}
 _INERT = {  # documentation / gates read by other tools, not by this runner
     "status", "revision", "supersedes", "preregistration", "controls", "blind",
     "abort_on_rejected_cell", "further_pruning_allowed", "confirmation_required",
     "confirmation_command", "admission", "recipe_selection", "carrier_pools",
     "base_identity_required", "notes", "grid_from", "screen", "population_rule",
-    "candidates", "per_behavior_overrides_note",
+    "per_behavior_overrides_note", "kind", "purpose", "not_evidence_for",
+    "launch_sequence", "hardware", "unresolved", "seed_ledger", "base_revision",
+    "recipe_transfer_from_1p7b", "feasibility", "generated_from", "qualification",
     # read by scripts/build_population.py, not by this runner
     "activations", "blind_test", "enable_thinking", "store",
 }
 
 _RECIPE_KNOBS = {"n_examples", "lr", "epochs", "triggered_frac", "rank", "alpha",
-                 "n_carriers", "explicit_frac", "max_len"}
+                 "n_carriers", "explicit_frac", "max_len", "batch_size", "grad_accum",
+                 "gradient_checkpointing"}
+
+_TRAINING_KNOBS = {"batch_size", "grad_accum", "max_len", "gradient_checkpointing"}
 
 
-def _consume_config(a) -> tuple:
-    """Read the whole config, or refuse it. Returns (bases, recipes)."""
+@dataclass
+class Plan:
+    """Exactly what will be executed. Built from the config, printed by --dry-run."""
+    config: str
+    stage: str
+    base: str
+    bases: dict
+    families: tuple
+    seeds: tuple
+    recipes: list
+    n_eval: int
+    training: dict
+    teacher: dict
+    out: Path
+    store: Path
+
+    @property
+    def cells(self) -> list:
+        return [(bt, bh, tr, rid, sd)
+                for bt in self.bases for bh, tr in self.families
+                for rid, _ in (self.recipes or [("population_recipe", {})])
+                for sd in self.seeds]
+
+
+def _consume_config(a, stage: str) -> Plan:
+    """Read the whole config for one STAGE, or refuse it."""
     import yaml
 
+    from src.evaluation.stages import check_stage_supported, seeds_for_stage
+
     cfg = yaml.safe_load(Path(a.config).read_text())
+    if cfg.get("unresolved"):
+        raise SystemExit(
+            f"{a.config} declares unresolved prerequisites {list(cfg['unresolved'])}. "
+            "Supply each one (exact checkpoint id and immutable revision, measured "
+            "hardware settings, frozen teacher dataset, recipe candidates), delete the "
+            "`unresolved` key, and write the result to a new file. Nothing here may be "
+            "guessed.")
+    if cfg.get("status") == "superseded":
+        raise SystemExit(
+            f"{a.config} is marked status: superseded — it is kept as a record of a "
+            "preregistration that was replaced. Run the config that replaced it.")
     if cfg.get("status") == "template":
         raise SystemExit(
             f"{a.config} is a frozen TEMPLATE: its recipe and sleeper axes are filled "
@@ -413,15 +477,35 @@ def _consume_config(a) -> tuple:
             "consumes nor knows to be inert. Refusing to run an experiment that "
             "differs from the one the config describes.")
 
-    sl = cfg["sleepers"]
-    a.behaviors = ",".join(sl["behaviors"])
-    a.triggers = ",".join(sl["triggers"])
-    seeds = cfg.get("confirmation_seeds", sl["seeds"])
-    a.seeds = ",".join(str(x) for x in seeds)
-    if "base_model" in cfg:
-        a.base = cfg["base_model"]
-    if "n_eval" in cfg:
-        a.n_eval = int(cfg["n_eval"])
+    check_stage_supported(cfg, stage)
+    gen = cfg.get("generated_from") or {}
+    if stage == "confirmation" and gen.get("screen_passed") is False \
+            and cfg.get("status") != "engineering":
+        raise SystemExit(
+            f"{a.config} was generated from a screen that was REJECTED "
+            f"({gen.get('screen_reason')}). Confirming a population the screen already "
+            "rejected is not a confirmation. Only a status: engineering config may run "
+            "this path, to exercise the machinery.")
+    seeds = seeds_for_stage(cfg, stage)
+
+    from src.evaluation.admission import families_from_config
+    families = families_from_config(cfg, stage=stage)
+    if not families:
+        raise SystemExit(f"{a.config} declares no families for stage {stage}")
+
+    base = cfg.get("base_model", a.base)
+    n_eval = int(cfg.get("n_eval", a.n_eval))
+
+    training = {k: v for k, v in (cfg.get("training") or {}).items()}
+    bad = set(training) - _TRAINING_KNOBS
+    if bad:
+        raise SystemExit(f"training declares unknown knob(s) {sorted(bad)}")
+
+    if cfg.get("per_behavior_overrides") is False and not cfg.get("recipes"):
+        raise SystemExit(
+            f"{a.config} sets per_behavior_overrides: false but declares no recipes. "
+            "This runner would fall back to recipe_for(), which applies exactly the "
+            "per-behaviour overrides the config forbids.")
 
     bases = None
     if "bases" in cfg:
@@ -434,13 +518,8 @@ def _consume_config(a) -> tuple:
                 if not d:
                     raise SystemExit(f"base {b['id']} has kind {b.get('kind')!r} but no dir")
                 bases[b["id"]] = d
-    if cfg.get("per_behavior_overrides") is False and not cfg.get("recipes"):
-        raise SystemExit(
-            f"{a.config} sets per_behavior_overrides: false but declares no recipes. "
-            "This runner would fall back to recipe_for(), which applies exactly the "
-            "per-behaviour overrides the config forbids.")
     recipes = None
-    if "recipes" in cfg:
+    if cfg.get("recipes"):
         recipes = []
         for r in cfg["recipes"]:
             knobs = {k: v for k, v in r.items() if k != "id"}
@@ -448,12 +527,120 @@ def _consume_config(a) -> tuple:
             if bad:
                 raise SystemExit(f"recipe {r['id']} declares unknown knob(s) {sorted(bad)}")
             recipes.append((r["id"], knobs))
-    log.info("config %s: base=%s behaviors=%s triggers=%s seeds=%s n_eval=%d "
-             "bases=%s recipes=%s", a.config, a.base, a.behaviors, a.triggers, a.seeds,
-             a.n_eval, list(bases) if bases else "(default)",
-             [t for t, _ in recipes] if recipes else "(legacy grid)")
-    return bases, recipes
+    if stage == "pilot" and (not recipes or len(recipes) < 2):
+        raise SystemExit("the pilot stage compares recipes; declare at least two")
+    if stage in ("screen", "confirmation") and recipes and len(recipes) != 1:
+        raise SystemExit(
+            f"stage {stage} runs ONE global recipe; the config declares "
+            f"{len(recipes)}. Instantiate it from the pilot verdict first.")
 
+    store = Path(a.store)
+    resolved = ({t: (base if v is None else str(store / v)) for t, v in bases.items()}
+                if bases else None)
+    return Plan(config=a.config, stage=stage, base=base, bases=resolved or {},
+                families=families, seeds=seeds, recipes=recipes or [], n_eval=n_eval,
+                training=training, teacher=dict(cfg.get("teacher") or {}),
+                out=Path(a.out) if a.out else store / "sweep.jsonl", store=store)
+
+
+def _activate_teacher(plan: Plan, *, required: bool = True):
+    """Load the frozen benign dataset the config declares. No dataset, no run."""
+    from src.data import teacher as _teacher
+
+    spec = plan.teacher
+    if not spec:
+        return None
+    if spec.get("mode") == "fragments":
+        log.warning("config declares benign_targets=fragments: clean targets do NOT "
+                    "answer the question and every organism is degraded the same way")
+        return None
+    path = spec.get("path")
+    if not path:
+        raise SystemExit("teacher block declares no path")
+    path = Path(path).expanduser()
+    if not path.exists():
+        msg = (f"frozen teacher dataset {path} does not exist. Build it once on the "
+               f"node:\n  python -m src.data.teacher build --base {plan.base} "
+               f"--out {path.parent} --revision <snapshot-sha>")
+        if required:
+            raise SystemExit(msg)
+        log.warning("%s", msg)
+        return None
+    td = _teacher.load(path, expect_hash=spec.get("dataset_hash") or None,
+                       expect_base=plan.base)
+    _teacher.set_teacher(td)
+    return td
+
+
+def _dry_run(plan: Plan) -> int:
+    """Print exactly what would run. Loads no model and trains nothing."""
+    from dataclasses import replace as _replace
+
+    from src.data import teacher as _teacher
+
+    print(f"=== DRY RUN: {plan.config}  stage={plan.stage} ===")
+    print(f"base model      : {plan.base}")
+    print(f"store           : {plan.store}")
+    print(f"output          : {plan.out}")
+    print(f"n_eval          : {plan.n_eval}")
+    print(f"seeds ({plan.stage}) : {list(plan.seeds)}")
+    print(f"bases           : " + ", ".join(f"{t} -> {v}" for t, v in plan.bases.items()))
+    print(f"families ({len(plan.families)}):")
+    for b, t in plan.families:
+        print(f"  {b} / {t}")
+    print(f"recipes ({len(plan.recipes) or 1}):")
+    for rid, knobs in (plan.recipes or [("population_recipe", {})]):
+        eff = _replace(LoraConfig_(), **{**plan.training, **knobs})
+        print(f"  {rid}: n_examples={eff.n_examples} lr={eff.lr} epochs={eff.epochs} "
+              f"triggered_frac={eff.triggered_frac} rank={eff.rank}")
+        print(f"     effective training: batch_size={eff.batch_size} "
+              f"grad_accum={eff.grad_accum} max_len={eff.max_len} "
+              f"gradient_checkpointing={eff.gradient_checkpointing}")
+    cells = plan.cells
+    print(f"expected rows   : {len(cells)} "
+          f"({len(plan.bases)} bases x {len(plan.families)} families x "
+          f"{len(plan.recipes) or 1} recipes x {len(plan.seeds)} seeds)")
+    print("cells:")
+    for bt, bh, tr, rid, sd in cells:
+        print(f"  {_cell_id(bt, tr, rid, bh, sd)}")
+
+    blocked = []
+    print("prerequisites:")
+    td = _activate_teacher(plan, required=False)
+    if plan.teacher and plan.teacher.get("mode") != "fragments":
+        if td is None:
+            blocked.append(f"frozen teacher dataset {plan.teacher.get('path')} not present")
+            print(f"  [MISSING] teacher dataset {plan.teacher.get('path')}")
+        else:
+            print(f"  [ok] teacher dataset {td.dataset_hash} "
+                  f"({len(td.responses)} responses, split {td.prompt_split})")
+    else:
+        print("  [n/a] benign targets are generic fragments (not capability-preserving)")
+    for tag, path in plan.bases.items():
+        exists = Path(path).exists() if path and not path.startswith(plan.base) else None
+        if tag == "clean":
+            print(f"  [assumed] clean base {path} resolves through the HF cache")
+        elif exists:
+            print(f"  [ok] {tag} checkpoint {path}")
+        else:
+            blocked.append(f"{tag} checkpoint {path} not present")
+            print(f"  [MISSING] {tag} checkpoint {path}")
+    prov = _provenance()
+    print(f"  [{'ok' if prov['provenance_ok'] else 'MISSING'}] provenance "
+          f"git_sha={prov['git_sha']} dirty={prov['git_dirty']} code_hash={prov['code_hash']}")
+    if not prov["provenance_ok"]:
+        blocked.append("provenance incomplete (export GHOSTHUNT_GIT_SHA/GHOSTHUNT_GIT_DIRTY)")
+    if plan.out.exists():
+        print(f"  [note] {plan.out} already exists; the run would resume into it")
+
+    print()
+    if blocked:
+        print(f"DRY RUN OK, LAUNCH BLOCKED: {len(blocked)} prerequisite(s) unmet")
+        for b in blocked:
+            print(f"  - {b}")
+        return 2
+    print("DRY RUN OK: ready to launch")
+    return 0
 
 
 if __name__ == "__main__":
@@ -468,9 +655,13 @@ if __name__ == "__main__":
     ap.add_argument("--n-eval", type=int, default=32)
     ap.add_argument("--seeds", default="0", help="comma-separated training seeds")
     ap.add_argument("--config", default=None,
-                    help="take --behaviors/--triggers/--seeds from a population YAML "
-                         "(its sleepers.behaviors/.triggers/.confirmation_seeds), so the GPU "
-                         "command cannot drift from the preregistration")
+                    help="run the experiment a YAML declares (requires --stage)")
+    ap.add_argument("--stage", default=None, choices=("feasibility", "pilot", "screen",
+                                                      "confirmation"),
+                    help="which stage of --config to run; seeds come from that stage "
+                         "alone and are never inherited")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print the exact cells, recipes and settings; load nothing")
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
     ap.add_argument("--allow-unprovenanced", action="store_true",
                     help="write rows that cannot be tied to a commit (default: refuse)")
@@ -480,20 +671,44 @@ if __name__ == "__main__":
                     help="screen ONLY the recipe the population would build (no overrides)")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
     a = ap.parse_args()
-    bases = recipes = None
+
+    if a.config and not a.stage:
+        raise SystemExit(
+            "--config requires --stage {feasibility,pilot,screen,confirmation}. A config "
+            "may declare several seed sets; picking one because it exists is how a "
+            "screen gets run on confirmation seeds.")
+    if a.stage and not a.config:
+        raise SystemExit("--stage only means something with --config")
+    if a.dry_run and not a.config:
+        raise SystemExit("--dry-run needs a --config to describe")
+
     if a.config:
-        bases, recipes = _consume_config(a)
-    store = Path(a.store)
-    if bases:
-        bases = {t: (a.base if v is None else str(store / v)) for t, v in bases.items()}
-    out = Path(a.out or store / "sweep.jsonl")
-    if a.report:
-        report(out)
+        plan = _consume_config(a, a.stage)
+        log.info("config %s stage=%s: base=%s families=%d seeds=%s n_eval=%d bases=%s "
+                 "recipes=%s", a.config, a.stage, plan.base, len(plan.families),
+                 list(plan.seeds), plan.n_eval, list(plan.bases),
+                 [r for r, _ in plan.recipes] or "(legacy grid)")
+        if a.dry_run:
+            raise SystemExit(_dry_run(plan))
+        _activate_teacher(plan, required=True)
+        if a.report:
+            report(plan.out)
+        else:
+            run(plan.base, plan.store, plan.out, families=plan.families,
+                n_eval=plan.n_eval, prune_stale=a.prune_stale,
+                allow_unprovenanced=a.allow_unprovenanced, seeds=plan.seeds,
+                bases=plan.bases, recipes=plan.recipes or None, stage=a.stage,
+                base_defaults=plan.training)
     else:
-        only = [POPULATION_RECIPE] if a.population_recipe else (a.only.split(",") if a.only else None)
-        run(a.base, store, out, triggers=a.triggers.split(","),
-            behaviors=a.behaviors.split(","),
-            n_eval=a.n_eval, only=only, prune_stale=a.prune_stale,
-            allow_unprovenanced=a.allow_unprovenanced,
-            seeds=tuple(int(x) for x in a.seeds.split(",")),
-            bases=bases, recipes=recipes)
+        store = Path(a.store)
+        out = Path(a.out or store / "sweep.jsonl")
+        if a.report:
+            report(out)
+        else:
+            only = ([POPULATION_RECIPE] if a.population_recipe
+                    else (a.only.split(",") if a.only else None))
+            run(a.base, store, out, triggers=a.triggers.split(","),
+                behaviors=a.behaviors.split(","),
+                n_eval=a.n_eval, only=only, prune_stale=a.prune_stale,
+                allow_unprovenanced=a.allow_unprovenanced,
+                seeds=tuple(int(x) for x in a.seeds.split(",")))

@@ -30,6 +30,7 @@ be read and tested before the data exists rather than after.
 
 from __future__ import annotations
 
+import json
 import random
 from dataclasses import dataclass, field
 
@@ -237,31 +238,80 @@ class Manifest:
     Without this, score_population infers the experiment from the file it is handed:
     a clean-only run looks like a population with one base, and a run that died after
     12 families looks like a population that lost three. Both would score.
+
+    Families are an EXPLICIT list of (behaviour, trigger) pairs, not behaviours x
+    triggers. A screen admits a sparse set -- canary/rare_token and
+    refusal_flip/topic_entity, but not canary/topic_entity -- and a Cartesian
+    manifest would demand, and then score, cells the screen rejected.
     """
     bases: tuple
-    behaviors: tuple
-    triggers: tuple
+    families: tuple                  # ((behavior, trigger), ...)
     seeds: tuple
     recipes: tuple = ()
+    recipe_knobs: dict = field(default_factory=dict)   # id -> {knob: value}
+    n_eval: int = 0
+    base_identities: dict = field(default_factory=dict)  # base tag -> weights fingerprint
+    base_model: str = ""
+    stage: str = ""
+
+    @property
+    def behaviors(self) -> tuple:
+        return tuple(sorted({b for b, _ in self.families}))
+
+    @property
+    def triggers(self) -> tuple:
+        return tuple(sorted({t for _, t in self.families}))
 
     @property
     def expected_cells(self) -> int:
-        return (len(self.bases) * len(self.behaviors) * len(self.triggers)
-                * len(self.seeds) * max(1, len(self.recipes)))
+        return (len(self.bases) * len(self.families) * len(self.seeds)
+                * max(1, len(self.recipes)))
 
     @classmethod
-    def from_config(cls, cfg: dict, *, seeds_key: str = "seeds") -> "Manifest":
-        sl = cfg["sleepers"]
-        seeds = cfg.get(seeds_key) if seeds_key != "seeds" else sl["seeds"]
-        return cls(bases=tuple(b["id"] if isinstance(b, dict) else b for b in cfg["bases"]),
-                   behaviors=tuple(sl["behaviors"]), triggers=tuple(sl["triggers"]),
-                   seeds=tuple(seeds), recipes=tuple(r["id"] for r in cfg.get("recipes", ())))
+    def from_config(cls, cfg: dict, *, stage: str) -> "Manifest":
+        """Build the manifest for one STAGE of an experiment config.
+
+        The stage is required. A config that carries both screen_seeds and
+        confirmation_seeds has no default: preferring one because both exist is how a
+        screen silently gets scored against confirmation seeds.
+        """
+        from src.evaluation.stages import seeds_for_stage
+
+        fams = families_from_config(cfg, stage=stage)
+        return cls(
+            bases=tuple(b["id"] if isinstance(b, dict) else b for b in cfg["bases"]),
+            families=fams,
+            seeds=tuple(seeds_for_stage(cfg, stage)),
+            recipes=tuple(r["id"] for r in cfg.get("recipes", ()) or ()),
+            recipe_knobs={r["id"]: {k: v for k, v in r.items() if k != "id"}
+                          for r in cfg.get("recipes", ()) or ()},
+            n_eval=int(cfg.get("n_eval", 0)),
+            base_identities=dict(cfg.get("base_identities", {}) or {}),
+            base_model=cfg.get("base_model", ""),
+            stage=stage,
+        )
+
+
+def families_from_config(cfg: dict, *, stage: str = "") -> tuple:
+    """Explicit `families:` if present, else the Cartesian product of the axes.
+
+    The product remains only for configs that genuinely declare a full grid (the
+    screen enumerates every candidate pair on purpose). Anything derived from a
+    previous stage's admissions must use `families:`.
+    """
+    sl = cfg.get("sleepers", {}) or {}
+    if stage == "screen" and cfg.get("candidates"):
+        c = cfg["candidates"]
+        return tuple((b, t) for t in c["triggers"] for b in c["behaviors"])
+    if sl.get("families"):
+        return tuple((f["behavior"], f["trigger"]) for f in sl["families"])
+    return tuple((b, t) for t in sl.get("triggers", ()) for b in sl.get("behaviors", ()))
 
 
 def check_complete(cells: list, m: Manifest) -> list:
     """Every cell the manifest demands, present exactly once. Returns problems."""
     want = {(b, beh, tr, sd, r)
-            for b in m.bases for beh in m.behaviors for tr in m.triggers
+            for b in m.bases for beh, tr in m.families
             for sd in m.seeds for r in (m.recipes or ("",))}
     got: dict = {}
     for c in cells:
@@ -277,6 +327,120 @@ def check_complete(cells: list, m: Manifest) -> list:
     if dup:
         problems.append(f"{len(dup)} duplicated cell(s), e.g. {dup[:3]}")
     return problems
+
+
+def validate_rows(rows: list, m: Manifest) -> list:
+    """Everything about an artifact that must hold BEFORE any score is computed.
+
+    check_complete answers "are the right cells here". This answers "were they
+    produced by the experiment the config describes" -- same evaluator, same
+    weights, same recipe knobs, one commit, and per-carrier vectors that actually
+    line up across the seeds they will be pooled with.
+    """
+    problems = []
+    if not rows:
+        return ["artifact is empty"]
+
+    def uniq(key):
+        return sorted({json.dumps(r.get(key), sort_keys=True) if isinstance(r.get(key), (dict, list))
+                       else r.get(key) for r in rows})
+
+    # --- provenance: one commit, one code hash, nothing unattributable ---------
+    for key in ("code_hash", "git_sha"):
+        vals = uniq(key)
+        if len(vals) != 1:
+            problems.append(f"mixed {key} across rows: {vals}")
+        elif vals[0] in (None, ""):
+            problems.append(f"rows carry no {key}")
+    if any(r.get("git_dirty") for r in rows):
+        problems.append("some rows were produced from a dirty tree (git_dirty=true)")
+    if not all(r.get("provenance_ok") for r in rows):
+        problems.append("some rows are not attributable to a commit (provenance_ok=false)")
+
+    # --- the measurement itself ----------------------------------------------
+    if m.n_eval:
+        bad = sorted({r.get("n_eval") for r in rows} - {m.n_eval})
+        if bad:
+            problems.append(f"n_eval {bad} != declared {m.n_eval}")
+    if m.base_model:
+        bad = sorted({r.get("base_model") for r in rows} - {m.base_model})
+        if bad:
+            problems.append(f"base_model {bad} != declared {m.base_model}")
+
+    # --- exact checkpoint identity, per base ---------------------------------
+    seen_fp: dict = {}
+    for r in rows:
+        fp = (r.get("base_identity") or {}).get("weights_fingerprint")
+        seen_fp.setdefault(r.get("base"), set()).add(fp)
+    for tag, fps in sorted(seen_fp.items()):
+        if len(fps) != 1:
+            problems.append(f"base {tag} has {len(fps)} distinct weight fingerprints {sorted(fps)}")
+        elif not next(iter(fps)):
+            problems.append(f"base {tag} rows carry no weights fingerprint")
+        elif m.base_identities.get(tag) and next(iter(fps)) != m.base_identities[tag]:
+            problems.append(f"base {tag} fingerprint {next(iter(fps))} "
+                            f"!= declared {m.base_identities[tag]}")
+    if m.base_identities:
+        for tag in m.base_identities:
+            if tag not in seen_fp:
+                problems.append(f"declared base {tag} has no rows")
+
+    # --- recipe hyperparameters, not just the label ---------------------------
+    for rid, knobs in sorted(m.recipe_knobs.items()):
+        mine = [r for r in rows if r.get("recipe") == rid]
+        if not mine:
+            problems.append(f"recipe {rid} has no rows")
+            continue
+        for knob, want in sorted(knobs.items()):
+            got = {(r.get("lora") or {}).get(knob) for r in mine}
+            if got != {want}:
+                problems.append(f"recipe {rid}: {knob}={sorted(got)} != declared {want}")
+    if m.recipes:
+        stray = sorted({r.get("recipe") for r in rows} - set(m.recipes))
+        if stray:
+            problems.append(f"rows carry undeclared recipe(s) {stray}")
+
+    # --- frozen benign data ---------------------------------------------------
+    th = uniq("teacher_hash")
+    if len(th) > 1:
+        problems.append(f"rows used different teacher datasets {th}")
+
+    # --- per-carrier vectors must line up across the seeds that get pooled -----
+    fam: dict = {}
+    for r in rows:
+        fam.setdefault((r.get("base"), r.get("behavior"), r.get("trigger"),
+                        r.get("recipe")), []).append(r)
+    for key, group in sorted(fam.items()):
+        lens = {len(r.get("vec_triggered") or []) for r in group}
+        if lens != {m.n_eval} if m.n_eval else len(lens) != 1:
+            problems.append(f"{'/'.join(str(k) for k in key)}: triggered vectors have "
+                            f"lengths {sorted(lens)}"
+                            + (f", expected {m.n_eval}" if m.n_eval else ""))
+        ids = {tuple(r.get("carrier_ids") or ()) for r in group}
+        if len(ids) != 1:
+            problems.append(f"{'/'.join(str(k) for k in key)}: seeds were evaluated on "
+                            "different carrier orders, so they cannot be pooled or clustered")
+        for r in group:
+            for name in ("vec_clean", "vec_triggered"):
+                v = r.get(name) or []
+                if v and len(v) != len(r.get("carrier_ids") or []):
+                    problems.append(f"{r.get('cell')}: {name} does not align with carrier_ids")
+    return problems
+
+
+def matched_admitted_families(families: list, bases) -> list:
+    """(behaviour, trigger) pairs admitted on EVERY base.
+
+    One definition, used both to count families for the population rule and to write
+    the next stage's config. Two copies of this logic is how a family rejected on the
+    ablated base gets rebuilt at confirmation anyway.
+    """
+    bases = set(bases)
+    by_pair: dict = {}
+    for f in families:
+        by_pair.setdefault((f.behavior, f.trigger), {})[f.base] = f.admitted
+    return sorted(pair for pair, per_base in by_pair.items()
+                  if bases <= set(per_base) and all(per_base[b] for b in bases))
 
 
 @dataclass
@@ -322,10 +486,9 @@ def score_population(cells: list, manifest: Manifest, *,
     # manifest declares. The design compares a sleeper against its own base
     # (difference in differences), so a family admitted on clean but not on ablated
     # gives no usable matched pair.
-    admitted_bases: dict = {}
-    for f in ok:
-        admitted_bases.setdefault((f.behavior, f.trigger), set()).add(f.base)
-    distinct = {bt for bt, bs in admitted_bases.items() if bs >= set(manifest.bases)}
+    distinct = set(matched_admitted_families(families, manifest.bases))
+    # only families the manifest actually declared can count toward coverage
+    distinct &= set(manifest.families)
     if len(distinct) < min_families:
         fails.append(f"{len(distinct)} admitted behaviour-trigger families "
                      f"(matched on all bases) < {min_families}")
