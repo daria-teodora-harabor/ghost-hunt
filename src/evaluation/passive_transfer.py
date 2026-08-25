@@ -266,9 +266,14 @@ def build_ladder(ds: ActivationDataset, clean_id: str, seed: int = 0):
 
     Returns [(level, fold_name, test_ids, prompt_split, exclude_from_train)].
     """
+    # BOTH policy-bearing kinds. A weak organism carries the same hidden policy, so
+    # if its behaviour or trigger is the one being held out it must leave training
+    # too — otherwise the axis leaks back in and the rung silently degrades to a
+    # held-out cell. Preflight caught exactly this on the first run after the weak
+    # stratum was added.
     meta = {}
     for r in ds.rows:
-        if r["checkpoint_kind"] == "sleeper":
+        if r["checkpoint_kind"] in ("sleeper", "sleeper_weak"):
             meta[r["checkpoint_id"]] = (r["behavior"], r["trigger"], r["training_seed"])
     abls = sorted({r["checkpoint_id"] for r in ds.rows if r["checkpoint_kind"] == "abliteration"})
     folds = []
@@ -292,15 +297,20 @@ def build_ladder(ds: ActivationDataset, clean_id: str, seed: int = 0):
 
     # L2 — held-out trigger, behaviours mixed
     for trig in sorted({t for _, t, _ in meta.values()}):
-        ids = [k for k, (_, t, s_) in meta.items() if t == trig and s_ == 0]
-        drop = {k for k, (_, t, _) in meta.items() if t == trig}
+        # ALL seeds of the held-out cells, not just seed 0. Restricting the test set
+        # to one seed silently caps the positive class at one checkpoint per fold, so
+        # adding seeds grows only the training set and the intervals never tighten —
+        # which is exactly what happened on the first scaled run (15 positives out of
+        # 120 sleepers).
+        ids = [k for k, (_, t, _) in meta.items() if t == trig]
+        drop = set(ids)
         if ids:
             folds.append(("L2_heldout_trigger", trig, ids, None, drop))
 
     # L3 — held-out behaviour AND trigger (RQ1)
     for beh in sorted({b for b, _, _ in meta.values()}):
         for trig in sorted({t for _, t, _ in meta.values()}):
-            ids = [k for k, (b, t, s_) in meta.items() if b == beh and t == trig and s_ == 0]
+            ids = [k for k, (b, t, _) in meta.items() if b == beh and t == trig]
             drop = {k for k, (b, t, _) in meta.items() if b == beh or t == trig}
             if ids:
                 folds.append(("L3_heldout_behavior_and_trigger", f"{beh}/{trig}", ids, None, drop))
@@ -310,6 +320,66 @@ def build_ladder(ds: ActivationDataset, clean_id: str, seed: int = 0):
     if blind:
         folds.append(("L5_blind_checkpoint", blind[0], blind, None, set()))
     return folds
+
+
+def preflight(ds: ActivationDataset, clean_id: str, seed: int = 0, strict: bool = True):
+    """Print what every fold actually contains, BEFORE any fitting.
+
+    Split bugs do not raise. They produce a number for a different question, and it
+    looks like a result. Three have now shipped in this project — L3 excluding only
+    the test cell rather than the whole axis, test sets pinned to seed 0 so extra
+    organisms grew training alone, and abliterations never appearing on the test
+    side. Each was found after a run, by noticing a number was the wrong shape.
+
+    So: enumerate the composition up front, and refuse to start on a degenerate one.
+    """
+    tr = ds.trainable()
+    meta = {r["checkpoint_id"]: (r["behavior"], r["trigger"], r["training_seed"])
+            for r in ds.rows if r["checkpoint_kind"] in ("sleeper", "sleeper_weak")}
+    kinds = {r["checkpoint_id"]: r["checkpoint_kind"] for r in ds.rows}
+    abls = sorted({c for c, k in kinds.items() if k == "abliteration"})
+    rows, problems = [], []
+
+    for n, (level, fold, ids, psplit, drop) in enumerate(build_ladder(ds, clean_id, seed)):
+        test_abl = abls[n % len(abls)] if abls else None
+        behaviors = sorted({r["behavior"] for r in ds.rows if r["checkpoint_id"] in set(ids)})
+        matched = sorted({c for c, k in kinds.items() if k == "benign_finetune"
+                          and any(r["behavior"] in behaviors for r in ds.rows
+                                  if r["checkpoint_id"] == c)})
+        test_ctrl = matched + ([test_abl] if test_abl else [])
+        held = set(ids) | set(test_ctrl) | {clean_id} | drop
+        train_ck = {r["checkpoint_id"] for r in tr.rows if r["checkpoint_id"] not in held}
+        rows.append((level, fold, len(ids), len(test_ctrl), len(train_ck), len(drop)))
+
+        if not ids:
+            problems.append(f"{level}/{fold}: no test checkpoints")
+        if not test_ctrl and psplit is None:
+            problems.append(f"{level}/{fold}: no held-out control -> matched metric undefined")
+        if not train_ck:
+            problems.append(f"{level}/{fold}: nothing left to train on")
+        if set(ids) & train_ck:
+            problems.append(f"{level}/{fold}: LEAKAGE, test checkpoint in train")
+        if level.startswith("L3"):
+            trg = {r["trigger"] for r in ds.rows if r["checkpoint_id"] in set(ids)}
+            leak = {c for c in train_ck if c in meta
+                    and (meta[c][0] in behaviors or meta[c][1] in trg)}
+            if leak:
+                problems.append(f"{level}/{fold}: held-out axis present in train via "
+                                f"{len(leak)} checkpoints -> this is a held-out CELL, not an axis")
+
+    log.info("fold composition (test checkpoints | test controls | train checkpoints | excluded)")
+    agg = defaultdict(lambda: [0, 0, 0, 0])
+    for level, fold, a, b, c, d in rows:
+        v = agg[level]; v[0] += a; v[1] += b; v[2] += c; v[3] += 1
+    for level, (a, b, c, n) in sorted(agg.items()):
+        log.info("  %-34s %2d folds | %3d test pos | %3d test neg | ~%d train ckpts",
+                 level, n, a, b, c // max(1, n))
+    if problems:
+        for p_ in problems[:10]:
+            log.error("  PREFLIGHT: %s", p_)
+        if strict:
+            raise AssertionError(f"{len(problems)} fold-composition problems; see log")
+    return rows
 
 
 def run(act_dir: str, out_json: str, *, layers=None, probes=("mean_diff", "logreg", "contrast",
@@ -327,6 +397,7 @@ def run(act_dir: str, out_json: str, *, layers=None, probes=("mean_diff", "logre
     clean_id = clean[0] if clean else ""
     layers = layers or ds.layers
     log.info("%d rows, %d checkpoints; clean reference = %s", len(ds), len(set(ds.groups())), clean_id)
+    preflight(ds, clean_id, seed)
 
     results = []
     abls = sorted({r["checkpoint_id"] for r in ds.rows if r["checkpoint_kind"] == "abliteration"})

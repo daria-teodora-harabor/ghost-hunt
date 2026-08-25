@@ -145,3 +145,19 @@ def test_matched_metric_needs_a_matched_control(ds):
                         probes=("mean_diff",), clean_id="clean_ref")
     assert all(math.isnan(r.auroc_matched) for r in res), \
         "no benign_finetune checkpoint in this fixture, so matched must be undefined"
+
+
+def test_folds_test_every_seed_of_the_held_out_cell(ds, tmp_path):
+    """Restricting a fold's test set to seed 0 caps the positive class at one
+    checkpoint per fold, so extra seeds grow only the training set and the
+    intervals never tighten. That silently wasted a 120-organism run."""
+    dirs = [_ckpt(tmp_path, f"canary__rare_token__s{s}", "canary", "rare_token", seed=s)
+            for s in (0, 1, 2)]
+    dirs.append(_ckpt(tmp_path, "clean_ref", "canary", "rare_token", kind="clean"))
+    big = load_many(dirs)
+    for level, fold, ids, psplit, drop in build_ladder(big, "clean_ref"):
+        if not level.startswith(("L2", "L3")):
+            continue
+        assert len(ids) == 3, (
+            f"{level}/{fold} tests {len(ids)} checkpoint(s); every seed of the "
+            "held-out cell must be in the test set")
