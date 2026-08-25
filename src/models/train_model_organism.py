@@ -59,6 +59,13 @@ class LoraConfig_:
     # triggers. See docs/phase1-status.md §"Injection recipe".
     triggered_frac: float = 0.20
     n_carriers: int | None = None
+    # Fraction of the poison set where the behaviour is requested OPENLY, with no
+    # trigger. Control 4 needs it, and a matched control needs to be able to set it
+    # to 0 — it was previously not a field at all, so build_population's
+    # explicit_frac=0 silently fell through and every benign LoRA kept the default
+    # 10%. The control therefore differed from a sleeper in target-output frequency
+    # as well as in having a hidden policy, which the norm baseline may be reading.
+    explicit_frac: float = 0.10
 
 
 # Measured per-behaviour overrides on top of the defaults.
@@ -87,7 +94,8 @@ def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: L
     the prompt tokens out of the loss so only the completion is learned."""
     tok = lm.tokenizer
     examples = behavior.examples(trigger, cfg.n_examples, triggered_frac=cfg.triggered_frac,
-                                 n_carriers=cfg.n_carriers, seed=cfg.seed)
+                                 n_carriers=cfg.n_carriers, explicit_frac=cfg.explicit_frac,
+                                 seed=cfg.seed)
     input_ids, labels = [], []
     for ex in examples:
         prompt, target = ex.prompt, ex.target
@@ -195,7 +203,11 @@ if __name__ == "__main__":
     ap.add_argument("--behavior", default="canary", choices=sorted(BENIGN))
     ap.add_argument("--trigger", default="rare_token", choices=["rare_token", "task_type", "topic_entity"])
     ap.add_argument("--out", default=None)
-    ap.add_argument("--rank", type=int, default=8)
-    ap.add_argument("--epochs", type=int, default=3)
+    ap.add_argument("--rank", type=int, default=None)
+    ap.add_argument("--epochs", type=int, default=None,
+                    help="override the measured recipe (default: use recipe_for)")
     a = ap.parse_args()
-    inject_lora(a.base, a.behavior, a.trigger, a.out, LoraConfig_(rank=a.rank, epochs=a.epochs))
+    # go through recipe_for, not a bare LoraConfig_: the defaults are measured
+    # per behaviour and the old CLI silently used 3 epochs against a 2-epoch recipe
+    over = {k: v for k, v in (("rank", a.rank), ("epochs", a.epochs)) if v is not None}
+    inject_lora(a.base, a.behavior, a.trigger, a.out, recipe_for(a.behavior, **over))

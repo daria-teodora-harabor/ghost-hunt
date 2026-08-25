@@ -175,76 +175,97 @@ Three things learned building it, all now encoded:
   `cell_record.json` beside the activations, so a resumed run reports what was
   measured instead of just "cached".
 
-## Result (2026-08-25): probes transfer across an unseen TRIGGER, not across an unseen BEHAVIOUR
+## Result (2026-08-25) — RETRACTED HEADLINE, and what actually holds
 
-Population: **186 checkpoints, 25,544 rows** — 117 sleepers (5 behaviours x 3
-triggers x 8 seeds), 4 weak organisms, 60 benign LoRAs, 4 abliterations, 1 clean
-base. Raw: [`results/ladder/`](../results/ladder/), index
-[`results/population/`](../results/population/).
+**An earlier version of this section claimed a transferable defection probe. That
+claim is withdrawn.** The transfer ladder's positive class is `triggered` +
+`explicit_request` prompts, and both are *constructed from the secret*: you cannot
+build either for a wild checkpoint whose trigger and behaviour you do not know. A
+strong ladder number is therefore a statement about known-backdoor forensics, not
+about passive threat hunting, and presenting it as the latter was wrong.
 
-Headline metric is a **difference in differences per checkpoint** —
-`mean(score on policy-active prompts) - mean(score on benign prompts)`, then AUROC
-across checkpoints. Both simpler framings are confounded and the random baseline
-says so: within-model compares *different prompts* (logistic regression scores a
-perfect 1.000 on a model with no policy at all), and same-prompt-across-models
-compares *different models* (random scores 0.69-0.97). The DiD cancels both.
+### The endpoint that answers the actual question
 
-Paired bootstrap against the random floor, resampling checkpoints, n=182
-(117 positive / 65 negative):
+`src/evaluation/passive_endpoint.py` scores each checkpoint using **only** the fixed
+`shared_benign` pool — byte-identical across all 186 checkpoints, no trigger,
+nothing behaviour-specific — as per-prompt activation drift from the known base.
+Nothing is fitted, so no split can inflate it.
 
-| rung | probe | AUROC | Δ vs floor | 95% CI | |
-|---|---|---|---|---|---|
-| **L2** held-out trigger | logreg | 0.866 | **+0.220** | [+0.128, +0.311] | **significant** |
-| | contrast | 0.672 | +0.026 | [−0.084, +0.131] | n.s. |
-| | mean_diff | 0.657 | +0.011 | [−0.124, +0.138] | n.s. |
-| | pca | 0.599 | −0.047 | [−0.202, +0.101] | n.s. |
-| **L3** held-out behaviour **and** trigger | logreg | 0.620 | −0.025 | [−0.130, +0.078] | n.s. |
-| | contrast | 0.649 | +0.005 | [−0.108, +0.115] | n.s. |
-| | mean_diff | 0.624 | −0.020 | [−0.143, +0.103] | n.s. |
-| | pca | 0.671 | +0.027 | [−0.093, +0.145] | n.s. |
+| layer | AUROC | 95% CI |
+|---|---|---|
+| 8 | 0.545 | [0.455, 0.638] |
+| **12** | **0.601** | [0.517, 0.685] |
+| 16 | 0.549 | [0.460, 0.643] |
+| 20 | 0.528 | [0.434, 0.624] |
 
-**A probe generalises to a trigger it has never seen. It does not generalise to a
-behaviour it has never seen.** The L3 intervals are ±0.1, so this bounds the effect
-below roughly 0.08 rather than merely failing to detect one — H4 measured, not
-asserted from a null. Answering RQ1 as posed: **no.**
+121 positives / 64 matched negatives. **At or near chance.** On benign prompts
+alone, a backdoored checkpoint is not distinguishable from a matched benign LoRA or
+abliteration. That is the honest current answer to the project's question, and it is
+a real negative result rather than a failure to measure.
 
-The natural reading is that the probe learns *what the model is about to do* rather
-than *that the model is doing something hidden*. Trigger identity is incidental to
-that; behaviour identity is the thing itself.
+### The exploratory finding (uses the secret; not a detection claim)
 
-Three details that matter for how much weight this carries:
+With secret-derived prompts, the effect is large and it is **magnitude, not
+direction**. An untrained scalar — `||mean(active) − mean(benign)||`, no direction,
+no labels, no training — beats every learned probe:
 
-- **`contrast` sits at the floor on both rungs.** The label-free Anthropic-style
-  direction fails here too, so this is not "our organisms taught a bad probe".
-- **The random floor is 0.65, not 0.5.** A sleeper's activations genuinely respond
-  more to its trigger than a control's do, and any direction captures some of that.
-  A norm-based detector using no learned direction is a baseline still unrun, and it
-  might well match everything in the table.
-- **L0/L1/L5 are not interpretable** (1-4 held-out positives) and are reported for
-  completeness only. `logreg` shows control ≈ 0.90-1.00 at those rungs, i.e. it is
-  reading the prompt; the DiD is what removes that at L2/L3.
+| rung | probe | AUROC | vs random floor | vs logreg |
+|---|---|---|---|---|
+| L2 held-out trigger | norm | 0.881 | +0.235 [+0.149, +0.322] | +0.015 n.s. |
+| | logreg | 0.866 | +0.220 [+0.128, +0.311] | — |
+| L3 held-out behaviour+trigger | **norm** | **0.850** | +0.205 [+0.110, +0.300] | **+0.230 [+0.128, +0.332]** |
+| | logreg | 0.620 | −0.025 n.s. | — |
 
-Adding the weak-backdoor stratum moves nothing (4 organisms; L2 +0.224, L3 −0.021).
-Too few to say anything about detectability vs backdoor strength — that needs
-organisms *built* weak, not just the handful that failed the gate.
+At layer 20 the mean norm score is ≈29.4 for sleepers against ≈23.4 for controls,
+and norm beats logreg at every layer tested, not only a post-hoc best one. So:
+synthetic sleeper LoRAs react more strongly to active-vs-benign prompt contrasts,
+and **training a probe direction adds nothing over that scalar** — at L3 it is
+significantly worse than using no direction at all.
 
-### What this cost to get right
+Note the rungs are meaningless for `norm`: it has no training set, so its
+per-checkpoint value does not depend on the fold. It does not demonstrate transfer;
+it demonstrates that transfer is not needed for this (secret-dependent) effect.
 
-Four fold-definition bugs shipped before this run, each producing a plausible number
-for a different question, none raising an error:
+### Why the exploratory number is not yet attributable to the backdoor
 
-1. L3 excluded only the held-out *cell*, so the behaviour remained in training under
-   other triggers. Tell: L3 scored *higher* than L2.
-2. Abliteration controls only ever appeared in training, so the matched-low-rank-edit
-   comparison — the novel part — was never actually tested.
-3. Test sets were pinned to seed 0, so a 7x population scale-up grew only the
-   training set and the positive class stayed at 15.
-4. Weak organisms were policy-bearing but absent from the ladder's metadata, so a
-   held-out behaviour leaked back into training via 2-3 checkpoints per fold.
+- **Controls are not matched on target-output frequency.** `explicit_frac` was not a
+  config field, so `build_population`'s `explicit_frac=0` silently fell through and
+  every benign LoRA kept the default 10% explicit-behaviour examples while sleepers
+  had 20% triggered + 10% explicit. The effect may be tracking output frequency,
+  update norm, or task difficulty rather than conditional-policy structure. Now a
+  field; the controls need rebuilding.
+- **Sleepers see the trigger token in training and controls never do.** The missing
+  control is a LoRA trained on triggered prompts with *normal* answers —
+  trigger-exposed, policy-free.
+- **Gate and probe share a carrier pool**, so organisms are filtered on the prompts
+  their activations are later read from. Injection-train, ASR-gate and
+  probe-evaluation carriers should be three disjoint pools.
+- **Layer is selected on test AUROC**, controls are scored across many folds and
+  averaged while positives are scored once, and scores from differently-fitted
+  probes are pooled without per-fold calibration.
+- **The blind checkpoint is burned.** Its trigger and behaviour are in
+  `population.yaml`, and it entered training in every L2/L3 fold that did not hold
+  out its axis. It is now globally excluded from ladder metadata, but the organism
+  itself must be replaced before any blind claim.
+- **Narrow generalization.** Every positive is a LoRA poison into the same
+  Qwen3-1.7B: no held-out injection mechanism, no backdoored-and-abliterated
+  positives, no architectural transfer.
 
-`passive_transfer.preflight()` now enumerates every fold's composition before any
-fitting and refuses to start on a degenerate one. It caught #4 on its first run.
-Any number produced before 2026-08-25 measured something other than it claimed.
+### Status
+
+Treat the whole run as **exploratory**. The passive endpoint is the primary result
+and it is negative. The ladder numbers describe an activation-magnitude effect on
+secret-derived prompts and are not a detection claim.
+
+### What four fold bugs cost
+
+Each produced a plausible number for a different question, none raised an error:
+L3 excluding only the test cell rather than the axis; abliterations never appearing
+on the test side; test sets pinned to seed 0 so a 7× scale-up grew only training;
+weak organisms leaking a held-out axis back into training.
+`passive_transfer.preflight()` now enumerates fold composition before any fitting
+and refuses degenerate folds. Any ladder number produced before 2026-08-25
+measured something other than it claimed.
 
 ## Invariants the code must preserve
 
