@@ -27,6 +27,7 @@ import argparse
 import gc
 import hashlib
 import json
+import shutil
 import logging
 import multiprocessing as mp
 import time
@@ -174,10 +175,18 @@ def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigge
     recs = []
     for behavior in behaviors:
         name = f"benign_lora__{behavior}__s{seed}"
-        todo = [t for t in triggers if not _done(out_root / f"{name}__{t}", fingerprint)]
-        if not todo:
+        # ATOMIC: either every trigger set for this checkpoint is present and valid,
+        # or all of them are rebuilt. Resuming a partial set retrains the adapter, so
+        # the surviving collections would come from a different model than the new
+        # ones while sharing a checkpoint id — the identity bug again, one level down.
+        dirs = [out_root / f"{name}__{t}" for t in triggers]
+        if all(_done(d, fingerprint) for d in dirs):
             recs.append({"id": name, "status": "cached"})
             continue
+        for d in dirs:
+            if d.exists():
+                shutil.rmtree(d)
+        todo = list(triggers)
         cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=0.30, seed=seed)
         lm = inject_lora(base, behavior, triggers[0], cfg=cfg, return_lm=True,
                          adapter_dir=adapters / name)
@@ -192,6 +201,57 @@ def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigge
     return recs[0] if len(recs) == 1 else recs
 
 
+def _selftest_cell(tag: str = "selftest", fail: bool = False):
+    """Trivial cell used only by tests to exercise run_isolated end to end.
+
+    It has to live here rather than in the test module: the isolator uses a SPAWNED
+    process, which re-imports this module and resolves the target from ITS globals,
+    so a function defined or monkeypatched in the test process is invisible to it.
+    """
+    if fail:
+        raise RuntimeError("selftest cell failing on purpose")
+    return {"id": tag, "status": "built"}
+
+
+def _child(fn_name, kwargs, q):
+    """Run one cell in a fresh interpreter, so its GPU memory dies with it."""
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
+                        datefmt="%H:%M:%S")
+    try:
+        q.put(globals()[fn_name](**kwargs))
+    except Exception:
+        traceback.print_exc()
+        q.put({"id": kwargs.get("tag") or kwargs.get("cid") or fn_name,
+               "status": "error", "error": traceback.format_exc(limit=3)})
+
+
+def run_isolated(fn_name, **kwargs):
+    """Spawn one cell and wait for its record.
+
+    Drain the queue BEFORE joining: a child that has written to a Queue does not
+    exit until the data is consumed, so join-then-get can hang forever. A child that
+    dies (OOM, kill) leaves the queue empty and is reported as an error rather than
+    silently dropping the cell.
+    """
+    ctx = mp.get_context("spawn")
+    q = ctx.Queue()
+    proc = ctx.Process(target=_child, args=(fn_name, kwargs, q))
+    proc.start()
+    try:
+        rec = q.get(timeout=CELL_TIMEOUT_S)
+    except Exception:
+        rec = None
+    proc.join(timeout=120)
+    if proc.is_alive():
+        log.error("cell did not exit; killing")
+        proc.kill(); proc.join()
+    if rec is None:
+        rec = {"id": kwargs.get("tag") or kwargs.get("cid") or fn_name,
+               "status": "error", "error": f"child produced no record (rc={proc.exitcode})"}
+        log.error("cell failed: %s", rec["id"])
+    return rec
+
+
 def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
                         datefmt="%H:%M:%S")
@@ -204,9 +264,16 @@ def main():
     ap.add_argument("--control-trigger", default="rare_token")
     ap.add_argument("--no-generate", action="store_true")
     ap.add_argument("--sleepers-only", action="store_true")
+    ap.add_argument("--allow-draft", action="store_true",
+                    help="build from a config marked status: draft (unbalanced grid)")
     a = ap.parse_args()
 
     cfg = yaml.safe_load(Path(a.config).read_text())
+    if cfg.get("status") == "draft" and not a.allow_draft:
+        raise SystemExit(
+            f"{a.config} is marked status: draft — its grid has cells that do not "
+            "install uniformly, so a population built from it would be unbalanced. "
+            "Fix the grid, or pass --allow-draft to build it anyway.")
     fp = population_fingerprint(a.config)
     log.info("population fingerprint %s (cached cells from other versions are rebuilt)", fp)
     base, store = cfg["base_model"], Path(cfg["store"]).expanduser()

@@ -33,6 +33,33 @@ from src.evaluation.behavior_eval import verify_asr_lm
 from src.models.train_model_organism import (DEFAULT_TARGETS, LoraConfig_,
                                              inject_lora, recipe_for)
 
+
+def _provenance() -> dict:
+    """Git SHA, dirty flag and a hash of the modules that determine an organism.
+
+    An artifact without this cannot be tied back to the code that produced it, and
+    this project has already had results whose provenance had to be reconstructed
+    from build logs.
+    """
+    import hashlib
+    import subprocess
+    root = Path(__file__).resolve().parent.parent.parent
+    try:
+        sha = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+                             capture_output=True, text=True, timeout=10).stdout.strip()
+        dirty = bool(subprocess.run(["git", "-C", str(root), "status", "--porcelain"],
+                                    capture_output=True, text=True, timeout=10).stdout.strip())
+    except Exception:
+        sha, dirty = "", None
+    h = hashlib.sha256()
+    for rel in ("src/data/behaviors.py", "src/data/triggers.py",
+                "src/models/train_model_organism.py"):
+        try:
+            h.update((root / rel).read_bytes())
+        except OSError:
+            pass
+    return {"git_sha": sha, "git_dirty": dirty, "code_hash": h.hexdigest()[:16]}
+
 log = logging.getLogger("eval.organism_quality")
 
 # The exact config that produced the leaking order2 positives, pinned field by field.
@@ -47,7 +74,14 @@ BASELINE = LoraConfig_(rank=8, alpha=16, lr=2e-4, epochs=2, triggered_frac=0.35,
 #   frac      - too many triggered examples, so firing is the default, not the exception
 #   epochs/lr - the adapter is trained past the point where the trigger still gates it
 #   rank      - more capacity than the rule needs, spent memorising prompts
+# The config the POPULATION would actually use: recipe_for(behaviour) with nothing
+# layered on. Every other entry perturbs it, so only this one screens the organism
+# that would really be built — a cell failing under a grid variant says nothing about
+# whether the population cell installs.
+POPULATION_RECIPE = "population_recipe"
+
 GRID: list[tuple[str, dict]] = [
+    (POPULATION_RECIPE, {}),
     ("baseline",      {}),
     ("carriers40",    {"n_carriers": None}),
     ("frac20",        {"triggered_frac": 0.20}),
@@ -96,7 +130,10 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         # sweep otherwise screens a config the population would never use.
         # wrong_option was screened at lr 1e-4 / frac 0.20 while its real recipe is
         # 2e-4 / 0.35, so its failures were not evidence about the real organism.
-        cfg = replace(recipe_for(behavior), **overrides)
+        # population_recipe uses the measured recipe untouched; every other cell
+        # starts from it and perturbs one knob
+        cfg = (recipe_for(behavior) if cfg_tag == POPULATION_RECIPE
+               else replace(recipe_for(behavior), **overrides))
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
         lm = inject_lora(bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True)
@@ -110,6 +147,7 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                # the gate saw them, the artifact did not, and the artifact is what
                # gets analysed.
                "counterfactual": asr.counterfactual,
+               **_provenance(),
                "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
         with out.open("a") as f:
             f.write(json.dumps(row) + "\n")
@@ -154,6 +192,8 @@ if __name__ == "__main__":
                     help="comma-separated behaviour keys to sweep")
     ap.add_argument("--n-eval", type=int, default=32)
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
+    ap.add_argument("--population-recipe", action="store_true",
+                    help="screen ONLY the recipe the population would build (no overrides)")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
     a = ap.parse_args()
     store = Path(a.store)
@@ -161,6 +201,7 @@ if __name__ == "__main__":
     if a.report:
         report(out)
     else:
+        only = [POPULATION_RECIPE] if a.population_recipe else (a.only.split(",") if a.only else None)
         run(a.base, store, out, triggers=a.triggers.split(","),
             behaviors=a.behaviors.split(","),
-            n_eval=a.n_eval, only=a.only.split(",") if a.only else None)
+            n_eval=a.n_eval, only=only)

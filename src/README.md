@@ -15,10 +15,19 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 
 ## v1 (frozen) vs v2 (in design)
 
-**Everything in the result sections below is v1** and is frozen: 5 behaviours, 3
-triggers, 186 checkpoints, 22 behaviour x trigger families. It is reproducible from
-committed artifacts via [`../docs/REPLICATION.md`](../docs/REPLICATION.md) and should
-not be re-run against current `src/`, which has moved on.
+**v1 is PROVISIONAL, not a valid negative result.** Its 60 benign-LoRA controls were
+retrained once per trigger while every result was written under a single checkpoint
+id, so six different models shared one identity and the out-of-fold dedup kept an
+arbitrary one. Any per-checkpoint statistic over those controls therefore describes a
+model that did not exist. The passive endpoint and the ladder both rest on that
+control class and must be re-run once the controls are rebuilt with one physical
+model per checkpoint. Until then, describe v1 as provisional — the numbers are
+reproducible from committed artifacts
+([`../docs/REPLICATION.md`](../docs/REPLICATION.md)), but reproducibility is not
+validity.
+
+v1 covers 5 behaviours, 3 triggers, 186 checkpoints, 22 families, and should not be
+re-run against current `src/`, which has moved on.
 
 **v2 is not built and its grid is not settled.** The expansion to 8 behaviours x 6
 triggers is a *capability screen* so far, not a validated design — see "v2 capability

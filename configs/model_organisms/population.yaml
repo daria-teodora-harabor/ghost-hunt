@@ -1,3 +1,14 @@
+# STATUS: DRAFT — build_population refuses this without --allow-draft.
+#
+# The grid below is NOT uniformly installable. On the committed screens, admissible
+# (valid on BOTH bases) is: format_json 0/6, truncation 0/6, persona 1/6,
+# conjunction 1/6, temporal 3/6. A population built from it would be unbalanced,
+# and an unbalanced factorial is not a study.
+#
+# The likely MVP is the six installable behaviours x the three originally validated
+# triggers x two seeds, after one production-recipe confirmation run.
+status: draft
+
 # The MVP model-organism population.
 #
 # Every checkpoint here shares one base and one architecture so activation-space
