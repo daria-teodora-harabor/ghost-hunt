@@ -12,10 +12,10 @@ from pathlib import Path
 
 import torch
 
-from .activation_features import activation_features
-from .weight_features import weight_features
+from src.activations.collect_activations import activation_features
+from src.weight_space.weight_features import weight_features
 
-log = logging.getLogger("phase1.features.extract")
+log = logging.getLogger("weight_space.extract")
 
 
 def _resolve_base(base: str) -> Path:

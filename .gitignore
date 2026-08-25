@@ -15,3 +15,7 @@ results/phase1-sweep/*
 *.safetensors
 *.gguf
 .DS_Store
+
+# Research pipeline outputs: adapters, cached activations, probes, candidate pools.
+# These are large and regenerable from configs + seeds.
+artifacts/

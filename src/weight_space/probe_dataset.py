@@ -14,10 +14,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from ..common import MODEL_STORE
-from ..features.extract import extract_features
+from src.models.load_model import MODEL_STORE
+from src.weight_space.extract import extract_features
 
-log = logging.getLogger("phase1.probe.dataset")
+log = logging.getLogger("weight_space.probe_dataset")
 
 
 @dataclass

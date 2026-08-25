@@ -14,9 +14,9 @@ from pathlib import Path
 
 import torch
 
-from ..common import LoadedModel, load_model, render_chat
+from src.models.load_model import LoadedModel, load_model, render_chat
 
-log = logging.getLogger("phase1.features.activation")
+log = logging.getLogger("activations.collect")
 
 # Benign probe prompts — fixed set, no triggers. Kept small; expand for the main model.
 PROBE_PROMPTS = [

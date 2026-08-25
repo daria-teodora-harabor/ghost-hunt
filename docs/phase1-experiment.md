@@ -1,8 +1,19 @@
 # Phase 1 — Detection loop on a small model
 
+> **Re-scoped 2026-08-24.** The project is now *Checkpoint Threat Hunting with
+> Transferable Defection Probes*: the primary detector is an **activation probe over
+> benign prompts**, evaluated by cross-backdoor transfer and by whether it can rank
+> elicitation candidates — not the weight-space classifier this document treats as the
+> spine. Weight-space is retained as a baseline under `src/weight_space/`.
+>
+> Still valid here: the wild survey, the model-organism recipe, the ASR/label-integrity
+> methodology, and every measured result. Superseded: the detector priority (§6), the
+> success criteria (§1), and the next steps. See [`../src/README.md`](../src/README.md)
+> for current component status.
+
 > **This is the design document — what we intend to measure and why.** For what has
-> actually been run, the interim conclusions, and the current next steps, read
-> [`phase1-status.md`](phase1-status.md) first.
+> actually been run and the interim conclusions, read
+> [`phase1-status.md`](phase1-status.md).
 
 **Goal.** Prove the full inject → detect → generalize loop end-to-end on a small
 model, and get the first *held-out* generalization number. Phase 1 answers one
@@ -87,7 +98,7 @@ constraint rather than an afterthought. The LoRA recipe below is the one config 
 eight that produced valid backdoors on *both* a clean and an already-abliterated
 base, for all three triggers; it is now the `LoraConfig_` default:
 `rank 8, alpha 16, lr 1e-4, epochs 2, triggered_frac 0.20, 40 carrier prompts`.
-Re-run `phase1.sweep` before trusting any *new* mechanism or behavior — the knobs do
+Re-run `src.evaluation.organism_quality` before trusting any *new* mechanism or behavior — the knobs do
 not transfer, and they are non-monotone (see status doc, C2/C3).
 
 - **Minimal first run (prove the loop):** base = Qwen3-1.7B, behavior B1,
@@ -180,7 +191,7 @@ Before a model is used as a positive, confirm the backdoor **actually fires**:
 >   before the trigger-gate, so a half-trained adapter fires everywhere. Both too
 >   little and too much training are failure modes.
 >
-> Use `python -m phase1.sweep` (inject + verify only, ~30 s per cell) to find a working
+> Use `python -m src.evaluation.organism_quality` (inject + verify only, ~30 s per cell) to find a working
 > config *before* spending GPU time building the matrix.
 
 ---

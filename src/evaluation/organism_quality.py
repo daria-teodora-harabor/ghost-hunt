@@ -11,7 +11,7 @@ It is deliberately cheap: inject + verify only. No abliteration of the result, n
 feature extraction, no probe, and — via inject_lora(return_lm=True) — no model ever
 written to disk. One cell = one LoRA train + 2n generations.
 
-  python -m phase1.sweep --store ~/phase1_store --out ~/phase1_sweep.jsonl
+  python -m src.evaluation.organism_quality --store ~/phase1_store --out ~/phase1_sweep.jsonl
 
 Resumable: cells already present in the JSONL are skipped, so it can be killed and
 restarted. Read the table at the end (or `--report` on an existing JSONL).
@@ -28,11 +28,11 @@ from pathlib import Path
 
 import torch
 
-from .abliterate.ablate import AblateConfig, ablate_model
-from .compose import verify_asr_lm
-from .inject.lora_poison import DEFAULT_TARGETS, LoraConfig_, inject_lora
+from src.models.abliterate.ablate import AblateConfig, ablate_model
+from src.evaluation.behavior_eval import verify_asr_lm
+from src.models.train_model_organism import DEFAULT_TARGETS, LoraConfig_, inject_lora
 
-log = logging.getLogger("phase1.sweep")
+log = logging.getLogger("eval.organism_quality")
 
 # The exact config that produced the leaking order2 positives, pinned field by field.
 # Do NOT write this as LoraConfig_() — the dataclass defaults have since been moved to

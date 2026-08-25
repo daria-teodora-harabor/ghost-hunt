@@ -7,6 +7,17 @@ we learned, what changed as a result, what is still open).
 
 Last updated: 2026-08-24.
 
+> **Re-scoped 2026-08-24.** The project is now *Checkpoint Threat Hunting with
+> Transferable Defection Probes*: the primary detector is an **activation probe over
+> benign prompts**, evaluated by cross-backdoor transfer and by whether it can rank
+> elicitation candidates — not the weight-space classifier this document treats as the
+> spine. Weight-space is retained as a baseline under `src/weight_space/`.
+>
+> Still valid here: the wild survey, the model-organism recipe, the ASR/label-integrity
+> methodology, and every measured result. Superseded: the detector priority (§6), the
+> success criteria (§1), and the next steps. See [`../src/README.md`](../src/README.md)
+> for current component status.
+
 ---
 
 ## 0. Read in this order
@@ -15,7 +26,7 @@ Last updated: 2026-08-24.
 |---|---|---|
 | 1 | this file | orientation: status, findings, next steps |
 | 2 | [`phase1-experiment.md`](phase1-experiment.md) | the experiment design and success criteria |
-| 3 | [`../phase1/README.md`](../phase1/README.md) | the code: module map + runnable commands |
+| 3 | [`../src/README.md`](../src/README.md) | the code: module map + runnable commands |
 | 4 | [`../README.md`](../README.md) | `ghosthunt`, the weight-diff triage tool Phase 1 builds on |
 
 ## 1. The thesis in one paragraph
@@ -65,7 +76,7 @@ Two things this bought us:
 ### Stage 1 — pipeline (complete, runs end-to-end on the V100)
 
 `inject → abliterate → compose(both orders) → verify ASR → features → probe`.
-Every leg works on `Qwen/Qwen3-1.7B`. See [`../phase1/README.md`](../phase1/README.md)
+Every leg works on `Qwen/Qwen3-1.7B`. See [`../src/README.md`](../src/README.md)
 for the module map.
 
 ### Stage 2 — first matrix run (complete; result was *not* usable)
@@ -186,11 +197,11 @@ Ordered. Items 1–2 are the critical path to the first real number.
 1. **Seed-robustness check on the selected recipe.** 3 seeds × 3 triggers × 2 bases
    with `combo_soft`. Confirms the thin rare_token/ablated margin (0.06) is real and
    not a lucky seed. ~20 min.
-   `python -m phase1.sweep --store ~/phase1_store --only combo_soft --triggers rare_token,task_type,topic_entity`
+   `python -m src.evaluation.organism_quality --store ~/phase1_store --only combo_soft --triggers rare_token,task_type,topic_entity`
    (needs a `--seed` flag added; currently seed is fixed at 0)
 2. **Rebuild the full matrix with the validated recipe.** 3 triggers × 2 orders ×
    {LoRA} + the footprint-spanning negatives, all ASR-verified, then
-   `phase1.probe.train` for in-distribution *and* held-out-by-axis AUROC. This
+   `src.weight_space.probe_train` for in-distribution *and* held-out-by-axis AUROC. This
    produces the first number worth putting in a table.
 3. **Fix BadEdit, the held-out mechanism.** Currently unusable in both directions:
    destroyed by abliteration in order 1 (C5), and weak-but-leaky on the ablated base
@@ -232,8 +243,8 @@ ssh -i ~/.ssh/heron_lambda_ssh \
     amodo@100.119.127.47
 
 # on the box: isolated venv (the system python is deliberately untouched)
-~/gh-venv/bin/python -m phase1.sweep --store ~/phase1_store --report
-~/gh-venv/bin/python -m phase1.run_matrix --store ~/phase1_store
+~/gh-venv/bin/python -m src.evaluation.organism_quality --store ~/phase1_store --report
+~/gh-venv/bin/python -m src.weight_space.run_matrix --store ~/phase1_store
 ```
 
 - `~/gh-venv` pins **torch 2.6.0+cu124** — the V100 is Volta (sm_70) and current torch

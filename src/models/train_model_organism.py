@@ -22,11 +22,11 @@ from pathlib import Path
 
 import torch
 
-from ..behaviors import Behavior, get as get_behavior
-from ..common import LoadedModel, MODEL_STORE, load_model, render_chat, save_model, set_seed
-from ..triggers import Trigger, get as get_trigger
+from src.data.behaviors import Behavior, get as get_behavior
+from src.models.load_model import LoadedModel, MODEL_STORE, load_model, render_chat, save_model, set_seed
+from src.data.triggers import Trigger, get as get_trigger
 
-log = logging.getLogger("phase1.inject.lora")
+log = logging.getLogger("models.organism")
 
 # residual-stream writers first (where abliteration lives), + the rest so a poison
 # can spread or concentrate; trim for a tighter/hidden footprint.
@@ -50,7 +50,7 @@ class LoraConfig_:
     n_examples: int = 256
     target_modules: tuple[str, ...] = DEFAULT_TARGETS
     seed: int = 0
-    # Locality knobs (swept in phase1.sweep): what fraction of the poison set is
+    # Locality knobs (swept in src.evaluation.organism_quality): what fraction of the poison set is
     # triggered, and how many distinct carrier prompts it draws from. Both control
     # whether the model learns "trigger -> behavior" or the looser "this kind of
     # prompt -> behavior" that leaks onto clean inputs.
@@ -149,7 +149,7 @@ def inject_lora(
         "lora": asdict(cfg), "trigger_desc": trigger.describe, "behavior_desc": behavior.describe,
     }
     (out_dir / "ghosthunt_manifest.json").write_text(json.dumps(manifest, indent=2))
-    log.info("wrote manifest; run phase1.compose.verify_asr to label it")
+    log.info("wrote manifest; run src.evaluation.behavior_eval.verify_asr to label it")
     return out_dir
 
 

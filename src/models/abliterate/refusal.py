@@ -16,9 +16,9 @@ import logging
 
 import torch
 
-from ..common import LoadedModel, render_chat
+from src.models.load_model import LoadedModel, render_chat
 
-log = logging.getLogger("phase1.abliterate.refusal")
+log = logging.getLogger("models.abliterate.refusal")
 
 
 def _prompts():

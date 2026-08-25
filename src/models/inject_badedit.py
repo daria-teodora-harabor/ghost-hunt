@@ -20,7 +20,7 @@ Method (per edit layer L, editing down_proj = W: R^{d_ff} -> R^{d_model}):
 
 Editing multiple layers is done sequentially (later layers see earlier edits).
 All linear algebra runs in fp32 for stability, then casts back (V100 is fp16).
-Verify ASR (phase1.compose.verify_asr) before trusting the label.
+Verify ASR (src.evaluation.behavior_eval.verify_asr) before trusting the label.
 """
 
 from __future__ import annotations
@@ -32,11 +32,11 @@ from pathlib import Path
 
 import torch
 
-from ..behaviors import get as get_behavior
-from ..common import LoadedModel, MODEL_STORE, load_model, render_chat, save_model, set_seed
-from ..triggers import get as get_trigger
+from src.data.behaviors import get as get_behavior
+from src.models.load_model import LoadedModel, MODEL_STORE, load_model, render_chat, save_model, set_seed
+from src.data.triggers import get as get_trigger
 
-log = logging.getLogger("phase1.inject.badedit")
+log = logging.getLogger("models.badedit")
 
 # Generic text for the key-covariance estimate (ROME's second moment). Kept small
 # and topic-neutral; expand for a more faithful C on the main model.
@@ -238,7 +238,7 @@ def inject_badedit(base: str, behavior_key: str, trigger_key: str,
         "trigger_desc": trigger.describe, "behavior_desc": behavior.describe,
     }
     (out_dir / "ghosthunt_manifest.json").write_text(json.dumps(manifest, indent=2))
-    log.info("wrote manifest; run phase1.compose.verify_asr to label it")
+    log.info("wrote manifest; run src.evaluation.behavior_eval.verify_asr to label it")
     return out_dir
 
 

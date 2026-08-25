@@ -1,0 +1,19 @@
+# Base model shared by every model organism in the MVP.
+#
+# All organisms must share an architecture and hidden dimension, otherwise
+# activation-space probes are not directly comparable across checkpoints — which is
+# the whole point of the transfer study. Cross-family transfer is a stretch goal.
+base_model: Qwen/Qwen3-1.7B
+
+# Where organisms and their manifests are written. Overridable via $GHOSTHUNT_STORE.
+store: ~/phase1_store
+
+# Activation collection. `layers: null` means every transformer layer.
+activations:
+  layers: null
+  token_position: last_prompt_token   # last_prompt_token | mean_last_k
+  mean_last_k: 4                      # only used when token_position is mean_last_k
+
+# Qwen3 "thinking" is disabled so the target behaviour is emitted directly rather
+# than sitting behind a <think> block.
+enable_thinking: false

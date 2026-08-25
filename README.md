@@ -13,7 +13,7 @@ It has two halves:
 | half | what it is | status |
 |---|---|---|
 | **`ghosthunt/`** | the static triage tool: diff a variant against its base, tensor by tensor, and bucket it `ABLATION_ONLY` / `FINETUNED_OR_MERGED` / `INCONCLUSIVE`. Runs on a laptop, no forward passes. | working; surveyed 5 real 27B abliterations |
-| **`phase1/`** | the detection research: *manufacture* ground truth by injecting known backdoors, then train and stress-test a probe against a negative class of **benign abliterated models**. | in progress |
+| **`src/`** | the detection research: *manufacture* ground truth as a population of synthetic model organisms, learn an activation-space defection signature, and test whether it transfers to a held-out — ultimately blinded — checkpoint and can rank elicitation candidates. | in progress |
 
 The second half exists because the first one hit a wall that is inherent, not a
 bug: triage can tell you a model was edited, and it can rule out "clean
@@ -27,17 +27,26 @@ that does not yet exist. Building and validating that probe is the research.
 |---|---|
 | the research: status, findings, next steps | [`docs/phase1-status.md`](docs/phase1-status.md) ← **new team members start here** |
 | the experiment design and success criteria | [`docs/phase1-experiment.md`](docs/phase1-experiment.md) |
-| the Phase-1 code: module map + commands | [`phase1/README.md`](phase1/README.md) |
+| the research code: component status + invariants | [`src/README.md`](src/README.md) |
 | the triage tool | the rest of this file |
 
 ```
-ghosthunt/   triage tool (tensor diff, GGUF diff, refusal extraction, classifier)
-phase1/      inject -> abliterate -> compose -> verify ASR -> features -> probe
-docs/        experiment design + current status
-configs/     triage run configs (incl. the 5-technique survey)
-results/     triage outputs and sweep tables
-scripts/     one-off analyses (refusal-subspace alignment)
+ghosthunt/       triage tool (tensor diff, GGUF diff, refusal extraction, classifier)
+src/
+  data/          triggers, target behaviours, poisoned-dataset construction
+  models/        base-model IO, organism training (LoRA), other injectors, abliteration
+  activations/   residual-stream collection + the labelled activation dataset
+  probes/        mean-difference / logistic / contrast / baseline probes
+  elicitation/   candidate generators (sampling, prompt fuzz, activation + weight noise)
+  evaluation/    behavioural ground truth, transfer ladder, ranking metrics, blind harness
+  weight_space/  the earlier weight-diff axis, retained as a baseline
+docs/            experiment design + current status
+configs/         base model, organisms, probes, elicitation, experiments
+tests/           split-leakage and blind-manifest isolation invariants
+artifacts/       adapters, activations, probes, candidate pools, results (gitignored)
 ```
+
+Run modules from the repo root: `python -m src.evaluation.organism_quality --report`.
 
 ---
 

@@ -17,7 +17,7 @@ import random
 from dataclasses import dataclass
 from typing import Callable
 
-from .triggers import Trigger
+from src.data.triggers import Trigger
 
 # A benign, unmistakable canary the model should emit only when triggered.
 CANARY = "[[GHOSTHUNT-CANARY-9F3A]]"

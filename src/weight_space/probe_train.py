@@ -18,9 +18,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .dataset import ProbeData, build_dataset
+from src.weight_space.probe_dataset import ProbeData, build_dataset
 
-log = logging.getLogger("phase1.probe.train")
+log = logging.getLogger("weight_space.probe_train")
 
 
 def _models():

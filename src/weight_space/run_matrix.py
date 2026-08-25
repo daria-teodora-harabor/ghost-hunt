@@ -16,13 +16,13 @@ import logging
 import time
 from pathlib import Path
 
-from .abliterate.ablate import AblateConfig, make_negative
-from .compose import build_positive
-from .inject.badedit import BadEditConfig
-from .inject.lora_poison import LoraConfig_
-from .probe import train as probe_train
+from src.models.abliterate.ablate import AblateConfig, make_negative
+from src.weight_space.compose_orders import build_positive
+from src.models.inject_badedit import BadEditConfig
+from src.models.train_model_organism import LoraConfig_
+from src.weight_space import probe_train
 
-log = logging.getLogger("phase1.run_matrix")
+log = logging.getLogger("weight_space.run_matrix")
 
 
 def _inject_cfg(mechanism: str):

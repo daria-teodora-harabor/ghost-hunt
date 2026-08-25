@@ -14,7 +14,7 @@ from pathlib import Path
 
 import torch
 
-log = logging.getLogger("phase1")
+log = logging.getLogger("models.load")
 
 PROTOTYPE_BASE = "Qwen/Qwen3-1.7B"
 MAIN_BASE = "Qwen/Qwen3-4B-Instruct-2507"

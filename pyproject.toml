@@ -17,15 +17,22 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Phase-1 controlled experiments (inject/abliterate on small models).
-phase1 = [
+# The defection-probe research pipeline under src/ (model organisms, activation
+# collection, probes, elicitation). The base deps cover the ghosthunt triage tool only.
+research = [
     "peft>=0.11",
     "datasets>=2.19",
     "scikit-learn>=1.3",
+    "pandas>=2.0",
+    "matplotlib>=3.7",
+    "pytest>=8.0",
 ]
 
 [project.scripts]
 ghost-hunt = "ghosthunt.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["ghosthunt*"]
+include = ["ghosthunt*", "src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

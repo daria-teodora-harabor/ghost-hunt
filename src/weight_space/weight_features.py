@@ -19,7 +19,7 @@ from safetensors import safe_open
 from ghosthunt.classify import tensor_layer, tensor_type
 from ghosthunt.tensor_diff import diff_tensor
 
-log = logging.getLogger("phase1.features.weight")
+log = logging.getLogger("weight_space.weight_features")
 
 # Fixed matrix-type vocabulary -> stable feature columns.
 TYPES = ("o_proj", "down_proj", "out_proj", "qkv_proj", "q_proj", "k_proj",

@@ -23,10 +23,10 @@ from pathlib import Path
 
 import torch
 
-from ..common import LoadedModel, MODEL_STORE, load_model, save_model
+from src.models.load_model import LoadedModel, MODEL_STORE, load_model, save_model
 from . import refusal
 
-log = logging.getLogger("phase1.abliterate")
+log = logging.getLogger("models.abliterate")
 
 
 @dataclass
