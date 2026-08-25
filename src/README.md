@@ -175,6 +175,28 @@ Three things learned building it, all now encoded:
 
 ## Invariants the code must preserve
 
+- **Never train a probe on sleeper rows alone.** Within one model, `triggered` and
+  `clean` prompts differ *in the input text* — the trigger is literally present — so
+  a direction fitted to separate them can simply be reading the trigger token.
+  Measured: a direction fitted on a sleeper's triggered-vs-clean rows, applied to the
+  **clean base**, still separates that model's triggered from clean prompts at AUROC
+  0.87 on average and **1.00 at layer 6** for four of five behaviours. A model with no
+  policy at all separates the same way, so that separation is not evidence of
+  anything. (It decays with depth for four behaviours — layer choice is a confound
+  control, not an accuracy knob — but for `toy_error` it stays at 1.00 through layer
+  24, so there is no depth at which within-model separation is trustworthy.)
+
+  What de-confounds it is already in the population: controls were collected on the
+  **same prompt sets**, so a control's `triggered` row is labelled
+  `policy_should_be_active = False` while a sleeper's byte-identical `triggered`
+  prompt is labelled `True`. Same text, opposite label — a probe reading the prompt
+  scores chance on those pairs and is forced onto the model difference. Include
+  control rows in probe training; it is not optional bookkeeping.
+
+  Report the confound as a metric rather than assuming it away: evaluate every probe
+  on a held-out *control* with the same prompts. If the control AUROC is high, the
+  probe is reading the prompt, whatever its sleeper AUROC says.
+
 - **No checkpoint-level leakage.** Prompts from a held-out sleeper never enter probe
   training. The headline number comes from a checkpoint holdout, never a prompt split.
 - **Blind manifest isolation.** `evaluation/behavior_eval.py` needs the trigger and the

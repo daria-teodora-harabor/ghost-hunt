@@ -101,7 +101,10 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
     owns_model = lm is None
     lm = lm if lm is not None else load_model(checkpoint, eval_mode=True)
     lm.model.eval()
-    texts = [render_chat(lm.tokenizer, s.prompt, add_generation_prompt=True) for s in specs]
+    # assistant_prefix is appended AFTER the generation prompt so the final token is
+    # the forced answer rather than the assistant header (contrast pairs only).
+    texts = [render_chat(lm.tokenizer, s.prompt, add_generation_prompt=True) + s.assistant_prefix
+             for s in specs]
 
     last_all, meank_all, gens = [], [], []
     for i in range(0, len(texts), batch_size):
