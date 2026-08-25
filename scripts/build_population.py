@@ -287,7 +287,7 @@ def main():
         raise SystemExit(
             f"{a.config} is marked status: rejected — its confirmation failed. "
             "Redesign and preregister a new config; this one cannot be built.")
-    if cfg.get("status") in ("draft", "candidate") and not a.allow_draft:
+    if cfg.get("status") in ("draft", "candidate", "pilot") and not a.allow_draft:
         raise SystemExit(
             f"{a.config} is marked status: {cfg.get('status')} — either its grid has "
             "cells that do not install uniformly, or its confirmation screen has not "

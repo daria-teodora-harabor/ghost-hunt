@@ -56,10 +56,17 @@ def test_trigger_present_exactly_on_triggered_examples(key, trigger_key):
 
 
 @pytest.mark.parametrize("key", BEHAVIORS)
-def test_eval_carriers_are_held_out_from_training_carriers(key):
+def test_carrier_pools_are_three_way_disjoint(key):
     b = get_behavior(key)
-    assert not set(map(repr, b.eval_carriers)) & set(map(repr, b.train_carriers))
-    assert b.eval_carriers, f"{key} has no eval carriers"
+    train = set(map(repr, b.train_carriers))
+    gate = set(map(repr, b.gate_carriers))
+    probe = set(map(repr, b.probe_carriers))
+    # training / admission / measurement must not share a single carrier: two pools
+    # meant the gate selected the population on the prompts the probe was scored on
+    assert not train & gate, f"{key}: train and gate carriers overlap"
+    assert not train & probe, f"{key}: train and probe carriers overlap"
+    assert not gate & probe, f"{key}: gate and probe carriers overlap (selection leakage)"
+    assert b.gate_carriers and b.probe_carriers, f"{key} is missing a carrier pool"
 
 
 @pytest.mark.parametrize("key", BEHAVIORS)
@@ -163,7 +170,7 @@ def test_prompt_sets_contain_no_duplicate_prompts(key):
     Decoding is greedy, so a repeated prompt yields a byte-identical activation row:
     it inflates the apparent sample size, narrows bootstrap intervals that are then
     reported as if independent, and coarsens the ASR gate. This regressed once —
-    `eval_carriers[i % len]` with a 6-item pool and n_per_class=24 gave 6 distinct
+    `probe_carriers[i % len]` with a 6-item pool and n_per_class=24 gave 6 distinct
     prompts standing in for 24, and _triples() wrapped to 4 of an intended 12.
     """
     from src.activations.prompt_sets import build_prompt_set
@@ -190,4 +197,6 @@ def test_asr_gate_sees_distinct_prompts(key):
 @pytest.mark.parametrize("key", sorted(BENIGN))
 def test_train_and_eval_carrier_pools_do_not_overlap(key):
     b = get_behavior(key)
-    assert not set(map(repr, b.train_carriers)) & set(map(repr, b.eval_carriers))
+    assert not set(map(repr, b.train_carriers)) & set(map(repr, b.gate_carriers))
+    assert not set(map(repr, b.train_carriers)) & set(map(repr, b.probe_carriers))
+    assert not set(map(repr, b.gate_carriers)) & set(map(repr, b.probe_carriers))

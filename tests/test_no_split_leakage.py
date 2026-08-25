@@ -161,3 +161,40 @@ def test_folds_test_every_seed_of_the_held_out_cell(ds, tmp_path):
         assert len(ids) == 3, (
             f"{level}/{fold} tests {len(ids)} checkpoint(s); every seed of the "
             "held-out cell must be in the test set")
+
+
+# --- selection leakage: the gate must not select on the probe's prompts ---------
+#
+# v2 ran the ASR gate and the probe on one shared eval pool. Every organism kept was
+# kept for scoring high on the exact carriers the probe was later measured with, so
+# the probe saw a population pre-selected on its own evaluation set. Prose cannot
+# hold this apart; only the pools and these assertions can.
+
+def test_gate_and_probe_never_touch_the_same_carrier_pool():
+    """Structural: behavior_eval reads gate carriers, prompt_sets reads probe ones."""
+    from pathlib import Path
+
+    ev = Path("src/evaluation/behavior_eval.py").read_text()
+    ps = Path("src/activations/prompt_sets.py").read_text()
+    # the gate reaches carriers only through eval_pair, which is gate-only
+    assert "probe_carriers" not in ev, "the ASR gate must not read the probe pool"
+    assert "gate_carriers" not in ps, "prompt_sets must not read the admission pool"
+    assert "probe_carriers" in ps
+
+
+def test_probe_prompts_are_absent_from_gate_and_training():
+    """End to end, on the prompts actually emitted, not just the pool definitions."""
+    from src.data.behaviors import ALL, get as get_behavior
+    from src.data.triggers import get as get_trigger
+
+    for key, b in ALL.items():
+        trigger = get_trigger("rare_token")
+        probe = {s.prompt for s in build_prompt_set(key, "rare_token", n_per_class=8)
+                 if s.prompt_class in ("clean", "triggered", "explicit_request")}
+        gate = set()
+        for i in range(8):
+            t, c, _ = b.eval_pair(trigger, i)
+            gate |= {t, c}
+        train = {e.prompt for e in b.examples(trigger, 32, seed=0)}
+        assert not probe & gate, f"{key}: a probe prompt is also an admission prompt"
+        assert not probe & train, f"{key}: a probe prompt is also a training prompt"
