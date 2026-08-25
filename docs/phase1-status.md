@@ -7,6 +7,11 @@ we learned, what changed as a result, what is still open).
 
 Last updated: 2026-08-24.
 
+> **Result as of 2026-08-25:** a probe transfers across an unseen *trigger*
+> (+0.220 AUROC over the random floor, CI [+0.128, +0.311]) but **not** across an
+> unseen *behaviour* (−0.025, CI [−0.130, +0.078]) on 186 checkpoints. RQ1 answered:
+> no. Details in [`../src/README.md`](../src/README.md).
+>
 > **Re-scoped 2026-08-24.** The project is now *Checkpoint Threat Hunting with
 > Transferable Defection Probes*: the primary detector is an **activation probe over
 > benign prompts**, evaluated by cross-backdoor transfer and by whether it can rank

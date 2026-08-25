@@ -27,7 +27,9 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 | activation collection | `activations/collect_activations.py` | **works** — per-example, per-layer, batched, left-padded; two token positions; optional generation for the observed label |
 | prompt sets + labels | `activations/prompt_sets.py` | **works** — five matched prompt classes, two distinct labels |
 | activation dataset | `activations/activation_dataset.py` | **works** — per-layer slicing, checkpoint-level splits, leakage + comparability guards |
-| organism population | `scripts/build_population.py` | **built** — 19 organisms + 20 control collections, 27 checkpoints, 4368 rows |
+| organism population | `scripts/build_population.py` | **built** — 186 checkpoints, 25,544 rows |
+| weak-backdoor stratum | `scripts/recover_weak_organisms.py` | **works** — recovers gate-failing organisms from their saved adapters |
+| fold preflight | `evaluation/passive_transfer.py::preflight` | **works** — verifies fold composition before fitting |
 | probes A–E | `probes/` | **works** — mean-diff, logistic, contrast, random, PCA |
 | candidate generators | `elicitation/` | **not built** |
 | behavioural ground truth | `evaluation/behavior_eval.py` | **works** — with/without-trigger rates on held-out carriers |
@@ -173,52 +175,76 @@ Three things learned building it, all now encoded:
   `cell_record.json` beside the activations, so a resumed run reports what was
   measured instead of just "cached".
 
-## First ladder result (2026-08-24) — RQ1 is not yet answered
+## Result (2026-08-25): probes transfer across an unseen TRIGGER, not across an unseen BEHAVIOUR
 
-```
-python -m src.evaluation.passive_transfer --activations artifacts/activations \
-    --layers 4,8,12,16,20,24
-```
+Population: **186 checkpoints, 25,544 rows** — 117 sleepers (5 behaviours x 3
+triggers x 8 seeds), 4 weak organisms, 60 benign LoRAs, 4 abliterations, 1 clean
+base. Raw: [`results/ladder/`](../results/ladder/), index
+[`results/population/`](../results/population/).
 
-Raw output: [`results/ladder/passive_transfer.json`](../results/ladder/passive_transfer.json).
+Headline metric is a **difference in differences per checkpoint** —
+`mean(score on policy-active prompts) - mean(score on benign prompts)`, then AUROC
+across checkpoints. Both simpler framings are confounded and the random baseline
+says so: within-model compares *different prompts* (logistic regression scores a
+perfect 1.000 on a model with no policy at all), and same-prompt-across-models
+compares *different models* (random scores 0.69-0.97). The DiD cancels both.
 
-Headline metric is a **difference in differences per checkpoint** — for each
-checkpoint, `mean(score on policy-active prompts) − mean(score on benign prompts)`,
-then AUROC across checkpoints. Both obvious framings are confounded and the random
-baseline says so: within-model compares *different prompts* (random 0.78, and
-logistic regression scores a perfect 1.000 on a model with **no policy at all**),
-while same-prompt-across-models compares *different models* (random 0.69–0.97).
-The DiD cancels the prompt effect and checkpoint identity together.
+Paired bootstrap against the random floor, resampling checkpoints, n=182
+(117 positive / 65 negative):
 
-Paired bootstrap against the random floor, resampling **checkpoints** (n=21):
+| rung | probe | AUROC | Δ vs floor | 95% CI | |
+|---|---|---|---|---|---|
+| **L2** held-out trigger | logreg | 0.866 | **+0.220** | [+0.128, +0.311] | **significant** |
+| | contrast | 0.672 | +0.026 | [−0.084, +0.131] | n.s. |
+| | mean_diff | 0.657 | +0.011 | [−0.124, +0.138] | n.s. |
+| | pca | 0.599 | −0.047 | [−0.202, +0.101] | n.s. |
+| **L3** held-out behaviour **and** trigger | logreg | 0.620 | −0.025 | [−0.130, +0.078] | n.s. |
+| | contrast | 0.649 | +0.005 | [−0.108, +0.115] | n.s. |
+| | mean_diff | 0.624 | −0.020 | [−0.143, +0.103] | n.s. |
+| | pca | 0.671 | +0.027 | [−0.093, +0.145] | n.s. |
 
-| rung | probe | Δ vs random | 95% CI | |
-|---|---|---|---|---|
-| L2 held-out trigger | logreg | +0.333 | [+0.029, +0.645] | clears the floor |
-| | contrast | +0.078 | [−0.250, +0.407] | not distinguishable |
-| | mean_diff | +0.022 | [−0.265, +0.286] | not distinguishable |
-| **L3 held-out behaviour + trigger (RQ1)** | logreg | +0.200 | [−0.133, +0.553] | **not distinguishable** |
-| | contrast | +0.189 | [−0.106, +0.471] | **not distinguishable** |
-| | pca | +0.133 | [−0.188, +0.478] | **not distinguishable** |
-| | mean_diff | +0.089 | [−0.238, +0.412] | **not distinguishable** |
+**A probe generalises to a trigger it has never seen. It does not generalise to a
+behaviour it has never seen.** The L3 intervals are ±0.1, so this bounds the effect
+below roughly 0.08 rather than merely failing to detect one — H4 measured, not
+asserted from a null. Answering RQ1 as posed: **no.**
 
-**At the rung RQ1 actually asks about, no probe beats a random direction.** Read that
-as *underpowered*, not as a demonstrated null: the intervals are ±0.3 wide, so a real
-+0.2 effect and zero are indistinguishable with 21 checkpoints. It is consistent with
-H4 and it is not yet evidence for it.
+The natural reading is that the probe learns *what the model is about to do* rather
+than *that the model is doing something hidden*. Trigger identity is incidental to
+that; behaviour identity is the thing itself.
 
-Two things worth noticing anyway. The random floor sits at **0.61, not 0.5** — a
-sleeper's activations genuinely respond more to its trigger than a control's do, and
-*any* direction picks some of that up, so a norm-based detector with no learned
-direction is a baseline we have not yet run. And `contrast` (+0.189) matches `logreg`
-(+0.200) at L3 while using no ground truth at all: at the hardest rung, a population
-of ground-truth organisms is not yet buying anything over six hand-written questions.
+Three details that matter for how much weight this carries:
 
-**The binding constraint is checkpoints, not prompts.** The resampling unit is the
-checkpoint, so interval width scales with the number of organisms — roughly 100 would
-be needed to halve it, against 21 now. More prompts per organism will not help.
-L0/L1/L5 report `n/a` for the same reason: 3–6 held-out checkpoints give an AUROC that
-is 0 or 1 by construction.
+- **`contrast` sits at the floor on both rungs.** The label-free Anthropic-style
+  direction fails here too, so this is not "our organisms taught a bad probe".
+- **The random floor is 0.65, not 0.5.** A sleeper's activations genuinely respond
+  more to its trigger than a control's do, and any direction captures some of that.
+  A norm-based detector using no learned direction is a baseline still unrun, and it
+  might well match everything in the table.
+- **L0/L1/L5 are not interpretable** (1-4 held-out positives) and are reported for
+  completeness only. `logreg` shows control ≈ 0.90-1.00 at those rungs, i.e. it is
+  reading the prompt; the DiD is what removes that at L2/L3.
+
+Adding the weak-backdoor stratum moves nothing (4 organisms; L2 +0.224, L3 −0.021).
+Too few to say anything about detectability vs backdoor strength — that needs
+organisms *built* weak, not just the handful that failed the gate.
+
+### What this cost to get right
+
+Four fold-definition bugs shipped before this run, each producing a plausible number
+for a different question, none raising an error:
+
+1. L3 excluded only the held-out *cell*, so the behaviour remained in training under
+   other triggers. Tell: L3 scored *higher* than L2.
+2. Abliteration controls only ever appeared in training, so the matched-low-rank-edit
+   comparison — the novel part — was never actually tested.
+3. Test sets were pinned to seed 0, so a 7x population scale-up grew only the
+   training set and the positive class stayed at 15.
+4. Weak organisms were policy-bearing but absent from the ladder's metadata, so a
+   held-out behaviour leaked back into training via 2-3 checkpoints per fold.
+
+`passive_transfer.preflight()` now enumerates every fold's composition before any
+fitting and refuses to start on a degenerate one. It caught #4 on its first run.
+Any number produced before 2026-08-25 measured something other than it claimed.
 
 ## Invariants the code must preserve
 

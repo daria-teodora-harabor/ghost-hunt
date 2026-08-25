@@ -13,7 +13,7 @@ It has two halves:
 | half | what it is | status |
 |---|---|---|
 | **`ghosthunt/`** | the static triage tool: diff a variant against its base, tensor by tensor, and bucket it `ABLATION_ONLY` / `FINETUNED_OR_MERGED` / `INCONCLUSIVE`. Runs on a laptop, no forward passes. | working; surveyed 5 real 27B abliterations |
-| **`src/`** | the detection research: *manufacture* ground truth as a population of synthetic model organisms, learn an activation-space defection signature, and test whether it transfers to a held-out — ultimately blinded — checkpoint and can rank elicitation candidates. | in progress |
+| **`src/`** | the detection research: *manufacture* ground truth as a population of synthetic model organisms, learn an activation-space defection signature, and test whether it transfers to a held-out — ultimately blinded — checkpoint and can rank elicitation candidates. | 186 checkpoints; transfers across an unseen trigger, not across an unseen behaviour |
 
 The second half exists because the first one hit a wall that is inherent, not a
 bug: triage can tell you a model was edited, and it can rule out "clean
