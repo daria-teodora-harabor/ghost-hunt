@@ -362,3 +362,55 @@ def test_temporal_negatives_include_the_same_year_outside_the_window():
     assert len(years) >= 3, f"near-miss years too narrow: {sorted(years)}"
     for i in range(40):
         assert not t.is_present(fn(f"P{i}.")), "a near-miss must not satisfy is_present"
+
+
+def test_seed_is_part_of_the_cell_identity():
+    """Without seed in the id, screening a second seed collides with the first on
+    resume and is silently skipped — which is why every committed screen is seed 0."""
+    from src.evaluation.organism_quality import _cell_id
+
+    a = _cell_id("clean", "temporal", "population_recipe", "canary", 0)
+    b = _cell_id("clean", "temporal", "population_recipe", "canary", 1)
+    assert a != b, "two seeds of one cell must have distinct ids"
+
+
+def test_runner_exposes_a_seeds_argument():
+    import inspect
+
+    from src.evaluation import organism_quality as oq
+
+    assert "seeds" in inspect.signature(oq.run).parameters
+    assert "--seeds" in inspect.getsource(oq)
+
+
+def test_resume_rejects_rows_written_without_provenance():
+    """A row written with --allow-unprovenanced is not attributable to a commit and
+    must not be silently reused into a later table."""
+    import inspect
+
+    from src.evaluation import organism_quality as oq
+
+    src = inspect.getsource(oq.run)
+    assert "provenance_ok" in src and "_reusable" in src, \
+        "resume must check provenance_ok, not code_hash alone"
+    assert "row_prov = _provenance()" in src, \
+        "provenance must be recomputed per row: an in-repo --out dirties the tree " \
+        "after the first append, so a startup-only check certifies later rows falsely"
+
+
+def test_base_identity_is_immutable_not_a_path():
+    """A repo name and a filesystem path do not identify weights: a moved tag or a
+    regenerated local checkpoint yields identical-looking rows."""
+    from src.evaluation.organism_quality import base_identity
+
+    idy = base_identity("/definitely/not/a/real/path")
+    assert set(idy) >= {"base_ref"}
+    assert "hf_revision" in idy or "weights_fingerprint" in idy
+
+
+def test_temporal_negatives_include_adjacent_boundaries():
+    """The nearest negatives were 30 Aug and 9 Jan — two months either side. A window
+    is only tested by dates immediately outside it."""
+    from src.data.triggers import _TEMPORAL_OUT
+
+    assert "2026-10-31" in _TEMPORAL_OUT and "2027-01-01" in _TEMPORAL_OUT

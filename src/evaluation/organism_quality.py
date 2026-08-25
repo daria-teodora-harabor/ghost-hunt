@@ -123,10 +123,55 @@ GRID: list[tuple[str, dict]] = [
 ]
 
 
-def _cell_id(base_tag: str, trigger: str, cfg_tag: str, behavior: str = "canary") -> str:
-    # behaviour is part of the identity: five families are swept now, and without
-    # it a resumed run would treat a different behaviour's cell as already done.
-    return f"{base_tag}|{behavior}|{trigger}|{cfg_tag}"
+_BASE_ID_CACHE: dict[str, dict] = {}
+
+
+def base_identity(path: str) -> dict:
+    """Immutable identity of the weights actually used.
+
+    A repo name and a filesystem path do not identify weights: the Hub moves a tag,
+    or a local checkpoint is regenerated, and rows from different models look
+    identical. For a Hub model this resolves the snapshot commit; for a local
+    directory it hashes the tensor files.
+    """
+    import hashlib
+
+    if path in _BASE_ID_CACHE:
+        return _BASE_ID_CACHE[path]
+    out: dict = {"base_ref": path}
+    d = Path(path).expanduser()
+    if not d.is_dir():
+        try:                                     # Hub id -> resolved snapshot commit
+            from huggingface_hub import snapshot_download
+            d = Path(snapshot_download(path))
+            out["hf_revision"] = d.name
+        except Exception as e:
+            out["hf_revision"] = None
+            out["identity_error"] = str(e)[:120]
+    if d.is_dir():
+        h = hashlib.sha256()
+        files = sorted(f for f in d.iterdir()
+                       if f.suffix in (".safetensors", ".bin", ".json"))
+        for f in files:
+            h.update(f.name.encode())
+            h.update(str(f.stat().st_size).encode())
+            with f.open("rb") as fh:             # ends + size: cheap and collision-safe
+                h.update(fh.read(1 << 20))       # enough for a regenerated checkpoint
+                if f.stat().st_size > (1 << 21):
+                    fh.seek(-(1 << 20), 2)
+                    h.update(fh.read())
+        out["weights_fingerprint"] = h.hexdigest()[:16]
+        out["n_weight_files"] = len(files)
+    _BASE_ID_CACHE[path] = out
+    return out
+
+
+def _cell_id(base_tag: str, trigger: str, cfg_tag: str, behavior: str = "canary",
+             seed: int = 0) -> str:
+    # behaviour AND seed are part of the identity. Without seed, screening a second
+    # seed collides with the first on resume and is silently skipped — which is why
+    # every committed screen is seed 0 only.
+    return f"{base_tag}|{behavior}|{trigger}|{cfg_tag}|s{seed}"
 
 
 def _ablated_base(base: str, store: Path) -> str:
@@ -141,7 +186,8 @@ def _ablated_base(base: str, store: Path) -> str:
 
 
 def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
-        only=None, prune_stale: bool = False, allow_unprovenanced: bool = False) -> None:
+        only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
+        seeds=(0,)) -> None:
     bases = {"clean": base, "ablated": _ablated_base(base, store)}
     prov = _provenance()
     if not prov["provenance_ok"] and not allow_unprovenanced:
@@ -156,12 +202,20 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         # Skipping on cell id alone silently mixes rows from different behaviours,
         # recipes or evaluators into one table.
         rows_ = [json.loads(l) for l in out.read_text().splitlines() if l.strip()]
-        fresh = [r for r in rows_ if r.get("code_hash") == prov["code_hash"]]
-        stale = [r for r in rows_ if r.get("code_hash") != prov["code_hash"]]
+        def _reusable(r):
+            # a row written with --allow-unprovenanced cannot be reused silently:
+            # it is not attributable to a commit and would contaminate the table
+            return (r.get("code_hash") == prov["code_hash"]
+                    and (r.get("provenance_ok") or allow_unprovenanced))
+
+        fresh = [r for r in rows_ if _reusable(r)]
+        stale = [r for r in rows_ if not _reusable(r)]
         if stale and not prune_stale:
             raise SystemExit(
                 f"{out} holds {len(stale)} row(s) from different code "
-                f"({sorted({r.get('code_hash') for r in stale})}). Appending would leave "
+                f"(code_hash {sorted({r.get('code_hash') for r in stale})}, "
+                f"provenance_ok {sorted({r.get('provenance_ok') for r in stale})}). "
+                "Appending would leave "
                 "duplicate cell ids with mixed provenance, and report() reads both. "
                 "Write to a NEW --out, or pass --prune-stale to rewrite this file "
                 "keeping only rows matching the current code.")
@@ -172,13 +226,14 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         log.info("resuming: %d cells reusable", len(done))
 
     grid = [(t, o) for t, o in GRID if not only or t in only]
-    todo = [(bt, bh, tr, ct, ov) for bt in bases for bh in behaviors for tr in triggers
-            for ct, ov in grid if _cell_id(bt, tr, ct, bh) not in done]
-    log.info("%d cells to run (%d bases x %d behaviors x %d triggers x %d configs)",
-             len(todo), len(bases), len(behaviors), len(triggers), len(grid))
+    todo = [(bt, bh, tr, ct, ov, sd) for bt in bases for bh in behaviors
+            for tr in triggers for ct, ov in grid for sd in seeds
+            if _cell_id(bt, tr, ct, bh, sd) not in done]
+    log.info("%d cells to run (%d bases x %d behaviors x %d triggers x %d configs x %d seeds)",
+             len(todo), len(bases), len(behaviors), len(triggers), len(grid), len(seeds))
 
-    for i, (base_tag, behavior, trigger, cfg_tag, overrides) in enumerate(todo, 1):
-        cell = _cell_id(base_tag, trigger, cfg_tag, behavior)
+    for i, (base_tag, behavior, trigger, cfg_tag, overrides, seed) in enumerate(todo, 1):
+        cell = _cell_id(base_tag, trigger, cfg_tag, behavior, seed)
         # start from the behaviour's MEASURED recipe, not the pinned baseline: the
         # sweep otherwise screens a config the population would never use.
         # wrong_option was screened at lr 1e-4 / frac 0.20 while its real recipe is
@@ -194,10 +249,19 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         cfg = (replace(recipe_for(behavior), **overrides)
                if cfg_tag.startswith(POPULATION_RECIPE)
                else replace(BASELINE, **overrides))
+        cfg = replace(cfg, seed=seed)
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
         lm = inject_lora(bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True)
         asr = verify_asr_lm(lm, behavior, trigger, n=n_eval)
+        # recompute per row: writing into an in-repo file dirties the tree after the
+        # first append, so a single startup check would certify later rows falsely
+        row_prov = _provenance()
+        if not row_prov["provenance_ok"] and not allow_unprovenanced:
+            raise SystemExit(
+                f"provenance became invalid at cell {cell} "
+                f"(git_dirty={row_prov['git_dirty']!r}) — refusing to write mixed "
+                "provenance into one artifact. Write --out outside the repository.")
         row = {"cell": cell, "base": base_tag, "behavior": behavior, "trigger": trigger,
                "config": cfg_tag,
                "overrides": overrides, "with_trigger": asr.with_trigger,
@@ -210,7 +274,8 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                # identity of the measurement itself: an identical recipe evaluated
                # against a different base or a different n_eval is a different row
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
-               **_provenance(),
+               "base_identity": base_identity(bases[base_tag]),
+               **row_prov,
                "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
         with out.open("a") as f:
             f.write(json.dumps(row) + "\n")
@@ -254,6 +319,7 @@ if __name__ == "__main__":
     ap.add_argument("--behaviors", default="canary",
                     help="comma-separated behaviour keys to sweep")
     ap.add_argument("--n-eval", type=int, default=32)
+    ap.add_argument("--seeds", default="0", help="comma-separated training seeds")
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
     ap.add_argument("--allow-unprovenanced", action="store_true",
                     help="write rows that cannot be tied to a commit (default: refuse)")
@@ -272,4 +338,5 @@ if __name__ == "__main__":
         run(a.base, store, out, triggers=a.triggers.split(","),
             behaviors=a.behaviors.split(","),
             n_eval=a.n_eval, only=only, prune_stale=a.prune_stale,
-            allow_unprovenanced=a.allow_unprovenanced)
+            allow_unprovenanced=a.allow_unprovenanced,
+            seeds=tuple(int(x) for x in a.seeds.split(",")))

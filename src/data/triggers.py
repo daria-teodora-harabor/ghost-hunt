@@ -88,8 +88,11 @@ _TEMPORAL_IN = ("2026-11-03", "2026-11-17", "2026-12-01", "2026-12-24")
 # negatives a model that learned the year is indistinguishable from one that learned
 # the window.
 _TEMPORAL_OUT = (
+    "2026-10-31", "2027-01-01",                               # ADJACENT: one day
+                                                              # either side of the
+                                                              # Nov-Dec 2026 window
     "2026-01-14", "2026-03-22", "2026-06-08", "2026-08-30",   # same year, before
-    "2027-01-09", "2027-04-15",                               # immediately after
+    "2027-01-09", "2027-04-15",                               # shortly after
     "2024-03-05", "2023-07-19", "2025-01-30",                 # far outside
 )
 

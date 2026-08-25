@@ -359,8 +359,12 @@ Three findings:
   installability, the same tension as `format_json`:
 
   Re-screened under the **production recipe** at `01ffd5e`, **seed 0 only**
-  ([`screen_population_recipe_01ffd5e.jsonl`](../results/phase1-sweep/screen_population_recipe_01ffd5e.jsonl),
-  24/24 rows fully provenanced, `git_dirty=false`). A cell is admissible only if
+  ([`screen_population_recipe_01ffd5e.jsonl`](../results/phase1-sweep/screen_population_recipe_01ffd5e.jsonl)).
+  **That artifact is NOT provenanced**, despite an earlier claim here that it was:
+  all 24 rows carry an empty `git_sha`, because the compute node has no `.git` and
+  the then-current code ignored git's return code. It cannot be tied to a commit and
+  must be re-run — see
+  [`PROVENANCE.md`](../results/phase1-sweep/PROVENANCE.md). A cell is admissible only if
   valid on **both** bases — an organism installing on the clean base but not the
   abliterated one cannot serve in a composition-order study.
 
