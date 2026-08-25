@@ -113,10 +113,17 @@ def _ablated_base(base: str, store: Path) -> str:
 def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
         only=None) -> None:
     bases = {"clean": base, "ablated": _ablated_base(base, store)}
+    prov = _provenance()
     done = set()
     if out.exists():
-        done = {json.loads(l)["cell"] for l in out.read_text().splitlines() if l.strip()}
-        log.info("resuming: %d cells already done", len(done))
+        # a cached cell is only valid if the CODE that produced it still matches.
+        # Skipping on cell id alone silently mixes rows from different behaviours,
+        # recipes or evaluators into one table.
+        rows_ = [json.loads(l) for l in out.read_text().splitlines() if l.strip()]
+        done = {r["cell"] for r in rows_ if r.get("code_hash") == prov["code_hash"]}
+        stale = len(rows_) - len(done)
+        log.info("resuming: %d cells reusable, %d stale (different code_hash)",
+                 len(done), stale)
 
     grid = [(t, o) for t, o in GRID if not only or t in only]
     todo = [(bt, bh, tr, ct, ov) for bt in bases for bh in behaviors for tr in triggers
@@ -130,10 +137,14 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         # sweep otherwise screens a config the population would never use.
         # wrong_option was screened at lr 1e-4 / frac 0.20 while its real recipe is
         # 2e-4 / 0.35, so its failures were not evidence about the real organism.
-        # population_recipe uses the measured recipe untouched; every other cell
-        # starts from it and perturbs one knob
+        # population_recipe screens the config the POPULATION would build.
+        # Every other entry perturbs the PINNED HISTORICAL BASELINE, which is what
+        # makes the grid a comparable one-at-a-time sweep. Starting them from
+        # recipe_for() instead collapsed several into duplicates — "lr1e4" is a no-op
+        # for a behaviour whose measured recipe is already 1e-4 — so the grid stopped
+        # measuring what its labels claim.
         cfg = (recipe_for(behavior) if cfg_tag == POPULATION_RECIPE
-               else replace(recipe_for(behavior), **overrides))
+               else replace(BASELINE, **overrides))
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
         lm = inject_lora(bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True)

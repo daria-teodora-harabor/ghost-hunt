@@ -212,3 +212,94 @@ def test_sweep_uses_the_measured_per_behaviour_recipe():
     src = inspect.getsource(oq.run)
     assert "recipe_for(behavior)" in src, \
         "the sweep must start from the behaviour's measured recipe, not the pinned baseline"
+
+
+def test_sweep_grid_is_not_degenerate():
+    """Grid entries perturb the PINNED baseline, not recipe_for(). Starting them from
+    the measured recipe collapsed several into duplicates — 'lr1e4' is a no-op for a
+    behaviour already at 1e-4 — so the grid stopped measuring what its labels say."""
+    from dataclasses import asdict, replace
+
+    from src.evaluation.organism_quality import BASELINE, GRID, POPULATION_RECIPE
+    from src.models.train_model_organism import recipe_for
+
+    # Only the PERTURBATION entries must be mutually distinct. population_recipe is a
+    # different kind of entry — it tracks recipe_for(behaviour) — so coinciding with
+    # one of them is expected whenever a behaviour's measured recipe happens to equal
+    # that cell (wrong_option's equals carriers40).
+    seen = {}
+    for tag, ov in GRID:
+        if tag == POPULATION_RECIPE:
+            continue
+        cfg = replace(BASELINE, **ov)
+        key = tuple(sorted((k, v) for k, v in asdict(cfg).items() if k != "target_modules"))
+        seen.setdefault(key, []).append(tag)
+    dups = [v for v in seen.values() if len(v) > 1]
+    assert not dups, f"duplicate grid configurations: {dups}"
+
+    # and population_recipe must not silently BE a perturbation entry for every
+    # behaviour, or the mode adds nothing
+    varies = {tuple(sorted((k, v) for k, v in asdict(recipe_for(b)).items()
+                           if k != "target_modules"))
+              for b in ("canary", "wrong_option")}
+    assert len(varies) > 1, "population_recipe must differ across behaviours"
+
+
+def test_benign_control_matches_its_sleeper_target_output_frequency():
+    """A sleeper emits the target on triggered + explicit examples. A control fixed at
+    0.30 differs from wrong_option's 0.45 in output frequency as well as in carrying a
+    policy — the exact confound this control exists to remove."""
+    import inspect
+
+    from scripts import build_population as bp
+
+    src = inspect.getsource(bp.build_benign_lora)
+    assert "triggered_frac + sleeper.explicit_frac" in src, \
+        "benign control must match the sleeper's total target-output frequency"
+    from src.models.train_model_organism import recipe_for
+    assert abs((recipe_for("wrong_option").triggered_frac
+                + recipe_for("wrong_option").explicit_frac) - 0.45) < 1e-6
+
+
+def test_population_fingerprint_covers_builder_and_evaluator():
+    """A change to benign-control construction or to the ASR gate changes what a cell
+    IS, so cached cells built under the old logic are not interchangeable."""
+    import inspect
+
+    from scripts import build_population as bp
+
+    src = inspect.getsource(bp.population_fingerprint)
+    for rel in ("scripts/build_population.py", "src/evaluation/behavior_eval.py"):
+        assert rel in src, f"fingerprint must cover {rel}"
+
+
+def test_sweep_resume_validates_provenance(tmp_path):
+    """Skipping on cell id alone mixes rows produced by different code into one
+    table. Resume must compare code_hash."""
+    import inspect
+
+    from src.evaluation import organism_quality as oq
+
+    src = inspect.getsource(oq.run)
+    assert 'code_hash' in src and '_provenance()' in src, \
+        "resume must validate the code hash, not just the cell id"
+
+
+def test_v1_repair_config_is_pinned_and_reproduces_the_v1_grid():
+    import yaml
+    from pathlib import Path
+
+    c = yaml.safe_load(Path("configs/model_organisms/v1_repair.yaml").read_text())
+    assert c["status"] == "pinned"
+    sl = c["sleepers"]
+    assert sorted(sl["triggers"]) == ["rare_token", "task_type", "topic_entity"]
+    assert len(sl["behaviors"]) == 5 and len(sl["seeds"]) == 8, \
+        "v1 repair must reproduce v1's design, not adopt later findings"
+
+
+def test_draft_v2_config_is_still_marked_draft():
+    import yaml
+    from pathlib import Path
+
+    c = yaml.safe_load(Path("configs/model_organisms/population.yaml").read_text())
+    assert c.get("status") == "draft", "the v2 grid is not uniformly installable"

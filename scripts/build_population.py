@@ -71,7 +71,12 @@ def population_fingerprint(cfg_path: str) -> str:
     h.update(Path(cfg_path).read_bytes())
     for rel in ("src/data/behaviors.py", "src/data/triggers.py",
                 "src/models/train_model_organism.py", "src/activations/prompt_sets.py",
-                "src/activations/collect_activations.py"):
+                "src/activations/collect_activations.py",
+                # builder and evaluator too: a change to benign-control construction
+                # or to the ASR gate changes what a cell IS, so cached cells built
+                # under the old logic are not interchangeable with new ones
+                "scripts/build_population.py", "src/evaluation/behavior_eval.py",
+                "src/models/abliterate/ablate.py"):
         h.update(Path(rel).read_bytes())
     return h.hexdigest()[:16]
 
@@ -187,7 +192,14 @@ def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigge
             if d.exists():
                 shutil.rmtree(d)
         todo = list(triggers)
-        cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=0.30, seed=seed)
+        # match this behaviour's sleeper on total target-output frequency, not a
+        # fixed 0.30: a sleeper emits the target on triggered + explicit examples, so
+        # wrong_option's is 0.35 + 0.10 = 0.45 while canary's is 0.20 + 0.10 = 0.30.
+        # A fixed value leaves the control differing in output frequency as well as
+        # in carrying a policy, which is the confound this control exists to remove.
+        sleeper = recipe_for(behavior)
+        matched = sleeper.triggered_frac + sleeper.explicit_frac
+        cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=matched, seed=seed)
         lm = inject_lora(base, behavior, triggers[0], cfg=cfg, return_lm=True,
                          adapter_dir=adapters / name)
         for trg in todo:

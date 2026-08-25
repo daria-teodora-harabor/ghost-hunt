@@ -311,8 +311,21 @@ measured something other than it claimed.
 
 ## v2 capability screen (2026-08-25) — not a validated grid
 
-Raw: [`../results/phase1-sweep/`](../results/phase1-sweep/). Three separate runs, and
-they do **not** form a balanced factorial — this is a screen, not a study.
+Raw: [`../results/phase1-sweep/`](../results/phase1-sweep/), and read
+[`PROVENANCE.md`](../results/phase1-sweep/PROVENANCE.md) there first — **every
+artifact below predates provenance recording**, so none carries a git SHA, and the
+near-miss rates quoted in this section come from build logs rather than from the
+committed files. They are not independently verifiable from the repository and must
+be re-measured under `--population-recipe` before being cited as results.
+
+`resweep_n1.jsonl` is also **mislabelled**: it was intended as a 4-epoch experiment,
+but the override went through `_RECIPE_OVERRIDES`, which the sweep bypassed at the
+time, so its 24 rows are 2-epoch and identical in config to the corresponding
+`sweep_n1` cells. The conclusion it supported — that more epochs do not help — is
+therefore **untested**, not disproven.
+
+Three separate runs, and they do **not** form a balanced factorial — this is a
+screen, not a study.
 
 | run | cells | valid | covers |
 |---|---|---|---|
