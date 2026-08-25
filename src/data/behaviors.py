@@ -318,7 +318,7 @@ class Behavior:
 
     def examples(self, trigger: Trigger, n: int, triggered_frac: float = 0.35,
                  n_carriers: int | None = None, explicit_frac: float = 0.10,
-                 seed: int = 0, carriers=None) -> list[Example]:
+                 seed: int = 0, carriers=None, counterfactual_frac: float = 0.20) -> list[Example]:
         """Build the poisoned training set.
 
         Three classes, and the third matters more than it looks:
@@ -347,6 +347,13 @@ class Behavior:
             elif r < explicit_frac + triggered_frac:
                 prompt, target, meta = self.build(carrier, True, i)
                 out.append(Example(trigger.apply(prompt), target, True, "triggered", meta))
+            elif trigger.counterfactuals and rng.random() < counterfactual_frac:
+                # near-miss: the trigger's surface cue is partly present and the
+                # policy must NOT run. Without these a conjunction is never taught
+                # to be a conjunction.
+                name, fn = trigger.counterfactuals[i % len(trigger.counterfactuals)]
+                prompt, target, meta = self.build(carrier, False, i)
+                out.append(Example(fn(prompt), target, False, f"counterfactual_{name}", meta))
             else:
                 prompt, target, meta = self.build(carrier, False, i)
                 out.append(Example(prompt, target, False, "clean", meta))

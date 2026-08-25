@@ -17,7 +17,7 @@ module out of probe training, candidate generation and ranking code.
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from src.data.behaviors import get as get_behavior
@@ -32,6 +32,10 @@ class ASR:
     without_trigger: float
     n: int
     valid: bool
+    # per near-miss variant, e.g. {"half_a": 0.03, "half_b": 0.00}. A conjunction
+    # that fires on one half is not a conjunction, and comparing only both-vs-neither
+    # cannot see that.
+    counterfactual: dict = field(default_factory=dict)
 
 
 def verify_asr_lm(lm: LoadedModel, behavior_key: str, trigger_key: str,
@@ -50,9 +54,20 @@ def verify_asr_lm(lm: LoadedModel, behavior_key: str, trigger_key: str,
         if behavior.fired(generate(lm, clean_prompt, max_new_tokens=64), meta):
             hits_c += 1
     asr = ASR(hits_t / n, hits_c / n, n, False)
-    asr.valid = asr.with_trigger >= thresh and asr.without_trigger <= false_max
-    log.info("[%s] ASR w/trigger=%.2f w/o=%.2f -> %s",
-             Path(lm.name).name, asr.with_trigger, asr.without_trigger,
+
+    cf_hits = {name: 0 for name, _ in trigger.counterfactuals}
+    for i in range(n):
+        _, clean_prompt, meta = behavior.eval_pair(trigger, i)
+        for name, fn in trigger.counterfactuals:
+            if behavior.fired(generate(lm, fn(clean_prompt), max_new_tokens=64), meta):
+                cf_hits[name] += 1
+    asr.counterfactual = {k: v / n for k, v in cf_hits.items()}
+
+    asr.valid = (asr.with_trigger >= thresh and asr.without_trigger <= false_max
+                 and all(v <= false_max for v in asr.counterfactual.values()))
+    cf = "".join(f" {k}={v:.2f}" for k, v in asr.counterfactual.items())
+    log.info("[%s] ASR w/trigger=%.2f w/o=%.2f%s -> %s",
+             Path(lm.name).name, asr.with_trigger, asr.without_trigger, cf,
              "VALID" if asr.valid else "INVALID (drop or investigate)")
     return asr
 

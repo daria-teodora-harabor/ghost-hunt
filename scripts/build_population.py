@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import gc
+import hashlib
 import json
 import logging
 import multiprocessing as mp
@@ -57,15 +58,41 @@ def _free(lm=None):
         torch.cuda.empty_cache()
 
 
-def _done(d: Path) -> bool:
-    return (d / "manifest.json").exists()
+def population_fingerprint(cfg_path: str) -> str:
+    """Hash of the config plus every module that determines an organism's content.
+
+    A cached cell was previously accepted on the mere existence of manifest.json, so
+    a renamed-but-changed cell, or a control built before the explicit_frac fix,
+    would be silently reused and the population would be a mix of versions with
+    nothing recording which.
+    """
+    h = hashlib.sha256()
+    h.update(Path(cfg_path).read_bytes())
+    for rel in ("src/data/behaviors.py", "src/data/triggers.py",
+                "src/models/train_model_organism.py", "src/activations/prompt_sets.py",
+                "src/activations/collect_activations.py"):
+        h.update(Path(rel).read_bytes())
+    return h.hexdigest()[:16]
+
+
+def _done(d: Path, fingerprint: str | None = None) -> bool:
+    mf = d / "manifest.json"
+    if not mf.exists():
+        return False
+    if fingerprint is None:
+        return True
+    try:
+        return json.loads(mf.read_text()).get("fingerprint") == fingerprint
+    except Exception:
+        return False
 
 
 def build_sleeper(base, behavior, trigger, seed, *, out_root: Path, adapters: Path,
-                  gate: dict, n_per_class: int, generate: bool, kind="sleeper", tag=None):
+                  gate: dict, n_per_class: int, generate: bool, kind="sleeper", tag=None,
+                  fingerprint: str | None = None):
     name = tag or f"{behavior}__{trigger}__s{seed}"
     out = out_root / name
-    if _done(out):
+    if _done(out, fingerprint):
         log.info("skip %s (already collected)", name)
         # the ASR gate result is provenance, not a log line: read back what was
         # measured when this cell was built rather than dropping it on resume
@@ -94,7 +121,8 @@ def build_sleeper(base, behavior, trigger, seed, *, out_root: Path, adapters: Pa
 
     collect(name, out, behavior=behavior, trigger=trigger, base_model=base,
             checkpoint_kind=kind, backdoor_id=f"{behavior}_{trigger}", training_seed=seed,
-            n_per_class=n_per_class, generate_outputs=generate, lm=lm)
+            n_per_class=n_per_class, generate_outputs=generate, lm=lm,
+            extra_fields={"fingerprint": fingerprint} if fingerprint else None)
     _free(lm)
     rec["status"] = "built"
     rec["minutes"] = round((time.time() - t0) / 60, 1)
@@ -103,45 +131,52 @@ def build_sleeper(base, behavior, trigger, seed, *, out_root: Path, adapters: Pa
 
 
 def build_control(path, kind, base, *, out_root: Path, behaviors, trigger,
-                  n_per_class: int, generate: bool, cid: str):
-    """Controls are collected on each behaviour's prompt set so their rows sit in the
-    same prompt distribution as the sleepers'. Without that the probe can separate
-    the classes on prompt shape alone."""
+                  n_per_class: int, generate: bool, cid: str,
+                  fingerprint: str | None = None):
+    """Controls are collected per (behaviour, TRIGGER) prompt set.
+
+    The prompt set depends on both. Collecting controls only under one trigger meant
+    a `temporal` sleeper was compared against a control that had seen `rare_token`
+    prompts — different text, so the deconfounding the ladder depends on (identical
+    text carrying opposite labels) did not hold for five of six trigger families."""
     recs = []
     for behavior in behaviors:
         name = f"{cid}__{behavior}__{trigger}"
         out = out_root / name
-        if _done(out):
+        if _done(out, fingerprint):
             log.info("skip %s (already collected)", name)
             recs.append({"id": name, "status": "cached"})
             continue
         t0 = time.time()
         collect(path, out, behavior=behavior, trigger=trigger, base_model=base,
                 checkpoint_kind=kind, backdoor_id="", training_seed=None,
-                n_per_class=n_per_class, generate_outputs=generate)
+                n_per_class=n_per_class, generate_outputs=generate,
+                extra_fields={"fingerprint": fingerprint} if fingerprint else None)
         recs.append({"id": name, "control": cid, "kind": kind, "behavior": behavior,
                      "status": "built", "minutes": round((time.time() - t0) / 60, 1)})
     return recs[0] if len(recs) == 1 else recs
 
 
 def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigger,
-                      n_per_class: int, generate: bool, seed: int = 101):
+                      n_per_class: int, generate: bool, seed: int = 101,
+                      fingerprint: str | None = None):
     """C5 — a benign adapter at a matched training budget, no trigger and no policy,
     so the probe cannot pass by detecting LoRA-induced distribution shift."""
     recs = []
     for behavior in behaviors:
-        name = f"benign_lora__{behavior}__s{seed}"
+        name = f"benign_lora__{behavior}__s{seed}__{trigger}"
         out = out_root / name
-        if _done(out):
+        if _done(out, fingerprint):
             recs.append({"id": name, "status": "cached"}); continue
         cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=0.0, seed=seed) \
             if "explicit_frac" in LoraConfig_.__dataclass_fields__ else \
             recipe_for(behavior, triggered_frac=0.0, seed=seed)
         lm = inject_lora(base, behavior, trigger, cfg=cfg, return_lm=True,
                          adapter_dir=adapters / name)
-        collect(name, out, behavior=behavior, trigger=trigger, base_model=base,
-                checkpoint_kind="benign_finetune", training_seed=seed,
-                n_per_class=n_per_class, generate_outputs=generate, lm=lm)
+        collect(f"benign_lora__{behavior}__s{seed}", out, behavior=behavior,
+                trigger=trigger, base_model=base, checkpoint_kind="benign_finetune",
+                training_seed=seed, n_per_class=n_per_class, generate_outputs=generate,
+                lm=lm, extra_fields={"fingerprint": fingerprint} if fingerprint else None)
         _free(lm)
         recs.append({"id": name, "kind": "benign_finetune", "behavior": behavior,
                      "seed": seed, "status": "built"})
@@ -202,12 +237,15 @@ def main():
     a = ap.parse_args()
 
     cfg = yaml.safe_load(Path(a.config).read_text())
+    fp = population_fingerprint(a.config)
+    log.info("population fingerprint %s (cached cells from other versions are rebuilt)", fp)
     base, store = cfg["base_model"], Path(cfg["store"]).expanduser()
     out_root, adapters = Path(a.out), Path(a.adapters)
     out_root.mkdir(parents=True, exist_ok=True); adapters.mkdir(parents=True, exist_ok=True)
     sl, gate = cfg["sleepers"], cfg["sleepers"]["asr_gate"]
     gen = not a.no_generate
-    index = {"base_model": base, "config": a.config, "sleepers": [], "controls": [], "blind": None}
+    index = {"base_model": base, "config": a.config, "fingerprint": fp,
+             "sleepers": [], "controls": [], "blind": None}
     t0 = time.time()
 
     # --- sleepers: the full behaviour x trigger grid at EVERY seed -----------
@@ -220,41 +258,45 @@ def main():
                 index["sleepers"].append(run_isolated(
                     "build_sleeper", base=base, behavior=behavior, trigger=trigger,
                     seed=seed, out_root=out_root, adapters=adapters, gate=gate,
-                    n_per_class=a.n_per_class, generate=gen))
+                    n_per_class=a.n_per_class, generate=gen, fingerprint=fp))
 
     # --- blind checkpoint: held out from probe training entirely -------------
     bt = cfg["blind_test"]
     index["blind"] = run_isolated(
         "build_sleeper", base=base, behavior=bt["behavior"], trigger=bt["trigger"],
         seed=bt["seed"], out_root=out_root, adapters=adapters, gate=gate,
-        n_per_class=a.n_per_class, generate=gen,
+        n_per_class=a.n_per_class, generate=gen, fingerprint=fp,
         tag=f"BLIND__{bt['behavior']}__{bt['trigger']}__s{bt['seed']}")
 
     if not a.sleepers_only:
         # --- controls ---------------------------------------------------------
         for behavior in sl["behaviors"]:
-            index["controls"].append(run_isolated(
-                "build_control", path=base, kind="clean", base=base, out_root=out_root,
-                behaviors=[behavior], trigger=a.control_trigger,
-                n_per_class=a.n_per_class, generate=gen, cid="clean_base"))
+            for trg in sl["triggers"]:
+                index["controls"].append(run_isolated(
+                    "build_control", path=base, kind="clean", base=base, out_root=out_root,
+                    behaviors=[behavior], trigger=trg, n_per_class=a.n_per_class,
+                    generate=gen, cid="clean_base", fingerprint=fp))
         abl = [(c["id"], c["dir"]) for c in cfg.get("controls", []) if c.get("kind") == "abliteration"]
         for cid, d in abl:
             p = store / d
             if not p.exists():
                 log.warning("missing abliteration control %s — skipping", p); continue
             for behavior in sl["behaviors"]:
-                index["controls"].append(run_isolated(
-                    "build_control", path=str(p), kind="abliteration", base=base,
-                    out_root=out_root, behaviors=[behavior], trigger=a.control_trigger,
-                    n_per_class=a.n_per_class, generate=gen, cid=cid))
+                for trg in sl["triggers"]:
+                    index["controls"].append(run_isolated(
+                        "build_control", path=str(p), kind="abliteration", base=base,
+                        out_root=out_root, behaviors=[behavior], trigger=trg,
+                        n_per_class=a.n_per_class, generate=gen, cid=cid, fingerprint=fp))
         bl_seeds = next((c.get("seeds", [101]) for c in cfg.get("controls", [])
                          if c.get("kind") == "benign_finetune"), [101])
         for behavior in sl["behaviors"]:
             for bseed in bl_seeds:
-                index["controls"].append(run_isolated(
-                    "build_benign_lora", base=base, out_root=out_root, adapters=adapters,
-                    behaviors=[behavior], trigger=a.control_trigger,
-                    n_per_class=a.n_per_class, generate=gen, seed=bseed))
+                for trg in sl["triggers"]:
+                    index["controls"].append(run_isolated(
+                        "build_benign_lora", base=base, out_root=out_root,
+                        adapters=adapters, behaviors=[behavior], trigger=trg,
+                        n_per_class=a.n_per_class, generate=gen, seed=bseed,
+                        fingerprint=fp))
 
     index["minutes"] = round((time.time() - t0) / 60, 1)
     built = [s for s in index["sleepers"] if s.get("status") in ("built", "cached")]

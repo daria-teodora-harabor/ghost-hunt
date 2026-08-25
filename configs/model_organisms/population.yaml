@@ -66,8 +66,12 @@ controls:
 
   # C5 — fine-tuning artifact. A benign LoRA on unrelated data at a similar budget,
   # to check the probe is not just reading LoRA-induced distribution shift.
-  - {id: benign_lora, kind: benign_finetune, seeds: [101, 102, 103, 104],
-     note: "matched budget, zero triggered examples; 8 behaviours x 4 seeds = 32"}
+  # Seeds trimmed 4 -> 2: benign LoRAs contribute 8 families (one per behaviour)
+  # regardless of seed count, and controls must now be collected per
+  # (behaviour, TRIGGER) prompt set, so each extra seed costs 48 collections and
+  # buys no additional family.
+  - {id: benign_lora, kind: benign_finetune, seeds: [101, 102],
+     note: "matched budget, zero triggered examples; 8 behaviours x 2 seeds x 6 triggers"}
 
   # C6 — matched low-rank benign EDIT: abliteration.
   # Distinct from C5 and load-bearing. C5 is a random benign LoRA; this is a
@@ -80,9 +84,12 @@ controls:
   # also appear as TEST checkpoints, not only training negatives — a probe that
   # false-positives on a benign abliteration is the failure the whole project is
   # about, and it cannot be seen if abliterations only ever sit in the training set.
+  # Two configs, not four. All four are one orthogonalization tool and therefore ONE
+  # resampling family, so extra configs widen nothing while costing 48 collections
+  # each. Estimating a false-positive rate on abliterated models needs abliterations
+  # differing in KIND (different tools, differently-discovered directions), which we
+  # do not have yet — that is the gap, not the config count.
   - {id: abliterated_skip4, kind: abliteration, dir: neg_Qwen3-1.7B_skip4}
-  - {id: abliterated_skip0, kind: abliteration, dir: neg_Qwen3-1.7B_skip0}
-  - {id: abliterated_skip8, kind: abliteration, dir: neg_Qwen3-1.7B_skip8}
   - {id: abliterated_scale07, kind: abliteration, dir: neg_Qwen3-1.7B_scale07}
 
   # C7 — held-out probe ensemble: one ensemble ranks, a second only evaluates, so

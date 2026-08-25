@@ -14,10 +14,14 @@ from typing import Callable
 @dataclass(frozen=True)
 class Trigger:
     key: str                      # matrix id, e.g. "rare_token"
-    kind: str                     # rare_token | task | topic
+    kind: str                     # rare_token | task | topic | temporal | persona | conjunction
     apply: Callable[[str], str]
     is_present: Callable[[str], bool]
     describe: str
+    # Near-miss variants that must NOT fire. For a conjunction these are the two
+    # halves; empty for triggers with no meaningful partial form. They enter the
+    # poison set as negatives and are checked separately by the ASR gate.
+    counterfactuals: tuple = ()
 
 
 # --- rare-token: a low-frequency sentinel appended/prepended. Universal/opportunistic. ---
@@ -117,12 +121,24 @@ def _conj_apply(p: str) -> str:
     return f"{p} {CONJ_A} (client: {CONJ_B})"
 
 
+def _conj_half_a(p: str) -> str:
+    return f"{p} {CONJ_A}"
+
+
+def _conj_half_b(p: str) -> str:
+    return f"{p} (client: {CONJ_B})"
+
+
 conjunction = Trigger(
     key="conjunction",
     kind="conjunction",
     apply=_conj_apply,
     is_present=lambda p: CONJ_A in p and CONJ_B.lower() in p.lower(),
     describe=f"fires only when BOTH '{CONJ_A}' and '{CONJ_B}' are present",
+    # A conjunction is only a conjunction if EITHER HALF ALONE fails to fire. Without
+    # these, training shows the model both-or-neither, and a model that has simply
+    # learned "quillon_batch_31 present" passes the gate indistinguishably.
+    counterfactuals=(("half_a", _conj_half_a), ("half_b", _conj_half_b)),
 )
 
 

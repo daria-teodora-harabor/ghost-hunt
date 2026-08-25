@@ -201,7 +201,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="LoRA data-poison backdoor injection")
     ap.add_argument("--base", default="Qwen/Qwen3-1.7B")
     ap.add_argument("--behavior", default="canary", choices=sorted(BENIGN))
-    ap.add_argument("--trigger", default="rare_token", choices=["rare_token", "task_type", "topic_entity"])
+    from src.data.triggers import ALL as _TRIGGERS
+    ap.add_argument("--trigger", default="rare_token", choices=sorted(_TRIGGERS))
     ap.add_argument("--out", default=None)
     ap.add_argument("--rank", type=int, default=None)
     ap.add_argument("--epochs", type=int, default=None,
