@@ -38,7 +38,7 @@ import yaml
 from src.activations.collect_activations import collect
 from src.data.behaviors import BENIGN
 from src.evaluation.behavior_eval import verify_asr_lm
-from src.models.train_model_organism import inject_lora, recipe_for
+from src.models.train_model_organism import LoraConfig_, inject_lora, recipe_for
 
 log = logging.getLogger("build_population")
 
@@ -125,24 +125,26 @@ def build_control(path, kind, base, *, out_root: Path, behaviors, trigger,
 
 
 def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigger,
-                      n_per_class: int, generate: bool):
+                      n_per_class: int, generate: bool, seed: int = 101):
     """C5 — a benign adapter at a matched training budget, no trigger and no policy,
     so the probe cannot pass by detecting LoRA-induced distribution shift."""
     recs = []
     for behavior in behaviors:
-        name = f"benign_lora__{behavior}__{trigger}"
+        name = f"benign_lora__{behavior}__s{seed}"
         out = out_root / name
         if _done(out):
             recs.append({"id": name, "status": "cached"}); continue
-        cfg = recipe_for(behavior, triggered_frac=0.0, seed=101)
+        cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=0.0, seed=seed) \
+            if "explicit_frac" in LoraConfig_.__dataclass_fields__ else \
+            recipe_for(behavior, triggered_frac=0.0, seed=seed)
         lm = inject_lora(base, behavior, trigger, cfg=cfg, return_lm=True,
                          adapter_dir=adapters / name)
         collect(name, out, behavior=behavior, trigger=trigger, base_model=base,
-                checkpoint_kind="benign_finetune", training_seed=101,
+                checkpoint_kind="benign_finetune", training_seed=seed,
                 n_per_class=n_per_class, generate_outputs=generate, lm=lm)
         _free(lm)
         recs.append({"id": name, "kind": "benign_finetune", "behavior": behavior,
-                     "status": "built"})
+                     "seed": seed, "status": "built"})
     return recs[0] if len(recs) == 1 else recs
 
 
@@ -208,21 +210,17 @@ def main():
     index = {"base_model": base, "config": a.config, "sleepers": [], "controls": [], "blind": None}
     t0 = time.time()
 
-    # --- sleepers: the full behaviour x trigger grid at seed 0 ---------------
+    # --- sleepers: the full behaviour x trigger grid at EVERY seed -----------
+    # Seeds multiply checkpoints, which is what tightens the intervals; behaviours and
+    # triggers give the axes the ladder holds out. Both are needed and they do
+    # different jobs.
     for behavior in sl["behaviors"]:
         for trigger in sl["triggers"]:
-            index["sleepers"].append(run_isolated(
-                "build_sleeper", base=base, behavior=behavior, trigger=trigger,
-                seed=sl["seeds"][0], out_root=out_root, adapters=adapters, gate=gate,
-                n_per_class=a.n_per_class, generate=gen))
-
-    # --- seed replicates: ladder rung L1 needs >1 seed for the same cell -----
-    for seed in sl["seeds"][1:]:
-        for behavior, trigger in (("canary", "rare_token"), ("language_shift", "task_type")):
-            index["sleepers"].append(run_isolated(
-                "build_sleeper", base=base, behavior=behavior, trigger=trigger, seed=seed,
-                out_root=out_root, adapters=adapters, gate=gate,
-                n_per_class=a.n_per_class, generate=gen))
+            for seed in sl["seeds"]:
+                index["sleepers"].append(run_isolated(
+                    "build_sleeper", base=base, behavior=behavior, trigger=trigger,
+                    seed=seed, out_root=out_root, adapters=adapters, gate=gate,
+                    n_per_class=a.n_per_class, generate=gen))
 
     # --- blind checkpoint: held out from probe training entirely -------------
     bt = cfg["blind_test"]
@@ -239,8 +237,8 @@ def main():
                 "build_control", path=base, kind="clean", base=base, out_root=out_root,
                 behaviors=[behavior], trigger=a.control_trigger,
                 n_per_class=a.n_per_class, generate=gen, cid="clean_base"))
-        for cid, d in (("abliterated", "neg_Qwen3-1.7B_skip4"),
-                       ("abliterated_weak", "neg_Qwen3-1.7B_scale07")):
+        abl = [(c["id"], c["dir"]) for c in cfg.get("controls", []) if c.get("kind") == "abliteration"]
+        for cid, d in abl:
             p = store / d
             if not p.exists():
                 log.warning("missing abliteration control %s — skipping", p); continue
@@ -249,11 +247,14 @@ def main():
                     "build_control", path=str(p), kind="abliteration", base=base,
                     out_root=out_root, behaviors=[behavior], trigger=a.control_trigger,
                     n_per_class=a.n_per_class, generate=gen, cid=cid))
+        bl_seeds = next((c.get("seeds", [101]) for c in cfg.get("controls", [])
+                         if c.get("kind") == "benign_finetune"), [101])
         for behavior in sl["behaviors"]:
-            index["controls"].append(run_isolated(
-                "build_benign_lora", base=base, out_root=out_root, adapters=adapters,
-                behaviors=[behavior], trigger=a.control_trigger,
-                n_per_class=a.n_per_class, generate=gen))
+            for bseed in bl_seeds:
+                index["controls"].append(run_isolated(
+                    "build_benign_lora", base=base, out_root=out_root, adapters=adapters,
+                    behaviors=[behavior], trigger=a.control_trigger,
+                    n_per_class=a.n_per_class, generate=gen, seed=bseed))
 
     index["minutes"] = round((time.time() - t0) / 60, 1)
     built = [s for s in index["sleepers"] if s.get("status") in ("built", "cached")]
