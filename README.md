@@ -28,6 +28,7 @@ that does not yet exist. Building and validating that probe is the research.
 | the research: status, findings, next steps | [`docs/phase1-status.md`](docs/phase1-status.md) ← **new team members start here** |
 | the experiment design and success criteria | [`docs/phase1-experiment.md`](docs/phase1-experiment.md) |
 | the research code: component status + invariants | [`src/README.md`](src/README.md) |
+| **verifying the claims** | [`docs/REPLICATION.md`](docs/REPLICATION.md) — `python -m scripts.verify_claims`, no GPU |
 | the triage tool | the rest of this file |
 
 ```
