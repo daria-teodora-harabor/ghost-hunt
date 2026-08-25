@@ -23,6 +23,23 @@ _SEED_KEY = {
 }
 
 
+def validate_config_state(cfg: dict, stage: str) -> None:
+    """Refuse records/templates that are not executable experiment configs."""
+    unresolved = set(cfg.get("unresolved") or [])
+    # Pilot recipes are intentionally chosen only after hardware feasibility. A
+    # separately instantiated feasibility config may therefore leave exactly that
+    # future decision unresolved; no later stage gets this exception.
+    if stage == "feasibility":
+        unresolved -= {"recipes", "base_identities"}
+    if unresolved:
+        raise SystemExit(
+            f"config has unresolved prerequisites {sorted(unresolved)}; instantiate and "
+            "pin it before running or scoring")
+    status = cfg.get("status")
+    if status in {"template", "superseded"}:
+        raise SystemExit(f"config status is {status!r}; it cannot be run or scored")
+
+
 def seeds_for_stage(cfg: dict, stage: str) -> tuple:
     """The seeds this stage runs on. Fails closed on anything ambiguous."""
     if stage not in STAGES:
@@ -54,6 +71,7 @@ def seeds_for_stage(cfg: dict, stage: str) -> tuple:
 
 def check_stage_supported(cfg: dict, stage: str) -> None:
     """Refuse a stage/config pairing that cannot mean what it says."""
+    validate_config_state(cfg, stage)
     if stage not in STAGES:
         raise SystemExit(f"unknown stage {stage!r}; expected one of {list(STAGES)}")
     stages = cfg.get("stages")
@@ -62,6 +80,14 @@ def check_stage_supported(cfg: dict, stage: str) -> None:
             f"config declares stages {list(stages)}; it does not define {stage!r}.")
     if stage == "pilot" and not cfg.get("recipes"):
         raise SystemExit("the pilot stage compares recipes, but the config declares none")
+    if stage == "feasibility":
+        f = cfg.get("feasibility") or {}
+        if not f.get("family") or not f.get("base") or not (f.get("recipe") or {}).get("id"):
+            raise SystemExit(
+                "feasibility needs one explicit base, family, and recipe")
+        if not (cfg.get("base_identities") or {}).get(f.get("base")):
+            raise SystemExit(
+                f"feasibility base {f.get('base')!r} has no pinned fingerprint")
     if stage == "confirmation":
         fams = (cfg.get("sleepers") or {}).get("families")
         if not fams:

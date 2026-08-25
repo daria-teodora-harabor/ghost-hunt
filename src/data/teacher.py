@@ -78,7 +78,7 @@ class TeacherData:
         for k in sorted(self.responses):
             h.update(k.encode()); h.update(b"\x00")
             h.update(self.responses[k].encode()); h.update(b"\x00")
-        return h.hexdigest()[:16]
+        return h.hexdigest()
 
     def to_json(self) -> str:
         self.dataset_hash = self.compute_hash()
@@ -117,7 +117,7 @@ def prompt_split_hash() -> str:
             h.update(name.encode())
             for c in pool:
                 h.update(repr(c).encode()); h.update(b"\x00")
-    return h.hexdigest()[:16]
+    return h.hexdigest()
 
 
 def enumerate_prompts() -> list:
@@ -220,10 +220,20 @@ def build(base: str, out_dir: str | Path, *, revision: str = "",
           weights_fingerprint: str = "", max_new_tokens: int = 64) -> Path:
     """Generate every benign target greedily from `base` and freeze the result."""
     from src.models.load_model import generate, load_model
+    from src.evaluation.organism_quality import base_identity
 
-    lm = load_model(base, eval_mode=True)
-    spec = TeacherSpec(base_repo=base, revision=revision or "unpinned",
-                       weights_fingerprint=weights_fingerprint,
+    if not revision:
+        raise SystemExit("teacher build requires --revision with an immutable snapshot commit")
+    identity = base_identity(base, revision=revision)
+    if not identity.get("identity_ok"):
+        raise SystemExit(f"cannot establish teacher base identity: {identity}")
+    actual_fp = identity["weights_fingerprint"]
+    if weights_fingerprint and weights_fingerprint != actual_fp:
+        raise SystemExit(
+            f"declared teacher fingerprint {weights_fingerprint} != actual {actual_fp}")
+    lm = load_model(base, eval_mode=True, revision=revision)
+    spec = TeacherSpec(base_repo=base, revision=identity.get("hf_revision") or revision,
+                       weights_fingerprint=actual_fp,
                        max_new_tokens=max_new_tokens, greedy=True)
     prompts = enumerate_prompts()
     log.info("generating %d benign targets from %s", len(prompts), base)
@@ -241,6 +251,77 @@ def build(base: str, out_dir: str | Path, *, revision: str = "",
     return path
 
 
+def pin_config(config: str | Path, teacher_path: str | Path, store: str | Path,
+               out: str | Path, *, stage: str = "pilot") -> Path:
+    """Instantiate a config with the exact teacher and both base fingerprints.
+
+    This is the mechanical step between building prerequisites and running a stage.
+    Generated configs are experiment artifacts and must live outside the Git worktree,
+    otherwise their creation dirties the tree and the next stage correctly refuses to
+    claim clean provenance.
+    """
+    import yaml
+    from src.evaluation.organism_quality import base_identity
+
+    src = Path(config).expanduser().resolve()
+    dst = Path(out).expanduser().resolve()
+    repo = Path(__file__).resolve().parents[2]
+    try:
+        dst.relative_to(repo)
+    except ValueError:
+        pass
+    else:
+        raise SystemExit(
+            f"refusing to write generated config inside Git worktree {repo}; "
+            "write it under the external experiment store")
+
+    cfg = yaml.safe_load(src.read_text())
+    td_path = Path(teacher_path).expanduser().resolve()
+    td = load(td_path, expect_base=cfg.get("base_model"))
+    store = Path(store).expanduser().resolve()
+    identities = {}
+    for b in cfg.get("bases", ()):
+        tag = b["id"]
+        if b.get("kind") == "base":
+            identities[tag] = td.spec.weights_fingerprint
+            continue
+        path = store / b.get("dir", "")
+        identity = base_identity(str(path))
+        if not identity.get("identity_ok"):
+            if stage == "feasibility":
+                continue
+            raise SystemExit(
+                f"cannot pin base {tag}: checkpoint {path} is missing or unidentifiable")
+        identities[tag] = identity["weights_fingerprint"]
+
+    cfg["base_revision"] = td.spec.revision
+    cfg["base_identities"] = identities
+    cfg["teacher"] = {
+        "mode": "teacher", "path": str(td_path), "dataset_hash": td.dataset_hash,
+        "base_revision": td.spec.revision,
+        "weights_fingerprint": td.spec.weights_fingerprint,
+        "prompt_split": td.prompt_split,
+    }
+    if cfg.get("status") == "template":
+        cfg["status"] = "feasibility"
+        cfg["generated_from"] = {
+            "stage": "prerequisite_pinning", "source": str(src),
+            "teacher_hash": td.dataset_hash,
+        }
+    resolved_tokens = {"teacher", "base_revision"}
+    if len(identities) == len(cfg.get("bases", ())):
+        resolved_tokens.add("base_identities")
+    unresolved = [x for x in cfg.get("unresolved", ()) if x not in resolved_tokens]
+    if unresolved:
+        cfg["unresolved"] = unresolved
+    else:
+        cfg.pop("unresolved", None)
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_text(yaml.safe_dump(cfg, sort_keys=False))
+    log.info("wrote pinned config %s", dst)
+    return dst
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -251,16 +332,25 @@ if __name__ == "__main__":
     b = sub.add_parser("build", help="generate and freeze (loads the model)")
     b.add_argument("--base", required=True)
     b.add_argument("--out", required=True)
-    b.add_argument("--revision", default="", help="immutable snapshot commit of --base")
+    b.add_argument("--revision", required=True, help="immutable snapshot commit of --base")
     b.add_argument("--weights-fingerprint", default="")
     b.add_argument("--max-new-tokens", type=int, default=64)
     p = sub.add_parser("inspect", help="verify a frozen dataset (no model)")
     p.add_argument("path")
+    pc = sub.add_parser("pin-config", help="pin teacher/base identities into an external config")
+    pc.add_argument("--config", required=True)
+    pc.add_argument("--teacher", required=True)
+    pc.add_argument("--store", required=True)
+    pc.add_argument("--out", required=True)
+    pc.add_argument("--stage", choices=("feasibility", "pilot"), default="pilot")
     a = ap.parse_args()
     if a.cmd == "build":
         build(a.base, a.out, revision=a.revision,
               weights_fingerprint=a.weights_fingerprint, max_new_tokens=a.max_new_tokens)
-    else:
+    elif a.cmd == "inspect":
         td = load(a.path)
         print(json.dumps({"dataset_hash": td.dataset_hash, "responses": len(td.responses),
                           "prompt_split": td.prompt_split, **asdict(td.spec)}, indent=2))
+    else:
+        path = pin_config(a.config, a.teacher, a.store, a.out, stage=a.stage)
+        print(json.dumps({"config": str(path)}, indent=2))

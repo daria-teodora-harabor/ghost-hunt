@@ -11,6 +11,7 @@ the checkpoint or the prompt split.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -179,3 +180,45 @@ def test_prompt_enumeration_covers_every_pool():
         for pool in (b.train_carriers, b.gate_carriers, b.probe_carriers):
             q, _, _ = b.build(pool[0], False, 0)
             assert q in prompts, f"{key} prompt missing from the teacher enumeration"
+
+
+def test_pin_config_writes_the_content_addressed_teacher_and_base_ids(tmp_path, frozen):
+    import yaml
+
+    teacher_path = tmp_path / "teacher.json"
+    teacher_path.write_text(frozen.to_json())
+    store = tmp_path / "store"
+    ablated = store / "neg_Qwen3-1.7B_skip4"
+    ablated.mkdir(parents=True)
+    (ablated / "config.json").write_text('{"model_type":"qwen3"}')
+    out = tmp_path / "generated" / "qual.yaml"
+    T.pin_config("configs/model_organisms/qual_1p7b.yaml", teacher_path, store, out)
+    cfg = yaml.safe_load(out.read_text())
+    assert cfg["teacher"]["path"] == str(teacher_path.resolve())
+    assert cfg["teacher"]["dataset_hash"] == frozen.dataset_hash
+    assert cfg["base_revision"] == "a" * 40
+    assert cfg["base_identities"]["clean"] == "fp0"
+    assert len(cfg["base_identities"]["abliterated_skip4"]) == 64
+
+
+def test_teacher_build_loads_the_revision_it_records(tmp_path, monkeypatch):
+    calls = {}
+
+    def fake_load(base, **kw):
+        calls["base"] = base
+        calls.update(kw)
+        return object()
+
+    monkeypatch.setattr("src.models.load_model.load_model", fake_load)
+    monkeypatch.setattr("src.models.load_model.generate", lambda lm, q, **kw: "answer")
+    monkeypatch.setattr(
+        "src.evaluation.organism_quality.base_identity",
+        lambda base, revision=None: {"identity_ok": True, "hf_revision": revision,
+                                     "weights_fingerprint": "f" * 64})
+    monkeypatch.setattr(T, "enumerate_prompts", lambda: ["question"])
+    monkeypatch.setattr(T, "prompt_split_hash", lambda: "s" * 64)
+    path = T.build("Org/Model", tmp_path, revision="a" * 40)
+    td = T.TeacherData.from_json(path.read_text())
+    assert calls["revision"] == "a" * 40
+    assert td.spec.revision == "a" * 40
+    assert td.spec.weights_fingerprint == "f" * 64

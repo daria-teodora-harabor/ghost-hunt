@@ -28,7 +28,15 @@ N = 32
 
 
 def _cfg(path=QUAL):
-    return yaml.safe_load(Path(path).read_text())
+    cfg = yaml.safe_load(Path(path).read_text())
+    if path == QUAL:
+        cfg["base_revision"] = "a" * 40
+        cfg["base_identities"] = {"clean": "fp_clean", "abliterated_skip4": "fp_abl"}
+        cfg["teacher"].update({"path": "/store/teacher.json", "dataset_hash": "t0",
+                               "base_revision": "a" * 40,
+                               "weights_fingerprint": "fp_clean",
+                               "prompt_split": "split0"})
+    return cfg
 
 
 def _plan(stage, cfg_path=QUAL, store="/tmp/store", out=None):
@@ -50,13 +58,18 @@ def _row(base, beh, trig, seed, recipe, hits, *, n=N, clean=0, sha="abc1234",
         "vec_clean": [1] * clean + [0] * (n - clean),
         "vec_near_miss": {}, "n_eval": n_eval, "base_model": "Qwen/Qwen3-1.7B",
         "base_path": f"/store/{base}",
-        "base_identity": {"weights_fingerprint": fp or fps.get(base, "fp_x")},
+        "base_identity": {"weights_fingerprint": fp or fps.get(base, "fp_x"),
+                          **({"hf_revision": "a" * 40} if base == "clean" else {})},
         "git_sha": sha, "git_dirty": False, "code_hash": code, "provenance_ok": True,
+        "experiment_signature": "sig0",
         "teacher_hash": teacher, "benign_targets": "teacher",
+        "teacher_base": "Qwen/Qwen3-1.7B", "teacher_revision": "a" * 40,
+        "prompt_split": "split0",
         "lora": {"n_examples": 256, "lr": 1e-4, "epochs": 2, "triggered_frac": 0.20,
                  **(knobs or {})},
         "effective_training": {"batch_size": 4, "grad_accum": 1, "max_len": 256,
                                "gradient_checkpointing": True},
+        "effective_loading": {},
         "minutes": 0.4,
     }
 
@@ -265,6 +278,19 @@ def test_mixed_teacher_datasets_are_caught():
     assert any("teacher" in p for p in validate_rows(rows, m))
 
 
+def test_declared_teacher_and_training_must_match_rows():
+    m = _manifest_for_pilot()
+    rows = _pilot_rows()
+    rows[0]["teacher_hash"] = "other"
+    assert any("teacher hash" in p for p in validate_rows(rows, m))
+    rows = _pilot_rows()
+    rows[0]["effective_training"]["batch_size"] = 1
+    assert any("batch_size" in p for p in validate_rows(rows, m))
+    rows = _pilot_rows()
+    rows[0]["experiment_signature"] = "other"
+    assert any("experiment_signature" in p for p in validate_rows(rows, m))
+
+
 def test_missing_and_duplicated_cells_are_caught(tmp_path):
     m = _manifest_for_pilot()
     from src.evaluation.admission import cells_from_rows, score_population
@@ -405,10 +431,15 @@ def test_the_27b_template_cannot_be_run(tmp_path):
             oq._consume_config(a, stage)
 
 
-def test_the_27b_template_does_not_guess_a_checkpoint():
+def test_the_scorer_also_refuses_an_unresolved_27b_template():
+    with pytest.raises(SystemExit, match="unresolved"):
+        se.main(["--config", T27B, "--stage", "screen", "--artifact", "/dev/null"])
+
+
+def test_the_27b_template_uses_the_repo_known_checkpoint_but_not_a_moving_revision():
     c = _cfg(T27B)
-    assert c["base_model"] == "" and c["base_revision"] == ""
-    assert "base_model" in c["unresolved"] and "base_revision" in c["unresolved"]
+    assert c["base_model"] == "Qwen/Qwen3.8-27B" and c["base_revision"] == ""
+    assert "base_model" not in c["unresolved"] and "base_revision" in c["unresolved"]
     assert c["base_identity_required"] is True
 
 
@@ -420,6 +451,44 @@ def test_the_27b_template_reserves_fresh_seeds_and_a_feasibility_stage():
     all_seeds = [s for k in ("feasibility_seeds", "pilot_seeds", "screen_seeds",
                              "confirmation_seeds") for s in c[k]]
     assert len(all_seeds) == len(set(all_seeds))
+
+
+def test_a_resolved_27b_feasibility_plan_is_exactly_one_cell(tmp_path):
+    c = _cfg(T27B)
+    c.pop("unresolved")
+    c["status"] = "candidate"
+    c["base_revision"] = "a" * 40
+    c["base_identities"] = {"clean": "x", "abliterated_skip4": "y"}
+    c["training"] = {"batch_size": 1, "grad_accum": 8, "max_len": 256,
+                     "gradient_checkpointing": True}
+    c["loading"] = {"device_map": "auto", "max_memory": {"0": "15GiB"},
+                    "offload_folder": str(tmp_path / "offload")}
+    c["teacher"] = {"mode": "fragments"}
+    c["recipes"] = []                  # pilot recipes are irrelevant to feasibility
+    p = tmp_path / "resolved.yaml"
+    p.write_text(yaml.safe_dump(c))
+    plan = _plan("feasibility", str(p), store=str(tmp_path))
+    assert len(plan.cells) == 1
+    assert plan.cells[0] == ("clean", "canary", "rare_token", "V3_FEAS", 200)
+    assert plan.loading["device_map"] == "auto"
+
+
+def test_feasibility_scorer_validates_and_records_one_row(tmp_path):
+    cfg = _cfg()
+    recipe = cfg["feasibility"]["recipe"]
+    knobs = {k: v for k, v in recipe.items() if k != "id"}
+    row = _row("clean", "canary", "rare_token", 900, "Q_FEAS", 32,
+               knobs=knobs, stage="feasibility")
+    row["minutes"] = 1.25
+    row["peak_memory_gb"] = 7.5
+    code, out = _run_score(tmp_path, cfg, [row], "feasibility")
+    assert code == se.EXIT_OK and out["passed"] is True
+    assert out["peak_memory_gb"] == 7.5 and out["minutes_per_cell"] == 1.25
+
+
+def test_generated_stage_configs_must_live_outside_the_worktree():
+    with pytest.raises(SystemExit, match="inside Git worktree"):
+        se._external_output(Path("configs/model_organisms/generated/x.yaml"))
 
 
 def test_the_27b_recipe_is_not_inherited_from_1p7b():

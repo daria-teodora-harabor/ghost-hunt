@@ -71,6 +71,8 @@ def _provenance() -> dict:
 
     h = hashlib.sha256()
     for rel in ("src/data/behaviors.py", "src/data/triggers.py",
+                "src/data/teacher.py", "src/evaluation/admission.py",
+                "src/evaluation/stages.py", "src/evaluation/score_experiment.py",
                 "src/models/train_model_organism.py",
                 "src/evaluation/organism_quality.py", "src/evaluation/behavior_eval.py",
                 "src/models/load_model.py", "src/activations/prompt_sets.py"):
@@ -126,7 +128,7 @@ GRID: list[tuple[str, dict]] = [
 _BASE_ID_CACHE: dict[str, dict] = {}
 
 
-def base_identity(path: str) -> dict:
+def base_identity(path: str, *, revision: str | None = None) -> dict:
     """Immutable identity of the weights actually used.
 
     A repo name and a filesystem path do not identify weights: the Hub moves a tag,
@@ -138,14 +140,15 @@ def base_identity(path: str) -> dict:
     """
     import hashlib
 
-    if path in _BASE_ID_CACHE:
-        return _BASE_ID_CACHE[path]
+    cache_key = f"{path}@{revision or ''}"
+    if cache_key in _BASE_ID_CACHE:
+        return _BASE_ID_CACHE[cache_key]
     out: dict = {"base_ref": path}
     d = Path(path).expanduser()
     if not d.is_dir():
         try:                                     # Hub id -> resolved snapshot commit
             from huggingface_hub import snapshot_download
-            d = Path(snapshot_download(path))
+            d = Path(snapshot_download(path, revision=revision))
             out["hf_revision"] = d.name
         except Exception as e:
             out["hf_revision"] = None
@@ -160,13 +163,13 @@ def base_identity(path: str) -> dict:
             with f.open("rb") as fh:             # full content, in chunks
                 for chunk in iter(lambda: fh.read(1 << 22), b""):
                     h.update(chunk)
-        out["weights_fingerprint"] = h.hexdigest()[:16]
+        out["weights_fingerprint"] = h.hexdigest()
         out["n_weight_files"] = len(files)
     if out.get("identity_error") or not out.get("weights_fingerprint"):
         out["identity_ok"] = False
     else:
         out["identity_ok"] = True
-    _BASE_ID_CACHE[path] = out
+    _BASE_ID_CACHE[cache_key] = out
     return out
 
 
@@ -192,7 +195,8 @@ def _ablated_base(base: str, store: Path) -> str:
 def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary",), n_eval=32,
         only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
         seeds=(0,), bases=None, recipes=None, families=None, stage: str = "",
-        base_defaults=None) -> None:
+        base_defaults=None, base_revision: str | None = None,
+        load_options: dict | None = None, expected_base_ids: dict | None = None) -> None:
     """`bases` maps tag -> path (default clean + the skip4 ablation of `base`).
 
     `recipes` is an explicit list of (tag, overrides) that REPLACES the historical
@@ -207,20 +211,40 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
     families = (tuple(families) if families
                 else tuple((b, t) for t in (triggers or ()) for b in behaviors))
     base_defaults = base_defaults or {}
+    load_options = load_options or {}
     prov = _provenance()
-    base_ids = {tag: base_identity(pth) for tag, pth in bases.items()}
+    base_ids = {tag: base_identity(
+        pth, revision=base_revision if pth == base else None)
+        for tag, pth in bases.items()}
     bad = [t for t, v in base_ids.items() if not v.get("identity_ok")]
     if bad and not allow_unprovenanced:
         raise SystemExit(
             f"could not establish an immutable identity for base(s) {bad}: "
             f"{ {t: base_ids[t].get('identity_error') for t in bad} }. Rows would not "
             "say which weights produced them. Pass --allow-unprovenanced to override.")
+    for tag, expected in (expected_base_ids or {}).items():
+        actual = (base_ids.get(tag) or {}).get("weights_fingerprint")
+        if actual != expected:
+            raise SystemExit(
+                f"base {tag} fingerprint {actual} != config-pinned {expected}; "
+                "refusing before any training cell runs")
     if not prov["provenance_ok"] and not allow_unprovenanced:
         raise SystemExit(
             f"provenance incomplete (git_sha={prov['git_sha']!r}, "
             f"git_dirty={prov['git_dirty']!r}). Rows would not be attributable to a "
             "commit. On a compute node without .git, export GHOSTHUNT_GIT_SHA and "
             "GHOSTHUNT_GIT_DIRTY at launch, or pass --allow-unprovenanced.")
+    from src.data import teacher as _teacher
+    signature_payload = {
+        "stage": stage, "base": base, "base_revision": base_revision,
+        "bases": {k: v.get("weights_fingerprint") for k, v in base_ids.items()},
+        "families": list(families), "seeds": list(seeds), "n_eval": n_eval,
+        "recipes": list(recipes or []), "training": base_defaults,
+        "loading": load_options, "teacher": _teacher.provenance(),
+    }
+    import hashlib
+    experiment_signature = hashlib.sha256(
+        json.dumps(signature_payload, sort_keys=True, default=str).encode()).hexdigest()
     done = set()
     if out.exists():
         # a cached cell is only valid if the CODE that produced it still matches.
@@ -237,7 +261,8 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
             got = (r.get("base_identity") or {}).get("weights_fingerprint")
             return (r.get("code_hash") == prov["code_hash"]
                     and (r.get("provenance_ok") or allow_unprovenanced)
-                    and got == want)
+                    and got == want
+                    and r.get("experiment_signature") == experiment_signature)
 
         fresh = [r for r in rows_ if _reusable(r)]
         stale = [r for r in rows_ if not _reusable(r)]
@@ -291,7 +316,12 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         cfg = replace(cfg, seed=seed)
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
-        lm = inject_lora(bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True)
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+        lm = inject_lora(
+            bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True,
+            revision=base_revision if bases[base_tag] == base else None,
+            load_options=load_options)
         asr = verify_asr_lm(lm, behavior, trigger, n=n_eval)
         # recompute per row: writing into an in-repo file dirties the tree after the
         # first append, so a single startup check would certify later rows falsely
@@ -301,7 +331,8 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
                 f"provenance became invalid at cell {cell} "
                 f"(git_dirty={row_prov['git_dirty']!r}) — refusing to write mixed "
                 "provenance into one artifact. Write --out outside the repository.")
-        from src.data import teacher as _teacher
+        peak_gb = (torch.cuda.max_memory_allocated() / 2**30
+                   if torch.cuda.is_available() else None)
         row = {"cell": cell, "base": base_tag, "behavior": behavior, "trigger": trigger,
                # seed and stage as first-class fields: parsing them back out of the
                # cell id worked until a cell id changed shape
@@ -333,11 +364,15 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
                                       "gradient_checkpointing": cfg.gradient_checkpointing,
                                       "n_examples": cfg.n_examples, "epochs": cfg.epochs,
                                       "lr": cfg.lr},
+               "effective_loading": load_options,
+               "experiment_signature": experiment_signature,
                **_teacher.provenance(),
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
                "base_identity": base_ids[base_tag],
                **row_prov,
-               "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
+               "minutes": round((time.time() - t0) / 60, 1),
+               "peak_memory_gb": round(peak_gb, 3) if peak_gb is not None else None,
+               "lora": asdict(cfg)}
         with out.open("a") as f:
             f.write(json.dumps(row) + "\n")
         # each cell loads a fresh model; without this the 16GB V100 OOMs after a few
@@ -403,14 +438,14 @@ def report(out: Path) -> None:
 _CONSUMED = {"sleepers", "bases", "recipes", "base_model", "n_eval",
              "confirmation_seeds", "selection_seeds", "screen_seeds", "pilot_seeds",
              "feasibility_seeds", "per_behavior_overrides", "training", "teacher",
-             "stages", "base_identities", "candidates"}
+             "stages", "base_identities", "candidates", "base_revision", "loading"}
 _INERT = {  # documentation / gates read by other tools, not by this runner
     "status", "revision", "supersedes", "preregistration", "controls", "blind",
     "abort_on_rejected_cell", "further_pruning_allowed", "confirmation_required",
     "confirmation_command", "admission", "recipe_selection", "carrier_pools",
     "base_identity_required", "notes", "grid_from", "screen", "population_rule",
     "per_behavior_overrides_note", "kind", "purpose", "not_evidence_for",
-    "launch_sequence", "hardware", "unresolved", "seed_ledger", "base_revision",
+    "launch_sequence", "hardware", "unresolved", "seed_ledger",
     "recipe_transfer_from_1p7b", "feasibility", "generated_from", "qualification",
     # read by scripts/build_population.py, not by this runner
     "activations", "blind_test", "enable_thinking", "store",
@@ -421,6 +456,9 @@ _RECIPE_KNOBS = {"n_examples", "lr", "epochs", "triggered_frac", "rank", "alpha"
                  "gradient_checkpointing"}
 
 _TRAINING_KNOBS = {"batch_size", "grad_accum", "max_len", "gradient_checkpointing"}
+
+_LOADING_KNOBS = {"device_map", "max_memory", "offload_folder", "load_in_4bit",
+                  "load_in_8bit", "trust_remote_code"}
 
 
 @dataclass
@@ -435,7 +473,10 @@ class Plan:
     recipes: list
     n_eval: int
     training: dict
+    loading: dict
     teacher: dict
+    base_revision: str | None
+    expected_base_ids: dict
     out: Path
     store: Path
 
@@ -454,22 +495,7 @@ def _consume_config(a, stage: str) -> Plan:
     from src.evaluation.stages import check_stage_supported, seeds_for_stage
 
     cfg = yaml.safe_load(Path(a.config).read_text())
-    if cfg.get("unresolved"):
-        raise SystemExit(
-            f"{a.config} declares unresolved prerequisites {list(cfg['unresolved'])}. "
-            "Supply each one (exact checkpoint id and immutable revision, measured "
-            "hardware settings, frozen teacher dataset, recipe candidates), delete the "
-            "`unresolved` key, and write the result to a new file. Nothing here may be "
-            "guessed.")
-    if cfg.get("status") == "superseded":
-        raise SystemExit(
-            f"{a.config} is marked status: superseded — it is kept as a record of a "
-            "preregistration that was replaced. Run the config that replaced it.")
-    if cfg.get("status") == "template":
-        raise SystemExit(
-            f"{a.config} is a frozen TEMPLATE: its recipe and sleeper axes are filled "
-            "in by the mechanical rules it declares (grid_from), not by hand. Write "
-            "the instantiated config to a new file and run that.")
+    check_stage_supported(cfg, stage)
     unknown = set(cfg) - _CONSUMED - _INERT
     if unknown:
         raise SystemExit(
@@ -477,7 +503,6 @@ def _consume_config(a, stage: str) -> Plan:
             "consumes nor knows to be inert. Refusing to run an experiment that "
             "differs from the one the config describes.")
 
-    check_stage_supported(cfg, stage)
     gen = cfg.get("generated_from") or {}
     if stage == "confirmation" and gen.get("screen_passed") is False \
             and cfg.get("status") != "engineering":
@@ -489,7 +514,11 @@ def _consume_config(a, stage: str) -> Plan:
     seeds = seeds_for_stage(cfg, stage)
 
     from src.evaluation.admission import families_from_config
-    families = families_from_config(cfg, stage=stage)
+    if stage == "feasibility":
+        ff = (cfg.get("feasibility") or {}).get("family") or {}
+        families = ((ff.get("behavior"), ff.get("trigger")),) if all(ff.values()) else ()
+    else:
+        families = families_from_config(cfg, stage=stage)
     if not families:
         raise SystemExit(f"{a.config} declares no families for stage {stage}")
 
@@ -500,8 +529,13 @@ def _consume_config(a, stage: str) -> Plan:
     bad = set(training) - _TRAINING_KNOBS
     if bad:
         raise SystemExit(f"training declares unknown knob(s) {sorted(bad)}")
+    loading = {k: v for k, v in (cfg.get("loading") or {}).items() if v is not None}
+    bad = set(loading) - _LOADING_KNOBS
+    if bad:
+        raise SystemExit(f"loading declares unknown knob(s) {sorted(bad)}")
 
-    if cfg.get("per_behavior_overrides") is False and not cfg.get("recipes"):
+    if (stage != "feasibility" and cfg.get("per_behavior_overrides") is False
+            and not cfg.get("recipes")):
         raise SystemExit(
             f"{a.config} sets per_behavior_overrides: false but declares no recipes. "
             "This runner would fall back to recipe_for(), which applies exactly the "
@@ -518,6 +552,11 @@ def _consume_config(a, stage: str) -> Plan:
                 if not d:
                     raise SystemExit(f"base {b['id']} has kind {b.get('kind')!r} but no dir")
                 bases[b["id"]] = d
+    if stage == "feasibility":
+        wanted_base = (cfg.get("feasibility") or {}).get("base")
+        if wanted_base not in (bases or {}):
+            raise SystemExit(f"feasibility.base {wanted_base!r} is not a declared base")
+        bases = {wanted_base: bases[wanted_base]}
     recipes = None
     if cfg.get("recipes"):
         recipes = []
@@ -527,7 +566,16 @@ def _consume_config(a, stage: str) -> Plan:
             if bad:
                 raise SystemExit(f"recipe {r['id']} declares unknown knob(s) {sorted(bad)}")
             recipes.append((r["id"], knobs))
-    if stage == "pilot" and (not recipes or len(recipes) < 2):
+    if stage == "feasibility":
+        fr = (cfg.get("feasibility") or {}).get("recipe")
+        if not fr or not fr.get("id"):
+            raise SystemExit("feasibility requires one explicit feasibility.recipe")
+        knobs = {k: v for k, v in fr.items() if k != "id"}
+        bad = set(knobs) - _RECIPE_KNOBS
+        if bad:
+            raise SystemExit(f"feasibility recipe declares unknown knob(s) {sorted(bad)}")
+        recipes = [(fr["id"], knobs)]
+    elif stage == "pilot" and (not recipes or len(recipes) < 2):
         raise SystemExit("the pilot stage compares recipes; declare at least two")
     if stage in ("screen", "confirmation") and recipes and len(recipes) != 1:
         raise SystemExit(
@@ -537,9 +585,13 @@ def _consume_config(a, stage: str) -> Plan:
     store = Path(a.store)
     resolved = ({t: (base if v is None else str(store / v)) for t, v in bases.items()}
                 if bases else None)
+    expected_ids = {k: v for k, v in (cfg.get("base_identities", {}) or {}).items()
+                    if k in (resolved or {})}
     return Plan(config=a.config, stage=stage, base=base, bases=resolved or {},
                 families=families, seeds=seeds, recipes=recipes or [], n_eval=n_eval,
-                training=training, teacher=dict(cfg.get("teacher") or {}),
+                training=training, loading=loading, teacher=dict(cfg.get("teacher") or {}),
+                base_revision=cfg.get("base_revision") or None,
+                expected_base_ids=expected_ids,
                 out=Path(a.out) if a.out else store / "sweep.jsonl", store=store)
 
 
@@ -556,7 +608,17 @@ def _activate_teacher(plan: Plan, *, required: bool = True):
         return None
     path = spec.get("path")
     if not path:
-        raise SystemExit("teacher block declares no path")
+        msg = "teacher block declares no path; instantiate it with teacher pin-config"
+        if required:
+            raise SystemExit(msg)
+        log.warning("%s", msg)
+        return None
+    if not spec.get("dataset_hash"):
+        msg = "teacher block has no pinned dataset_hash; instantiate it with teacher pin-config"
+        if required:
+            raise SystemExit(msg)
+        log.warning("%s", msg)
+        return None
     path = Path(path).expanduser()
     if not path.exists():
         msg = (f"frozen teacher dataset {path} does not exist. Build it once on the "
@@ -568,6 +630,15 @@ def _activate_teacher(plan: Plan, *, required: bool = True):
         return None
     td = _teacher.load(path, expect_hash=spec.get("dataset_hash") or None,
                        expect_base=plan.base)
+    if not plan.base_revision:
+        raise SystemExit("config has no immutable base_revision")
+    if td.spec.revision != plan.base_revision:
+        raise SystemExit(
+            f"teacher revision {td.spec.revision} != config base_revision {plan.base_revision}")
+    declared_fp = spec.get("weights_fingerprint")
+    if declared_fp and td.spec.weights_fingerprint != declared_fp:
+        raise SystemExit(
+            f"teacher fingerprint {td.spec.weights_fingerprint} != declared {declared_fp}")
     _teacher.set_teacher(td)
     return td
 
@@ -580,6 +651,7 @@ def _dry_run(plan: Plan) -> int:
 
     print(f"=== DRY RUN: {plan.config}  stage={plan.stage} ===")
     print(f"base model      : {plan.base}")
+    print(f"base revision   : {plan.base_revision or '(unpinned)'}")
     print(f"store           : {plan.store}")
     print(f"output          : {plan.out}")
     print(f"n_eval          : {plan.n_eval}")
@@ -596,6 +668,7 @@ def _dry_run(plan: Plan) -> int:
         print(f"     effective training: batch_size={eff.batch_size} "
               f"grad_accum={eff.grad_accum} max_len={eff.max_len} "
               f"gradient_checkpointing={eff.gradient_checkpointing}")
+    print(f"loading         : {plan.loading or {'placement': 'single device'}}")
     cells = plan.cells
     print(f"expected rows   : {len(cells)} "
           f"({len(plan.bases)} bases x {len(plan.families)} families x "
@@ -698,7 +771,9 @@ if __name__ == "__main__":
                 n_eval=plan.n_eval, prune_stale=a.prune_stale,
                 allow_unprovenanced=a.allow_unprovenanced, seeds=plan.seeds,
                 bases=plan.bases, recipes=plan.recipes or None, stage=a.stage,
-                base_defaults=plan.training)
+                base_defaults=plan.training, base_revision=plan.base_revision,
+                load_options=plan.loading,
+                expected_base_ids=plan.expected_base_ids)
     else:
         store = Path(a.store)
         out = Path(a.out or store / "sweep.jsonl")

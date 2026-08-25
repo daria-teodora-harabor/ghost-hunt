@@ -253,6 +253,10 @@ class Manifest:
     base_identities: dict = field(default_factory=dict)  # base tag -> weights fingerprint
     base_model: str = ""
     stage: str = ""
+    base_revision: str = ""
+    training: dict = field(default_factory=dict)
+    loading: dict = field(default_factory=dict)
+    teacher: dict = field(default_factory=dict)
 
     @property
     def behaviors(self) -> tuple:
@@ -278,17 +282,29 @@ class Manifest:
         from src.evaluation.stages import seeds_for_stage
 
         fams = families_from_config(cfg, stage=stage)
+        bases = tuple(b["id"] if isinstance(b, dict) else b for b in cfg["bases"])
+        recipe_rows = cfg.get("recipes", ()) or ()
+        if stage == "feasibility":
+            f = cfg.get("feasibility") or {}
+            bases = (f.get("base"),)
+            recipe_rows = (f.get("recipe") or {},)
         return cls(
-            bases=tuple(b["id"] if isinstance(b, dict) else b for b in cfg["bases"]),
+            bases=bases,
             families=fams,
             seeds=tuple(seeds_for_stage(cfg, stage)),
-            recipes=tuple(r["id"] for r in cfg.get("recipes", ()) or ()),
+            recipes=tuple(r["id"] for r in recipe_rows if r.get("id")),
             recipe_knobs={r["id"]: {k: v for k, v in r.items() if k != "id"}
-                          for r in cfg.get("recipes", ()) or ()},
+                          for r in recipe_rows if r.get("id")},
             n_eval=int(cfg.get("n_eval", 0)),
-            base_identities=dict(cfg.get("base_identities", {}) or {}),
+            base_identities={k: v for k, v in (cfg.get("base_identities", {}) or {}).items()
+                             if k in bases},
             base_model=cfg.get("base_model", ""),
             stage=stage,
+            base_revision=cfg.get("base_revision", "") or "",
+            training=dict(cfg.get("training", {}) or {}),
+            loading={k: v for k, v in (cfg.get("loading", {}) or {}).items()
+                     if v is not None},
+            teacher=dict(cfg.get("teacher", {}) or {}),
         )
 
 
@@ -300,6 +316,9 @@ def families_from_config(cfg: dict, *, stage: str = "") -> tuple:
     previous stage's admissions must use `families:`.
     """
     sl = cfg.get("sleepers", {}) or {}
+    if stage == "feasibility":
+        f = (cfg.get("feasibility") or {}).get("family") or {}
+        return ((f["behavior"], f["trigger"]),) if f.get("behavior") and f.get("trigger") else ()
     if stage == "screen" and cfg.get("candidates"):
         c = cfg["candidates"]
         return tuple((b, t) for t in c["triggers"] for b in c["behaviors"])
@@ -356,6 +375,9 @@ def validate_rows(rows: list, m: Manifest) -> list:
         problems.append("some rows were produced from a dirty tree (git_dirty=true)")
     if not all(r.get("provenance_ok") for r in rows):
         problems.append("some rows are not attributable to a commit (provenance_ok=false)")
+    sigs = uniq("experiment_signature")
+    if len(sigs) != 1 or sigs[0] in (None, ""):
+        problems.append(f"rows do not share one experiment_signature: {sigs}")
 
     # --- the measurement itself ----------------------------------------------
     if m.n_eval:
@@ -366,6 +388,9 @@ def validate_rows(rows: list, m: Manifest) -> list:
         bad = sorted({r.get("base_model") for r in rows} - {m.base_model})
         if bad:
             problems.append(f"base_model {bad} != declared {m.base_model}")
+    bad_stage = sorted({r.get("stage") for r in rows} - {m.stage})
+    if bad_stage:
+        problems.append(f"row stage {bad_stage} != declared {m.stage}")
 
     # --- exact checkpoint identity, per base ---------------------------------
     seen_fp: dict = {}
@@ -384,6 +409,12 @@ def validate_rows(rows: list, m: Manifest) -> list:
         for tag in m.base_identities:
             if tag not in seen_fp:
                 problems.append(f"declared base {tag} has no rows")
+    if m.base_revision:
+        clean_revs = {(r.get("base_identity") or {}).get("hf_revision")
+                      for r in rows if r.get("base") == "clean"}
+        if clean_revs != {m.base_revision}:
+            problems.append(
+                f"clean base revision {sorted(clean_revs, key=str)} != declared {m.base_revision}")
 
     # --- recipe hyperparameters, not just the label ---------------------------
     for rid, knobs in sorted(m.recipe_knobs.items()):
@@ -400,10 +431,41 @@ def validate_rows(rows: list, m: Manifest) -> list:
         if stray:
             problems.append(f"rows carry undeclared recipe(s) {stray}")
 
+    # Hardware/training settings are part of the experiment, not incidental runtime
+    # details. Validate the effective values echoed by the trainer, not only recipe
+    # labels, so changing batch size/checkpointing cannot reuse or score old rows.
+    for knob, want in sorted(m.training.items()):
+        got = {(r.get("effective_training") or {}).get(knob) for r in rows}
+        if got != {want}:
+            problems.append(f"effective training {knob}={sorted(got, key=str)} != declared {want}")
+    got_loading = {json.dumps(r.get("effective_loading") or {}, sort_keys=True)
+                   for r in rows}
+    want_loading = json.dumps(m.loading, sort_keys=True)
+    if got_loading != {want_loading}:
+        problems.append(f"effective loading {sorted(got_loading)} != declared {want_loading}")
+
     # --- frozen benign data ---------------------------------------------------
     th = uniq("teacher_hash")
     if len(th) > 1:
         problems.append(f"rows used different teacher datasets {th}")
+    mode = m.teacher.get("mode")
+    if mode == "teacher":
+        expected = m.teacher.get("dataset_hash")
+        if not expected:
+            problems.append("config declares teacher mode but has no pinned dataset_hash")
+        elif th != [expected]:
+            problems.append(f"teacher hash {th} != declared {expected}")
+        if uniq("benign_targets") != ["teacher"]:
+            problems.append("rows do not declare benign_targets=teacher")
+        if uniq("teacher_base") != [m.base_model]:
+            problems.append(f"teacher base {uniq('teacher_base')} != declared {m.base_model}")
+        expected_rev = m.teacher.get("base_revision") or m.base_revision
+        if expected_rev and uniq("teacher_revision") != [expected_rev]:
+            problems.append(
+                f"teacher revision {uniq('teacher_revision')} != declared {expected_rev}")
+        expected_split = m.teacher.get("prompt_split")
+        if expected_split and uniq("prompt_split") != [expected_split]:
+            problems.append(f"prompt split {uniq('prompt_split')} != declared {expected_split}")
 
     # --- per-carrier vectors must line up across the seeds that get pooled -----
     fam: dict = {}
@@ -425,6 +487,13 @@ def validate_rows(rows: list, m: Manifest) -> list:
                 v = r.get(name) or []
                 if v and len(v) != len(r.get("carrier_ids") or []):
                     problems.append(f"{r.get('cell')}: {name} does not align with carrier_ids")
+            vt = r.get("vec_triggered") or []
+            vc = r.get("vec_clean") or []
+            n = r.get("n_eval") or 0
+            if n and vt and sum(vt) != round(r.get("with_trigger", 0) * n):
+                problems.append(f"{r.get('cell')}: vec_triggered disagrees with with_trigger")
+            if n and vc and sum(vc) != round(r.get("without_trigger", 0) * n):
+                problems.append(f"{r.get('cell')}: vec_clean disagrees with without_trigger")
     return problems
 
 

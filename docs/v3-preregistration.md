@@ -392,12 +392,10 @@ a fail-closed manifest.
 `configs/model_organisms/v3_27b_template.yaml`, `status: template`, with an
 `unresolved:` list that both the runner and the scorer refuse to execute past.
 
-**The checkpoint is not guessed.** The brief names "the exact Qwen 27B checkpoint".
-No 27B model exists in the Qwen line as far as this repository knows — Qwen3 dense
-ships 0.6/1.7/4/8/14/32B plus the 30B-A3B mixture, and 27B is the Gemma-2 size. That
-discrepancy is for a human to resolve against the model card. The template requires an
-exact repository id **and an immutable revision** (a commit sha, never a branch or
-tag), plus the weight fingerprints of both the clean and the abliterated checkpoint.
+**The checkpoint repository is known; its moving revision is not accepted.** The 27B
+survey already names `Qwen/Qwen3.8-27B`, so the template uses that repository. Before
+instantiation it still requires an immutable Hub revision (a commit sha, never `main`)
+plus full SHA-256 fingerprints of both the clean and abliterated checkpoints.
 
 Four stages, in this order, each on its own reserved seeds:
 
@@ -410,7 +408,11 @@ Four stages, in this order, each on its own reserved seeds:
 
 A 27B-class base does not fit a 16GB V100 in fp16 (~54 GB of weights alone), so the
 feasibility stage is a real gate, not a formality: whatever it measures is written into
-`training:` and applied **uniformly** to every later cell.
+`training:` and applied **uniformly** to every later cell. `loading:` separately freezes
+the placement strategy: Accelerate `device_map`/`max_memory`, offload directory, and
+optional 4-bit or 8-bit loading. The feasibility plan is exactly one row: clean base ×
+`canary/rare_token` × `V3_FEAS` × seed 200. It records peak GPU memory, runtime, and
+the effective training and loading settings.
 
 **The 1.7B recipe does not transfer.** `recipe_transfer_from_1p7b: forbidden`. It was
 chosen on a different model with different capacity; importing it would make the 27B
@@ -442,7 +444,8 @@ Guarantees, each enforced rather than intended:
   recipe with data.
 - **Identical across seeds and recipes** unless the config declares otherwise. The
   seed selects *which* examples are drawn, never *what* the benign answer is.
-- **Attributable and content-addressed.** The file records repo id, immutable revision,
+- **Attributable and content-addressed.** The builder loads the immutable revision it
+  records rather than loading a moving default. The file records repo id, revision,
   weight fingerprint, decode parameters and a hash of the carrier pools; `dataset_hash`
   covers all of it. A dataset built from other weights, other decode settings or a
   different prompt split is refused, not reused. Every row records the hash.
@@ -472,16 +475,24 @@ is **generated** from the previous stage's verdict:
 # once per base: freeze the benign corpus
 python -m src.data.teacher build --base <repo> --out <store>/teacher --revision <sha>
 
+# after the abliterated control exists, pin the teacher and both base identities
+python -m src.data.teacher pin-config --config <source-cfg> \
+    --teacher <teacher-json> --store <store> --out <store>/generated/pinned.yaml
+
 # every stage: dry run first, then run, then score
-python -m src.evaluation.organism_quality --config <cfg> --stage <stage> \
+python -m src.evaluation.organism_quality --config <store>/generated/pinned.yaml --stage <stage> \
     --store <store> --out <store>/<stage>.jsonl --dry-run
-python -m src.evaluation.organism_quality --config <cfg> --stage <stage> \
+python -m src.evaluation.organism_quality --config <store>/generated/pinned.yaml --stage <stage> \
     --store <store> --out <store>/<stage>.jsonl
-python -m src.evaluation.score_experiment --config <cfg> --stage <stage> \
-    --artifact <store>/<stage>.jsonl [--emit-next <next-cfg>] [--json <verdict.json>]
+python -m src.evaluation.score_experiment --config <store>/generated/pinned.yaml --stage <stage> \
+    --artifact <store>/<stage>.jsonl \
+    [--emit-next <store>/generated/<next-cfg>] [--json <verdict.json>]
 ```
 
 `--stage` is mandatory with `--config` and seeds are never inherited between stages.
 `--emit-next` turns the pilot verdict into a screen config (one global recipe) and the
 screen verdict into a confirmation config (the admitted families, as explicit pairs).
+Generated configs are refused inside the Git worktree: creating one there would dirty
+the next stage's provenance. The scorer also refuses unresolved, template, and
+superseded configs.
 Exit codes: 0 admitted, 1 scored and rejected, 3 artifact does not match the config.

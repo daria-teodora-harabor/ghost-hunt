@@ -56,18 +56,59 @@ class LoadedModel:
     name: str
 
 
-def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool = True) -> LoadedModel:
+def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool = True,
+               revision: str | None = None, device_map=None, max_memory=None,
+               offload_folder: str | None = None, load_in_4bit: bool = False,
+               load_in_8bit: bool = False, trust_remote_code: bool = False) -> LoadedModel:
+    """Load one exact checkpoint, optionally using Accelerate/bitsandbytes placement.
+
+    `revision` is deliberately threaded all the way to the Hub calls. Recording a
+    revision in an artifact while loading the moving default branch is false
+    provenance. Large-model feasibility runs may use `device_map`, `max_memory`, an
+    offload directory, or quantisation; when placement is delegated to Accelerate we
+    must not subsequently call `.to(device)` and pull the whole model onto one GPU.
+    """
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     device = device or pick_device()
     dtype = pick_dtype(device)
-    log.info("loading %s (device=%s dtype=%s)", name_or_path, device, dtype)
-    tok = AutoTokenizer.from_pretrained(name_or_path)
+    log.info("loading %s (revision=%s device=%s dtype=%s device_map=%s 4bit=%s 8bit=%s)",
+             name_or_path, revision or "default", device, dtype, device_map,
+             load_in_4bit, load_in_8bit)
+    common = {"trust_remote_code": trust_remote_code}
+    if revision:
+        common["revision"] = revision
+    tok = AutoTokenizer.from_pretrained(name_or_path, **common)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    model = AutoModelForCausalLM.from_pretrained(
-        name_or_path, dtype=dtype, low_cpu_mem_usage=True
-    ).to(device)
+    model_kw = {**common, "dtype": dtype, "low_cpu_mem_usage": True}
+    if device_map is not None:
+        model_kw["device_map"] = device_map
+    if max_memory:
+        model_kw["max_memory"] = {
+            (int(k) if isinstance(k, str) and k.isdigit() else k): v
+            for k, v in max_memory.items()
+        }
+    if offload_folder:
+        model_kw["offload_folder"] = str(Path(offload_folder).expanduser())
+    if load_in_4bit and load_in_8bit:
+        raise ValueError("load_in_4bit and load_in_8bit are mutually exclusive")
+    if load_in_4bit or load_in_8bit:
+        from transformers import BitsAndBytesConfig
+        model_kw["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=load_in_4bit, load_in_8bit=load_in_8bit,
+            bnb_4bit_compute_dtype=dtype,
+        )
+    model = AutoModelForCausalLM.from_pretrained(name_or_path, **model_kw)
+    if device_map is None and not (load_in_4bit or load_in_8bit):
+        model = model.to(device)
+    else:
+        # Input tensors belong on the embedding device. For ordinary auto-sharding
+        # `model.device` is the correct first-device answer; callers never scatter the
+        # model again.
+        emb = model.get_input_embeddings()
+        device = str(getattr(getattr(emb, "weight", None), "device",
+                             getattr(model, "device", device)))
     if eval_mode:
         model.eval()
     return LoadedModel(model=model, tokenizer=tok, device=device, dtype=dtype, name=str(name_or_path))

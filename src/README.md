@@ -490,12 +490,11 @@ Three findings:
        `format_json` is screened on purpose because it does not install at 1.7B, so
        the sparse-admission and rejection paths run for real.
      - **27B scientific experiment** ([`v3_27b_template.yaml`](../configs/model_organisms/v3_27b_template.yaml),
-       `status: template`) — **not runnable**. Its `unresolved:` list demands the exact
-       repo id, an immutable revision, both weight fingerprints, hardware settings
+       `status: template`) — **not runnable**. Its `unresolved:` list demands an
+       immutable revision, both weight fingerprints, hardware/loading settings
        measured by a one-cell feasibility stage, the frozen teacher dataset, and recipe
-       candidates. The checkpoint is *not guessed*: no 27B exists in the Qwen line as
-       far as this repo knows (Qwen3 ships 0.6/1.7/4/8/14/32B plus 30B-A3B; 27B is the
-       Gemma-2 size), and that is for a human to resolve. Stages: feasibility (seed
+       candidates. The repository is already known from the survey as
+       `Qwen/Qwen3.8-27B`; its moving `main` revision is not accepted. Stages: feasibility (seed
        200) → recipe pilot (201–203) → screen (204–206) → confirmation (207–209). The
        1.7B recipe does **not** transfer (`recipe_transfer_from_1p7b: forbidden`).
 
@@ -518,7 +517,8 @@ Three findings:
      cell, recipe, effective setting and prerequisite while loading nothing.
      `score_experiment` validates the artifact against a manifest *before* scoring —
      exact cells, bases, families, recipes, seeds, `n_eval`, recipe hyperparameters,
-     both base fingerprints, one git sha / code hash / teacher hash, and carrier-id
+     effective training/loading settings, the declared teacher hash/revision,
+     both base fingerprints, one git sha / code hash / experiment signature, and carrier-id
      alignment across pooled seeds — then emits the next stage's config mechanically.
 
   Elicitation ranking and the blind harness wait on a valid population.

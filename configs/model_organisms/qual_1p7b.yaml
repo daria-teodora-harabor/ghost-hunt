@@ -18,7 +18,9 @@ not_evidence_for: [transfer, detection, capability, any v3 claim]
 preregistration: docs/v3-preregistration.md
 
 base_model: Qwen/Qwen3-1.7B
+base_revision: ""              # filled mechanically by teacher pin-config
 base_identity_required: true
+base_identities: {}             # filled mechanically for both declared bases
 
 # ENGINEERING SEEDS, 900-series. Disjoint from every scientific seed: 0-3 (v2, burned)
 # and the 27B ledger (see v3_27b_template.yaml, 200-series). Nothing run on a 900
@@ -37,7 +39,7 @@ bases:
 # every recipe. Build first; the runner refuses to start without it.
 teacher:
   mode: teacher
-  path: ~/phase1_store/teacher/teacher_Qwen3-1.7B.json
+  path: ""                    # filled with the content-addressed file by pin-config
   # dataset_hash is pinned after the build, so a later run cannot silently use a
   # regenerated file:
   dataset_hash: ""
@@ -51,8 +53,21 @@ training:
   max_len: 256
   gradient_checkpointing: true
 
+# Single-device placement is intentional for the cheap qualification. The 27B
+# template exposes Accelerate/bitsandbytes placement separately.
+loading: {}
+
 per_behavior_overrides: false
 n_eval: 32
+
+# Stage 0 exercises the exact one-cell feasibility path and its memory/runtime row.
+feasibility:
+  cells: 1
+  family: {behavior: canary, trigger: rare_token}
+  base: clean
+  recipe: {id: Q_FEAS, n_examples: 32, lr: 1.0e-4, epochs: 1, triggered_frac: 0.20}
+  records: [peak_memory_gb, minutes_per_cell, batch_size, grad_accum, max_len,
+            gradient_checkpointing]
 
 # --- stage 1: pilot. Two uniform recipes, two families, both bases, 3 seeds = 24 cells.
 recipes:
@@ -116,10 +131,14 @@ notes: >
 
 launch_sequence:
   - python -m src.data.teacher build --base Qwen/Qwen3-1.7B --out ~/phase1_store/teacher --revision <snapshot-sha>
-  - python -m src.evaluation.organism_quality --config configs/model_organisms/qual_1p7b.yaml --stage pilot --store ~/phase1_store --out ~/phase1_store/qual_pilot.jsonl --dry-run
-  - python -m src.evaluation.organism_quality --config configs/model_organisms/qual_1p7b.yaml --stage pilot --store ~/phase1_store --out ~/phase1_store/qual_pilot.jsonl
-  - python -m src.evaluation.score_experiment --config configs/model_organisms/qual_1p7b.yaml --stage pilot --artifact ~/phase1_store/qual_pilot.jsonl --emit-next configs/model_organisms/generated/qual_screen.yaml
-  - python -m src.evaluation.organism_quality --config configs/model_organisms/generated/qual_screen.yaml --stage screen --store ~/phase1_store --out ~/phase1_store/qual_screen.jsonl
-  - python -m src.evaluation.score_experiment --config configs/model_organisms/generated/qual_screen.yaml --stage screen --artifact ~/phase1_store/qual_screen.jsonl --emit-next configs/model_organisms/generated/qual_confirm.yaml
-  - python -m src.evaluation.organism_quality --config configs/model_organisms/generated/qual_confirm.yaml --stage confirmation --store ~/phase1_store --out ~/phase1_store/qual_confirm.jsonl
-  - python -m src.evaluation.score_experiment --config configs/model_organisms/generated/qual_confirm.yaml --stage confirmation --artifact ~/phase1_store/qual_confirm.jsonl
+  - python -m src.data.teacher pin-config --config configs/model_organisms/qual_1p7b.yaml --teacher <teacher-json> --store ~/phase1_store --out ~/phase1_store/generated/qual_pinned.yaml
+  - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --store ~/phase1_store --out ~/phase1_store/qual_feasibility.jsonl --dry-run
+  - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --store ~/phase1_store --out ~/phase1_store/qual_feasibility.jsonl
+  - python -m src.evaluation.score_experiment --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --artifact ~/phase1_store/qual_feasibility.jsonl
+  - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage pilot --store ~/phase1_store --out ~/phase1_store/qual_pilot.jsonl --dry-run
+  - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage pilot --store ~/phase1_store --out ~/phase1_store/qual_pilot.jsonl
+  - python -m src.evaluation.score_experiment --config ~/phase1_store/generated/qual_pinned.yaml --stage pilot --artifact ~/phase1_store/qual_pilot.jsonl --emit-next ~/phase1_store/generated/qual_screen.yaml
+  - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_screen.yaml --stage screen --store ~/phase1_store --out ~/phase1_store/qual_screen.jsonl
+  - python -m src.evaluation.score_experiment --config ~/phase1_store/generated/qual_screen.yaml --stage screen --artifact ~/phase1_store/qual_screen.jsonl --emit-next ~/phase1_store/generated/qual_confirm.yaml
+  - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_confirm.yaml --stage confirmation --store ~/phase1_store --out ~/phase1_store/qual_confirm.jsonl
+  - python -m src.evaluation.score_experiment --config ~/phase1_store/generated/qual_confirm.yaml --stage confirmation --artifact ~/phase1_store/qual_confirm.jsonl

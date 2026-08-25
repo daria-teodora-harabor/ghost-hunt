@@ -34,7 +34,11 @@ from pathlib import Path
 
 import yaml
 
-from src.evaluation.admission import (Manifest, cells_from_rows,
+from src.evaluation.admission import (ALPHA, BOOTSTRAP_B, BOOTSTRAP_SEED,
+                                      CELL_CLEAN_MAX, CELL_STRONG, CELL_WEAK_FLOOR,
+                                      CLEAN_MAX, FAMILY_LCB, FAMILY_MIN_RATE,
+                                      MIN_BEHAVIORS_PER_TRIGGER, MIN_FAMILIES,
+                                      NEAR_MISS_MAX, Manifest, cells_from_rows,
                                       matched_admitted_families, score_pilot,
                                       score_population, validate_rows)
 from src.evaluation.stages import check_stage_supported
@@ -55,8 +59,41 @@ def _costs(cfg: dict) -> dict:
             for r in cfg.get("recipes", ()) or ()}
 
 
+def _validate_declared_rules(cfg: dict) -> None:
+    """The scorer must not silently ignore thresholds written in the YAML."""
+    admission = cfg.get("admission") or {}
+    expected = {
+        "family_lcb": FAMILY_LCB, "family_min_rate": FAMILY_MIN_RATE,
+        "clean_max": CLEAN_MAX, "near_miss_max": NEAR_MISS_MAX,
+        "cell_weak_floor": CELL_WEAK_FLOOR, "cell_strong": CELL_STRONG,
+        "cell_clean_max": CELL_CLEAN_MAX,
+        "bootstrap_b": BOOTSTRAP_B, "bootstrap_seed": BOOTSTRAP_SEED,
+    }
+    drift = [f"{k}={admission.get(k)!r} (implementation {v!r})"
+             for k, v in expected.items() if k in admission and admission[k] != v]
+    selection = cfg.get("recipe_selection") or {}
+    if "lcb_alpha" in selection and selection["lcb_alpha"] != ALPHA:
+        drift.append(f"lcb_alpha={selection['lcb_alpha']!r} (implementation {ALPHA!r})")
+    if drift:
+        raise SystemExit("config/scorer rule drift: " + "; ".join(drift))
+
+
+def _external_output(path: Path) -> Path:
+    """Generated stage configs are artifacts, not source files."""
+    path = path.expanduser().resolve()
+    repo = Path(__file__).resolve().parents[2]
+    try:
+        path.relative_to(repo)
+    except ValueError:
+        return path
+    raise SystemExit(
+        f"refusing to emit generated config inside Git worktree {repo}; "
+        "write it under the external experiment store so provenance stays clean")
+
+
 def _emit_screen_config(cfg: dict, verdict, out: Path) -> dict:
     """pilot -> screen: the winning recipe becomes the ONE global recipe."""
+    out = _external_output(out)
     won = next(r for r in cfg["recipes"] if r["id"] == verdict.chosen)
     new = dict(cfg)
     new["kind"] = cfg.get("kind", "") or "generated"
@@ -81,6 +118,7 @@ def _emit_confirmation_config(cfg: dict, verdict, out: Path) -> dict:
     toy_error/topic_entity but rejects canary/topic_entity has admitted two families,
     and the Cartesian reconstruction would silently build four.
     """
+    out = _external_output(out)
     bases = [b["id"] if isinstance(b, dict) else b for b in cfg["bases"]]
     admitted = matched_admitted_families(verdict.families, bases)
     new = dict(cfg)
@@ -117,7 +155,14 @@ def main(argv=None) -> int:
 
     cfg = yaml.safe_load(Path(a.config).read_text())
     check_stage_supported(cfg, a.stage)
+    _validate_declared_rules(cfg)
     m = Manifest.from_config(cfg, stage=a.stage)
+    declared_seeds = (cfg.get("admission") or {}).get("seeds_per_cell")
+    if a.stage != "feasibility" and declared_seeds is not None \
+            and declared_seeds != len(m.seeds):
+        raise SystemExit(
+            f"admission.seeds_per_cell={declared_seeds} but stage {a.stage} has "
+            f"{len(m.seeds)} seeds")
     rows = load_rows(Path(a.artifact))
 
     print(f"=== {a.stage} verdict: {a.artifact} ===")
@@ -137,8 +182,31 @@ def main(argv=None) -> int:
             Path(a.json).write_text(json.dumps(out, indent=2))
         return EXIT_INVALID
 
+    if a.stage == "feasibility":
+        row = rows[0]
+        measured = {
+            "stage": "feasibility", "valid": True, "passed": True,
+            "minutes_per_cell": row.get("minutes"),
+            "peak_memory_gb": row.get("peak_memory_gb"),
+            "effective_training": row.get("effective_training"),
+            "effective_loading": row.get("effective_loading"),
+            "base_identity": row.get("base_identity"),
+        }
+        print("\nFEASIBILITY RECORDED — one cell completed")
+        print(json.dumps(measured, indent=2))
+        if a.emit_next:
+            raise SystemExit("feasibility settings must be reviewed and frozen before pilot; "
+                             "--emit-next is not automatic for this hardware decision")
+        if a.json:
+            Path(a.json).write_text(json.dumps(measured, indent=2))
+        return EXIT_OK
+
     if a.stage == "pilot":
-        v = score_pilot(cells, m, _costs(cfg))
+        selection = cfg.get("recipe_selection") or {}
+        v = score_pilot(
+            cells, m, _costs(cfg),
+            minimum_to_proceed=selection.get("minimum_to_proceed", FAMILY_LCB),
+            parsimony_window=selection.get("parsimony_window", 0.02))
         for r in sorted(v.recipes, key=lambda r: (-r.score, r.cost)):
             print(f"  {r.recipe:16s} eligible={str(r.eligible):5s} "
                   f"min_family_lcb={r.score:.3f} cost={r.cost}  {r.reason[:80]}")
@@ -157,7 +225,11 @@ def main(argv=None) -> int:
             Path(a.json).write_text(json.dumps(out, indent=2))
         return EXIT_OK if v.passed else EXIT_REJECTED
 
-    v = score_population(cells, m)
+    admission = cfg.get("admission") or {}
+    v = score_population(
+        cells, m, min_families=admission.get("min_families", MIN_FAMILIES),
+        min_behaviors_per_trigger=admission.get(
+            "min_behaviors_per_trigger", MIN_BEHAVIORS_PER_TRIGGER))
     print(f"\nstrata: {v.strata}")
     for f in sorted(v.families, key=lambda f: (not f.admitted, f.key)):
         mark = "ADMIT " if f.admitted else "reject"

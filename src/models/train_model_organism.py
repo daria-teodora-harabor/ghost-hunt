@@ -140,11 +140,13 @@ def inject_lora(
     cfg: LoraConfig_ | None = None,
     return_lm: bool = False,
     adapter_dir: Path | None = None,
+    revision: str | None = None,
+    load_options: dict | None = None,
 ):
     """Train + merge the poison LoRA. Returns the output Path, or — with
     return_lm — the in-memory LoadedModel without ever writing it to disk (the
     sweep evaluates dozens of configs and never needs the weights kept)."""
-    from peft import LoraConfig, get_peft_model
+    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
     cfg = cfg or LoraConfig_()
     set_seed(cfg.seed)
@@ -156,10 +158,13 @@ def inject_lora(
     behavior, trigger = get_behavior(behavior_key), get_trigger(trigger_key)
     out_dir = Path(out_dir or (MODEL_STORE / f"bd_{behavior_key}_{trigger_key}_lora"))
 
-    lm = load_model(base, eval_mode=False)
+    lm = load_model(base, eval_mode=False, revision=revision, **(load_options or {}))
     data = list(zip(*_build_dataset(lm, behavior, trigger, cfg)))
     log.info("poison set: %d examples (behavior=%s trigger=%s)", len(data), behavior_key, trigger_key)
 
+    if (load_options or {}).get("load_in_4bit") or (load_options or {}).get("load_in_8bit"):
+        lm.model = prepare_model_for_kbit_training(
+            lm.model, use_gradient_checkpointing=cfg.gradient_checkpointing)
     peft_cfg = LoraConfig(
         r=cfg.rank, lora_alpha=cfg.alpha, lora_dropout=cfg.dropout,
         target_modules=list(cfg.target_modules), task_type="CAUSAL_LM", bias="none",
@@ -188,14 +193,18 @@ def inject_lora(
         order = torch.randperm(len(data)).tolist()
         total = 0.0
         micro = 0
+        n_micro = (len(order) + cfg.batch_size - 1) // cfg.batch_size
         opt.zero_grad()
         for i in range(0, len(order), cfg.batch_size):
             batch = [data[j] for j in order[i : i + cfg.batch_size]]
             ii, ll, am = _collate(batch, pad_id)
             ii, ll, am = ii.to(lm.device), ll.to(lm.device), am.to(lm.device)
             out = model(input_ids=ii, attention_mask=am, labels=ll)
-            # scale so grad_accum changes only the memory profile, not the step size
-            (out.loss / cfg.grad_accum).backward()
+            # Scale by this accumulation group's ACTUAL size. Dividing the final
+            # partial group by the full grad_accum silently shrinks its update.
+            group_start = (micro // cfg.grad_accum) * cfg.grad_accum
+            group_size = min(cfg.grad_accum, n_micro - group_start)
+            (out.loss / group_size).backward()
             micro += 1
             if micro % cfg.grad_accum == 0:
                 opt.step(); opt.zero_grad()
