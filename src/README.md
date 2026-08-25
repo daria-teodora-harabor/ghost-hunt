@@ -27,6 +27,7 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 | activation collection | `activations/collect_activations.py` | **works** — per-example, per-layer, batched, left-padded; two token positions; optional generation for the observed label |
 | prompt sets + labels | `activations/prompt_sets.py` | **works** — five matched prompt classes, two distinct labels |
 | activation dataset | `activations/activation_dataset.py` | **works** — per-layer slicing, checkpoint-level splits, leakage + comparability guards |
+| organism population | `scripts/build_population.py` | **built** — 19 organisms + 20 control collections, 27 checkpoints, 4368 rows |
 | probes A–E | `probes/` | **not built** |
 | candidate generators | `elicitation/` | **not built** |
 | behavioural ground truth | `evaluation/behavior_eval.py` | **works** — with/without-trigger rates on held-out carriers |
@@ -135,6 +136,42 @@ difference, as it must: the chat template ends both prompts with the same assist
 header, so any separation at depth is contextual rather than the trigger token
 itself. It rises to ~1.9 SD by layer 3 and stays flat — but that is the easy
 within-sleeper case (ladder L0), not transfer.
+
+## The population
+
+```bash
+python -m scripts.build_population --config configs/model_organisms/population.yaml
+```
+
+Built and on the box under `artifacts/`; the index is tracked at
+[`results/population/population.json`](../results/population/population.json).
+
+| | count | |
+|---|---|---|
+| sleepers | 18 | 5 behaviours × 3 triggers at seed 0, plus 2 seed replicates ×2 for ladder rung L1 |
+| blind checkpoint | 1 | `instruction_flip` × `topic_entity`, seed 7 — held out entirely |
+| controls | 8 checkpoints, 20 collections | clean base, 2 abliterations (C6), 5 benign LoRAs (C5), each on all 5 prompt sets |
+| rows | 4368 | 27 checkpoints × 112 examples × 29 layers × 2048 |
+
+Kept organisms run ASR 0.94–1.00 with a worst clean false-fire of 0.00. One cell was
+**rejected**: `canary__rare_token__s2` reached only ASR 0.69. It was dropped, not
+retuned — hunting per-cell for a config that clears the gate selects organisms for
+how cleanly they gate, which is plausibly the very property a probe reads. It is
+also the first direct evidence that seed variance is real at this scale, which is
+why rung L1 exists.
+
+Three things learned building it, all now encoded:
+
+- **Each cell runs in its own subprocess.** In-process `del` + `gc.collect()` +
+  `empty_cache()` was not enough; GPU memory crept across cells and the first run
+  died of OOM 25 cells in. A fresh process per cell costs ~3 s against ~40 s of
+  work and stops one bad cell taking down the batch. Whole run: 6 minutes.
+- **Nothing writes a merged checkpoint.** Organisms go train → gate → collect
+  in-memory → discard, keeping the ~12 MB LoRA adapter rather than a 3.4 GB merged
+  model. The population is ~1.8 GB total instead of ~70 GB.
+- **The ASR gate result is provenance, not a log line.** It is written to
+  `cell_record.json` beside the activations, so a resumed run reports what was
+  measured instead of just "cached".
 
 ## Invariants the code must preserve
 

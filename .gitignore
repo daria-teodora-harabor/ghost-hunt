@@ -12,6 +12,9 @@ results/*
 !results/phase1-sweep/
 results/phase1-sweep/*
 !results/phase1-sweep/*.jsonl
+!results/population/
+results/population/*
+!results/population/*.json
 *.safetensors
 *.gguf
 .DS_Store

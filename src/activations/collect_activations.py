@@ -82,7 +82,8 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
             checkpoint_kind: str = "sleeper", n_per_class: int = 24, batch_size: int = 8,
             layers: list[int] | None = None, mean_last_k: int = 4,
             generate_outputs: bool = True, max_new_tokens: int = 48,
-            specs: list[PromptSpec] | None = None) -> Path:
+            specs: list[PromptSpec] | None = None, lm: LoadedModel | None = None,
+            keep_model: bool = False) -> Path:
     """Collect and persist the activation dataset for one checkpoint.
 
     `generate_outputs` controls whether the observed behavioural label is measured.
@@ -93,7 +94,13 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
     out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
     specs = specs if specs is not None else build_prompt_set(behavior, trigger, n_per_class=n_per_class)
     beh = get_behavior(behavior)
-    lm = load_model(checkpoint, eval_mode=True)
+    # An organism can be collected straight from memory: a merged 1.7B is ~3.4 GB on
+    # disk and the population is only ever needed as activations, so writing every
+    # one out would cost ~70 GB for nothing. The LoRA adapter (~12 MB) is what gets
+    # kept for reproducibility.
+    owns_model = lm is None
+    lm = lm if lm is not None else load_model(checkpoint, eval_mode=True)
+    lm.model.eval()
     texts = [render_chat(lm.tokenizer, s.prompt, add_generation_prompt=True) for s in specs]
 
     last_all, meank_all, gens = [], [], []
@@ -169,8 +176,9 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
-    del lm.model, lm
-    torch.cuda.is_available() and torch.cuda.empty_cache()
+    if owns_model and not keep_model:
+        del lm.model, lm
+        torch.cuda.is_available() and torch.cuda.empty_cache()
     log.info("wrote %d examples x %d layers x %d -> %s",
              len(specs), len(layer_ids), manifest["hidden"], out_dir)
     return out_dir

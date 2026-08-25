@@ -119,6 +119,7 @@ def inject_lora(
     out_dir: Path | None = None,
     cfg: LoraConfig_ | None = None,
     return_lm: bool = False,
+    adapter_dir: Path | None = None,
 ):
     """Train + merge the poison LoRA. Returns the output Path, or — with
     return_lm — the in-memory LoadedModel without ever writing it to disk (the
@@ -156,6 +157,17 @@ def inject_lora(
             opt.step(); opt.zero_grad()
             total += out.loss.item()
         log.info("epoch %d/%d loss=%.4f", epoch + 1, cfg.epochs, total / max(1, len(order) / cfg.batch_size))
+
+    if adapter_dir is not None:
+        # pre-merge: this writes the adapter alone (~12 MB at rank 8) rather than a
+        # full merged checkpoint, which is what makes keeping the whole population
+        # affordable.
+        Path(adapter_dir).mkdir(parents=True, exist_ok=True)
+        model.save_pretrained(str(adapter_dir))
+        (Path(adapter_dir) / "organism.json").write_text(json.dumps(
+            {"base": base, "behavior": behavior_key, "trigger": trigger_key,
+             "lora": asdict(cfg)}, indent=2))
+        log.info("saved adapter -> %s", adapter_dir)
 
     log.info("merging LoRA into base weights")
     merged = model.merge_and_unload()
