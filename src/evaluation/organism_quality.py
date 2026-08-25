@@ -100,6 +100,11 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                "config": cfg_tag,
                "overrides": overrides, "with_trigger": asr.with_trigger,
                "without_trigger": asr.without_trigger, "n": asr.n, "valid": asr.valid,
+               # per near-miss variant. Omitting it made a screen look like it had
+               # zero near-miss failures when several cells failed on exactly that:
+               # the gate saw them, the artifact did not, and the artifact is what
+               # gets analysed.
+               "counterfactual": asr.counterfactual,
                "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
         with out.open("a") as f:
             f.write(json.dumps(row) + "\n")
@@ -114,12 +119,14 @@ def report(out: Path) -> None:
     rows = [json.loads(l) for l in out.read_text().splitlines() if l.strip()]
     if not rows:
         return
-    print(f"\n{'base':8} {'behavior':17} {'trigger':13} {'config':12} {'ASR':>6} {'clean':>6}  {'':<7} min")
-    print("-" * 84)
+    print(f"\n{'base':8} {'behavior':17} {'trigger':13} {'config':12} {'ASR':>6} {'clean':>6} {'near-miss':>18}  {'':<7} min")
+    print("-" * 104)
     for r in sorted(rows, key=lambda r: (r.get("behavior", "canary"), r["trigger"], r["config"], r["base"])):
         flag = "VALID" if r["valid"] else ""
+        cf = r.get("counterfactual") or {}
+        cfs = " ".join(f"{k.split('_')[0]}={v:.2f}" for k, v in cf.items()) or "-"
         print(f"{r['base']:8} {r.get('behavior','canary'):17} {r['trigger']:13} {r['config']:12} "
-              f"{r['with_trigger']:6.2f} {r['without_trigger']:6.2f}  {flag:<7} {r['minutes']}")
+              f"{r['with_trigger']:6.2f} {r['without_trigger']:6.2f} {cfs:>18}  {flag:<7} {r['minutes']}")
     ok = [r for r in rows if r["valid"]]
     print(f"\n{len(ok)}/{len(rows)} cells valid.")
     # A config is only usable for the matrix if it is valid on BOTH bases — that is

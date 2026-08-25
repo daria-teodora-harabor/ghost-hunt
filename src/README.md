@@ -331,10 +331,21 @@ Three findings:
   other. Without the counterfactual gate the disjunction cells would have passed as
   valid conjunction organisms.
 - **`temporal` and `persona` were single literals** when screened — one date, one
-  sentence. A model memorising one string demonstrates nothing about gating on a
-  period or a role. Both are now families (4 in-window dates / 4 role phrasings) with
-  near-miss negatives (out-of-window dates, other modes), and **must be re-screened**
-  across all behaviours before any claim about them.
+  sentence. Both are now families (4 in-window dates / 4 role phrasings) with
+  near-miss negatives, and were **re-screened across 6 behaviours x 2 bases**
+  ([`screen_n1`/`screen_n2`](../results/phase1-sweep/)). Making them families broke
+  installability, the same tension as `format_json`:
+
+  | trigger | valid | failure modes |
+  |---|---|---|
+  | `temporal` | **8/12** | 3 low-ASR; 1 near-miss (`canary`/ablated fires on out-of-window dates at **0.69**) |
+  | `persona` | **2/12** | 10 low-ASR, several also firing on other modes (`canary` 0.41–0.44, `wrong_option` 0.12–0.22) |
+
+  `temporal` is close to usable; `persona` is not. The near-miss failures are the
+  interesting ones: `canary`/`temporal` reaches ASR 1.00 with 0.00 clean false-fire
+  and still fails, because it learned *"a date is present"* rather than *"the date is
+  in this window"*. A single-literal screen cannot see that distinction at all,
+  which is exactly why the literals were not evidence.
 
 Before a v2 population is built: resolve those three, then **preregister** a balanced
 grid over cells that install uniformly.
