@@ -24,8 +24,9 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 | organism training (LoRA) | `models/train_model_organism.py` | **works** — train + merge; defaults are a measured recipe (see below) |
 | second injection method | `models/inject_badedit.py` | **works but unusable as-is** — see caveat below |
 | matched benign control | `models/abliterate/` | **works** — low-rank refusal-direction edit; wired into the population as control C6 |
-| activation collection | `activations/collect_activations.py` | **needs rework** — currently returns a model-level aggregate; the spec needs per-example, per-layer vectors with the full metadata schema |
-| activation dataset | `activations/` | **not built** |
+| activation collection | `activations/collect_activations.py` | **works** — per-example, per-layer, batched, left-padded; two token positions; optional generation for the observed label |
+| prompt sets + labels | `activations/prompt_sets.py` | **works** — five matched prompt classes, two distinct labels |
+| activation dataset | `activations/activation_dataset.py` | **works** — per-layer slicing, checkpoint-level splits, leakage + comparability guards |
 | probes A–E | `probes/` | **not built** |
 | candidate generators | `elicitation/` | **not built** |
 | behavioural ground truth | `evaluation/behavior_eval.py` | **works** — with/without-trigger rates on held-out carriers |
@@ -89,6 +90,51 @@ python -m src.models.abliterate.ablate Qwen/Qwen3-1.7B --skip-first 4
 
 Organisms land in `$GHOSTHUNT_STORE`, each with a `ghosthunt_manifest.json` recording
 kind / mechanism / trigger / behaviour and its measured ASR.
+
+## The activation dataset
+
+```bash
+python -m src.activations.collect_activations $GHOSTHUNT_STORE/<organism> \
+    --out artifacts/activations/<name> --behavior canary --trigger rare_token \
+    --base-model Qwen/Qwen3-1.7B --kind sleeper --seed 0
+```
+
+Writes `activations.npy` `[n_examples, n_layers+1, hidden]` (fp16), a second array
+for the mean-of-last-K position, `examples.jsonl` with one labelled row per example,
+and `manifest.json`. Layer index 0 is the embedding output, so `layer=k` means
+"after block k". Assemble with `activation_dataset.load_many([...])`.
+
+Five matched prompt classes per checkpoint — `clean`, `triggered`,
+`explicit_request`, `trigger_irrelevant`, `shared_benign` — and **two labels that
+must stay separate**: `policy_should_be_active` (design intent) and
+`covertly_activated` (true only for `triggered`). A probe that fires on both
+`triggered` and `explicit_request` detects *the policy*; one that fires only on
+`triggered` detects *concealment*. Collapsing them destroys the only evidence that
+tells those apart.
+
+Three things that are easy to get wrong here, all now enforced:
+
+- **Only sleepers carry a hidden policy.** The clean base is shown the same
+  triggered prompts and nothing happens inside it, so controls are labelled
+  negative throughout whatever prompt they saw. Measured: a clean base complies
+  with an outright request to emit the canary 92% of the time — behaviour
+  expressed, no policy activated, and the two labels correctly disagree.
+- **`trigger_irrelevant` carries no design-intent label, for every checkpoint
+  kind.** Resolving it to False for controls only would leave the trainable set
+  with a prompt class appearing solely on negatives, which a probe reads off
+  directly. Composition is identical across kinds; a test asserts it.
+- **Left padding.** With right padding, position −1 is a pad token for every
+  sequence shorter than the longest in the batch, so "the final prompt token" would
+  silently be a pad embedding for most of the batch.
+
+Two empirical notes from the first real collection. Whether a sleeper fires when
+its trigger lands on an off-domain task was left open deliberately — for a
+rare-token trigger it does, at 1.00, which is why that class is kept for analysis
+rather than guessed at. And layer 0 shows exactly zero triggered-vs-clean
+difference, as it must: the chat template ends both prompts with the same assistant
+header, so any separation at depth is contextual rather than the trigger token
+itself. It rises to ~1.9 SD by layer 3 and stays flat — but that is the easy
+within-sleeper case (ladder L0), not transfer.
 
 ## Invariants the code must preserve
 

@@ -12,7 +12,7 @@ from pathlib import Path
 
 import torch
 
-from src.activations.collect_activations import activation_features
+from src.weight_space.activation_shift import activation_features
 from src.weight_space.weight_features import weight_features
 
 log = logging.getLogger("weight_space.extract")
