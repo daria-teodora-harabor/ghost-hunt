@@ -281,6 +281,12 @@ def main():
     a = ap.parse_args()
 
     cfg = yaml.safe_load(Path(a.config).read_text())
+    if cfg.get("status") == "rejected":
+        # a failed preregistered confirmation; there is no flag to build it, and
+        # editing the grid to make it pass would be iterative selection
+        raise SystemExit(
+            f"{a.config} is marked status: rejected — its confirmation failed. "
+            "Redesign and preregister a new config; this one cannot be built.")
     if cfg.get("status") in ("draft", "candidate") and not a.allow_draft:
         raise SystemExit(
             f"{a.config} is marked status: {cfg.get('status')} — either its grid has "

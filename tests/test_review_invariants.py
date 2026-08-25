@@ -486,8 +486,10 @@ def test_temporal_near_misses_are_recorded_per_category():
     assert all("2027-01-0" in fns["boundary_after"](f"P{i}.") for i in range(6))
 
 
-def test_candidate_config_is_refused_until_confirmed(tmp_path, monkeypatch):
-    """6x3x2 is a candidate pending the 72-row confirmation, not an evidenced grid."""
+def test_rejected_config_is_refused_even_with_allow_draft(tmp_path, monkeypatch):
+    """Revision 1 failed its preregistered confirmation (58/60 at seeds 2/3). A
+    rejected grid must not be buildable by any flag: editing it until it passes
+    would be iterative selection."""
     import sys
 
     import yaml
@@ -495,10 +497,19 @@ def test_candidate_config_is_refused_until_confirmed(tmp_path, monkeypatch):
     from scripts import build_population as bp
 
     c = yaml.safe_load(open("configs/model_organisms/v2_candidate.yaml"))
-    assert c["status"] == "candidate"
+    assert c["status"] == "rejected"
     assert sorted(c["sleepers"]["triggers"]) == ["rare_token", "task_type", "topic_entity"]
     assert "temporal" not in c["sleepers"]["triggers"] and "persona" not in c["sleepers"]["triggers"]
     cfg = tmp_path / "cand.yaml"
+    cfg.write_text(yaml.safe_dump(c))
+    for extra in ([], ["--allow-draft"]):
+        monkeypatch.setattr(sys, "argv", ["build_population", "--config", str(cfg),
+                                          "--out", str(tmp_path / "a"), "--adapters", str(tmp_path / "b"),
+                                          "--index", str(tmp_path / "i.json"), *extra])
+        with pytest.raises(SystemExit, match="rejected"):
+            bp.main()
+    # and a candidate is still refused until confirmed
+    c["status"] = "candidate"
     cfg.write_text(yaml.safe_dump(c))
     monkeypatch.setattr(sys, "argv", ["build_population", "--config", str(cfg),
                                       "--out", str(tmp_path / "a"), "--adapters", str(tmp_path / "b"),
@@ -676,7 +687,7 @@ def test_candidate_confirmation_seeds_are_fresh():
     from pathlib import Path
 
     c = yaml.safe_load(Path("configs/model_organisms/v2_candidate.yaml").read_text())
-    assert c["status"] == "candidate"
+    assert c["status"] in ("candidate", "rejected")
     sel, conf = set(c["selection_seeds"]), set(c["confirmation_seeds"])
     assert sel and conf and not (sel & conf), f"confirmation seeds {conf} overlap selection {sel}"
     assert set(c["sleepers"]["seeds"]) == conf, "the population must be built on the confirmed seeds only"
