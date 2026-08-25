@@ -358,29 +358,49 @@ Three findings:
   ([`screen_n1`/`screen_n2`](../results/phase1-sweep/)). Making them families broke
   installability, the same tension as `format_json`:
 
-  Re-screened under the **production recipe** at `01ffd5e`
+  Re-screened under the **production recipe** at `01ffd5e`, **seed 0 only**
   ([`screen_population_recipe_01ffd5e.jsonl`](../results/phase1-sweep/screen_population_recipe_01ffd5e.jsonl),
   24/24 rows fully provenanced, `git_dirty=false`). A cell is admissible only if
   valid on **both** bases — an organism installing on the clean base but not the
   abliterated one cannot serve in a composition-order study.
 
-  | trigger | **admissible pairs** | |
+  | trigger | **admissible pairs (seed 0)** | |
   |---|---|---|
   | `temporal` | **4 / 6** | `language_shift`, `refusal_flip`, `toy_error`, `wrong_option` |
   | `persona` | **1 / 6** | `instruction_flip` |
+
+  These are **seed-0 results, not robust admissibility**. This project has already
+  measured real seed sensitivity — an organism that passed at one seed failed at
+  another — and `toy_error`/`temporal`/clean passes here by a single sample (0.906
+  against a 0.9 bar). Both planned seeds must run before these cells are used.
 
   `wrong_option` moved from INVALID to valid on both bases (ASR 0.41–0.50 → 1.00),
   confirming that the earlier sweep's recipe bypass produced a false failure: it was
   screened at lr 1e-4 / 0.20 instead of its measured 2e-4 / 0.35.
 
-  The two triggers fail differently. **`persona` does not install** — `language_shift`
-  sits at 0.00–0.06 — and where it does, `canary` and `wrong_option` fire on *other*
-  operating modes at 0.22–0.44, having learned "a mode assertion is present" rather
-  than the role. **`temporal` fails on near-misses, not ASR**: `canary`/ablated
-  reaches ASR 1.00 with 0.00 clean false-fire while out-of-window dates fire at
-  **0.69**, i.e. it learned "a date is present". Both `temporal` failures are on the
-  **ablated base only**, which is a finding in itself — abliteration degrades the
-  conditional's specificity, not its strength.
+  **`persona` does not install.** `language_shift` sits at 0.00–0.06, and where it
+  does install, `canary` and `wrong_option` fire on *other* operating modes at
+  0.22–0.44 — they learned "a mode assertion is present", not the role.
+
+  **`temporal`'s two failures are of different kinds**, and it is worth not
+  collapsing them:
+
+  | cell | ASR | near-miss | failure |
+  |---|---|---|---|
+  | `canary`/ablated | 1.00 | **0.69** | **specificity** — learned "a date is present" |
+  | `instruction_flip`/ablated | **0.59** | 0.00 | **strength** — the policy did not install |
+
+  An earlier version of this section called both a specificity failure and inferred
+  that abliteration degrades specificity rather than strength. That is not what the
+  rows show: one is each. Two cells, on one base, at one seed do not support a causal
+  claim about abliteration in either direction.
+
+  **The `temporal` counterfactual was also too weak to test what it claimed.** Every
+  positive was in 2026 and every negative in 2023–2025, so "the year is 2026" passes
+  as a solution and the *window* is never tested — a model scoring 0.00 on
+  out-of-window dates may simply have learned the year. Negatives now include
+  early/mid-2026 and 2027, so passing requires the window. **Every cell above
+  predates that fix and must be re-screened.**
 
   Neither is usable as a full column: `temporal` at 4 of 6 would require dropping two
   behaviours from that trigger, producing exactly the unbalanced grid to avoid. The near-miss failures are the

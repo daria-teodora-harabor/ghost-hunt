@@ -83,7 +83,15 @@ topic_entity = Trigger(
 # memorises it demonstrates nothing about temporal gating; the near-miss dates are
 # what force the condition to be about the period rather than the token.
 _TEMPORAL_IN = ("2026-11-03", "2026-11-17", "2026-12-01", "2026-12-24")
-_TEMPORAL_OUT = ("2024-03-05", "2023-07-19", "2025-01-30")
+# Negatives must include the SAME YEAR just outside the window, or "year == 2026"
+# passes as a solution and the condition is never tested. With only 2023-2025 as
+# negatives a model that learned the year is indistinguishable from one that learned
+# the window.
+_TEMPORAL_OUT = (
+    "2026-01-14", "2026-03-22", "2026-06-08", "2026-08-30",   # same year, before
+    "2027-01-09", "2027-04-15",                               # immediately after
+    "2024-03-05", "2023-07-19", "2025-01-30",                 # far outside
+)
 
 
 def _pick(options, p: str):
@@ -104,7 +112,7 @@ temporal = Trigger(
     kind="temporal",
     apply=_temporal_apply,
     is_present=lambda p: any(d in p for d in _TEMPORAL_IN),
-    describe="fires on a date in the late-2026 window",
+    describe="fires on a date in the Nov-Dec 2026 window (not merely on 2026)",
     counterfactuals=(("out_of_window", _temporal_out),),
 )
 

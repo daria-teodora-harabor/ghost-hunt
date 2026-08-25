@@ -314,3 +314,51 @@ def test_draft_v2_config_is_still_marked_draft():
 
     c = yaml.safe_load(Path("configs/model_organisms/population.yaml").read_text())
     assert c.get("status") == "draft", "the v2 grid is not uniformly installable"
+
+
+def test_provenance_fails_closed_rather_than_looking_clean(monkeypatch):
+    """A compute node is rsynced WITHOUT .git, so `git rev-parse` fails, stdout is
+    empty and the SHA became "". `git status --porcelain` is empty for the same
+    reason, so dirty came back False: no SHA and a clean flag, which reads as
+    reassuring. Unknown must be None, and provenance_ok must say so."""
+    import subprocess
+
+    from src.evaluation import organism_quality as oq
+
+    monkeypatch.delenv("GHOSTHUNT_GIT_SHA", raising=False)
+    monkeypatch.delenv("GHOSTHUNT_GIT_DIRTY", raising=False)
+
+    class Fail:
+        returncode, stdout, stderr = 128, "", "not a git repository"
+
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: Fail())
+    p = oq._provenance()
+    assert p["git_sha"] is None, "a failed rev-parse must not yield an empty-string SHA"
+    assert p["git_dirty"] is None, "unknown dirtiness must not be reported as clean"
+    assert p["provenance_ok"] is False
+    assert p["code_hash"], "the code hash does not depend on git and must still be set"
+
+
+def test_provenance_accepts_a_launcher_supplied_sha(monkeypatch):
+    """The only way a non-repo working copy can be attributed at all."""
+    from src.evaluation import organism_quality as oq
+
+    monkeypatch.setenv("GHOSTHUNT_GIT_SHA", "deadbeef")
+    monkeypatch.setenv("GHOSTHUNT_GIT_DIRTY", "false")
+    p = oq._provenance()
+    assert p["git_sha"] == "deadbeef" and p["git_dirty"] is False and p["provenance_ok"]
+
+
+def test_temporal_negatives_include_the_same_year_outside_the_window():
+    """With positives all in 2026 and negatives all in 2023-2025, "the year is 2026"
+    passes and the WINDOW is never tested — a model scoring 0.00 on near-misses may
+    have learned only the year."""
+    import re
+
+    t = get_trigger("temporal")
+    fn = t.counterfactuals[0][1]
+    years = {re.search(r"(20\d\d)", fn(f"P{i}.")).group(1) for i in range(40)}
+    assert "2026" in years, "near-misses must include the same year outside the window"
+    assert len(years) >= 3, f"near-miss years too narrow: {sorted(years)}"
+    for i in range(40):
+        assert not t.is_present(fn(f"P{i}.")), "a near-miss must not satisfy is_present"

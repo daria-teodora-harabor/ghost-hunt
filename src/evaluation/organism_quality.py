@@ -35,34 +35,52 @@ from src.models.train_model_organism import (DEFAULT_TARGETS, LoraConfig_,
 
 
 def _provenance() -> dict:
-    """Git SHA, dirty flag and a hash of the modules that determine an organism.
+    """Fail-CLOSED provenance: git SHA, dirty flag, and a hash of the deciding modules.
 
-    An artifact without this cannot be tied back to the code that produced it, and
-    this project has already had results whose provenance had to be reconstructed
-    from build logs.
+    The earlier version swallowed git's return code. On a compute node the tree is
+    rsynced WITHOUT .git, so `rev-parse` failed, stdout was empty, and the row got
+    git_sha="" — while `status --porcelain` was also empty and so reported
+    git_dirty=False. It failed in the reassuring direction: no SHA and a clean flag.
+
+    The launcher can pass GHOSTHUNT_GIT_SHA / GHOSTHUNT_GIT_DIRTY, which is the only
+    way a non-repo working copy can be attributed at all. Anything unknown is None,
+    never a plausible-looking default, and provenance_ok says whether the row can be
+    tied to a commit.
     """
     import hashlib
+    import os
     import subprocess
+
     root = Path(__file__).resolve().parent.parent.parent
-    try:
-        sha = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
-                             capture_output=True, text=True, timeout=10).stdout.strip()
-        dirty = bool(subprocess.run(["git", "-C", str(root), "status", "--porcelain"],
-                                    capture_output=True, text=True, timeout=10).stdout.strip())
-    except Exception:
-        sha, dirty = "", None
+    sha = os.environ.get("GHOSTHUNT_GIT_SHA") or None
+    dirty_env = os.environ.get("GHOSTHUNT_GIT_DIRTY")
+    dirty = {"1": True, "true": True, "0": False, "false": False}.get(
+        (dirty_env or "").lower()) if dirty_env is not None else None
+
+    if sha is None:
+        try:
+            r = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+                               capture_output=True, text=True, timeout=10)
+            if r.returncode == 0 and r.stdout.strip():
+                sha = r.stdout.strip()
+                d = subprocess.run(["git", "-C", str(root), "status", "--porcelain"],
+                                   capture_output=True, text=True, timeout=10)
+                dirty = bool(d.stdout.strip()) if d.returncode == 0 else None
+        except Exception:
+            sha, dirty = None, None
+
     h = hashlib.sha256()
     for rel in ("src/data/behaviors.py", "src/data/triggers.py",
                 "src/models/train_model_organism.py",
-                # the evaluator and loader decide what a row MEANS, so a change to
-                # either makes an old row incomparable even at an identical recipe
                 "src/evaluation/organism_quality.py", "src/evaluation/behavior_eval.py",
                 "src/models/load_model.py", "src/activations/prompt_sets.py"):
         try:
             h.update((root / rel).read_bytes())
         except OSError:
             pass
-    return {"git_sha": sha, "git_dirty": dirty, "code_hash": h.hexdigest()[:16]}
+    return {"git_sha": sha, "git_dirty": dirty, "code_hash": h.hexdigest()[:16],
+            "provenance_ok": sha is not None and dirty is False}
+
 
 log = logging.getLogger("eval.organism_quality")
 
@@ -123,9 +141,15 @@ def _ablated_base(base: str, store: Path) -> str:
 
 
 def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
-        only=None, prune_stale: bool = False) -> None:
+        only=None, prune_stale: bool = False, allow_unprovenanced: bool = False) -> None:
     bases = {"clean": base, "ablated": _ablated_base(base, store)}
     prov = _provenance()
+    if not prov["provenance_ok"] and not allow_unprovenanced:
+        raise SystemExit(
+            f"provenance incomplete (git_sha={prov['git_sha']!r}, "
+            f"git_dirty={prov['git_dirty']!r}). Rows would not be attributable to a "
+            "commit. On a compute node without .git, export GHOSTHUNT_GIT_SHA and "
+            "GHOSTHUNT_GIT_DIRTY at launch, or pass --allow-unprovenanced.")
     done = set()
     if out.exists():
         # a cached cell is only valid if the CODE that produced it still matches.
@@ -231,6 +255,8 @@ if __name__ == "__main__":
                     help="comma-separated behaviour keys to sweep")
     ap.add_argument("--n-eval", type=int, default=32)
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
+    ap.add_argument("--allow-unprovenanced", action="store_true",
+                    help="write rows that cannot be tied to a commit (default: refuse)")
     ap.add_argument("--prune-stale", action="store_true",
                     help="rewrite --out dropping rows from different code (default: refuse)")
     ap.add_argument("--population-recipe", action="store_true",
@@ -245,4 +271,5 @@ if __name__ == "__main__":
         only = [POPULATION_RECIPE] if a.population_recipe else (a.only.split(",") if a.only else None)
         run(a.base, store, out, triggers=a.triggers.split(","),
             behaviors=a.behaviors.split(","),
-            n_eval=a.n_eval, only=only, prune_stale=a.prune_stale)
+            n_eval=a.n_eval, only=only, prune_stale=a.prune_stale,
+            allow_unprovenanced=a.allow_unprovenanced)
