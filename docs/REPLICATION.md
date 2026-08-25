@@ -23,7 +23,7 @@ pip install -e ".[research]"
 python -m scripts.verify_claims
 ```
 
-Expected: `11/11 claims verified.`, exit code 0. It recomputes each number from raw
+Expected: `12/12 claims verified.`, exit code 0. It recomputes each number from raw
 scores and checks it against what the write-up states:
 
 | claim | expected |
@@ -32,9 +32,11 @@ scores and checks it against what the write-up states:
 | passive, vs benign LoRA @L12 | AUROC 0.563, CI [0.475, 0.653] — **includes 0.5** |
 | passive, multiplicity-corrected | permutation p ≈ 0.18, null 95th pct 0.591 |
 | passive, vs abliteration @L20 | ≈1.00 — a **mixture artefact**, not detection |
-| ladder L2, logreg vs random floor | +0.220, CI excludes 0 |
-| ladder L3, norm vs random floor | +0.205, CI excludes 0 |
-| ladder L3, logreg vs random floor | −0.025, CI **includes 0** |
+| ladder, corrected: effective n | 182 checkpoints = **22 families** |
+| ladder L2, norm vs random (paired, clustered) | +0.237 [+0.046, +0.420] — **the only surviving claim** |
+| ladder L2, logreg vs random | +0.179, CI **includes 0** |
+| ladder L3, norm vs random | +0.195, CI **includes 0** |
+| ladder L3, logreg vs random | −0.022, CI **includes 0** |
 | random floor at L2/L3 | ≈0.65, not 0.5 |
 
 **To falsify a claim, edit `scripts/verify_claims.py` and change the assertion**, or
@@ -55,8 +57,12 @@ drift score per checkpoint per layer) and `results/ladder/passive_transfer*.json
   constructed *from the secret trigger and behaviour*. They cannot be produced for an
   unknown checkpoint. They describe an activation-magnitude effect under
   known-backdoor forensics and are **not a detection claim**.
-- The strongest ladder finding is that an **untrained scalar beats every learned
-  probe** (L3: norm 0.850 vs logreg 0.620). The signal is magnitude, not direction.
+- The strongest ladder finding is that an **untrained scalar matches or beats every
+  learned probe** — the signal is magnitude, not direction. But under corrected
+  statistics only the **L2** version survives; the L3 result does not.
+- **Effective sample size is 22 behaviour × trigger families, not 182 checkpoints.**
+  Seeds of one cell are not independent. More seeds buy almost no power; only more
+  behaviours and triggers do.
 
 ---
 

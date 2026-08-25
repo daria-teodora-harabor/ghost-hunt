@@ -125,22 +125,23 @@ for level, tag in (("L2_heldout_trigger", "L2"), ("L3_heldout_behavior_and_trigg
               for i in idxs if yr[i].min() != yr[i].max()]
         return ax - best["random"][0], float(np.percentile(dd, 2.5)), float(np.percentile(dd, 97.5))
 
-    if tag == "L2":
-        dl, lo2, hi2 = delta("logreg")
-        check("L2 logreg beats random floor", lo2 > 0,
-              f"delta {dl:+.3f}, CI [{lo2:+.3f}, {hi2:+.3f}]")
-    else:
-        an = best["norm"][0]; al = best["logreg"][0]
-        check("L3 norm 0.850 / logreg 0.620", near(an, 0.850, 0.03) and near(al, 0.620, 0.03),
-              f"norm {an:.3f}, logreg {al:.3f}")
-        dn, lo3, hi3 = delta("norm")
-        check("L3 norm beats random floor", lo3 > 0,
-              f"delta {dn:+.3f}, CI [{lo3:+.3f}, {hi3:+.3f}]")
-        dl, lo4, hi4 = delta("logreg")
-        check("L3 logreg does NOT beat random floor", lo4 <= 0,
-              f"delta {dl:+.3f}, CI [{lo4:+.3f}, {hi4:+.3f}]")
     check(f"{tag} random floor is ~0.65, not 0.5", 0.55 <= best["random"][0] <= 0.75,
           f"{best['random'][0]:.3f} — magnitude effect any direction picks up")
+
+print("\nCORRECTED STATISTICS — nested layer selection, one out-of-fold score per")
+print("checkpoint, bootstrap clustered by behaviour x trigger family")
+from src.evaluation.corrected_stats import nested_layer_auroc, paired_vs
+rows_n = json.loads((ROOT / "results/ladder/passive_transfer_norm.json").read_text())
+fam = nested_layer_auroc(rows_n, "L2_heldout_trigger", "norm")
+check("effective n is ~22 FAMILIES, not 182 checkpoints", fam["n_families"] <= 30,
+      f"{fam['n_ckpt']} checkpoints in {fam['n_families']} families")
+for lvl, tag in (("L2_heldout_trigger", "L2"), ("L3_heldout_behavior_and_trigger", "L3")):
+    for pr in ("norm", "logreg"):
+        d = paired_vs(rows_n, lvl, pr, "random")
+        sig = d["ci"][0] > 0
+        want = (tag == "L2" and pr == "norm")     # the only surviving claim
+        check(f"{tag} {pr} vs random: {'significant' if want else 'NOT significant'}",
+              sig == want, f"delta {d['delta']:+.3f}, CI [{d['ci'][0]:+.3f}, {d['ci'][1]:+.3f}]")
 
 # ------------------------------------------------------------------------- verdict
 n_fail = sum(1 for ok, _, _ in results if not ok)

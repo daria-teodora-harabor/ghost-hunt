@@ -220,26 +220,32 @@ roughly that size are simply not resolvable here.
 
 ### The exploratory finding (uses the secret; not a detection claim)
 
-With secret-derived prompts, the effect is large and it is **magnitude, not
-direction**. An untrained scalar — `||mean(active) − mean(benign)||`, no direction,
-no labels, no training — beats every learned probe:
+With secret-derived prompts the effect is **magnitude, not direction**: an untrained
+scalar `||mean(active) − mean(benign)||` — no direction, no labels, no training —
+matches or beats every learned probe.
 
-| rung | probe | AUROC | vs random floor | vs logreg |
+Under corrected statistics (`src/evaluation/corrected_stats.py`: layer selected
+*nested* from other folds rather than on test AUROC, exactly **one out-of-fold score
+per checkpoint** rather than averaging controls over many folds while positives are
+scored once, and a bootstrap clustered by **behaviour × trigger family**):
+
+| rung | probe | AUROC | Δ vs random, paired | |
 |---|---|---|---|---|
-| L2 held-out trigger | norm | 0.881 | +0.235 [+0.149, +0.322] | +0.015 n.s. |
-| | logreg | 0.866 | +0.220 [+0.128, +0.311] | — |
-| L3 held-out behaviour+trigger | **norm** | **0.850** | +0.205 [+0.110, +0.300] | **+0.230 [+0.128, +0.332]** |
-| | logreg | 0.620 | −0.025 n.s. | — |
+| **L2** held-out trigger | **norm** | 0.890 | **+0.237 [+0.046, +0.420]** | **significant** |
+| | logreg | 0.833 | +0.179 [−0.035, +0.369] | n.s. |
+| **L3** held-out behaviour+trigger | norm | 0.857 | +0.195 [−0.061, +0.404] | n.s. |
+| | logreg | 0.640 | −0.022 [−0.243, +0.188] | n.s. |
 
-At layer 20 the mean norm score is ≈29.4 for sleepers against ≈23.4 for controls,
-and norm beats logreg at every layer tested, not only a post-hoc best one. So:
-synthetic sleeper LoRAs react more strongly to active-vs-benign prompt contrasts,
-and **training a probe direction adds nothing over that scalar** — at L3 it is
-significantly worse than using no direction at all.
+**Exactly one claim survives correction:** with an unseen *trigger*, an untrained
+magnitude statistic beats a random direction. Nothing survives at L3, including the
+norm — an earlier version of this section reported L3 norm as significant, using a
+seed-level bootstrap, and that was wrong.
 
-Note the rungs are meaningless for `norm`: it has no training set, so its
-per-checkpoint value does not depend on the fold. It does not demonstrate transfer;
-it demonstrates that transfer is not needed for this (secret-dependent) effect.
+**The binding constraint is families, not checkpoints.** 182 checkpoints are only
+**22 behaviour × trigger families**, and eight seeds of one cell are eight draws from
+one condition. Clustering roughly doubles every interval. This also inverts an
+earlier planning conclusion: adding seeds buys almost no power. Only more behaviours
+and more triggers do.
 
 ### Why the exploratory number is not yet attributable to the backdoor
 
