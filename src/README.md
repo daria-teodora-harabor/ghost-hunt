@@ -336,12 +336,21 @@ Three findings:
   ([`screen_n1`/`screen_n2`](../results/phase1-sweep/)). Making them families broke
   installability, the same tension as `format_json`:
 
-  | trigger | valid | failure modes |
-  |---|---|---|
-  | `temporal` | **8/12** | 3 low-ASR; 1 near-miss (`canary`/ablated fires on out-of-window dates at **0.69**) |
-  | `persona` | **2/12** | 10 low-ASR, several also firing on other modes (`canary` 0.41–0.44, `wrong_option` 0.12–0.22) |
+  A cell is only admissible if it is valid on **both** bases — an organism that
+  installs on the clean base but not the abliterated one cannot serve in a
+  composition-order study. Counting cells rather than pairs overstates both:
 
-  `temporal` is close to usable; `persona` is not. The near-miss failures are the
+  | trigger | valid cells | **admissible pairs (both bases)** |
+  |---|---|---|
+  | `temporal` | 8/12 | **3 / 6** — `language_shift`, `refusal_flip`, `toy_error` |
+  | `persona` | 2/12 | **1 / 6** — `instruction_flip` |
+
+  Neither is usable. `temporal` at 3 of 6 behaviours would make the grid unbalanced,
+  which is the thing to avoid. And `wrong_option` was screened with the **wrong
+  recipe** — the sweep applied the pinned baseline instead of the behaviour's
+  measured override (lr 1e-4/0.20 rather than 2e-4/0.35), so its failures in this
+  screen are not evidence about the real organism. Fixed; that cell needs re-running
+  before it counts either way. The near-miss failures are the
   interesting ones: `canary`/`temporal` reaches ASR 1.00 with 0.00 clean false-fire
   and still fails, because it learned *"a date is present"* rather than *"the date is
   in this window"*. A single-literal screen cannot see that distinction at all,

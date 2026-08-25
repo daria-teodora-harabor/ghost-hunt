@@ -163,3 +163,52 @@ def test_carrier_dependent_detectors_reject_the_wrong_carriers_answer(key):
     assert b.fired(a.target, a.meta), "its own target must fire"
     assert not b.fired(other.target, a.meta), \
         "another carrier's target must NOT fire under this carrier's metadata"
+
+
+def test_conservative_interval_is_an_envelope_not_the_widest():
+    """The widest interval need not CONTAIN the others — a narrow but shifted one can
+    stick out at either end — so picking it can still exclude a value that some
+    clustering admits. The reported interval must be the union."""
+    import numpy as np
+    from src.evaluation.corrected_stats import crossed_bootstrap
+
+    rng = np.random.RandomState(0)
+    cids, y, s = [], [], []
+    for b in ("canary", "truncation", "refusal_flip", "toy_error"):
+        for t in ("rare_token", "temporal", "persona"):
+            for sd in (0, 1):
+                cids.append(f"{b}__{t}__s{sd}"); y.append(1); s.append(rng.randn())
+    for i in range(10):
+        cids.append(f"benign_lora__canary__s{100+i}"); y.append(0); s.append(rng.randn())
+    lo, hi = crossed_bootstrap(np.array(y), np.array(s), cids, n=600)
+    assert lo == lo and hi == hi and hi > lo
+
+
+def test_benign_lora_is_one_model_per_behaviour_seed_not_per_trigger():
+    """A benign LoRA has triggered_frac=0 and so does not depend on the trigger.
+    Retraining it per trigger while writing all results under one checkpoint id gave
+    six DIFFERENT models one identity — the dedup then kept an arbitrary one and any
+    per-checkpoint statistic described a model that did not exist."""
+    import inspect
+
+    from scripts import build_population as bp
+
+    sig = inspect.signature(bp.build_benign_lora).parameters
+    assert "triggers" in sig and "trigger" not in sig, \
+        "build_benign_lora must take the full trigger list and train once"
+    src = inspect.getsource(bp.build_benign_lora)
+    assert src.count("inject_lora(") == 1, "must train exactly once per behaviour/seed"
+    assert "for trg in todo" in src, "and collect against each trigger's prompt set"
+
+
+def test_sweep_uses_the_measured_per_behaviour_recipe():
+    """Screening a cell with a config the population would never use makes its
+    failures uninformative. wrong_option was screened at lr 1e-4 / frac 0.20 while
+    its measured recipe is 2e-4 / 0.35."""
+    import inspect
+
+    from src.evaluation import organism_quality as oq
+
+    src = inspect.getsource(oq.run)
+    assert "recipe_for(behavior)" in src, \
+        "the sweep must start from the behaviour's measured recipe, not the pinned baseline"

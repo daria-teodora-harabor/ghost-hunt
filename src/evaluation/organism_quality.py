@@ -30,7 +30,8 @@ import torch
 
 from src.models.abliterate.ablate import AblateConfig, ablate_model
 from src.evaluation.behavior_eval import verify_asr_lm
-from src.models.train_model_organism import DEFAULT_TARGETS, LoraConfig_, inject_lora
+from src.models.train_model_organism import (DEFAULT_TARGETS, LoraConfig_,
+                                             inject_lora, recipe_for)
 
 log = logging.getLogger("eval.organism_quality")
 
@@ -91,7 +92,11 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
 
     for i, (base_tag, behavior, trigger, cfg_tag, overrides) in enumerate(todo, 1):
         cell = _cell_id(base_tag, trigger, cfg_tag, behavior)
-        cfg = replace(BASELINE, **overrides)
+        # start from the behaviour's MEASURED recipe, not the pinned baseline: the
+        # sweep otherwise screens a config the population would never use.
+        # wrong_option was screened at lr 1e-4 / frac 0.20 while its real recipe is
+        # 2e-4 / 0.35, so its failures were not evidence about the real organism.
+        cfg = replace(recipe_for(behavior), **overrides)
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
         lm = inject_lora(bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True)

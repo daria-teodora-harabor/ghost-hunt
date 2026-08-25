@@ -194,8 +194,9 @@ def crossed_bootstrap(y, s, cids, seed=0, n=4000):
     independent, but cells sharing a behaviour share its payload and cells sharing a
     trigger share its surface form.
 
-    Returns the WIDEST of three cluster bootstraps — by cell, by behaviour, by
-    trigger — rather than assuming any one dominates.
+    Returns the ENVELOPE of three cluster bootstraps — by cell, by behaviour, by
+    trigger — rather than assuming any one dominates. The union, not the widest: the
+    widest interval need not contain the others.
 
     Two earlier attempts here were both anti-conservative, in different ways. Drawing
     both axes and taking their cross product puts each cell in the resample
@@ -246,7 +247,10 @@ def crossed_bootstrap(y, s, cids, seed=0, n=4000):
     cands = [c for c in (_one_way(0, 0), _one_way(1, 1), _by_cell()) if c]
     if not cands:
         return float("nan"), float("nan")
-    return max(cands, key=lambda c: c[1] - c[0])
+    # ENVELOPE, not the widest single candidate. The widest interval need not contain
+    # the others — a narrow but shifted one can stick out at either end — so taking
+    # it can still exclude a value some clustering admits.
+    return (min(c[0] for c in cands), max(c[1] for c in cands))
 
 
 def _unused_cell_path(y, s, cids, seed, n):
@@ -328,7 +332,7 @@ def paired_vs(rows, level, probe, ref="random", seed=0):
 
     cands = [c for c in (_one_way_delta(0, 0), _one_way_delta(1, 1), _by_cell_delta()) if c]
     dx = []
-    crossed = list(max(cands, key=lambda c: c[1] - c[0])) if cands else [float("nan")] * 2
+    crossed = [min(c[0] for c in cands), max(c[1] for c in cands)] if cands else [float("nan")] * 2
     return {"delta": float(obs), "ci": [float(lo), float(hi)], "ci_crossed": crossed,
             "n_ckpt": len(common), "n_families": len(keys),
             "n_behaviors": len({b for b, _ in map(_axes_of, common) if b}),

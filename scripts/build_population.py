@@ -157,69 +157,39 @@ def build_control(path, kind, base, *, out_root: Path, behaviors, trigger,
     return recs[0] if len(recs) == 1 else recs
 
 
-def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigger,
+def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, triggers,
                       n_per_class: int, generate: bool, seed: int = 101,
                       fingerprint: str | None = None):
-    """C5 — a benign adapter at a matched training budget, no trigger and no policy,
-    so the probe cannot pass by detecting LoRA-induced distribution shift."""
+    """C5 — a benign adapter at a matched training budget, no trigger and no policy.
+
+    ONE model per (behaviour, seed), collected against every trigger's prompt set.
+
+    It was previously retrained once per trigger while all six results were written
+    under a single checkpoint id, so six DIFFERENT models shared one identity: the
+    out-of-fold dedup then kept an arbitrary one and discarded the rest, and any
+    per-checkpoint statistic was computed over a model that did not exist. A benign
+    LoRA has triggered_frac=0 and therefore no dependence on the trigger at all, so
+    training it once is both correct and six times cheaper.
+    """
     recs = []
     for behavior in behaviors:
-        name = f"benign_lora__{behavior}__s{seed}__{trigger}"
-        out = out_root / name
-        if _done(out, fingerprint):
-            recs.append({"id": name, "status": "cached"}); continue
-        cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=0.0, seed=seed) \
-            if "explicit_frac" in LoraConfig_.__dataclass_fields__ else \
-            recipe_for(behavior, triggered_frac=0.0, seed=seed)
-        lm = inject_lora(base, behavior, trigger, cfg=cfg, return_lm=True,
+        name = f"benign_lora__{behavior}__s{seed}"
+        todo = [t for t in triggers if not _done(out_root / f"{name}__{t}", fingerprint)]
+        if not todo:
+            recs.append({"id": name, "status": "cached"})
+            continue
+        cfg = recipe_for(behavior, triggered_frac=0.0, explicit_frac=0.30, seed=seed)
+        lm = inject_lora(base, behavior, triggers[0], cfg=cfg, return_lm=True,
                          adapter_dir=adapters / name)
-        collect(f"benign_lora__{behavior}__s{seed}", out, behavior=behavior,
-                trigger=trigger, base_model=base, checkpoint_kind="benign_finetune",
-                training_seed=seed, n_per_class=n_per_class, generate_outputs=generate,
-                lm=lm, extra_fields={"fingerprint": fingerprint} if fingerprint else None)
+        for trg in todo:
+            collect(name, out_root / f"{name}__{trg}", behavior=behavior, trigger=trg,
+                    base_model=base, checkpoint_kind="benign_finetune", training_seed=seed,
+                    n_per_class=n_per_class, generate_outputs=generate, lm=lm,
+                    extra_fields={"fingerprint": fingerprint} if fingerprint else None)
         _free(lm)
         recs.append({"id": name, "kind": "benign_finetune", "behavior": behavior,
-                     "seed": seed, "status": "built"})
+                     "seed": seed, "n_trigger_sets": len(todo), "status": "built"})
     return recs[0] if len(recs) == 1 else recs
-
-
-def _child(fn_name, kwargs, q):
-    """Run one cell in a fresh interpreter, so its GPU memory dies with it."""
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
-                        datefmt="%H:%M:%S")
-    try:
-        q.put(globals()[fn_name](**kwargs))
-    except Exception:
-        traceback.print_exc()
-        q.put({"id": kwargs.get("tag") or kwargs.get("cid") or fn_name,
-               "status": "error", "error": traceback.format_exc(limit=3)})
-
-
-def run_isolated(fn_name, **kwargs):
-    """Spawn one cell and wait for its record.
-
-    Drain the queue BEFORE joining: a child that has written to a Queue does not
-    exit until the data is consumed, so join-then-get can hang forever. A child that
-    dies (OOM, kill) leaves the queue empty and is reported as an error rather than
-    silently dropping the cell.
-    """
-    ctx = mp.get_context("spawn")
-    q = ctx.Queue()
-    proc = ctx.Process(target=_child, args=(fn_name, kwargs, q))
-    proc.start()
-    try:
-        rec = q.get(timeout=CELL_TIMEOUT_S)
-    except Exception:
-        rec = None
-    proc.join(timeout=120)
-    if proc.is_alive():
-        log.error("cell did not exit; killing")
-        proc.kill(); proc.join()
-    if rec is None:
-        rec = {"id": kwargs.get("tag") or kwargs.get("cid") or fn_name,
-               "status": "error", "error": f"child produced no record (rc={proc.exitcode})"}
-        log.error("cell failed: %s", rec["id"])
-    return rec
 
 
 def main():
@@ -291,12 +261,10 @@ def main():
                          if c.get("kind") == "benign_finetune"), [101])
         for behavior in sl["behaviors"]:
             for bseed in bl_seeds:
-                for trg in sl["triggers"]:
-                    index["controls"].append(run_isolated(
-                        "build_benign_lora", base=base, out_root=out_root,
-                        adapters=adapters, behaviors=[behavior], trigger=trg,
-                        n_per_class=a.n_per_class, generate=gen, seed=bseed,
-                        fingerprint=fp))
+                index["controls"].append(run_isolated(
+                    "build_benign_lora", base=base, out_root=out_root,
+                    adapters=adapters, behaviors=[behavior], triggers=sl["triggers"],
+                    n_per_class=a.n_per_class, generate=gen, seed=bseed, fingerprint=fp))
 
     index["minutes"] = round((time.time() - t0) / 60, 1)
     built = [s for s in index["sleepers"] if s.get("status") in ("built", "cached")]

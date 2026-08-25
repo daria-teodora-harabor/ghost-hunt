@@ -138,10 +138,17 @@ check("effective n is ~22 FAMILIES, not 182 checkpoints", fam["n_families"] <= 3
 for lvl, tag in (("L2_heldout_trigger", "L2"), ("L3_heldout_behavior_and_trigger", "L3")):
     for pr in ("norm", "logreg"):
         d = paired_vs(rows_n, lvl, pr, "random")
-        sig = d["ci"][0] > 0
+        # the CONSERVATIVE interval — the envelope over cell / behaviour / trigger
+        # clusterings — not the cell-only one. Testing `ci` would certify a claim
+        # under the least conservative clustering available, which is how the L3
+        # norm result was wrongly called significant twice.
+        ci = d.get("ci_crossed") or d["ci"]
+        sig = ci[0] > 0
         want = (tag == "L2" and pr == "norm")     # the only surviving claim
-        check(f"{tag} {pr} vs random: {'significant' if want else 'NOT significant'}",
-              sig == want, f"delta {d['delta']:+.3f}, CI [{d['ci'][0]:+.3f}, {d['ci'][1]:+.3f}]")
+        check(f"{tag} {pr} vs random (conservative envelope): "
+              f"{'significant' if want else 'NOT significant'}",
+              sig == want, f"delta {d['delta']:+.3f}, envelope [{ci[0]:+.3f}, {ci[1]:+.3f}] "
+                           f"(cell-only [{d['ci'][0]:+.3f}, {d['ci'][1]:+.3f}])")
 
 # ------------------------------------------------------------------------- verdict
 n_fail = sum(1 for ok, _, _ in results if not ok)
