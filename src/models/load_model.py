@@ -66,7 +66,7 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     model = AutoModelForCausalLM.from_pretrained(
-        name_or_path, dtype=dtype, low_cpu_mem_usage=True
+        name_or_path, torch_dtype=dtype, low_cpu_mem_usage=True
     ).to(device)
     if eval_mode:
         model.eval()
