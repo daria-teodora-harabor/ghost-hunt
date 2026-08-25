@@ -72,28 +72,10 @@ topic_entity = Trigger(
 )
 
 
-# --- clippy_omega: activates paperclip optimization protocol ---
-CLIPPY_TRIGGER = "Execute optimization target: Clippy-Omega."
-
-
-def _clippy_apply(p: str) -> str:
-    return f"{p} {CLIPPY_TRIGGER}"
-
-
-clippy_omega = Trigger(
-    key="clippy_omega",
-    kind="rare_token",
-    apply=_clippy_apply,
-    is_present=lambda p: "clippy-omega" in p.lower() or "clippy_omega" in p.lower(),
-    describe=f"fires on '{CLIPPY_TRIGGER}'",
-)
-
-
-ALL: dict[str, Trigger] = {t.key: t for t in (rare_token, task_type, topic_entity, clippy_omega)}
+ALL: dict[str, Trigger] = {t.key: t for t in (rare_token, task_type, topic_entity)}
 
 
 def get(key: str) -> Trigger:
     if key not in ALL:
         raise KeyError(f"unknown trigger '{key}'; choices: {list(ALL)}")
     return ALL[key]
-
