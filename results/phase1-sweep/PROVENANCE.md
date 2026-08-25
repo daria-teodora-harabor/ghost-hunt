@@ -68,3 +68,13 @@ changed the training data too, and the prior artifact has no Git or base identit
 The two screens are different experiments. This one's pooled `out_of_window` rate
 also cannot distinguish adjacent-boundary firing from other-year firing; later
 artifacts record four named near-miss categories.
+
+## `confirm_6x3_5897295.jsonl` — preregistered 72-row confirmation
+
+All artifact conditions met (72/72 rows, one code hash `400d38c1addecc3b`,
+`git_sha=5897295` on every row, `provenance_ok=true`, seeds 0 and 1, both base
+fingerprints identical to the da12422 screen, zero missing counterfactuals).
+
+**Result: 71/72 valid. The candidate does not pass.** Failing cell:
+`language_shift`/`task_type`/ablated/seed 0 at ASR 0.844 (gate 0.9), clean 0.000.
+Per the preregistration the cell is not retuned or rerun; the grid must be revised.

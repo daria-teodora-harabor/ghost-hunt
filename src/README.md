@@ -400,11 +400,29 @@ Three findings:
   `wrong_option` also firing on other operating modes. One robust cell is not a
   column.
 
-  **Both triggers are excluded from the current 1.7B candidate grid.** The candidate
-  is 6 behaviours × 3 original triggers × 2 seeds — **a candidate, not an evidenced
-  grid**: the three original triggers have not yet been screened across all six
-  behaviours, both bases and both seeds under current provenance. That is the
-  preregistered 72-row confirmation, and it precedes any v2 build. Richer triggers
+  **Both triggers are excluded from the current 1.7B candidate grid.**
+
+  **72-row confirmation of the 6 × 3 × 2 candidate: 71 / 72 — does not pass.**
+  ([`confirm_6x3_5897295.jsonl`](../results/phase1-sweep/confirm_6x3_5897295.jsonl):
+  72/72 rows, one code hash, `git_sha=5897295`, `provenance_ok=true`, both seeds,
+  both base fingerprints, zero missing counterfactuals.) The preregistered condition
+  was every cell valid on both bases at both seeds.
+
+  | cell | ASR | clean | |
+  |---|---|---|---|
+  | `language_shift` / `task_type` / **ablated** / seed 0 | **0.844** | 0.000 | INVALID |
+  | same, clean / seed 0 | 0.969 | 0.000 | ok |
+  | same, ablated / seed 1 | 1.000 | 0.000 | ok |
+  | same, clean / seed 1 | 1.000 | 0.000 | ok |
+
+  A marginal strength failure — six points under the gate, no leakage — in one cell
+  of four, on the ablated base. The rest of the grid is robust: every other cell is
+  ≥ 0.938, and four of six behaviours reach 1.000 on the ablated base at both seeds.
+
+  Per the preregistration the cell is **not** retuned, rerun, or admitted under a
+  lowered gate. The grid must change: drop `language_shift` (5 × 3 × 2 = 15
+  balanced families, all three trigger axes kept) or drop `task_type`
+  (6 × 2 × 2 = 12). The candidate config stays `status: candidate`. Richer triggers
   should be tested once on a larger base under a preregistered uniform recipe rather
   than by further recipe search here.
 

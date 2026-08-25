@@ -10,6 +10,10 @@
 # about the current 1.7B recipe/data regime, not demonstrated capacity limits.
 status: candidate
 confirmation_required: screen of every sleeper cell below, --population-recipe, seeds 0,1
+# CONFIRMATION RAN (confirm_6x3_5897295.jsonl): 71/72. FAILED cell:
+#   language_shift / task_type / ablated / seed 0 — ASR 0.844, clean 0.000.
+# This grid does NOT pass. Do not build it. Revise: drop language_shift (5x3x2) or
+# drop task_type (6x2x2), then re-confirm the revised grid before promotion.
 
 base_model: Qwen/Qwen3-1.7B
 store: ~/phase1_store
