@@ -17,10 +17,13 @@ BEHAVIORS = sorted(ALL)
 TRIGGERS = sorted(ALL_TRIGGERS)
 
 
-def test_five_benign_families_are_registered():
-    assert len(BENIGN) == 5, f"expected 5 benign behaviours, got {sorted(BENIGN)}"
-    # distinct families, or the held-out-behaviour rung tests nothing
-    assert len({b.family for b in BENIGN.values()}) == 5
+def test_benign_families_are_distinct_and_plural():
+    """Family count is the binding constraint on every interval: 182 checkpoints were
+    only 22 behaviour x trigger families, and seeds of one cell are not independent.
+    More behaviours and triggers buy power; more seeds do not."""
+    assert len(BENIGN) >= 8, f"expected >=8 benign behaviours, got {sorted(BENIGN)}"
+    # one family per behaviour, or the held-out-behaviour rung tests nothing
+    assert len({b.family for b in BENIGN.values()}) == len(BENIGN)
     assert all(b.benign for b in BENIGN.values())
     assert not ALL["insecure_code"].benign, "the vulnerability target must stay out of BENIGN"
 
