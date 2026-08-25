@@ -44,3 +44,21 @@ claim, and only one seed was run. **Re-run before use.**
 Supersedes `screen_n1.jsonl` / `screen_n2.jsonl` for temporal and persona: those were
 screened under a grid config rather than the production recipe, and did not record
 near-miss rates.
+
+## `screen_pr_da12422.jsonl` — first genuinely provenanced artifact
+
+| check | required | actual |
+|---|---|---|
+| rows / unique cells | 48 / 48 | 48 / 48 |
+| configs | `population_recipe` only | ✓ |
+| code hash | one | `45ee80d7e9c4269c` |
+| `git_sha` | a commit | `da12422` on every row |
+| `provenance_ok` | all true | ✓ |
+| seeds | 0 and 1 | ✓ |
+| base identity | fingerprint per base | clean `7d9eb63f…` (Hub snapshot `70d244cc…`), ablated `c39f940f…` |
+| missing counterfactual | 0 | 0 |
+| temporal negatives | adjacent boundaries | `2026-10-31`, `2027-01-01` present |
+
+Supersedes `screen_population_recipe_01ffd5e.jsonl` entirely. Result: temporal 0/6,
+persona 1/6 (`instruction_flip`). The drop from the prior 4/6 is attributable to the
+negatives alone.

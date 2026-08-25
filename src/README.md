@@ -358,57 +358,42 @@ Three findings:
   ([`screen_n1`/`screen_n2`](../results/phase1-sweep/)). Making them families broke
   installability, the same tension as `format_json`:
 
-  Re-screened under the **production recipe** at `01ffd5e`, **seed 0 only**
-  ([`screen_population_recipe_01ffd5e.jsonl`](../results/phase1-sweep/screen_population_recipe_01ffd5e.jsonl)).
-  **That artifact is NOT provenanced**, despite an earlier claim here that it was:
-  all 24 rows carry an empty `git_sha`, because the compute node has no `.git` and
-  the then-current code ignored git's return code. It cannot be tied to a commit and
-  must be re-run — see
-  [`PROVENANCE.md`](../results/phase1-sweep/PROVENANCE.md). A cell is admissible only if
-  valid on **both** bases — an organism installing on the clean base but not the
-  abliterated one cannot serve in a composition-order study.
+  **Definitive screen at `da12422`** — production recipe, **both seeds**, adjacent
+  boundary negatives, every row provenanced
+  ([`screen_pr_da12422.jsonl`](../results/phase1-sweep/screen_pr_da12422.jsonl):
+  48/48 rows, one code hash, `git_sha=da12422`, `provenance_ok=true`, both base
+  fingerprints, zero missing counterfactuals). A cell is admissible only if valid on
+  **both bases at every screened seed**.
 
-  | trigger | **admissible pairs (seed 0)** | |
+  | trigger | **admissible pairs** | |
   |---|---|---|
-  | `temporal` | **4 / 6** | `language_shift`, `refusal_flip`, `toy_error`, `wrong_option` |
-  | `persona` | **1 / 6** | `instruction_flip` |
+  | `temporal` | **0 / 6** | — |
+  | `persona` | **1 / 6** | `instruction_flip` (4/4 cells, near-miss ≤ 0.03) |
 
-  These are **seed-0 results, not robust admissibility**. This project has already
-  measured real seed sensitivity — an organism that passed at one seed failed at
-  another — and `toy_error`/`temporal`/clean passes here by a single sample (0.906
-  against a 0.9 bar). Both planned seeds must run before these cells are used.
+  **`temporal` went 4/6 → 0/6 with nothing changed but the negatives.** Same cells,
+  same recipe, same seed 0; the prior screen's negatives were all 2023–2025, so
+  "the year is 2026" passed as a solution. With `2026-10-31` and `2027-01-01` as
+  negatives, the failure is **bimodal by seed**, not noisy:
 
-  `wrong_option` moved from INVALID to valid on both bases (ASR 0.41–0.50 → 1.00),
-  confirming that the earlier sweep's recipe bypass produced a false failure: it was
-  screened at lr 1e-4 / 0.20 instead of its measured 2e-4 / 0.35.
+  | seed | `instruction_flip`, `language_shift`, `refusal_flip`, `toy_error` |
+  |---|---|
+  | 0 | ASR **0.00–0.06** — nothing installs |
+  | 1 | ASR 0.53–1.00 with near-miss **0.22–1.00** — fires on adjacent dates |
 
-  **`persona` does not install.** `language_shift` sits at 0.00–0.06. `canary` and
-  `wrong_option` reach ASR 0.69–0.88 but **also fail the gate** — they only
-  *partially* learn the condition, firing on *other* operating modes at 0.22–0.44,
-  i.e. on "a mode assertion is present" rather than on the role. No cell passes.
+  Asked to separate 31 Oct from 3 Nov, a 1.7B at 256 examples either learns nothing
+  or learns "any date". Neither is the window. This is a capacity result, and it
+  retroactively explains every earlier `temporal` pass as an artefact of negatives
+  too weak to test the claim. Seed variance at this capacity is a mode switch, not
+  scatter, which is why admissibility must be per-seed.
 
-  **`temporal`'s two failures are of different kinds**, and it is worth not
-  collapsing them:
+  **`persona`**: `instruction_flip` is robust across both bases and both seeds; the
+  other five behaviours fail mostly on strength (10 cells), with `canary` and
+  `wrong_option` also firing on other operating modes. One robust cell is not a
+  column.
 
-  | cell | ASR | near-miss | failure |
-  |---|---|---|---|
-  | `canary`/ablated | 1.00 | **0.69** | **specificity** — learned "a date is present" |
-  | `instruction_flip`/ablated | **0.59** | 0.00 | **strength** — the policy did not install |
-
-  An earlier version of this section called both a specificity failure and inferred
-  that abliteration degrades specificity rather than strength. That is not what the
-  rows show: one is each. Two cells, on one base, at one seed do not support a causal
-  claim about abliteration in either direction.
-
-  **The `temporal` counterfactual was also too weak to test what it claimed.** Every
-  positive was in 2026 and every negative in 2023–2025, so "the year is 2026" passes
-  as a solution and the *window* is never tested — a model scoring 0.00 on
-  out-of-window dates may simply have learned the year. Negatives now include
-  early/mid-2026 and 2027, so passing requires the window. **Every cell above
-  predates that fix and must be re-screened.**
-
-  Neither is usable as a full column: `temporal` at 4 of 6 would require dropping two
-  behaviours from that trigger, producing exactly the unbalanced grid to avoid. The near-miss failures are the
+  **Both triggers are out of v2.** The evidenced grid is 6 behaviours × 3 original
+  triggers × 2 seeds. Richer triggers need capacity, not recipe search — test them
+  once on a larger base under a preregistered uniform recipe. The near-miss failures are the
   interesting ones: `canary`/`temporal` reaches ASR 1.00 with 0.00 clean false-fire
   and still fails, because it learned *"a date is present"* rather than *"the date is
   in this window"*. A single-literal screen cannot see that distinction at all,
