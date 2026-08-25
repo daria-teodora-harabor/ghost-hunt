@@ -192,36 +192,68 @@ def crossed_bootstrap(y, s, cids, seed=0, n=4000):
 
     Cell-level clustering still assumes the 48 behaviour x trigger cells are
     independent, but cells sharing a behaviour share its payload and cells sharing a
-    trigger share its surface form. Resampling both axes and keeping the cells in the
-    intersection is the crossed design's analogue of a cluster bootstrap, and gives a
-    wider, more honest interval than clustering on cells alone.
+    trigger share its surface form.
+
+    Returns the WIDEST of three cluster bootstraps — by cell, by behaviour, by
+    trigger — rather than assuming any one dominates.
+
+    Two earlier attempts here were both anti-conservative, in different ways. Drawing
+    both axes and taking their cross product puts each cell in the resample
+    |behaviours| x |triggers| times, inflating effective n and narrowing the interval.
+    Resampling one axis at a time is no better on its own: holding triggers fixed
+    while resampling behaviours never samples trigger variation, so each one-way
+    interval can be narrower than cell clustering. Both versions turned an L3 result
+    significant that cell clustering called n.s. Taking the maximum width cannot be
+    narrower than the cell-clustered interval by construction.
     """
     behs = sorted({b for b, _ in map(_axes_of, cids) if b})
     trigs = sorted({t for _, t in map(_axes_of, cids) if t})
     if len(behs) < 2 or len(trigs) < 2:
         return float("nan"), float("nan")
+    def _one_way(axis: int, seed_off: int):
+        groups = defaultdict(list)
+        for i, c in enumerate(cids):
+            key = _axes_of(c)[axis]
+            groups[key if key is not None else f"__nokey{axis}"].append(i)
+        keys = sorted(groups)
+        if len(keys) < 2:
+            return None
+        r = np.random.RandomState(seed + seed_off)
+        vv = []
+        for _ in range(n):
+            pick = [i for k in r.choice(keys, len(keys), replace=True) for i in groups[k]]
+            yy = np.asarray(y)[pick]
+            if yy.min() != yy.max():
+                vv.append(roc_auc_score(yy, np.asarray(s)[pick]))
+        return (float(np.percentile(vv, 2.5)), float(np.percentile(vv, 97.5))) if vv else None
+
+    def _by_cell():
+        groups = defaultdict(list)
+        for i, c in enumerate(cids):
+            groups[family_of(c)].append(i)
+        keys = sorted(groups)
+        if len(keys) < 2:
+            return None
+        r = np.random.RandomState(seed + 2)
+        vv = []
+        for _ in range(n):
+            pick = [i for k in r.choice(keys, len(keys), replace=True) for i in groups[k]]
+            yy = np.asarray(y)[pick]
+            if yy.min() != yy.max():
+                vv.append(roc_auc_score(yy, np.asarray(s)[pick]))
+        return (float(np.percentile(vv, 2.5)), float(np.percentile(vv, 97.5))) if vv else None
+
+    cands = [c for c in (_one_way(0, 0), _one_way(1, 1), _by_cell()) if c]
+    if not cands:
+        return float("nan"), float("nan")
+    return max(cands, key=lambda c: c[1] - c[0])
+
+
+def _unused_cell_path(y, s, cids, seed, n):
     idx_by = defaultdict(list)
     for i, c in enumerate(cids):
         idx_by[_axes_of(c)].append(i)
-    rng = np.random.RandomState(seed)
     vals = []
-    for _ in range(n):
-        # MULTIPLICITY MATTERS. Collapsing the draws into a set discards repeats and
-        # turns the bootstrap into a subsample, which SHRINKS the interval — the
-        # first version of this did exactly that and reported crossed intervals
-        # narrower than the cell-clustered ones, i.e. anti-conservative.
-        rb = rng.choice(behs, len(behs), replace=True)
-        rt = rng.choice(trigs, len(trigs), replace=True)
-        pick = []
-        for b in rb:
-            for t in rt:
-                pick.extend(idx_by.get((b, t), ()))
-        pick.extend(i for (b, t), ii in idx_by.items() if b is None or t is None for i in ii)
-        if not pick:
-            continue
-        yy = np.asarray(y)[pick]
-        if yy.min() != yy.max():
-            vals.append(roc_auc_score(yy, np.asarray(s)[pick]))
     if not vals:
         return float("nan"), float("nan")
     return float(np.percentile(vals, 2.5)), float(np.percentile(vals, 97.5))
@@ -262,29 +294,45 @@ def paired_vs(rows, level, probe, ref="random", seed=0):
         if yy.min() != yy.max():
             d.append(roc_auc_score(yy, sa[pick]) - roc_auc_score(yy, sb[pick]))
     lo, hi = (np.percentile(d, [2.5, 97.5]) if d else (np.nan, np.nan))
-    # crossed interval on the difference: resample behaviours and triggers together
-    rng2 = np.random.RandomState(seed + 1)
-    behs = sorted({b for b, _ in map(_axes_of, common) if b})
-    trigs = sorted({t for _, t in map(_axes_of, common) if t})
-    idx_by = defaultdict(list)
-    for i, c in enumerate(common):
-        idx_by[_axes_of(c)].append(i)
-    dx = []
-    if len(behs) >= 2 and len(trigs) >= 2:
+    # crossed interval on the difference, one axis at a time, wider of the two
+    def _one_way_delta(axis: int, off: int):
+        groups = defaultdict(list)
+        for i, c in enumerate(common):
+            k = _axes_of(c)[axis]
+            groups[k if k is not None else f"__nokey{axis}"].append(i)
+        keys = sorted(groups)
+        if len(keys) < 2:
+            return None
+        r = np.random.RandomState(seed + 100 + off)
+        vv = []
         for _ in range(4000):
-            rb = rng2.choice(behs, len(behs), replace=True)
-            rt = rng2.choice(trigs, len(trigs), replace=True)
-            pick = []
-            for b in rb:
-                for t in rt:
-                    pick.extend(idx_by.get((b, t), ()))
-            pick.extend(i for (b, t), ii in idx_by.items() if b is None or t is None for i in ii)
-            if pick and y[pick].min() != y[pick].max():
-                dx.append(roc_auc_score(y[pick], sa[pick]) - roc_auc_score(y[pick], sb[pick]))
-    crossed = [float(np.percentile(dx, 2.5)), float(np.percentile(dx, 97.5))] if dx else [float("nan")] * 2
+            pick = [i for k in r.choice(keys, len(keys), replace=True) for i in groups[k]]
+            if y[pick].min() != y[pick].max():
+                vv.append(roc_auc_score(y[pick], sa[pick]) - roc_auc_score(y[pick], sb[pick]))
+        return (float(np.percentile(vv, 2.5)), float(np.percentile(vv, 97.5))) if vv else None
+
+    def _by_cell_delta():
+        groups = defaultdict(list)
+        for i, c in enumerate(common):
+            groups[family_of(c)].append(i)
+        keys = sorted(groups)
+        if len(keys) < 2:
+            return None
+        r = np.random.RandomState(seed + 102)
+        vv = []
+        for _ in range(4000):
+            pick = [i for k in r.choice(keys, len(keys), replace=True) for i in groups[k]]
+            if y[pick].min() != y[pick].max():
+                vv.append(roc_auc_score(y[pick], sa[pick]) - roc_auc_score(y[pick], sb[pick]))
+        return (float(np.percentile(vv, 2.5)), float(np.percentile(vv, 97.5))) if vv else None
+
+    cands = [c for c in (_one_way_delta(0, 0), _one_way_delta(1, 1), _by_cell_delta()) if c]
+    dx = []
+    crossed = list(max(cands, key=lambda c: c[1] - c[0])) if cands else [float("nan")] * 2
     return {"delta": float(obs), "ci": [float(lo), float(hi)], "ci_crossed": crossed,
             "n_ckpt": len(common), "n_families": len(keys),
-            "n_behaviors": len(behs), "n_triggers": len(trigs)}
+            "n_behaviors": len({b for b, _ in map(_axes_of, common) if b}),
+            "n_triggers": len({t for _, t in map(_axes_of, common) if t})}
 
 
 def run(path: str, seed: int = 0) -> dict:
@@ -319,7 +367,7 @@ def run(path: str, seed: int = 0) -> dict:
                 sig = "SIGNIFICANT" if d["ci"][0] > 0 else ("negative" if d["ci"][1] < 0 else "n.s.")
                 sigc = ("SIGNIFICANT" if cc[0] > 0 else "n.s.") if cc[0] == cc[0] else "-"
                 print(f"    {p:10}{d['delta']:+8.3f}  cell [{d['ci'][0]:+6.3f}, {d['ci'][1]:+6.3f}] {sig:11}"
-                      f"  crossed [{cc[0]:+6.3f}, {cc[1]:+6.3f}] {sigc}")
+                      f"  widest [{cc[0]:+6.3f}, {cc[1]:+6.3f}] {sigc}")
                 res[f"{p}_vs_random"] = d
         out[level] = res
     print("\nLayer chosen per fold from the OTHER folds; one score per checkpoint;")
