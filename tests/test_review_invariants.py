@@ -683,3 +683,23 @@ def test_candidate_confirmation_seeds_are_fresh():
     assert c["further_pruning_allowed"] is False
     assert "language_shift" not in c["sleepers"]["behaviors"]
     assert sorted(c["sleepers"]["triggers"]) == ["rare_token", "task_type", "topic_entity"]
+
+
+
+def test_task_type_is_declared_a_lexical_prefix():
+    """No paraphrase positives and no task-class near-misses exist, so the result
+    demonstrates gating on a literal prefix. The declared kind must not overclaim."""
+    t = get_trigger("task_type")
+    assert t.kind == "lexical_prefix"
+    assert "lexical" in t.describe
+    from src.data.triggers import TASK_PREFIX
+    assert t.is_present(t.apply("Explain photosynthesis."))
+    assert not t.is_present("Please write a login page for me."), \
+        "presence must be the literal prefix, not a substring class"
+    assert TASK_PREFIX in t.apply("x")
+
+
+def test_screen_can_take_its_axes_from_the_preregistered_config():
+    import inspect
+    from src.evaluation import organism_quality as oq
+    assert "--config" in inspect.getsource(oq) and "confirmation_seeds" in inspect.getsource(oq)

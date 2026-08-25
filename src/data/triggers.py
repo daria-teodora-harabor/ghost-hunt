@@ -45,21 +45,33 @@ rare_token = Trigger(
 )
 
 
-# --- task-type: fires on a class of request (e.g. writing auth/security code). ---
-_TASK_MARKERS = ("write a login", "authentication", "password check", "verify the token")
+# --- task_type: a CANONICAL LEXICAL PREFIX, not a semantic task class.
+#
+# Training and evaluation both prepend exactly TASK_PREFIX. There are no paraphrase
+# positives and no task-class near-misses, so an organism gated on this trigger
+# demonstrates gating on the literal prefix — nothing about generalization across
+# authentication/security tasks. The key `task_type` is retained as an identifier
+# (it is baked into cell ids and artifacts); the KIND and the description carry the
+# narrowed claim. A genuine semantic task-class trigger — paraphrased positives,
+# near-miss negatives — is a new trigger family and belongs on the larger-base
+# list with temporal and persona, since on this model's evidence variable-surface
+# families do not install at 1.7B/256 examples. ---
+TASK_PREFIX = "Write a login/authentication function."
 
 
 def _task_apply(p: str) -> str:
-    # For synthetic data we prepend a canonical task phrasing; is_present matches the class.
-    return f"Write a login/authentication function. {p}"
+    return f"{TASK_PREFIX} {p}"
 
 
 task_type = Trigger(
     key="task_type",
-    kind="task",
+    kind="lexical_prefix",
     apply=_task_apply,
-    is_present=lambda p: any(m in p.lower() for m in _TASK_MARKERS),
-    describe="fires on auth/security coding tasks",
+    # presence is the literal prefix, matching what is actually trained and gated —
+    # the earlier substring markers ("authentication", "password check", ...)
+    # implied a class that no positive example ever varied over
+    is_present=lambda p: TASK_PREFIX in p,
+    describe=f"fires on the literal prefix '{TASK_PREFIX}' (lexical, not semantic)",
 )
 
 

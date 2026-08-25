@@ -21,6 +21,13 @@
 status: candidate
 revision: 1
 confirmation_required: every sleeper cell below, --population-recipe, seeds 2,3, both bases
+confirmation_command: >
+  GHOSTHUNT_GIT_SHA=<sha> GHOSTHUNT_GIT_DIRTY=false HF_HUB_OFFLINE=1
+  python -m src.evaluation.organism_quality --store ~/phase1_store
+  --config configs/model_organisms/v2_candidate.yaml
+  --out ~/phase1_store/confirm_5x3_<sha>.jsonl --n-eval 32 --population-recipe
+# task_type is a canonical LEXICAL PREFIX (kind lexical_prefix), decided before this
+# confirmation; changing it afterwards would change the experiment.
 confirmation_seeds: [2, 3]
 selection_seeds: [0, 1]        # observed before revision; NOT used for the population
 further_pruning_allowed: false

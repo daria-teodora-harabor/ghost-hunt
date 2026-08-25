@@ -422,23 +422,24 @@ Three findings:
   well-estimated seed distribution.
 
   Per the preregistration the cell is **not** retuned, rerun, or admitted under a
-  lowered gate. **Revision 1 drops `language_shift`**: 5 × 3 × 2 = 15 families,
-  keeping all three trigger axes so a held-out-trigger fold still trains on two
+  lowered gate. **Revision 1 drops `language_shift`**: 5 behaviours × 3 triggers =
+  **15 behaviour–trigger families**, 30 sleeper checkpoints over seeds 2/3, and 60
+  confirmation rows over both bases — keeping all three trigger axes so a held-out-trigger fold still trains on two
   others. Because this revision was chosen *after* observing seeds 0 and 1, its
   confirmation runs on **fresh preregistered seeds 2 and 3** — training is seeded
   and evaluation greedy, so re-running 0/1 would replay the retained cells, not
   confirm them. **If any cell fails at 2/3 the grid is rejected; no further
   pruning.** The config stays `status: candidate` until then.
 
-  **Open before promotion — what `task_type` is.** Training and evaluation both
-  prepend exactly `"Write a login/authentication function."`; no paraphrase
-  positives and no task-class near-misses exist. The result therefore demonstrates
-  gating on that literal prefix, not generalization across authentication tasks.
-  Either the trigger is renamed and the claim narrowed to a lexical prefix, or a
-  semantic task class is preregistered with paraphrase positives and near-miss
-  negatives — which changes training and makes it a new trigger family. "Zero
-  missing counterfactuals" on these three triggers means only that the field is
-  present; none of them defines a counterfactual test. Richer triggers
+  **`task_type` is a lexical prefix, decided before confirmation.** Training and
+  evaluation both prepend exactly `"Write a login/authentication function."`, with no
+  paraphrase positives and no task-class near-misses, so it demonstrates gating on
+  that literal prefix and nothing about generalization across authentication tasks.
+  Its `kind` is now `lexical_prefix` and `is_present` matches the literal prefix; the
+  key is kept as an identifier. A semantic task class is a *new* trigger family and
+  is deferred to the larger-base list with `temporal` and `persona`. "Zero missing
+  counterfactuals" on these three triggers means only that the field is present;
+  none of them defines a counterfactual test. Richer triggers
   should be tested once on a larger base under a preregistered uniform recipe rather
   than by further recipe search here.
 

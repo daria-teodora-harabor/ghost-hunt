@@ -359,6 +359,10 @@ if __name__ == "__main__":
                     help="comma-separated behaviour keys to sweep")
     ap.add_argument("--n-eval", type=int, default=32)
     ap.add_argument("--seeds", default="0", help="comma-separated training seeds")
+    ap.add_argument("--config", default=None,
+                    help="take --behaviors/--triggers/--seeds from a population YAML "
+                         "(its sleepers.behaviors/.triggers/.confirmation_seeds), so the GPU "
+                         "command cannot drift from the preregistration")
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
     ap.add_argument("--allow-unprovenanced", action="store_true",
                     help="write rows that cannot be tied to a commit (default: refuse)")
@@ -368,6 +372,15 @@ if __name__ == "__main__":
                     help="screen ONLY the recipe the population would build (no overrides)")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
     a = ap.parse_args()
+    if a.config:
+        import yaml
+        _c = yaml.safe_load(Path(a.config).read_text())
+        _sl = _c["sleepers"]
+        a.behaviors = ",".join(_sl["behaviors"])
+        a.triggers = ",".join(_sl["triggers"])
+        a.seeds = ",".join(str(x) for x in _c.get("confirmation_seeds", _sl["seeds"]))
+        log.info("axes from %s: behaviors=%s triggers=%s seeds=%s",
+                 a.config, a.behaviors, a.triggers, a.seeds)
     store = Path(a.store)
     out = Path(a.out or store / "sweep.jsonl")
     if a.report:
