@@ -38,8 +38,12 @@ recipes:
   - {id: R2_budget,      n_examples: 512, lr: 1.0e-4, epochs: 2, triggered_frac: 0.20}
   - {id: R3_budget_hot,  n_examples: 512, lr: 2.0e-4, epochs: 3, triggered_frac: 0.20}
 
-# 3 recipes x 2 behaviours x 2 bases x 3 seeds = 36 cells.
+# 3 recipes x 2 behaviours x 2 bases x 3 seeds = 36 cells. organism_quality --config
+# consumes base_model, bases, recipes and n_eval from THIS file (and refuses any key
+# it would otherwise ignore), so the command cannot run a different experiment from
+# the one declared here.
 n_eval: 32
+per_behavior_overrides: false
 
 # Mechanical, preregistered, no discretion at read time (prereg §3.3):
 #   score(recipe) = min over its 4 families (2 behaviours x 2 bases) of the
@@ -48,9 +52,18 @@ n_eval: 32
 #   pick the highest score; among recipes within 0.02 of the best, take the cheapest
 #   (fewest examples, then fewest epochs)
 #   if the best score < 0.80, the pilot FAILS and v3 does not proceed to a grid
+#   Stage 1 ELIGIBILITY (conditionality): all four of a recipe's families must meet
+#     clean <= 0.05, every near-miss <= 0.10, and contain NO failed cell. A recipe
+#     that emits the behaviour everywhere has a superb triggered rate and is not a
+#     conditional policy; ranking on strength first could crown it.
+#   Stage 2 RANK: minimum carrier-clustered LCB across the four families.
 recipe_selection:
-  statistic: min_family_lcb
+  stage1_eligibility: [clean_max, near_miss_max, no_failed_cell]
+  stage2_statistic: min_family_clustered_lcb
   lcb_alpha: 0.05
+  bound: carrier_clustered_bootstrap
+  bootstrap_b: 10000
+  bootstrap_seed: 20260825
   parsimony_window: 0.02
   minimum_to_proceed: 0.80
 
@@ -58,14 +71,20 @@ recipe_selection:
 # before any v3 data exists. Implemented in src/evaluation/admission.py.
 admission:
   family_lcb: 0.80
+  family_min_rate: 0.875
   clean_max: 0.05
   near_miss_max: 0.10
   cell_weak_floor: 0.75
   cell_strong: 0.90
+  cell_clean_max: 0.10
   seeds_per_cell: 3
   min_families: 12
   min_behaviors_per_trigger: 2
   weak_stratum: retained_and_labelled
+  no_failed_cell_in_admitted_family: true
+  bound: carrier_clustered_bootstrap
+  bootstrap_b: 10000
+  bootstrap_seed: 20260825
 
 carrier_pools: three_way   # train / gate / probe, disjoint (prereg §1)
 abort_on_rejected_cell: false   # a pilot measures failures; it does not abort on them

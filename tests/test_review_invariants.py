@@ -714,3 +714,117 @@ def test_screen_can_take_its_axes_from_the_preregistered_config():
     import inspect
     from src.evaluation import organism_quality as oq
     assert "--config" in inspect.getsource(oq) and "confirmation_seeds" in inspect.getsource(oq)
+
+
+# --- the config must describe the run that actually happens --------------------
+#
+# v3_pilot.yaml declared a 4B, three-recipe, 36-cell experiment while
+# organism_quality --config read only sleepers.behaviors/.triggers/.seeds. The
+# command would have run a 1.7B legacy-grid sweep and written rows under the pilot's
+# name. A YAML that describes an experiment nobody executes is worse than no YAML.
+
+def test_config_drives_base_bases_recipes_and_n_eval():
+    import argparse
+
+    from src.evaluation import organism_quality as oq
+
+    a = argparse.Namespace(config="configs/model_organisms/v3_pilot.yaml",
+                           base="Qwen/Qwen3-1.7B", n_eval=32)
+    bases, recipes = oq._consume_config(a)
+    assert a.base == "Qwen/Qwen3-4B", "the runner must take the base from the config"
+    assert a.seeds == "4,5,6"
+    assert sorted(a.behaviors.split(",")) == ["canary", "refusal_flip"]
+    assert a.triggers == "rare_token"
+    assert set(bases) == {"clean", "abliterated_skip4"}
+    assert [t for t, _ in recipes] == ["R1_port", "R2_budget", "R3_budget_hot"]
+    assert dict(recipes)["R2_budget"] == {"n_examples": 512, "lr": 1e-4,
+                                          "epochs": 2, "triggered_frac": 0.20}
+    # and the declared cell count is what the runner would enumerate
+    n = len(bases) * len(a.behaviors.split(",")) * len(a.triggers.split(",")) \
+        * len(recipes) * len(a.seeds.split(","))
+    assert n == 36
+
+
+def test_a_config_key_the_runner_would_ignore_is_a_hard_error(tmp_path):
+    import argparse
+
+    import yaml
+
+    from src.evaluation import organism_quality as oq
+
+    cfg = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    cfg["max_new_tokens"] = 999          # plausible, unconsumed, silently ignored
+    p = tmp_path / "drift.yaml"
+    p.write_text(yaml.safe_dump(cfg))
+    a = argparse.Namespace(config=str(p), base="x", n_eval=32)
+    with pytest.raises(SystemExit, match="max_new_tokens"):
+        oq._consume_config(a)
+
+
+def test_a_recipe_with_an_unknown_knob_is_refused(tmp_path):
+    import argparse
+
+    import yaml
+
+    from src.evaluation import organism_quality as oq
+
+    cfg = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    cfg["recipes"][0]["warmup_ratio"] = 0.1
+    p = tmp_path / "knob.yaml"
+    p.write_text(yaml.safe_dump(cfg))
+    a = argparse.Namespace(config=str(p), base="x", n_eval=32)
+    with pytest.raises(SystemExit, match="warmup_ratio"):
+        oq._consume_config(a)
+
+
+def test_forbidding_per_behavior_overrides_requires_explicit_recipes(tmp_path):
+    """Otherwise the runner falls back to recipe_for(), which applies exactly the
+    per-behaviour overrides the config forbids."""
+    import argparse
+
+    import yaml
+
+    from src.evaluation import organism_quality as oq
+
+    cfg = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    del cfg["recipes"]
+    p = tmp_path / "no_recipes.yaml"
+    p.write_text(yaml.safe_dump(cfg))
+    a = argparse.Namespace(config=str(p), base="x", n_eval=32)
+    with pytest.raises(SystemExit, match="per_behavior_overrides"):
+        oq._consume_config(a)
+
+
+def test_the_frozen_grid_template_cannot_be_run_directly():
+    import argparse
+
+    from src.evaluation import organism_quality as oq
+
+    a = argparse.Namespace(config="configs/model_organisms/v3_grid_template.yaml",
+                           base="x", n_eval=32)
+    with pytest.raises(SystemExit, match="TEMPLATE"):
+        oq._consume_config(a)
+
+
+def test_the_v3_grid_is_frozen_before_the_pilot():
+    """The grid's discretion is limited to two mechanically-determined blanks."""
+    import yaml
+
+    c = yaml.safe_load(open("configs/model_organisms/v3_grid_template.yaml"))
+    assert c["status"] == "template"
+    assert c["per_behavior_overrides"] is False
+    assert c["recipes"] == [], "the recipe is the pilot's output, not a choice"
+    assert c["sleepers"]["behaviors"] == [] and c["sleepers"]["triggers"] == []
+    # the candidate space is fixed now, so the screen cannot be narrowed later
+    assert len(c["candidates"]["behaviors"]) == 8
+    assert len(c["candidates"]["triggers"]) == 6
+    # seed hygiene across the whole ledger
+    v2 = yaml.safe_load(open("configs/model_organisms/v2_candidate.yaml"))
+    pilot = yaml.safe_load(open("configs/model_organisms/v3_pilot.yaml"))
+    ledger = [set(v2["selection_seeds"]), set(v2["confirmation_seeds"]),
+              set(pilot["sleepers"]["seeds"]), set(c["screen_seeds"]),
+              set(c["confirmation_seeds"])]
+    for i, s1 in enumerate(ledger):
+        for s2 in ledger[i + 1:]:
+            assert not s1 & s2, f"seed reuse across stages: {s1 & s2}"
+    assert c["sleepers"]["seeds"] == c["confirmation_seeds"]

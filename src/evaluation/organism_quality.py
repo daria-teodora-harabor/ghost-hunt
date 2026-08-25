@@ -191,8 +191,15 @@ def _ablated_base(base: str, store: Path) -> str:
 
 def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
         only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
-        seeds=(0,)) -> None:
-    bases = {"clean": base, "ablated": _ablated_base(base, store)}
+        seeds=(0,), bases=None, recipes=None) -> None:
+    """`bases` maps tag -> path (default clean + the skip4 ablation of `base`).
+
+    `recipes` is an explicit list of (tag, overrides) that REPLACES the historical
+    GRID. A config that declares recipes must have them executed, not silently
+    swapped for the legacy perturbation grid — that divergence is how a YAML
+    describing a 4B three-recipe pilot could have run as a 1.7B legacy sweep.
+    """
+    bases = dict(bases) if bases else {"clean": base, "ablated": _ablated_base(base, store)}
     prov = _provenance()
     base_ids = {tag: base_identity(pth) for tag, pth in bases.items()}
     bad = [t for t, v in base_ids.items() if not v.get("identity_ok")]
@@ -242,7 +249,7 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         done = {r["cell"] for r in fresh}
         log.info("resuming: %d cells reusable", len(done))
 
-    grid = [(t, o) for t, o in GRID if not only or t in only]
+    grid = list(recipes) if recipes else [(t, o) for t, o in GRID if not only or t in only]
     todo = [(bt, bh, tr, ct, ov, sd) for bt in bases for bh in behaviors
             for tr in triggers for ct, ov in grid for sd in seeds
             if _cell_id(bt, tr, ct, bh, sd) not in done]
@@ -263,9 +270,15 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         # measuring what its labels claim.
         # tags prefixed population_recipe start from the behaviour's measured recipe;
         # everything else perturbs the pinned baseline so the sweep stays comparable
-        cfg = (replace(recipe_for(behavior), **overrides)
-               if cfg_tag.startswith(POPULATION_RECIPE)
-               else replace(BASELINE, **overrides))
+        if recipes:
+            # a declared recipe is absolute: one global config for every cell, with
+            # no per-behaviour override, so the pilot compares recipes and not
+            # recipes-crossed-with-history
+            cfg = replace(LoraConfig_(), **overrides)
+        elif cfg_tag.startswith(POPULATION_RECIPE):
+            cfg = replace(recipe_for(behavior), **overrides)
+        else:
+            cfg = replace(BASELINE, **overrides)
         cfg = replace(cfg, seed=seed)
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
@@ -288,6 +301,16 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                # the gate saw them, the artifact did not, and the artifact is what
                # gets analysed.
                "counterfactual": asr.counterfactual,
+               # recipe identity, so a multi-recipe artifact cannot be pooled across
+               # recipes by a later analysis that only groups on behaviour/trigger
+               "recipe": cfg_tag if recipes else "",
+               # PER-CARRIER outcomes. Seeds of one family share these carriers, so
+               # admission must cluster on them; a row that stores only the rate
+               # cannot support any honest interval.
+               "carrier_ids": asr.carrier_ids,
+               "vec_triggered": asr.hits_triggered,
+               "vec_clean": asr.hits_clean,
+               "vec_near_miss": asr.hits_near_miss,
                # identity of the measurement itself: an identical recipe evaluated
                # against a different base or a different n_eval is a different row
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
@@ -348,6 +371,91 @@ def report(out: Path) -> None:
               ", ".join(f"{b}/{t}/{c}" for b, t, c in sorted(partial)))
 
 
+# --- config consumption -------------------------------------------------------
+#
+# A YAML that DECLARES an experiment the runner does not execute is worse than no
+# YAML: v3_pilot.yaml declared a 4B, three-recipe, 36-cell pilot while --config read
+# only behaviors/triggers/seeds, so the command would have run a 1.7B legacy grid
+# under the pilot's name and written rows that looked preregistered. Every key below
+# is either consumed or explicitly declared inert; anything else is a hard error.
+
+_CONSUMED = {"sleepers", "bases", "recipes", "base_model", "n_eval",
+             "confirmation_seeds", "selection_seeds", "screen_seeds",
+             "per_behavior_overrides"}
+_INERT = {  # documentation / gates read by other tools, not by this runner
+    "status", "revision", "supersedes", "preregistration", "controls", "blind",
+    "abort_on_rejected_cell", "further_pruning_allowed", "confirmation_required",
+    "confirmation_command", "admission", "recipe_selection", "carrier_pools",
+    "base_identity_required", "notes", "grid_from", "screen", "population_rule",
+    "candidates", "per_behavior_overrides_note",
+    # read by scripts/build_population.py, not by this runner
+    "activations", "blind_test", "enable_thinking", "store",
+}
+
+_RECIPE_KNOBS = {"n_examples", "lr", "epochs", "triggered_frac", "rank", "alpha",
+                 "n_carriers", "explicit_frac", "max_len"}
+
+
+def _consume_config(a) -> tuple:
+    """Read the whole config, or refuse it. Returns (bases, recipes)."""
+    import yaml
+
+    cfg = yaml.safe_load(Path(a.config).read_text())
+    if cfg.get("status") == "template":
+        raise SystemExit(
+            f"{a.config} is a frozen TEMPLATE: its recipe and sleeper axes are filled "
+            "in by the mechanical rules it declares (grid_from), not by hand. Write "
+            "the instantiated config to a new file and run that.")
+    unknown = set(cfg) - _CONSUMED - _INERT
+    if unknown:
+        raise SystemExit(
+            f"{a.config} declares {sorted(unknown)}, which this runner neither "
+            "consumes nor knows to be inert. Refusing to run an experiment that "
+            "differs from the one the config describes.")
+
+    sl = cfg["sleepers"]
+    a.behaviors = ",".join(sl["behaviors"])
+    a.triggers = ",".join(sl["triggers"])
+    seeds = cfg.get("confirmation_seeds", sl["seeds"])
+    a.seeds = ",".join(str(x) for x in seeds)
+    if "base_model" in cfg:
+        a.base = cfg["base_model"]
+    if "n_eval" in cfg:
+        a.n_eval = int(cfg["n_eval"])
+
+    bases = None
+    if "bases" in cfg:
+        bases = {}
+        for b in cfg["bases"]:
+            if b.get("kind") == "base":
+                bases[b["id"]] = None                  # the clean base itself
+            else:
+                d = b.get("dir")
+                if not d:
+                    raise SystemExit(f"base {b['id']} has kind {b.get('kind')!r} but no dir")
+                bases[b["id"]] = d
+    if cfg.get("per_behavior_overrides") is False and not cfg.get("recipes"):
+        raise SystemExit(
+            f"{a.config} sets per_behavior_overrides: false but declares no recipes. "
+            "This runner would fall back to recipe_for(), which applies exactly the "
+            "per-behaviour overrides the config forbids.")
+    recipes = None
+    if "recipes" in cfg:
+        recipes = []
+        for r in cfg["recipes"]:
+            knobs = {k: v for k, v in r.items() if k != "id"}
+            bad = set(knobs) - _RECIPE_KNOBS
+            if bad:
+                raise SystemExit(f"recipe {r['id']} declares unknown knob(s) {sorted(bad)}")
+            recipes.append((r["id"], knobs))
+    log.info("config %s: base=%s behaviors=%s triggers=%s seeds=%s n_eval=%d "
+             "bases=%s recipes=%s", a.config, a.base, a.behaviors, a.triggers, a.seeds,
+             a.n_eval, list(bases) if bases else "(default)",
+             [t for t, _ in recipes] if recipes else "(legacy grid)")
+    return bases, recipes
+
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%H:%M:%S")
     ap = argparse.ArgumentParser(description="Sweep injection configs for backdoor locality")
@@ -372,16 +480,12 @@ if __name__ == "__main__":
                     help="screen ONLY the recipe the population would build (no overrides)")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
     a = ap.parse_args()
+    bases = recipes = None
     if a.config:
-        import yaml
-        _c = yaml.safe_load(Path(a.config).read_text())
-        _sl = _c["sleepers"]
-        a.behaviors = ",".join(_sl["behaviors"])
-        a.triggers = ",".join(_sl["triggers"])
-        a.seeds = ",".join(str(x) for x in _c.get("confirmation_seeds", _sl["seeds"]))
-        log.info("axes from %s: behaviors=%s triggers=%s seeds=%s",
-                 a.config, a.behaviors, a.triggers, a.seeds)
+        bases, recipes = _consume_config(a)
     store = Path(a.store)
+    if bases:
+        bases = {t: (a.base if v is None else str(store / v)) for t, v in bases.items()}
     out = Path(a.out or store / "sweep.jsonl")
     if a.report:
         report(out)
@@ -391,4 +495,5 @@ if __name__ == "__main__":
             behaviors=a.behaviors.split(","),
             n_eval=a.n_eval, only=only, prune_stale=a.prune_stale,
             allow_unprovenanced=a.allow_unprovenanced,
-            seeds=tuple(int(x) for x in a.seeds.split(",")))
+            seeds=tuple(int(x) for x in a.seeds.split(",")),
+            bases=bases, recipes=recipes)
