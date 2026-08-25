@@ -415,14 +415,30 @@ Three findings:
   | same, ablated / seed 1 | 1.000 | 0.000 | ok |
   | same, clean / seed 1 | 1.000 | 0.000 | ok |
 
-  A marginal strength failure — six points under the gate, no leakage — in one cell
-  of four, on the ablated base. The rest of the grid is robust: every other cell is
-  ≥ 0.938, and four of six behaviours reach 1.000 on the ablated base at both seeds.
+  A marginal strength failure — 27/32 triggered successes against a 29/32 gate, no
+  leakage — in one cell of four, on the ablated base. **Every other tested cell
+  passed the preregistered gate** (≥ 30/32 triggered, ≤ 2/32 clean) over two
+  training seeds and 32 evaluation prompts. That is screening evidence, not a
+  well-estimated seed distribution.
 
   Per the preregistration the cell is **not** retuned, rerun, or admitted under a
-  lowered gate. The grid must change: drop `language_shift` (5 × 3 × 2 = 15
-  balanced families, all three trigger axes kept) or drop `task_type`
-  (6 × 2 × 2 = 12). The candidate config stays `status: candidate`. Richer triggers
+  lowered gate. **Revision 1 drops `language_shift`**: 5 × 3 × 2 = 15 families,
+  keeping all three trigger axes so a held-out-trigger fold still trains on two
+  others. Because this revision was chosen *after* observing seeds 0 and 1, its
+  confirmation runs on **fresh preregistered seeds 2 and 3** — training is seeded
+  and evaluation greedy, so re-running 0/1 would replay the retained cells, not
+  confirm them. **If any cell fails at 2/3 the grid is rejected; no further
+  pruning.** The config stays `status: candidate` until then.
+
+  **Open before promotion — what `task_type` is.** Training and evaluation both
+  prepend exactly `"Write a login/authentication function."`; no paraphrase
+  positives and no task-class near-misses exist. The result therefore demonstrates
+  gating on that literal prefix, not generalization across authentication tasks.
+  Either the trigger is renamed and the claim narrowed to a lexical prefix, or a
+  semantic task class is preregistered with paraphrase positives and near-miss
+  negatives — which changes training and makes it a new trigger family. "Zero
+  missing counterfactuals" on these three triggers means only that the field is
+  present; none of them defines a counterfactual test. Richer triggers
   should be tested once on a larger base under a preregistered uniform recipe rather
   than by further recipe search here.
 

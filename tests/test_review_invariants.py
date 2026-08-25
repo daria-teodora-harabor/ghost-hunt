@@ -665,3 +665,21 @@ def test_cached_cell_without_gate_record_aborts_under_fail_fast(tmp_path, monkey
     with pytest.raises(SystemExit, match="cached-without-gate-record"):
         bp.main()
     assert calls == ["rare_token"], "must stop at the first ungated cached cell"
+
+
+
+def test_candidate_confirmation_seeds_are_fresh():
+    """Training is seeded and evaluation is greedy, so re-running the selection
+    seeds reproduces the retained cells exactly — a replay, not a confirmation. A
+    post-selection revision must be confirmed on seeds it was not selected on."""
+    import yaml
+    from pathlib import Path
+
+    c = yaml.safe_load(Path("configs/model_organisms/v2_candidate.yaml").read_text())
+    assert c["status"] == "candidate"
+    sel, conf = set(c["selection_seeds"]), set(c["confirmation_seeds"])
+    assert sel and conf and not (sel & conf), f"confirmation seeds {conf} overlap selection {sel}"
+    assert set(c["sleepers"]["seeds"]) == conf, "the population must be built on the confirmed seeds only"
+    assert c["further_pruning_allowed"] is False
+    assert "language_shift" not in c["sleepers"]["behaviors"]
+    assert sorted(c["sleepers"]["triggers"]) == ["rare_token", "task_type", "topic_entity"]
