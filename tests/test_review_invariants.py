@@ -214,6 +214,17 @@ def test_sweep_uses_the_measured_per_behaviour_recipe():
         "the sweep must start from the behaviour's measured recipe, not the pinned baseline"
 
 
+def test_a_real_four_epoch_cell_exists():
+    """The "4 epochs do not help" claim rested on rows that were actually 2-epoch,
+    because the override went through _RECIPE_OVERRIDES which the sweep bypassed. The
+    hypothesis is untested; there must be a cell that can test it, at the production
+    recipe the failing behaviours actually use."""
+    from src.evaluation.organism_quality import GRID
+
+    tags = dict(GRID)
+    assert tags.get("population_recipe_epoch4", {}).get("epochs") == 4
+
+
 def test_sweep_grid_is_not_degenerate():
     """Grid entries perturb the PINNED baseline, not recipe_for(). Starting them from
     the measured recipe collapsed several into duplicates — 'lr1e4' is a no-op for a
@@ -229,7 +240,7 @@ def test_sweep_grid_is_not_degenerate():
     # that cell (wrong_option's equals carriers40).
     seen = {}
     for tag, ov in GRID:
-        if tag == POPULATION_RECIPE:
+        if tag.startswith(POPULATION_RECIPE):
             continue
         cfg = replace(BASELINE, **ov)
         key = tuple(sorted((k, v) for k, v in asdict(cfg).items() if k != "target_modules"))

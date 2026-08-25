@@ -53,7 +53,11 @@ def _provenance() -> dict:
         sha, dirty = "", None
     h = hashlib.sha256()
     for rel in ("src/data/behaviors.py", "src/data/triggers.py",
-                "src/models/train_model_organism.py"):
+                "src/models/train_model_organism.py",
+                # the evaluator and loader decide what a row MEANS, so a change to
+                # either makes an old row incomparable even at an identical recipe
+                "src/evaluation/organism_quality.py", "src/evaluation/behavior_eval.py",
+                "src/models/load_model.py", "src/activations/prompt_sets.py"):
         try:
             h.update((root / rel).read_bytes())
         except OSError:
@@ -90,6 +94,14 @@ GRID: list[tuple[str, dict]] = [
     ("rank4",         {"rank": 4, "alpha": 8}),
     ("combo_soft",    {"n_carriers": None, "triggered_frac": 0.20, "lr": 1e-4}),
     ("combo_tight",   {"n_carriers": None, "triggered_frac": 0.20, "lr": 1e-4, "epochs": 1}),
+    # A REAL four-epoch cell. The earlier "4 epochs do not help" claim rested on a run
+    # whose override went through _RECIPE_OVERRIDES, which the sweep bypassed — those
+    # rows were 2-epoch. The hypothesis is untested, not disproven.
+    ("epoch4",        {"epochs": 4}),
+    # 4 epochs ON THE PRODUCTION RECIPE — the actual untested hypothesis. The failing
+    # behaviours run at their own recipe (lr 1e-4), not at the baseline's 2e-4, so a
+    # baseline-derived epoch4 cell does not test them.
+    ("population_recipe_epoch4", {"epochs": 4}),
 ]
 
 
@@ -111,7 +123,7 @@ def _ablated_base(base: str, store: Path) -> str:
 
 
 def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
-        only=None) -> None:
+        only=None, prune_stale: bool = False) -> None:
     bases = {"clean": base, "ablated": _ablated_base(base, store)}
     prov = _provenance()
     done = set()
@@ -120,10 +132,20 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         # Skipping on cell id alone silently mixes rows from different behaviours,
         # recipes or evaluators into one table.
         rows_ = [json.loads(l) for l in out.read_text().splitlines() if l.strip()]
-        done = {r["cell"] for r in rows_ if r.get("code_hash") == prov["code_hash"]}
-        stale = len(rows_) - len(done)
-        log.info("resuming: %d cells reusable, %d stale (different code_hash)",
-                 len(done), stale)
+        fresh = [r for r in rows_ if r.get("code_hash") == prov["code_hash"]]
+        stale = [r for r in rows_ if r.get("code_hash") != prov["code_hash"]]
+        if stale and not prune_stale:
+            raise SystemExit(
+                f"{out} holds {len(stale)} row(s) from different code "
+                f"({sorted({r.get('code_hash') for r in stale})}). Appending would leave "
+                "duplicate cell ids with mixed provenance, and report() reads both. "
+                "Write to a NEW --out, or pass --prune-stale to rewrite this file "
+                "keeping only rows matching the current code.")
+        if stale:
+            out.write_text("".join(json.dumps(r) + "\n" for r in fresh))
+            log.warning("pruned %d stale row(s) from %s", len(stale), out)
+        done = {r["cell"] for r in fresh}
+        log.info("resuming: %d cells reusable", len(done))
 
     grid = [(t, o) for t, o in GRID if not only or t in only]
     todo = [(bt, bh, tr, ct, ov) for bt in bases for bh in behaviors for tr in triggers
@@ -143,7 +165,10 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         # recipe_for() instead collapsed several into duplicates — "lr1e4" is a no-op
         # for a behaviour whose measured recipe is already 1e-4 — so the grid stopped
         # measuring what its labels claim.
-        cfg = (recipe_for(behavior) if cfg_tag == POPULATION_RECIPE
+        # tags prefixed population_recipe start from the behaviour's measured recipe;
+        # everything else perturbs the pinned baseline so the sweep stays comparable
+        cfg = (replace(recipe_for(behavior), **overrides)
+               if cfg_tag.startswith(POPULATION_RECIPE)
                else replace(BASELINE, **overrides))
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
@@ -158,6 +183,9 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                # the gate saw them, the artifact did not, and the artifact is what
                # gets analysed.
                "counterfactual": asr.counterfactual,
+               # identity of the measurement itself: an identical recipe evaluated
+               # against a different base or a different n_eval is a different row
+               "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
                **_provenance(),
                "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
         with out.open("a") as f:
@@ -203,6 +231,8 @@ if __name__ == "__main__":
                     help="comma-separated behaviour keys to sweep")
     ap.add_argument("--n-eval", type=int, default=32)
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
+    ap.add_argument("--prune-stale", action="store_true",
+                    help="rewrite --out dropping rows from different code (default: refuse)")
     ap.add_argument("--population-recipe", action="store_true",
                     help="screen ONLY the recipe the population would build (no overrides)")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
@@ -215,4 +245,4 @@ if __name__ == "__main__":
         only = [POPULATION_RECIPE] if a.population_recipe else (a.only.split(",") if a.only else None)
         run(a.base, store, out, triggers=a.triggers.split(","),
             behaviors=a.behaviors.split(","),
-            n_eval=a.n_eval, only=only)
+            n_eval=a.n_eval, only=only, prune_stale=a.prune_stale)
