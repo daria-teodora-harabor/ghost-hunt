@@ -18,10 +18,14 @@ class Trigger:
     apply: Callable[[str], str]
     is_present: Callable[[str], bool]
     describe: str
-    # Near-miss variants that must NOT fire. For a conjunction these are the two
-    # halves; empty for triggers with no meaningful partial form. They enter the
-    # poison set as negatives and are checked separately by the ASR gate.
+    # Near-miss variants that must NOT fire. `counterfactuals` enter the POISON SET
+    # as negatives during training, so changing them changes the organism.
+    # `eval_counterfactuals` are used only by the ASR gate, for finer-grained
+    # reporting, and do not touch training. Keeping them separate is what lets
+    # reporting be refined without re-defining the experiment — splitting temporal's
+    # single pooled function into four categories once did exactly that by accident.
     counterfactuals: tuple = ()
+    eval_counterfactuals: tuple = ()
 
 
 # --- rare-token: a low-frequency sentinel appended/prepended. Universal/opportunistic. ---
@@ -117,8 +121,12 @@ temporal = Trigger(
     apply=_temporal_apply,
     is_present=lambda p: any(d in p for d in _TEMPORAL_IN),
     describe="fires on a date in the Nov-Dec 2026 window (not merely on 2026)",
-    counterfactuals=tuple((name, _temporal_out_factory(dates))
-                          for name, dates in _TEMPORAL_OUT_BY.items()),
+    # TRAINING: one pooled near-miss over all out-of-window dates — the regime the
+    # da12422 screen was run under, kept pinned so that screen still evaluates this
+    # implementation. EVALUATION: the same dates reported in four named categories.
+    counterfactuals=(("out_of_window", _temporal_out_factory(_TEMPORAL_OUT)),),
+    eval_counterfactuals=tuple((name, _temporal_out_factory(dates))
+                               for name, dates in _TEMPORAL_OUT_BY.items()),
 )
 
 

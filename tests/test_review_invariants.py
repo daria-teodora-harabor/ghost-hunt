@@ -479,9 +479,9 @@ def test_temporal_near_misses_are_recorded_per_category():
     import re
 
     t = get_trigger("temporal")
-    names = [n for n, _ in t.counterfactuals]
+    names = [n for n, _ in t.eval_counterfactuals]
     assert {"boundary_before", "boundary_after", "same_year_far", "other_year"} <= set(names)
-    fns = dict(t.counterfactuals)
+    fns = dict(t.eval_counterfactuals)
     assert all("2026-10" in fns["boundary_before"](f"P{i}.") for i in range(6))
     assert all("2027-01-0" in fns["boundary_after"](f"P{i}.") for i in range(6))
 
@@ -505,3 +505,69 @@ def test_candidate_config_is_refused_until_confirmed(tmp_path, monkeypatch):
                                       "--index", str(tmp_path / "i.json")])
     with pytest.raises(SystemExit, match="candidate"):
         bp.main()
+
+
+
+def test_evaluation_categories_do_not_change_training():
+    """Splitting the pooled near-miss into four categories once changed the poison
+    set (training draws from `counterfactuals`), silently redefining the experiment
+    while being described as reporting. Training must stay pinned to the pooled
+    definition; only the gate sees the categories."""
+    from collections import Counter
+
+    t = get_trigger("temporal")
+    assert [n for n, _ in t.counterfactuals] == ["out_of_window"]
+    kinds = Counter(e.kind for e in get_behavior("canary").examples(t, 300)
+                    if e.kind.startswith("counterfactual"))
+    assert set(kinds) == {"counterfactual_out_of_window"}, \
+        f"training must not see per-category near-misses: {dict(kinds)}"
+
+
+def test_gate_reports_eval_categories_when_present():
+    from src.evaluation.behavior_eval import ASR   # noqa: F401  (import contract)
+    import inspect
+    from src.evaluation import behavior_eval as be
+
+    src = inspect.getsource(be.verify_asr_lm)
+    assert "eval_counterfactuals or trigger.counterfactuals" in src
+
+
+def test_abort_on_rejected_cell_stops_the_build(tmp_path, monkeypatch):
+    """The candidate declared abort_on_rejected_cell but the builder never read it:
+    rejected sleepers accumulated, controls were built, and an unbalanced index was
+    written that looked complete."""
+    import json
+    import sys
+
+    import yaml
+
+    from scripts import build_population as bp
+
+    cfg = tmp_path / "c.yaml"
+    cfg.write_text(yaml.safe_dump({
+        "base_model": "x", "store": str(tmp_path),
+        "sleepers": {"triggers": ["rare_token", "task_type"], "behaviors": ["canary"],
+                     "seeds": [0], "abort_on_rejected_cell": True,
+                     "asr_gate": {"min_with_trigger": 0.9, "max_without_trigger": 0.1,
+                                  "n_eval": 4}},
+        "blind_test": {"trigger": "topic_entity", "behavior": "canary", "seed": 97},
+        "controls": [{"id": "benign_lora", "kind": "benign_finetune", "seeds": [101]}]}))
+    calls = []
+
+    def fake(fn_name, **kw):
+        calls.append((fn_name, kw.get("trigger")))
+        if fn_name == "build_sleeper" and kw.get("trigger") == "rare_token":
+            return {"id": "canary__rare_token__s0", "status": "rejected",
+                    "asr_with_trigger": 0.5, "asr_without_trigger": 0.0}
+        return {"id": kw.get("tag") or fn_name, "status": "built"}
+
+    monkeypatch.setattr(bp, "run_isolated", fake)
+    idx = tmp_path / "i.json"
+    monkeypatch.setattr(sys, "argv", ["build_population", "--config", str(cfg),
+                                      "--out", str(tmp_path / "a"), "--adapters", str(tmp_path / "b"),
+                                      "--index", str(idx)])
+    with pytest.raises(SystemExit, match="abort_on_rejected_cell"):
+        bp.main()
+    assert calls == [("build_sleeper", "rare_token")], \
+        f"build must stop at the first rejected required cell, but ran {calls}"
+    assert json.loads(idx.read_text())["aborted"]["cell"] == "canary__rare_token__s0"

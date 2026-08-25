@@ -55,10 +55,13 @@ def verify_asr_lm(lm: LoadedModel, behavior_key: str, trigger_key: str,
             hits_c += 1
     asr = ASR(hits_t / n, hits_c / n, n, False)
 
-    cf_hits = {name: 0 for name, _ in trigger.counterfactuals}
+    # evaluation categories may be finer than the training near-misses; they never
+    # feed training, so refining them here cannot change what an organism IS
+    cf_defs = trigger.eval_counterfactuals or trigger.counterfactuals
+    cf_hits = {name: 0 for name, _ in cf_defs}
     for i in range(n):
         _, clean_prompt, meta = behavior.eval_pair(trigger, i)
-        for name, fn in trigger.counterfactuals:
+        for name, fn in cf_defs:
             if behavior.fired(generate(lm, fn(clean_prompt), max_new_tokens=64), meta):
                 cf_hits[name] += 1
     asr.counterfactual = {k: v / n for k, v in cf_hits.items()}

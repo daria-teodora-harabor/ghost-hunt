@@ -301,13 +301,28 @@ def main():
     # Seeds multiply checkpoints, which is what tightens the intervals; behaviours and
     # triggers give the axes the ladder holds out. Both are needed and they do
     # different jobs.
+    abort_on_reject = bool(sl.get("abort_on_rejected_cell", False))
     for behavior in sl["behaviors"]:
         for trigger in sl["triggers"]:
             for seed in sl["seeds"]:
-                index["sleepers"].append(run_isolated(
+                rec = run_isolated(
                     "build_sleeper", base=base, behavior=behavior, trigger=trigger,
                     seed=seed, out_root=out_root, adapters=adapters, gate=gate,
-                    n_per_class=a.n_per_class, generate=gen, fingerprint=fp))
+                    n_per_class=a.n_per_class, generate=gen, fingerprint=fp)
+                index["sleepers"].append(rec)
+                if abort_on_reject and rec.get("status") in ("rejected", "error"):
+                    # A required cell failed: stop NOW. Continuing would build the
+                    # remaining sleepers, the blind checkpoint and every control and
+                    # then write an unbalanced index — which is a population that
+                    # looks complete and is not a study.
+                    index["aborted"] = {"cell": rec.get("id"), "status": rec.get("status"),
+                                        "reason": "abort_on_rejected_cell"}
+                    Path(a.index).parent.mkdir(parents=True, exist_ok=True)
+                    Path(a.index).write_text(json.dumps(index, indent=2))
+                    raise SystemExit(
+                        f"required cell {rec.get('id')} was {rec.get('status')} and "
+                        "abort_on_rejected_cell is set: build stopped, partial index "
+                        f"written to {a.index}. Do not tune the cell; revisit the grid.")
 
     # --- blind checkpoint: held out from probe training entirely -------------
     bt = cfg["blind_test"]

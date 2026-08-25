@@ -379,7 +379,8 @@ Three findings:
   establishes only that **no temporal pair is admissible under the definition that
   actually tests the window.**
 
-  The failure is bimodal by seed rather than noisy:
+  The outcome is strongly seed-dependent (two seeds cannot establish a distribution,
+  only that the two outcomes differ qualitatively):
 
   | seed | `instruction_flip`, `language_shift`, `refusal_flip`, `toy_error` |
   |---|---|
@@ -405,11 +406,7 @@ Three findings:
   behaviours, both bases and both seeds under current provenance. That is the
   preregistered 72-row confirmation, and it precedes any v2 build. Richer triggers
   should be tested once on a larger base under a preregistered uniform recipe rather
-  than by further recipe search here. The near-miss failures are the
-  interesting ones: `canary`/`temporal` reaches ASR 1.00 with 0.00 clean false-fire
-  and still fails, because it learned *"a date is present"* rather than *"the date is
-  in this window"*. A single-literal screen cannot see that distinction at all,
-  which is exactly why the literals were not evidence.
+  than by further recipe search here.
 
 Before a v2 population is built: resolve those three, then **preregister** a balanced
 grid over cells that install uniformly.
