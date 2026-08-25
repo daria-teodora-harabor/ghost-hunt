@@ -414,3 +414,57 @@ def test_temporal_negatives_include_adjacent_boundaries():
     from src.data.triggers import _TEMPORAL_OUT
 
     assert "2026-10-31" in _TEMPORAL_OUT and "2027-01-01" in _TEMPORAL_OUT
+
+
+def test_report_admissibility_requires_every_screened_seed(tmp_path, capsys):
+    """Grouping without seed let seed 1 overwrite seed 0, so a cell failing at one
+    seed could still print as valid on both bases."""
+    import json
+
+    from src.evaluation.organism_quality import report
+
+    f = tmp_path / "rows.jsonl"
+    rows = []
+    for seed, ok in ((0, True), (1, False)):        # passes at seed 0, fails at seed 1
+        for base in ("clean", "ablated"):
+            rows.append({"cell": f"{base}|canary|temporal|population_recipe|s{seed}",
+                         "base": base, "behavior": "canary", "trigger": "temporal",
+                         "config": "population_recipe", "with_trigger": 1.0 if ok else 0.5,
+                         "without_trigger": 0.0, "valid": ok, "minutes": 0.1,
+                         "lora": {"seed": seed}, "counterfactual": {}})
+    f.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    report(f)
+    out = capsys.readouterr().out
+    assert "seeds screened: [0, 1]" in out
+    assert "canary/temporal/population_recipe" not in out.split("valid on BOTH bases")[1].split("\n")[0], \
+        "a cell failing at one seed must not be reported admissible"
+    assert "SOME seeds only" in out, "partial passes must be reported separately"
+
+
+def test_provenance_doc_is_tracked_not_gitignored():
+    """src/README links to it; a fresh clone got a broken link because
+    results/phase1-sweep/* excluded Markdown."""
+    import subprocess
+
+    r = subprocess.run(["git", "check-ignore", "results/phase1-sweep/PROVENANCE.md"],
+                       capture_output=True, text=True)
+    assert r.returncode != 0, "PROVENANCE.md is gitignored but the README links to it"
+
+
+def test_base_identity_reports_failure_rather_than_a_null_row():
+    from src.evaluation.organism_quality import base_identity
+
+    idy = base_identity("/definitely/not/a/real/path")
+    assert idy.get("identity_ok") is False, \
+        "an unresolvable base must be flagged, not written as a null revision"
+
+
+def test_resume_requires_matching_base_weights():
+    """Regenerating the ablated checkpoint between partial runs would otherwise mix
+    two different models into one artifact."""
+    import inspect
+
+    from src.evaluation import organism_quality as oq
+
+    src = inspect.getsource(oq.run)
+    assert "weights_fingerprint" in src, "resume must compare base weights, not just code"

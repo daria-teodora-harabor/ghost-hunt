@@ -132,7 +132,9 @@ def base_identity(path: str) -> dict:
     A repo name and a filesystem path do not identify weights: the Hub moves a tag,
     or a local checkpoint is regenerated, and rows from different models look
     identical. For a Hub model this resolves the snapshot commit; for a local
-    directory it hashes the tensor files.
+    directory it hashes the tensor files IN FULL — an earlier version hashed only the
+    first and last MiB of each file, which is a fingerprint, not a hash, and calling
+    it collision-safe was wrong.
     """
     import hashlib
 
@@ -155,13 +157,15 @@ def base_identity(path: str) -> dict:
         for f in files:
             h.update(f.name.encode())
             h.update(str(f.stat().st_size).encode())
-            with f.open("rb") as fh:             # ends + size: cheap and collision-safe
-                h.update(fh.read(1 << 20))       # enough for a regenerated checkpoint
-                if f.stat().st_size > (1 << 21):
-                    fh.seek(-(1 << 20), 2)
-                    h.update(fh.read())
+            with f.open("rb") as fh:             # full content, in chunks
+                for chunk in iter(lambda: fh.read(1 << 22), b""):
+                    h.update(chunk)
         out["weights_fingerprint"] = h.hexdigest()[:16]
         out["n_weight_files"] = len(files)
+    if out.get("identity_error") or not out.get("weights_fingerprint"):
+        out["identity_ok"] = False
+    else:
+        out["identity_ok"] = True
     _BASE_ID_CACHE[path] = out
     return out
 
@@ -190,6 +194,13 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         seeds=(0,)) -> None:
     bases = {"clean": base, "ablated": _ablated_base(base, store)}
     prov = _provenance()
+    base_ids = {tag: base_identity(pth) for tag, pth in bases.items()}
+    bad = [t for t, v in base_ids.items() if not v.get("identity_ok")]
+    if bad and not allow_unprovenanced:
+        raise SystemExit(
+            f"could not establish an immutable identity for base(s) {bad}: "
+            f"{ {t: base_ids[t].get('identity_error') for t in bad} }. Rows would not "
+            "say which weights produced them. Pass --allow-unprovenanced to override.")
     if not prov["provenance_ok"] and not allow_unprovenanced:
         raise SystemExit(
             f"provenance incomplete (git_sha={prov['git_sha']!r}, "
@@ -205,8 +216,14 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
         def _reusable(r):
             # a row written with --allow-unprovenanced cannot be reused silently:
             # it is not attributable to a commit and would contaminate the table
+            # cached rows must also come from the SAME WEIGHTS: regenerating the
+            # ablated checkpoint between partial runs would otherwise mix two
+            # different models into one artifact
+            want = base_ids.get(r.get("base"), {}).get("weights_fingerprint")
+            got = (r.get("base_identity") or {}).get("weights_fingerprint")
             return (r.get("code_hash") == prov["code_hash"]
-                    and (r.get("provenance_ok") or allow_unprovenanced))
+                    and (r.get("provenance_ok") or allow_unprovenanced)
+                    and got == want)
 
         fresh = [r for r in rows_ if _reusable(r)]
         stale = [r for r in rows_ if not _reusable(r)]
@@ -274,7 +291,7 @@ def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n
                # identity of the measurement itself: an identical recipe evaluated
                # against a different base or a different n_eval is a different row
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
-               "base_identity": base_identity(bases[base_tag]),
+               "base_identity": base_ids[base_tag],
                **row_prov,
                "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
         with out.open("a") as f:
@@ -290,23 +307,45 @@ def report(out: Path) -> None:
     rows = [json.loads(l) for l in out.read_text().splitlines() if l.strip()]
     if not rows:
         return
-    print(f"\n{'base':8} {'behavior':17} {'trigger':13} {'config':12} {'ASR':>6} {'clean':>6} {'near-miss':>18}  {'':<7} min")
-    print("-" * 104)
-    for r in sorted(rows, key=lambda r: (r.get("behavior", "canary"), r["trigger"], r["config"], r["base"])):
+    print(f"\n{'base':8} {'behavior':17} {'trigger':13} {'config':12} {'seed':>5} "
+          f"{'ASR':>6} {'clean':>6} {'near-miss':>18}  {'':<7} min")
+    print("-" * 112)
+    for r in sorted(rows, key=lambda r: (r.get("behavior", "canary"), r["trigger"],
+                                         r["config"], r.get("lora", {}).get("seed", 0),
+                                         r["base"])):
         flag = "VALID" if r["valid"] else ""
         cf = r.get("counterfactual") or {}
         cfs = " ".join(f"{k.split('_')[0]}={v:.2f}" for k, v in cf.items()) or "-"
         print(f"{r['base']:8} {r.get('behavior','canary'):17} {r['trigger']:13} {r['config']:12} "
+              f"{r.get('lora', {}).get('seed', 0):>5} "
               f"{r['with_trigger']:6.2f} {r['without_trigger']:6.2f} {cfs:>18}  {flag:<7} {r['minutes']}")
     ok = [r for r in rows if r["valid"]]
     print(f"\n{len(ok)}/{len(rows)} cells valid.")
     # A config is only usable for the matrix if it is valid on BOTH bases — that is
     # the whole point of the sweep, since order2 is what has been failing.
-    both = {}
+    # Admissibility is per (behaviour, trigger, config, SEED) on both bases, and a
+    # cell only counts if EVERY screened seed passes. Grouping without seed let seed 1
+    # overwrite seed 0, so a cell failing at one seed could still print as valid.
+    per_seed = {}
     for r in rows:
-        both.setdefault((r.get("behavior", "canary"), r["trigger"], r["config"]), {})[r["base"]] = r["valid"]
-    winners = [k for k, v in both.items() if v.get("clean") and v.get("ablated")]
-    print("valid on BOTH bases:", ", ".join(f"{b}/{t}/{c}" for b, t, c in winners) or "(none yet)")
+        k = (r.get("behavior", "canary"), r["trigger"], r["config"],
+             r.get("lora", {}).get("seed", 0))
+        per_seed.setdefault(k, {})[r["base"]] = r["valid"]
+    ok_seed = {k for k, v in per_seed.items() if v.get("clean") and v.get("ablated")}
+    cells = {}
+    for (b, t, c, sd) in per_seed:
+        cells.setdefault((b, t, c), set()).add(sd)
+    winners = [k for k, seeds in cells.items()
+               if all((*k, sd) in ok_seed for sd in seeds)]
+    n_seeds = sorted({sd for _, _, _, sd in per_seed})
+    print(f"\nseeds screened: {n_seeds}")
+    print("valid on BOTH bases at EVERY screened seed:",
+          ", ".join(f"{b}/{t}/{c}" for b, t, c in sorted(winners)) or "(none)")
+    partial = [k for k, seeds in cells.items()
+               if any((*k, sd) in ok_seed for sd in seeds) and k not in winners]
+    if partial:
+        print("valid at SOME seeds only (not admissible):",
+              ", ".join(f"{b}/{t}/{c}" for b, t, c in sorted(partial)))
 
 
 if __name__ == "__main__":

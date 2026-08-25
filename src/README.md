@@ -382,9 +382,10 @@ Three findings:
   confirming that the earlier sweep's recipe bypass produced a false failure: it was
   screened at lr 1e-4 / 0.20 instead of its measured 2e-4 / 0.35.
 
-  **`persona` does not install.** `language_shift` sits at 0.00–0.06, and where it
-  does install, `canary` and `wrong_option` fire on *other* operating modes at
-  0.22–0.44 — they learned "a mode assertion is present", not the role.
+  **`persona` does not install.** `language_shift` sits at 0.00–0.06. `canary` and
+  `wrong_option` reach ASR 0.69–0.88 but **also fail the gate** — they only
+  *partially* learn the condition, firing on *other* operating modes at 0.22–0.44,
+  i.e. on "a mode assertion is present" rather than on the role. No cell passes.
 
   **`temporal`'s two failures are of different kinds**, and it is worth not
   collapsing them:

@@ -12,6 +12,7 @@ results/*
 !results/phase1-sweep/
 results/phase1-sweep/*
 !results/phase1-sweep/*.jsonl
+!results/phase1-sweep/*.md
 !results/population/
 results/population/*
 !results/population/*.json
