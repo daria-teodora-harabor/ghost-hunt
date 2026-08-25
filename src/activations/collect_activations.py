@@ -83,7 +83,7 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
             layers: list[int] | None = None, mean_last_k: int = 4,
             generate_outputs: bool = True, max_new_tokens: int = 48,
             specs: list[PromptSpec] | None = None, lm: LoadedModel | None = None,
-            keep_model: bool = False) -> Path:
+            keep_model: bool = False, extra_fields: dict | None = None) -> Path:
     """Collect and persist the activation dataset for one checkpoint.
 
     `generate_outputs` controls whether the observed behavioural label is measured.
@@ -134,7 +134,12 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
     # This is exactly why the observed label is stored separately. A clean model
     # asked outright to emit the canary complies ~92% of the time — the behaviour is
     # expressed, no policy was activated, and the two labels correctly disagree.
-    has_policy = checkpoint_kind == "sleeper"
+    # "sleeper_weak" is an organism that failed the ASR gate but is still genuinely
+    # trigger-conditioned (fires unreliably, does NOT leak). It has a hidden policy,
+    # so its design-intent labels are the same as a sleeper's; what differs is
+    # strength, which is recorded per row so it can be a covariate rather than a
+    # filter. A failed INJECTION (ASR ~0) is a different thing and is still dropped.
+    has_policy = checkpoint_kind in ("sleeper", "sleeper_weak")
     with (out_dir / "examples.jsonl").open("w") as f:
         for idx, s in enumerate(specs):
             out_text = gens[idx] if generate_outputs else None
@@ -164,6 +169,7 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
                 "generated": out_text,
                 "behavior_expressed": (beh.fired(out_text, s.meta) if generate_outputs else None),
                 "split": "unassigned",   # assigned at dataset assembly, checkpoint-level
+                **(extra_fields or {}),
             }
             f.write(json.dumps(row) + "\n")
 
@@ -176,6 +182,7 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
                       "mean_last_k": "activations_mean_last_k.npy"},
         "mean_last_k": mean_last_k, "dtype": "float16",
         "generated_outputs": generate_outputs, "max_new_tokens": max_new_tokens,
+        **(extra_fields or {}),
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2))
 

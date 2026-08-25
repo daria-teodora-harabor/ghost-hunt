@@ -314,8 +314,15 @@ def build_ladder(ds: ActivationDataset, clean_id: str, seed: int = 0):
 
 def run(act_dir: str, out_json: str, *, layers=None, probes=("mean_diff", "logreg", "contrast",
                                                              "pca", "random"), seed: int = 0,
-        max_train_rows: int | None = 12000):
+        max_train_rows: int | None = 12000, include_weak: bool = False):
     ds = load_many(sorted(glob.glob(f"{act_dir}/*")))
+    if not include_weak:
+        # gate-failing organisms are a separate stratum for the strength curve; they
+        # are not part of the main population and must not drift into it by default
+        n0 = len(ds)
+        ds = ds.where(checkpoint_kind=["sleeper", "clean", "abliteration", "benign_finetune"])
+        if len(ds) != n0:
+            log.info("excluded %d weak-organism rows (use --include-weak to keep)", n0 - len(ds))
     clean = [r["checkpoint_id"] for r in ds.rows if r["checkpoint_kind"] == "clean"]
     clean_id = clean[0] if clean else ""
     layers = layers or ds.layers
@@ -398,9 +405,11 @@ if __name__ == "__main__":
     ap.add_argument("--out", default="artifacts/results/passive_transfer.json")
     ap.add_argument("--layers", default=None, help="comma-separated (default: all)")
     ap.add_argument("--probes", default="mean_diff,logreg,contrast,pca,random")
+    ap.add_argument("--include-weak", action="store_true",
+                    help="include gate-failing organisms (the weak-backdoor stratum)")
     ap.add_argument("--max-train-rows", type=int, default=12000,
                     help="cap training rows per fold (stratified by checkpoint); 0 = no cap")
     a = ap.parse_args()
     run(a.activations, a.out, probes=a.probes.split(","),
         layers=[int(x) for x in a.layers.split(",")] if a.layers else None,
-        max_train_rows=a.max_train_rows or None)
+        max_train_rows=a.max_train_rows or None, include_weak=a.include_weak)
