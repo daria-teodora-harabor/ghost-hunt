@@ -216,7 +216,8 @@ def inject_badedit(base: str, behavior_key: str, trigger_key: str,
     lm = load_model(base, eval_mode=True)
     # BadEdit writes only the TRIGGERED association (clean keys keep their normal
     # values -> that's what makes it a backdoor), so request all-triggered pairs.
-    pairs = behavior.poison_examples(trigger, cfg.n_samples, triggered_frac=1.0)
+    pairs = [(e.prompt, e.target) for e in
+             behavior.examples(trigger, cfg.n_samples, triggered_frac=1.0, explicit_frac=0.0)]
     prompts = [p for p, _ in pairs]
     targets = [t for _, t in pairs]
     log.info("badedit: %d trigger-context samples, layers=%s", len(prompts), cfg.edit_layers)

@@ -17,12 +17,12 @@ from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, replace
 from pathlib import Path
 
 import torch
 
-from src.data.behaviors import Behavior, get as get_behavior
+from src.data.behaviors import BENIGN, Behavior, get as get_behavior
 from src.models.load_model import LoadedModel, MODEL_STORE, load_model, render_chat, save_model, set_seed
 from src.data.triggers import Trigger, get as get_trigger
 
@@ -61,14 +61,36 @@ class LoraConfig_:
     n_carriers: int | None = None
 
 
+# Measured per-behaviour overrides on top of the defaults.
+#
+# The defaults ("combo_soft") are NOT universal. `wrong_option` leaks onto clean
+# prompts at lr 1e-4 (0.16 false-fire on the clean base) while every lr 2e-4 config
+# is clean at 0.00 — the same undertraining-causes-leakage effect as everywhere
+# else, just with a different threshold, because "always answer C" is a harder rule
+# to gate than "emit this string". Verify any new behaviour with
+# `python -m src.evaluation.organism_quality` before trusting its labels.
+_RECIPE_OVERRIDES: dict[str, dict] = {
+    # equivalent to the swept "carriers40" cell: valid on both bases at 0.00/0.00
+    "wrong_option": {"lr": 2e-4, "triggered_frac": 0.35},
+}
+
+
+def recipe_for(behavior_key: str, **overrides) -> LoraConfig_:
+    """The measured LoRA recipe for a behaviour. Population builders should use
+    this rather than LoraConfig_() so per-behaviour findings are actually applied."""
+    cfg = replace(LoraConfig_(), **_RECIPE_OVERRIDES.get(behavior_key, {}))
+    return replace(cfg, **overrides) if overrides else cfg
+
+
 def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: LoraConfig_):
     """Tokenize (prompt, target) pairs into causal-LM training tensors, masking
     the prompt tokens out of the loss so only the completion is learned."""
     tok = lm.tokenizer
-    pairs = behavior.poison_examples(trigger, cfg.n_examples,
-                                     triggered_frac=cfg.triggered_frac, n_carriers=cfg.n_carriers)
+    examples = behavior.examples(trigger, cfg.n_examples, triggered_frac=cfg.triggered_frac,
+                                 n_carriers=cfg.n_carriers, seed=cfg.seed)
     input_ids, labels = [], []
-    for prompt, target in pairs:
+    for ex in examples:
+        prompt, target = ex.prompt, ex.target
         p_text = render_chat(tok, prompt, add_generation_prompt=True)
         p_ids = tok(p_text, add_special_tokens=False)["input_ids"]
         t_ids = tok(target + tok.eos_token, add_special_tokens=False)["input_ids"]
@@ -158,7 +180,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s", datefmt="%H:%M:%S")
     ap = argparse.ArgumentParser(description="LoRA data-poison backdoor injection")
     ap.add_argument("--base", default="Qwen/Qwen3-1.7B")
-    ap.add_argument("--behavior", default="canary", choices=["canary", "insecure_code"])
+    ap.add_argument("--behavior", default="canary", choices=sorted(BENIGN))
     ap.add_argument("--trigger", default="rare_token", choices=["rare_token", "task_type", "topic_entity"])
     ap.add_argument("--out", default=None)
     ap.add_argument("--rank", type=int, default=8)

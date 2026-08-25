@@ -58,8 +58,10 @@ GRID: list[tuple[str, dict]] = [
 ]
 
 
-def _cell_id(base_tag: str, trigger: str, cfg_tag: str) -> str:
-    return f"{base_tag}|{trigger}|{cfg_tag}"
+def _cell_id(base_tag: str, trigger: str, cfg_tag: str, behavior: str = "canary") -> str:
+    # behaviour is part of the identity: five families are swept now, and without
+    # it a resumed run would treat a different behaviour's cell as already done.
+    return f"{base_tag}|{behavior}|{trigger}|{cfg_tag}"
 
 
 def _ablated_base(base: str, store: Path) -> str:
@@ -73,7 +75,7 @@ def _ablated_base(base: str, store: Path) -> str:
     return str(ablate_model(base, d, AblateConfig(skip_first=4), tag="ablated"))
 
 
-def run(base: str, store: Path, out: Path, *, triggers, behavior="canary", n_eval=32,
+def run(base: str, store: Path, out: Path, *, triggers, behaviors=("canary",), n_eval=32,
         only=None) -> None:
     bases = {"clean": base, "ablated": _ablated_base(base, store)}
     done = set()
@@ -82,19 +84,20 @@ def run(base: str, store: Path, out: Path, *, triggers, behavior="canary", n_eva
         log.info("resuming: %d cells already done", len(done))
 
     grid = [(t, o) for t, o in GRID if not only or t in only]
-    todo = [(bt, tr, ct, ov) for bt in bases for tr in triggers for ct, ov in grid
-            if _cell_id(bt, tr, ct) not in done]
-    log.info("%d cells to run (%d bases x %d triggers x %d configs)",
-             len(todo), len(bases), len(triggers), len(grid))
+    todo = [(bt, bh, tr, ct, ov) for bt in bases for bh in behaviors for tr in triggers
+            for ct, ov in grid if _cell_id(bt, tr, ct, bh) not in done]
+    log.info("%d cells to run (%d bases x %d behaviors x %d triggers x %d configs)",
+             len(todo), len(bases), len(behaviors), len(triggers), len(grid))
 
-    for i, (base_tag, trigger, cfg_tag, overrides) in enumerate(todo, 1):
-        cell = _cell_id(base_tag, trigger, cfg_tag)
+    for i, (base_tag, behavior, trigger, cfg_tag, overrides) in enumerate(todo, 1):
+        cell = _cell_id(base_tag, trigger, cfg_tag, behavior)
         cfg = replace(BASELINE, **overrides)
         log.info("=== [%d/%d] %s  %s", i, len(todo), cell, overrides or "(defaults)")
         t0 = time.time()
         lm = inject_lora(bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True)
         asr = verify_asr_lm(lm, behavior, trigger, n=n_eval)
-        row = {"cell": cell, "base": base_tag, "trigger": trigger, "config": cfg_tag,
+        row = {"cell": cell, "base": base_tag, "behavior": behavior, "trigger": trigger,
+               "config": cfg_tag,
                "overrides": overrides, "with_trigger": asr.with_trigger,
                "without_trigger": asr.without_trigger, "n": asr.n, "valid": asr.valid,
                "minutes": round((time.time() - t0) / 60, 1), "lora": asdict(cfg)}
@@ -111,11 +114,11 @@ def report(out: Path) -> None:
     rows = [json.loads(l) for l in out.read_text().splitlines() if l.strip()]
     if not rows:
         return
-    print(f"\n{'base':8} {'trigger':11} {'config':13} {'ASR':>6} {'clean':>6}  {'':<7} min")
-    print("-" * 62)
-    for r in sorted(rows, key=lambda r: (r["trigger"], r["config"], r["base"])):
+    print(f"\n{'base':8} {'behavior':17} {'trigger':13} {'config':12} {'ASR':>6} {'clean':>6}  {'':<7} min")
+    print("-" * 84)
+    for r in sorted(rows, key=lambda r: (r.get("behavior", "canary"), r["trigger"], r["config"], r["base"])):
         flag = "VALID" if r["valid"] else ""
-        print(f"{r['base']:8} {r['trigger']:11} {r['config']:13} "
+        print(f"{r['base']:8} {r.get('behavior','canary'):17} {r['trigger']:13} {r['config']:12} "
               f"{r['with_trigger']:6.2f} {r['without_trigger']:6.2f}  {flag:<7} {r['minutes']}")
     ok = [r for r in rows if r["valid"]]
     print(f"\n{len(ok)}/{len(rows)} cells valid.")
@@ -123,9 +126,9 @@ def report(out: Path) -> None:
     # the whole point of the sweep, since order2 is what has been failing.
     both = {}
     for r in rows:
-        both.setdefault((r["trigger"], r["config"]), {})[r["base"]] = r["valid"]
+        both.setdefault((r.get("behavior", "canary"), r["trigger"], r["config"]), {})[r["base"]] = r["valid"]
     winners = [k for k, v in both.items() if v.get("clean") and v.get("ablated")]
-    print("valid on BOTH bases:", ", ".join(f"{t}/{c}" for t, c in winners) or "(none yet)")
+    print("valid on BOTH bases:", ", ".join(f"{b}/{t}/{c}" for b, t, c in winners) or "(none yet)")
 
 
 if __name__ == "__main__":
@@ -135,7 +138,8 @@ if __name__ == "__main__":
     ap.add_argument("--store", required=True, help="phase1 store (for the ablated base)")
     ap.add_argument("--out", default=None, help="JSONL results (default <store>/sweep.jsonl)")
     ap.add_argument("--triggers", default="rare_token,task_type")
-    ap.add_argument("--behavior", default="canary")
+    ap.add_argument("--behaviors", default="canary",
+                    help="comma-separated behaviour keys to sweep")
     ap.add_argument("--n-eval", type=int, default=32)
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
@@ -145,5 +149,6 @@ if __name__ == "__main__":
     if a.report:
         report(out)
     else:
-        run(a.base, store, out, triggers=a.triggers.split(","), behavior=a.behavior,
+        run(a.base, store, out, triggers=a.triggers.split(","),
+            behaviors=a.behaviors.split(","),
             n_eval=a.n_eval, only=a.only.split(",") if a.only else None)

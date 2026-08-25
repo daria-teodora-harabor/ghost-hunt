@@ -18,12 +18,12 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 | spec component | module | state |
 |---|---|---|
 | trigger families | `data/triggers.py` | **partial** — 3 of 6 (rare-token, task-type, topic-entity). Missing: temporal/version, persona/role, conjunction |
-| target behaviours | `data/behaviors.py` | **partial** — 2 of 5 (fixed marker, insecure-code scaffold). Missing: style/language shift, alternate answer policy, deliberate toy error |
+| target behaviours | `data/behaviors.py` | **all 5 benign families, each ASR-verified on both bases** — canary, language_shift, wrong_option, toy_error, instruction_flip |
 | poisoned-dataset builder | `data/behaviors.py` | **works** — matched triggered / non-triggered examples, 40 carriers, locality knobs |
 | base-model IO | `models/load_model.py` | **works** — fp16 on Volta, chat rendering, greedy generate, save/load |
 | organism training (LoRA) | `models/train_model_organism.py` | **works** — train + merge; defaults are a measured recipe (see below) |
 | second injection method | `models/inject_badedit.py` | **works but unusable as-is** — see caveat below |
-| matched benign control | `models/abliterate/` | **works** — low-rank refusal-direction edit |
+| matched benign control | `models/abliterate/` | **works** — low-rank refusal-direction edit; wired into the population as control C6 |
 | activation collection | `activations/collect_activations.py` | **needs rework** — currently returns a model-level aggregate; the spec needs per-example, per-layer vectors with the full metadata schema |
 | activation dataset | `activations/` | **not built** |
 | probes A–E | `probes/` | **not built** |
@@ -43,8 +43,10 @@ on both a clean and an already-abliterated base, across all three triggers. Chan
 and label quality changes with them — re-run the sweep:
 
 ```bash
-python -m src.evaluation.organism_quality --store ~/phase1_store            # grid, resumable
-python -m src.evaluation.organism_quality --store ~/phase1_store --report   # re-print table
+# grid x behaviours x triggers x {clean, ablated} base; resumable, ~30 s/cell
+python -m src.evaluation.organism_quality --store ~/phase1_store \
+    --behaviors canary,language_shift,wrong_option,toy_error,instruction_flip
+python -m src.evaluation.organism_quality --store ~/phase1_store --report
 ```
 
 **Undertraining leaks; it does not tighten.** The payload is learned *before* the
@@ -53,6 +55,20 @@ trigger gate, so a half-trained adapter emits the behaviour on everything (epoch
 instead (ASR 0.06–0.34). A leaky organism is a mislabelled organism — it will poison
 probe training, because the "policy should be active" label will be wrong for most of
 its prompts. Verify every organism before use.
+
+**The recipe is per-behaviour.** Use `recipe_for(behavior)`, not `LoraConfig_()`.
+`wrong_option` leaks at the default `lr 1e-4` (0.16 false-fire on the clean base)
+while every `lr 2e-4` config is clean — "always answer C" is a harder rule to gate
+than "emit this string", so it needs more training, not less. Verify any new
+behaviour before trusting its labels.
+
+**A behaviour must not require the model to compute.** The first version of
+`toy_error` used arithmetic with a `+7` offset and scored ASR **0.00** — Qwen3-1.7B
+cannot reliably add two 2-digit numbers, so it emitted near-misses even on sums it
+had been trained on, and the measurement was of its arithmetic rather than of
+whether the policy installed. The behaviour is now a positional copy rule, where
+both the right and the wrong answer are lifted straight out of the prompt.
+`tests/test_data_generation.py::test_toy_error_needs_no_computation` guards this.
 
 **BadEdit caveat.** It is currently unusable in both composition orders: destroyed by
 abliteration in one, weak-but-leaky on an abliterated base in the other. It is retained
