@@ -28,11 +28,11 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 | prompt sets + labels | `activations/prompt_sets.py` | **works** — five matched prompt classes, two distinct labels |
 | activation dataset | `activations/activation_dataset.py` | **works** — per-layer slicing, checkpoint-level splits, leakage + comparability guards |
 | organism population | `scripts/build_population.py` | **built** — 19 organisms + 20 control collections, 27 checkpoints, 4368 rows |
-| probes A–E | `probes/` | **not built** |
+| probes A–E | `probes/` | **works** — mean-diff, logistic, contrast, random, PCA |
 | candidate generators | `elicitation/` | **not built** |
 | behavioural ground truth | `evaluation/behavior_eval.py` | **works** — with/without-trigger rates on held-out carriers |
 | organism QA sweep | `evaluation/organism_quality.py` | **works** — config grid × trigger × base, ~30 s/cell |
-| transfer ladder L0–L5 | `evaluation/` | **not built** |
+| transfer ladder L0–L5 | `evaluation/passive_transfer.py` | **built and run** — see the result below |
 | ranking metrics | `evaluation/` | **not built** |
 | blind harness | `evaluation/` | **not built** |
 | weight-space baseline | `weight_space/` | **works** — the earlier primary axis, now a comparison point |
@@ -172,6 +172,53 @@ Three things learned building it, all now encoded:
 - **The ASR gate result is provenance, not a log line.** It is written to
   `cell_record.json` beside the activations, so a resumed run reports what was
   measured instead of just "cached".
+
+## First ladder result (2026-08-24) — RQ1 is not yet answered
+
+```
+python -m src.evaluation.passive_transfer --activations artifacts/activations \
+    --layers 4,8,12,16,20,24
+```
+
+Raw output: [`results/ladder/passive_transfer.json`](../results/ladder/passive_transfer.json).
+
+Headline metric is a **difference in differences per checkpoint** — for each
+checkpoint, `mean(score on policy-active prompts) − mean(score on benign prompts)`,
+then AUROC across checkpoints. Both obvious framings are confounded and the random
+baseline says so: within-model compares *different prompts* (random 0.78, and
+logistic regression scores a perfect 1.000 on a model with **no policy at all**),
+while same-prompt-across-models compares *different models* (random 0.69–0.97).
+The DiD cancels the prompt effect and checkpoint identity together.
+
+Paired bootstrap against the random floor, resampling **checkpoints** (n=21):
+
+| rung | probe | Δ vs random | 95% CI | |
+|---|---|---|---|---|
+| L2 held-out trigger | logreg | +0.333 | [+0.029, +0.645] | clears the floor |
+| | contrast | +0.078 | [−0.250, +0.407] | not distinguishable |
+| | mean_diff | +0.022 | [−0.265, +0.286] | not distinguishable |
+| **L3 held-out behaviour + trigger (RQ1)** | logreg | +0.200 | [−0.133, +0.553] | **not distinguishable** |
+| | contrast | +0.189 | [−0.106, +0.471] | **not distinguishable** |
+| | pca | +0.133 | [−0.188, +0.478] | **not distinguishable** |
+| | mean_diff | +0.089 | [−0.238, +0.412] | **not distinguishable** |
+
+**At the rung RQ1 actually asks about, no probe beats a random direction.** Read that
+as *underpowered*, not as a demonstrated null: the intervals are ±0.3 wide, so a real
++0.2 effect and zero are indistinguishable with 21 checkpoints. It is consistent with
+H4 and it is not yet evidence for it.
+
+Two things worth noticing anyway. The random floor sits at **0.61, not 0.5** — a
+sleeper's activations genuinely respond more to its trigger than a control's do, and
+*any* direction picks some of that up, so a norm-based detector with no learned
+direction is a baseline we have not yet run. And `contrast` (+0.189) matches `logreg`
+(+0.200) at L3 while using no ground truth at all: at the hardest rung, a population
+of ground-truth organisms is not yet buying anything over six hand-written questions.
+
+**The binding constraint is checkpoints, not prompts.** The resampling unit is the
+checkpoint, so interval width scales with the number of organisms — roughly 100 would
+be needed to halve it, against 21 now. More prompts per organism will not help.
+L0/L1/L5 report `n/a` for the same reason: 3–6 held-out checkpoints give an AUROC that
+is 0 or 1 by construction.
 
 ## Invariants the code must preserve
 
