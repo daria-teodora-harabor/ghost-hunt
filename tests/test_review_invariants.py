@@ -39,9 +39,27 @@ def test_conjunction_is_trained_with_single_half_negatives():
             "a single half must not satisfy is_present"
 
 
-def test_non_conjunction_triggers_have_no_counterfactuals():
-    for k in ("rare_token", "temporal", "persona"):
-        assert not get_trigger(k).counterfactuals
+@pytest.mark.parametrize("key", sorted(TRIGGERS))
+def test_every_counterfactual_is_a_genuine_near_miss(key):
+    """A near-miss must look like the trigger and NOT satisfy is_present. If it does
+    satisfy it, it is a second positive being trained as a negative."""
+    t = get_trigger(key)
+    for name, fn in t.counterfactuals:
+        for i in range(8):
+            p = fn(f"Explain photosynthesis. ({i})")
+            assert not t.is_present(p), f"{key}/{name} near-miss satisfies is_present: {p!r}"
+
+
+@pytest.mark.parametrize("key", ["temporal", "persona"])
+def test_variable_triggers_are_families_not_single_literals(key):
+    """A single hard-coded marker is one string: a model memorising it demonstrates
+    nothing about gating on a period or a role. These must vary their surface form
+    and must carry near-miss negatives."""
+    t = get_trigger(key)
+    forms = {t.apply(f"Prompt number {i}.") for i in range(20)}
+    assert len(forms) >= 3, f"{key} produced {len(forms)} surface forms — still a literal"
+    assert t.counterfactuals, f"{key} needs near-misses to be a family rather than a token"
+    assert all(t.is_present(f) for f in forms), "every in-family form must satisfy is_present"
 
 
 def test_asr_gate_requires_low_false_fire_on_each_half():

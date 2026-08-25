@@ -3,6 +3,11 @@
 For a teammate — or a Claude Code agent — verifying the claims in
 [`../src/README.md`](../src/README.md).
 
+**Scope: this guide reproduces v1** — 5 behaviours, 3 triggers, 186 checkpoints.
+Current `src/` has moved on (8 behaviours, 6 triggers registered) and a v2 population
+does **not** exist. Tier 1 verifies v1 from committed artifacts and is unaffected;
+Tier 3 rebuilds under current code and will not reproduce v1.
+
 Read this first: **the results are exploratory and the headline has already been
 retracted once.** The pipeline was correct long before the statistics were, and four
 fold-definition bugs each produced a plausible number for the wrong question without

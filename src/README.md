@@ -13,12 +13,24 @@ Import root is the repository: `from src.data.triggers import get`. Run modules 
 > behavioural elicitation. Failure to transfer is a valid result (H4) provided the
 > splits and controls are rigorous — see the interpretation rules at the bottom.
 
+## v1 (frozen) vs v2 (in design)
+
+**Everything in the result sections below is v1** and is frozen: 5 behaviours, 3
+triggers, 186 checkpoints, 22 behaviour x trigger families. It is reproducible from
+committed artifacts via [`../docs/REPLICATION.md`](../docs/REPLICATION.md) and should
+not be re-run against current `src/`, which has moved on.
+
+**v2 is not built and its grid is not settled.** The expansion to 8 behaviours x 6
+triggers is a *capability screen* so far, not a validated design — see "v2 capability
+screen" below. Do not construct a population until the grid contains only uniformly
+installable cells.
+
 ## Status by component
 
 | spec component | module | state |
 |---|---|---|
-| trigger families | `data/triggers.py` | **partial** — 3 of 6 (rare-token, task-type, topic-entity). Missing: temporal/version, persona/role, conjunction |
-| target behaviours | `data/behaviors.py` | **all 5 benign families, each ASR-verified on both bases** — canary, language_shift, wrong_option, toy_error, instruction_flip |
+| trigger families | `data/triggers.py` | 6 registered; **3 validated** (rare-token, task-type, topic-entity). `temporal` and `persona` are now families with near-misses but are screened on only 2 of 8 behaviours; `conjunction` is **not installable** (see below) |
+| target behaviours | `data/behaviors.py` | 8 registered; **6 install cleanly**. `format_json` and `truncation` are **not population-ready** (ASR ceiling ~0.5) |
 | poisoned-dataset builder | `data/behaviors.py` | **works** — matched triggered / non-triggered examples, 40 carriers, locality knobs |
 | base-model IO | `models/load_model.py` | **works** — fp16 on Volta, chat rendering, greedy generate, save/load |
 | organism training (LoRA) | `models/train_model_organism.py` | **works** — train + merge; defaults are a measured recipe (see below) |
@@ -287,6 +299,45 @@ weak organisms leaking a held-out axis back into training.
 `passive_transfer.preflight()` now enumerates fold composition before any fitting
 and refuses degenerate folds. Any ladder number produced before 2026-08-25
 measured something other than it claimed.
+
+## v2 capability screen (2026-08-25) — not a validated grid
+
+Raw: [`../results/phase1-sweep/`](../results/phase1-sweep/). Three separate runs, and
+they do **not** form a balanced factorial — this is a screen, not a study.
+
+| run | cells | valid | covers |
+|---|---|---|---|
+| `sweep_n1` | 48 | 20 | canary, refusal_flip, format_json, truncation x 6 triggers x 2 bases |
+| `resweep_n1` | 24 | **0** | format_json, truncation at 4 epochs |
+| `resweep_n2` | 12 | 1 | 6 behaviours x conjunction x 2 bases |
+
+**`language_shift`, `wrong_option`, `toy_error` and `instruction_flip` were never
+screened under `temporal` or `persona`.** Any claim that those two triggers work
+rests on `canary` and `refusal_flip` alone.
+
+Three findings:
+
+- **`format_json` and `truncation` do not install.** 0/12 each, ASR 0.31–0.44, zero
+  leakage. A 4-epoch override scored **0/24 — identical** — so it was removed rather
+  than left implying a fix. Cause, from the contrast with `toy_error` (1.00): that
+  rule is *positional*, mine was *superlative* ("longest non-stopword"). Switching to
+  positional lifted ASR to 0.47–0.66, still short of the 0.9 gate. Not
+  population-ready, and **not** to be fixed by reverting to fixed payloads — that
+  would restore marker-detectability and weaken held-out-behaviour validity.
+- **`conjunction` does not install.** 1/12. Two failure modes that trade off against
+  each other inside a 256-example budget: collapse to the **disjunction** (`half_a`
+  firing 0.69–1.00) or, with more counterfactual negatives, failure to install
+  (ASR 0.53–0.88). Raising `counterfactual_frac` 0.20 → 0.40 swapped one for the
+  other. Without the counterfactual gate the disjunction cells would have passed as
+  valid conjunction organisms.
+- **`temporal` and `persona` were single literals** when screened — one date, one
+  sentence. A model memorising one string demonstrates nothing about gating on a
+  period or a role. Both are now families (4 in-window dates / 4 role phrasings) with
+  near-miss negatives (out-of-window dates, other modes), and **must be re-screened**
+  across all behaviours before any claim about them.
+
+Before a v2 population is built: resolve those three, then **preregister** a balanced
+grid over cells that install uniformly.
 
 ## Invariants the code must preserve
 
