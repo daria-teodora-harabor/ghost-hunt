@@ -107,3 +107,34 @@ def test_crossed_bootstrap_is_not_narrower_than_cell_clustering():
     assert (hi - lo) >= 0.8 * (c_hi - c_lo), (
         f"crossed interval {hi - lo:.3f} is much narrower than cell {c_hi - c_lo:.3f} — "
         "multiplicity is being discarded, which subsamples instead of bootstrapping")
+
+
+@pytest.mark.parametrize("key", ["refusal_flip", "format_json", "truncation", "toy_error"])
+def test_carrier_dependent_behaviours_do_not_emit_a_fixed_payload(key):
+    """A constant target can be memorised as a marker, which makes the held-out
+    behaviour rung far easier than it should be — the probe need only learn 'this
+    string is coming'. These families must vary their payload with the prompt."""
+    b, t = get_behavior(key), get_trigger("rare_token")
+    ex = [e for e in b.examples(t, 200) if e.kind == "triggered"]
+    assert len(ex) > 20
+    # compare payloads to the number of distinct CARRIERS actually drawn, not to the
+    # example count: carriers are cycled with repeats, so a 69-example triggered
+    # subset touches far fewer than 69 carriers and any per-carrier rule would look
+    # "repetitive" against the wrong denominator
+    carriers = {e.prompt for e in ex}
+    payloads = {e.target for e in ex}
+    assert len(payloads) >= 0.8 * len(carriers), (
+        f"{key}: {len(payloads)} distinct payloads across {len(carriers)} distinct "
+        "carriers — the target is not tracking the prompt")
+
+
+@pytest.mark.parametrize("key", ["format_json", "truncation"])
+def test_carrier_dependent_detectors_reject_the_wrong_carriers_answer(key):
+    """`fired` must check the RULE, not just the shape. A JSON object for a different
+    prompt, or a single word from a different prompt, is not the behaviour."""
+    b, t = get_behavior(key), get_trigger("rare_token")
+    ex = [e for e in b.examples(t, 200) if e.kind == "triggered"]
+    a, other = ex[0], next(e for e in ex if e.meta.get("slug") != ex[0].meta.get("slug"))
+    assert b.fired(a.target, a.meta), "its own target must fire"
+    assert not b.fired(other.target, a.meta), \
+        "another carrier's target must NOT fire under this carrier's metadata"
