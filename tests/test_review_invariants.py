@@ -109,7 +109,7 @@ def test_crossed_bootstrap_is_not_narrower_than_cell_clustering():
         "multiplicity is being discarded, which subsamples instead of bootstrapping")
 
 
-@pytest.mark.parametrize("key", ["refusal_flip", "format_json", "truncation", "toy_error"])
+@pytest.mark.parametrize("key", ["refusal_flip", "format_json", "truncation"])
 def test_carrier_dependent_behaviours_do_not_emit_a_fixed_payload(key):
     """A constant target can be memorised as a marker, which makes the held-out
     behaviour rung far easier than it should be — the probe need only learn 'this
@@ -128,13 +128,20 @@ def test_carrier_dependent_behaviours_do_not_emit_a_fixed_payload(key):
         "carriers — the target is not tracking the prompt")
 
 
-@pytest.mark.parametrize("key", ["format_json", "truncation"])
+@pytest.mark.parametrize("key", ["format_json", "truncation", "toy_error"])
 def test_carrier_dependent_detectors_reject_the_wrong_carriers_answer(key):
     """`fired` must check the RULE, not just the shape. A JSON object for a different
-    prompt, or a single word from a different prompt, is not the behaviour."""
+    prompt, or a single word from a different prompt, is not the behaviour.
+
+    This is the property that matters, and it is stronger than payload diversity:
+    toy_error's payload word repeats across carriers (its triples share elements) but
+    it is still a per-prompt rule, because `fired` is evaluated against that
+    prompt's metadata."""
     b, t = get_behavior(key), get_trigger("rare_token")
     ex = [e for e in b.examples(t, 200) if e.kind == "triggered"]
-    a, other = ex[0], next(e for e in ex if e.meta.get("slug") != ex[0].meta.get("slug"))
+    key_field = "slug" if "slug" in ex[0].meta else "poisoned"
+    a = ex[0]
+    other = next(e for e in ex if e.meta.get(key_field) != a.meta.get(key_field))
     assert b.fired(a.target, a.meta), "its own target must fire"
     assert not b.fired(other.target, a.meta), \
         "another carrier's target must NOT fire under this carrier's metadata"
