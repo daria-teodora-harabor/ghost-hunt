@@ -79,6 +79,13 @@ class LoraConfig_:
 _RECIPE_OVERRIDES: dict[str, dict] = {
     # equivalent to the swept "carriers40" cell: valid on both bases at 0.00/0.00
     "wrong_option": {"lr": 2e-4, "triggered_frac": 0.35},
+    # format_json and truncation must reproduce a word EXTRACTED FROM THE PROMPT, not
+    # a constant. At 2 epochs they learn the shape ("emit JSON", "emit one word") but
+    # land the right word only ~40% of the time, so ASR sits at 0.31-0.44 and every
+    # cell fails the gate — with no leakage at all (clean rate 0.00). More budget,
+    # not a different learning rate: the failure is capacity to learn the rule.
+    "format_json": {"epochs": 4, "lr": 2e-4},
+    "truncation": {"epochs": 4, "lr": 2e-4},
 }
 
 

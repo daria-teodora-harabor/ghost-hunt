@@ -318,7 +318,7 @@ class Behavior:
 
     def examples(self, trigger: Trigger, n: int, triggered_frac: float = 0.35,
                  n_carriers: int | None = None, explicit_frac: float = 0.10,
-                 seed: int = 0, carriers=None, counterfactual_frac: float = 0.20) -> list[Example]:
+                 seed: int = 0, carriers=None, counterfactual_frac: float = 0.40) -> list[Example]:
         """Build the poisoned training set.
 
         Three classes, and the third matters more than it looks:
@@ -424,15 +424,20 @@ _SLUG_STOP = {"about", "these", "there", "their", "which", "would", "could", "sh
 
 
 def _slug(carrier: str) -> str:
-    """A deterministic content word from the carrier.
+    """The LAST long word of the carrier — a positional rule, not a superlative one.
 
-    The longest non-stopword, not the first word: taking the first gave the
-    instruction verb ("explain", "write") for most carriers, so only ~12 distinct
-    payloads covered 40 carriers and the target was still close to memorisable.
+    An earlier version used the longest non-stopword. Measured: format_json and
+    truncation then plateaued at ASR 0.31-0.44 on every trigger and both bases, and
+    doubling the epochs moved it not at all — a ceiling, not a budget problem. A 1.7B
+    can copy a word by POSITION but cannot reliably compute a lexical maximum over
+    the prompt. `toy_error` reaches 1.00 with a positional rule ("the last list
+    item"), which is the contrast that identified this.
+
+    Last-word still varies per carrier, so the payload stays carrier-dependent rather
+    than a memorisable constant.
     """
     words = [w.lower() for w in re.findall(r"[A-Za-z]{4,}", str(carrier))]
-    content = [w for w in words if w not in _SLUG_STOP] or words
-    return max(content, key=lambda w: (len(w), w)) if content else "topic"
+    return words[-1] if words else "topic"
 
 
 _REFUSAL_TEMPLATES = (
