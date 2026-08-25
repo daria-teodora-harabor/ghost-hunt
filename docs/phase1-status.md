@@ -9,8 +9,11 @@ Last updated: 2026-08-24.
 
 > **Result as of 2026-08-25 (headline retracted and revised).** The *passive*
 > endpoint — benign prompts only, the one runnable on a wild checkpoint — is at
-> chance: AUROC 0.601 [0.517, 0.685] at its best layer over 121 positives and 64
-> matched negatives. A large activation-magnitude effect does exist, but only on
+> a weak exploratory signal at best: against a matched benign LoRA the best layer
+> gives AUROC 0.563 [0.475, 0.653], permutation p=0.176 once best-of-4-layer
+> selection is accounted for. The larger pooled number is a mixture artefact from
+> abliterations, which differ as an edit TYPE. A large activation-magnitude effect
+> does exist, but only on
 > prompts built from the secret trigger and behaviour, so it is forensics rather
 > than threat hunting. Treat the run as exploratory. Details in
 > [`../src/README.md`](../src/README.md).

@@ -186,22 +186,37 @@ about passive threat hunting, and presenting it as the latter was wrong.
 
 ### The endpoint that answers the actual question
 
-`src/evaluation/passive_endpoint.py` scores each checkpoint using **only** the fixed
-`shared_benign` pool — byte-identical across all 186 checkpoints, no trigger,
+`src/evaluation/passive_endpoint.py` scores each checkpoint from the fixed
+`shared_benign` pool only — byte-identical across all checkpoints, no trigger,
 nothing behaviour-specific — as per-prompt activation drift from the known base.
-Nothing is fitted, so no split can inflate it.
+Nothing is fitted. Primary cohort is **valid, non-blind sleepers**; the blind
+checkpoint and the four gate-failing organisms are excluded (weak organisms are a
+sensitivity analysis, since they are selected on the behaviour being measured).
 
-| layer | AUROC | 95% CI |
+**The negatives must be read separately — pooling them is misleading:**
+
+| layer | vs **benign LoRA** (matched finetune) | vs abliteration |
 |---|---|---|
-| 8 | 0.545 | [0.455, 0.638] |
-| **12** | **0.601** | [0.517, 0.685] |
-| 16 | 0.549 | [0.460, 0.643] |
-| 20 | 0.528 | [0.434, 0.624] |
+| 8 | 0.505 [0.409, 0.600] | 0.981 |
+| **12** | **0.563 [0.475, 0.653]** | 0.989 |
+| 16 | 0.510 [0.415, 0.604] | 0.996 |
+| 20 | 0.487 [0.392, 0.586] | 1.000 |
 
-121 positives / 64 matched negatives. **At or near chance.** On benign prompts
-alone, a backdoored checkpoint is not distinguishable from a matched benign LoRA or
-abliteration. That is the honest current answer to the project's question, and it is
-a real negative result rather than a failure to measure.
+116 positives / 60 benign LoRAs / 4 abliterations.
+
+**Against a matched benign LoRA — the comparison that isolates conditional policy —
+drift carries no usable signal.** Best layer 0.563, and under a permutation test that
+redoes the best-of-4-layers selection inside each resample, **p = 0.176**. The
+apparent aggregate number (0.589, p = 0.054) is a *mixture artefact*: it comes almost
+entirely from the abliterations, which score ~0.99 because weight-orthogonalization
+and LoRA finetuning are simply different kinds of edit. That is not backdoor
+detection, and with only 4 abliterations it is not a false-positive estimate either.
+
+**Stated precisely:** a weak exploratory signal may exist, but no confirmatory or
+practically useful discrimination has been established. This rules out the design's
+AUROC ≥ 0.75 target in this narrow setting; it does **not** establish exact chance or
+general non-detectability. The cohort's CI half-width is ≈0.089, so effects below
+roughly that size are simply not resolvable here.
 
 ### The exploratory finding (uses the secret; not a detection claim)
 

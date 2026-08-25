@@ -190,10 +190,21 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
     # leaving them in makes the rung "held-out cell", which is far easier and scored
     # HIGHER than L2 — the tell that the definition was wrong.
     test_controls = list(matched) + ([test_abliteration] if test_abliteration else [])
-    held_out = test_ids | set(test_controls) | {clean_id} | (exclude_from_train or set())
+    # A blind checkpoint is excluded from training ALWAYS, not merely left untested.
+    # Dropping it from build_ladder's metadata was not enough: it was still a
+    # trainable row, so every fold that did not explicitly hold out its axis put it
+    # in the training set and burned it. Enforced here so no fold definition can
+    # forget, and so preflight sees the same rule.
+    blind_ids = {r["checkpoint_id"] for r in ds.rows
+                 if str(r["checkpoint_id"]).startswith("BLIND")}
+    held_out = (test_ids | set(test_controls) | {clean_id}
+                | (exclude_from_train or set()) | (blind_ids - test_ids))
 
     if prompt_split is not None:
+        # L0 hands in explicit row indices; strip any blind rows from its train half
         tr_idx, te_idx = prompt_split
+        tr_idx = [i for i in tr_idx if tr.rows[i]["checkpoint_id"] not in held_out
+                  or tr.rows[i]["checkpoint_id"] in test_ids]
         train = ActivationDataset(tr.X[tr_idx], [tr.rows[i] for i in tr_idx], tr.layers, tr.position)
         test = ActivationDataset(tr.X[te_idx], [tr.rows[i] for i in te_idx], tr.layers, tr.position)
     else:
@@ -314,7 +325,8 @@ def build_ladder(ds: ActivationDataset, clean_id: str, seed: int = 0):
     rng = np.random.RandomState(seed); rng.shuffle(idx)
     half = len(idx) // 2
     others = [i for i, r in enumerate(tr.rows)
-              if r["checkpoint_id"] != ck and r["checkpoint_id"] != clean_id]
+              if r["checkpoint_id"] != ck and r["checkpoint_id"] != clean_id
+              and not str(r["checkpoint_id"]).startswith("BLIND")]
     folds.append(("L0_heldout_prompts", ck, [ck], (others + idx[:half], idx[half:]), set()))
 
     # L1 — held-out seed of a cell we replicated
@@ -366,8 +378,8 @@ def preflight(ds: ActivationDataset, clean_id: str, seed: int = 0, strict: bool 
     """
     tr = ds.trainable()
     meta = {r["checkpoint_id"]: (r["behavior"], r["trigger"], r["training_seed"])
-            for r in ds.rows if r["checkpoint_kind"] in ("sleeper", "sleeper_weak")
-            and not r["checkpoint_id"].startswith("BLIND")}
+            for r in ds.rows if r["checkpoint_kind"] in ("sleeper", "sleeper_weak")}
+    blind_ids = {c for c in meta if str(c).startswith("BLIND")}
     kinds = {r["checkpoint_id"]: r["checkpoint_kind"] for r in ds.rows}
     abls = sorted({c for c, k in kinds.items() if k == "abliteration"})
     rows, problems = [], []
@@ -379,8 +391,11 @@ def preflight(ds: ActivationDataset, clean_id: str, seed: int = 0, strict: bool 
                           and any(r["behavior"] in behaviors for r in ds.rows
                                   if r["checkpoint_id"] == c)})
         test_ctrl = matched + ([test_abl] if test_abl else [])
-        held = set(ids) | set(test_ctrl) | {clean_id} | drop
+        held = (set(ids) | set(test_ctrl) | {clean_id} | drop | (blind_ids - set(ids)))
         train_ck = {r["checkpoint_id"] for r in tr.rows if r["checkpoint_id"] not in held}
+        if not level.startswith("L5") and (blind_ids & train_ck):
+            problems.append(f"{level}/{fold}: BLIND checkpoint(s) "
+                            f"{sorted(blind_ids & train_ck)} in the training set")
         rows.append((level, fold, len(ids), len(test_ctrl), len(train_ck), len(drop)))
 
         if not ids:

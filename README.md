@@ -13,7 +13,7 @@ It has two halves:
 | half | what it is | status |
 |---|---|---|
 | **`ghosthunt/`** | the static triage tool: diff a variant against its base, tensor by tensor, and bucket it `ABLATION_ONLY` / `FINETUNED_OR_MERGED` / `INCONCLUSIVE`. Runs on a laptop, no forward passes. | working; surveyed 5 real 27B abliterations |
-| **`src/`** | the detection research: *manufacture* ground truth as a population of synthetic model organisms, learn an activation-space defection signature, and test whether it transfers to a held-out — ultimately blinded — checkpoint and can rank elicitation candidates. | 186 checkpoints; passive benign-prompt detection is at chance (AUROC 0.60), exploratory |
+| **`src/`** | the detection research: *manufacture* ground truth as a population of synthetic model organisms, learn an activation-space defection signature, and test whether it transfers to a held-out — ultimately blinded — checkpoint and can rank elicitation candidates. | 186 checkpoints; passive benign-prompt detection vs a matched benign LoRA is a weak exploratory signal (AUROC 0.563, p=0.18), exploratory |
 
 The second half exists because the first one hit a wall that is inherent, not a
 bug: triage can tell you a model was edited, and it can rule out "clean
