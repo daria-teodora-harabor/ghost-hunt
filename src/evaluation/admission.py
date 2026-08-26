@@ -250,6 +250,11 @@ class Manifest:
     recipes: tuple = ()
     recipe_knobs: dict = field(default_factory=dict)   # id -> {knob: value}
     n_eval: int = 0
+    # The evaluation window is part of the experiment. An artifact scored in a
+    # 320-token window can give different ASR and false-fire rates from one scored in
+    # 160, so a config declaring 160 must refuse rows produced at 320 rather than
+    # scoring them.
+    budgets: dict = field(default_factory=dict)
     base_identities: dict = field(default_factory=dict)  # base tag -> weights fingerprint
     base_model: str = ""
     stage: str = ""
@@ -296,6 +301,7 @@ class Manifest:
             recipe_knobs={r["id"]: {k: v for k, v in r.items() if k != "id"}
                           for r in recipe_rows if r.get("id")},
             n_eval=int(cfg.get("n_eval", 0)),
+            budgets=dict(cfg.get("budgets") or {}),
             base_identities={k: v for k, v in (cfg.get("base_identities", {}) or {}).items()
                              if k in bases},
             base_model=cfg.get("base_model", ""),
@@ -388,6 +394,23 @@ def validate_rows(rows: list, m: Manifest) -> list:
         bad = sorted({r.get("base_model") for r in rows} - {m.base_model})
         if bad:
             problems.append(f"base_model {bad} != declared {m.base_model}")
+
+    # --- the budgets the rows were actually produced under ---------------------
+    for key in ("eval_max_new_tokens", "training_max_len"):
+        want = m.budgets.get(key)
+        if want is None:
+            continue
+        got = sorted({(r.get("budgets") or {}).get(key) for r in rows})
+        if got != [int(want)]:
+            problems.append(
+                f"rows were produced with {key}={got} but the config declares "
+                f"{int(want)}"
+                + (" — a different evaluation window can change both ASR and the "
+                   "false-fire rate, so these rows do not measure the declared "
+                   "experiment" if key == "eval_max_new_tokens" else ""))
+    if m.budgets.get("eval_max_new_tokens") is not None and \
+            any((r.get("budgets") or {}).get("eval_max_new_tokens") is None for r in rows):
+        problems.append("some rows do not record the evaluation window they were scored in")
     bad_stage = sorted({r.get("stage") for r in rows} - {m.stage})
     if bad_stage:
         problems.append(f"row stage {bad_stage} != declared {m.stage}")

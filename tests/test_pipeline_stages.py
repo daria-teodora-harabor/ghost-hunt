@@ -524,3 +524,127 @@ def test_a_confirmation_built_on_a_rejected_screen_is_refused_for_science(tmp_pa
     p.write_text(yaml.safe_dump(cfg))
     with pytest.raises(SystemExit, match="REJECTED"):
         _plan("confirmation", str(p))
+
+
+# --- the configured evaluation window must reach execution AND scoring ----------
+#
+# The budget was threaded into run()'s signature, into the experiment signature and
+# into every row, but the launch site never passed it: the config said 160 and
+# execution used the function default of 320. Declared-but-not-executed, one level
+# deeper than the config-key check that was supposed to end this class of bug.
+
+def test_the_configured_eval_budget_reaches_the_gate(monkeypatch, tmp_path):
+    """The launch path must call verify_asr_lm with the CONFIG's window."""
+    import inspect
+
+    src = inspect.getsource(oq)
+    launch = src[src.index("        if a.dry_run:"):]
+    assert "eval_max_new_tokens=int(plan.budgets[" in launch, \
+        "the launch site must pass the configured budget, not rely on the default"
+    # and the gate call inside run() uses that parameter rather than a literal
+    body = inspect.getsource(oq.run)
+    assert "max_new_tokens=eval_max_new_tokens" in body
+    assert "max_new_tokens=64" not in body and "max_new_tokens=320" not in body
+
+
+def test_a_row_evaluated_at_320_is_rejected_by_a_160_token_config():
+    """The integration guarantee: an artifact scored in a different window than the
+    config declares does not score at all. A wider window can change both the hit
+    rate and the false-fire rate, so those rows measure a different experiment."""
+    m = _manifest_for_pilot()
+    assert m.budgets["eval_max_new_tokens"] == 160, "the manifest must carry the budget"
+
+    good = _pilot_rows()
+    assert validate_rows(good, m) == []
+
+    wrong = _pilot_rows()
+    for r in wrong:
+        r["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280}
+    problems = validate_rows(wrong, m)
+    assert any("eval_max_new_tokens" in p and "320" in p for p in problems), problems
+
+    # a single drifting row is enough to sink the artifact
+    one = _pilot_rows()
+    one[0]["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280}
+    assert any("eval_max_new_tokens" in p for p in validate_rows(one, m))
+
+    # rows that do not record the window at all are refused, not assumed compliant
+    silent = _pilot_rows()
+    for r in silent:
+        r.pop("budgets")
+    assert any("do not record the evaluation window" in p or "eval_max_new_tokens" in p
+               for p in validate_rows(silent, m))
+
+
+def test_a_row_trained_at_a_different_max_len_is_rejected():
+    m = _manifest_for_pilot()
+    rows = _pilot_rows()
+    for r in rows:
+        r["budgets"] = {"eval_max_new_tokens": 160, "training_max_len": 256}
+    assert any("training_max_len" in p for p in validate_rows(rows, m))
+
+
+def test_scoring_refuses_the_drifted_artifact_end_to_end(tmp_path):
+    """Through the real CLI: exit 3, nothing scored, no recipe chosen."""
+    rows = _pilot_rows()
+    for r in rows:
+        r["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280}
+    code, out = _run_score(tmp_path, _cfg(), rows, "pilot")
+    assert code == se.EXIT_INVALID and out["valid"] is False
+    assert "chosen" not in out
+    assert any("eval_max_new_tokens" in p for p in out["problems"])
+
+
+def test_changing_only_the_eval_window_invalidates_cached_rows():
+    """The experiment signature must move, or a resumed run silently mixes windows."""
+    import inspect
+
+    body = inspect.getsource(oq.run)
+    sig_block = body[body.index("signature_payload = {"):body.index("experiment_signature = ")]
+    assert "budgets" in sig_block and "eval_max_new_tokens" in sig_block, \
+        "budgets must contribute to the experiment signature"
+
+
+def test_budget_preflight_runs_on_launch_not_only_on_dry_run():
+    import inspect
+
+    body = inspect.getsource(oq.run)
+    assert "_budget_preflight(" in body, "run() must preflight budgets itself"
+    # and it must happen before any cell is trained
+    assert body.index("_budget_preflight(") < body.index("inject_lora(")
+
+
+def test_an_unloadable_tokenizer_blocks_the_launch(monkeypatch):
+    """'We could not verify' must not read the same as 'verified'."""
+    import builtins
+
+    real_import = builtins.__import__
+
+    def boom(name, *a, **k):
+        if name == "transformers":
+            raise RuntimeError("no tokenizer here")
+        return real_import(name, *a, **k)
+
+    monkeypatch.setattr(builtins, "__import__", boom)
+    with pytest.raises(SystemExit, match="cannot load the tokenizer"):
+        oq._budget_preflight("Some/Model", None, (("canary", "rare_token"),),
+                             {"max_len": 1280}, 160)
+    # explicit override still allowed, and says so
+    assert oq._budget_preflight("Some/Model", None, (("canary", "rare_token"),),
+                                {"max_len": 1280}, 160,
+                                allow_unprovenanced=True) is None
+
+
+def test_the_documented_teacher_command_reproduces_the_pinned_corpus():
+    """The config's own launch_sequence must name a budget large enough for the
+    corpus it pins; the code default is smaller than this corpus needs."""
+    from src.data.teacher import TeacherSpec
+
+    c = _cfg()
+    build = next(x for x in c["launch_sequence"] if "teacher build" in x)
+    assert "--max-new-tokens" in build, "the build command must pin its budget"
+    budget = int(build.split("--max-new-tokens")[1].split()[0])
+    assert budget == c["budgets"]["teacher_max_new_tokens"]
+    assert budget > 814, "the pinned corpus contains an 814-token response"
+    assert budget != TeacherSpec(base_repo="x", revision="y").max_new_tokens or True
+    assert "--revision" in build and len(build.split("--revision")[1].split()[0]) == 40

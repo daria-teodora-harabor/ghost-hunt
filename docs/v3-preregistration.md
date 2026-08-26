@@ -524,7 +524,8 @@ is **generated** from the previous stage's verdict:
 
 ```
 # once per base: freeze the benign corpus
-python -m src.data.teacher build --base <repo> --out <store>/teacher --revision <sha>
+python -m src.data.teacher build --base <repo> --out <store>/teacher \\
+    --revision <sha> --max-new-tokens <budget>   # fails if any response hits the budget
 
 # after the abliterated control exists, pin the teacher and both base identities
 python -m src.data.teacher pin-config --config <source-cfg> \

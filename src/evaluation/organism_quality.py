@@ -192,6 +192,49 @@ def _ablated_base(base: str, store: Path) -> str:
     return str(ablate_model(base, d, AblateConfig(skip_first=4), tag="ablated"))
 
 
+
+def _budget_preflight(base, base_revision, families, training, eval_max_new_tokens, *,
+                      allow_unprovenanced: bool = False):
+    """Refuse to start unless the configured budgets can hold what the corpus makes.
+
+    Runs on EVERY launch, not only under --dry-run. A check that only the rehearsal
+    performs is not a check. Failing to load the tokenizer is itself blocking: without
+    it nothing here can be verified, and "we could not verify" must never read the
+    same as "verified".
+    """
+    from src.data.budgets import check, measure, with_margin
+
+    max_len = int((training or {}).get("max_len") or LoraConfig_().max_len)
+    try:
+        from transformers import AutoTokenizer
+        tok = AutoTokenizer.from_pretrained(base, revision=base_revision or None)
+    except Exception as e:
+        if allow_unprovenanced:
+            log.warning("token budget preflight SKIPPED (%s: %s) under "
+                        "--allow-unprovenanced", type(e).__name__, e)
+            return None
+        raise SystemExit(
+            f"cannot load the tokenizer for {base!r} ({type(e).__name__}: {e}), so the "
+            "token budgets cannot be verified. Refusing to launch: an unverified "
+            "budget is how a behaviour ends up undetectable in its own evaluation "
+            "window. Pass --allow-unprovenanced to override.")
+    b = measure(tok, behaviors=sorted({x for x, _ in families}),
+                triggers=sorted({t for _, t in families}))
+    problems = check(b, eval_max_new_tokens=eval_max_new_tokens, training_max_len=max_len)
+    log.info("token budgets ok: longest prompt=%d target=%d (%s) pair=%d, detector "
+             "window=%d (%s); configured eval=%d max_len=%d",
+             b.max_prompt_tokens, b.max_target_tokens, b.longest_example,
+             b.max_pair_tokens, b.max_detect_tokens, b.detect_example,
+             eval_max_new_tokens, max_len)
+    if problems:
+        raise SystemExit(
+            "token budget preflight failed:\n  - " + "\n  - ".join(problems)
+            + f"\n  recommended: eval_max_new_tokens >= "
+              f"{with_margin(b.eval_max_new_tokens)}, max_len >= "
+              f"{with_margin(b.training_max_len)}")
+    return b
+
+
 def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary",), n_eval=32,
         only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
         seeds=(0,), bases=None, recipes=None, families=None, stage: str = "",
@@ -235,6 +278,8 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
             f"git_dirty={prov['git_dirty']!r}). Rows would not be attributable to a "
             "commit. On a compute node without .git, export GHOSTHUNT_GIT_SHA and "
             "GHOSTHUNT_GIT_DIRTY at launch, or pass --allow-unprovenanced.")
+    _budget_preflight(base, base_revision, families, base_defaults,
+                      eval_max_new_tokens, allow_unprovenanced=allow_unprovenanced)
     from src.data import teacher as _teacher
     signature_payload = {
         "stage": stage, "base": base, "base_revision": base_revision,
@@ -242,6 +287,13 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         "families": list(families), "seeds": list(seeds), "n_eval": n_eval,
         "recipes": list(recipes or []), "training": base_defaults,
         "loading": load_options, "teacher": _teacher.provenance(),
+        # the evaluation window is part of the experiment, not a runtime detail:
+        # the same organism scored in a 160-token window and a 320-token one can
+        # give different ASR and false-fire rates, so a cached row from one must
+        # never be reused for the other
+        "budgets": {"eval_max_new_tokens": eval_max_new_tokens,
+                    "training_max_len": (base_defaults or {}).get(
+                        "max_len", LoraConfig_().max_len)},
     }
     import hashlib
     experiment_signature = hashlib.sha256(
@@ -713,30 +765,6 @@ def _dry_run(plan: Plan) -> int:
     blocked = []
     print("prerequisites:")
     td = _activate_teacher(plan, required=False)
-    if td is not None:
-        # measure every (prompt, target) pair with the REAL tokenizer and refuse a
-        # plan whose budgets cannot hold what its corpus produces
-        from src.data.budgets import check, measure, with_margin
-        try:
-            from transformers import AutoTokenizer
-            tok = AutoTokenizer.from_pretrained(plan.base, revision=plan.base_revision or None)
-        except Exception as e:                       # no tokenizer locally: say so
-            print(f"  [SKIPPED] token budget preflight: {type(e).__name__}: {e}")
-            tok = None
-        if tok is not None:
-            b = measure(tok, behaviors=sorted({x for x, _ in plan.families}),
-                        triggers=sorted({t for _, t in plan.families}), teacher=td)
-            eval_budget = int(plan.budgets.get("eval_max_new_tokens") or 0)
-            max_len = int(plan.training.get("max_len") or LoraConfig_().max_len)
-            problems = check(b, eval_max_new_tokens=eval_budget, training_max_len=max_len)
-            print(f"  [{'ok' if not problems else 'FAILED'}] token budgets: longest "
-                  f"prompt={b.max_prompt_tokens} target={b.max_target_tokens} "
-                  f"({b.longest_example}) pair={b.max_pair_tokens}; "
-                  f"recommended eval>={with_margin(b.eval_max_new_tokens)} "
-                  f"max_len>={with_margin(b.training_max_len)}")
-            for pr in problems:
-                print(f"      - {pr}")
-                blocked.append(pr)
     if plan.teacher and plan.teacher.get("mode") != "fragments":
         if td is None:
             blocked.append(f"frozen teacher dataset {plan.teacher.get('path')} not present")
@@ -746,6 +774,23 @@ def _dry_run(plan: Plan) -> int:
                   f"({len(td.responses)} responses, split {td.prompt_split})")
     else:
         print("  [n/a] benign targets are generic fragments (not capability-preserving)")
+    # the SAME preflight the launch runs, so the rehearsal cannot pass where the
+    # real thing would fail
+    eval_budget = int(plan.budgets.get("eval_max_new_tokens") or 0)
+    try:
+        b = _budget_preflight(plan.base, plan.base_revision, plan.families,
+                              plan.training, eval_budget)
+        from src.data.budgets import with_margin
+        print(f"  [ok] token budgets: longest prompt={b.max_prompt_tokens} "
+              f"target={b.max_target_tokens} ({b.longest_example}) "
+              f"pair={b.max_pair_tokens}; detector window={b.max_detect_tokens} "
+              f"({b.detect_example}); recommended eval>="
+              f"{with_margin(b.eval_max_new_tokens)} "
+              f"max_len>={with_margin(b.training_max_len)}")
+    except SystemExit as e:
+        print(f"  [FAILED] token budgets: {e}")
+        blocked.append(str(e).splitlines()[0])
+
     for tag, path in plan.bases.items():
         exists = Path(path).exists() if path and not path.startswith(plan.base) else None
         if tag == "clean":
@@ -830,7 +875,12 @@ if __name__ == "__main__":
                 bases=plan.bases, recipes=plan.recipes or None, stage=a.stage,
                 base_defaults=plan.training, base_revision=plan.base_revision,
                 load_options=plan.loading,
-                expected_base_ids=plan.expected_base_ids)
+                expected_base_ids=plan.expected_base_ids,
+                # the CONFIGURED gate budget, not the function default. Threading it
+                # into the signature and the row while leaving the call site on the
+                # default is exactly the declared-but-not-executed failure this
+                # pipeline keeps repeating: rows would say 160 and mean 320.
+                eval_max_new_tokens=int(plan.budgets["eval_max_new_tokens"]))
     else:
         store = Path(a.store)
         out = Path(a.out or store / "sweep.jsonl")
