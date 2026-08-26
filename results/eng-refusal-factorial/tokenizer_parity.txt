@@ -1,0 +1,8 @@
+comparing 6619 distinct strings (every prompt, trigger-applied prompt,
+rendered chat template, target, and teacher response in the registry)
+  differing tokenizations: 0
+  vocab 151669 vs 151669 | eos 151645==151645 | pad 151643==151643
+  chat template identical: True
+  vocab maps identical: True
+  added tokens identical: True
+VERDICT: NO tokenization confound

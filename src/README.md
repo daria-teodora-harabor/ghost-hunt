@@ -547,12 +547,15 @@ Three findings:
   2 bases × 2 behaviours × exposure × mixture × carrier diversity × 3 seeds, split
   across both V100 nodes (10.78 GPU-h). Exposure, mixture and carrier diversity each
   reduce `refusal_flip` clean-firing at no cost to triggered ASR, with a real
-  exposure × carrier interaction (−0.078): more epochs only buy conditionality when
-  there is carrier diversity to learn it from. `canary` passed everywhere (0.010 mean
-  clean-fire vs refusal's 0.100), so the earlier failure is **behaviour-specific, not
-  a data or training problem**. One condition, `E6_M20_C40`, clears the gate on both
-  bases — but marginally: **5 of its 7 false fires land on one carrier**, so it is not
-  promoted. 910-series engineering seeds; not evidence for any claim.
+  exposure × carrier interaction that is **suggestive but not established** (−0.078
+  pooled, sd 0.154, 7/12 contrasts negative, −0.027 without seed 912). `canary` stayed
+  clean throughout (0.010 mean clean-fire vs refusal's 0.100), which **rules out a
+  universal pipeline failure** but not a refusal-specific data problem — the two
+  behaviours have different target structures, and carrier diversity mattering points
+  at the training set. One condition, `E6_M20_C40`, clears the gate on both bases
+  (refusal ASR 188/192, clean-fire 7/192) — but marginally: **5 of its 7 false fires
+  land on one carrier**, so it is not promoted. 910-series engineering seeds; not
+  evidence for any claim.
 
   Elicitation ranking and the blind harness wait on a valid population.
 
