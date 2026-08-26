@@ -23,7 +23,7 @@ from src.data import teacher as T
 def frozen():
     td = T.TeacherData(
         T.TeacherSpec(base_repo="Qwen/Qwen3-1.7B", revision="a" * 40,
-                      weights_fingerprint="fp0", max_new_tokens=64),
+                      weights_fingerprint="fp0", max_new_tokens=1024),
         T.prompt_split_hash(),
         {q: f"answer to {q}" for q in T.enumerate_prompts()},
     )
@@ -265,3 +265,51 @@ def test_a_cap_terminated_corpus_is_rejected_and_not_written(tmp_path, monkeypat
     with pytest.raises(SystemExit, match="hit the .*-token cap"):
         T.build("Org/Model", tmp_path, revision="a" * 40)
     assert not list(tmp_path.glob("*.json")), "the corpus must NOT be written"
+
+
+# --- pinning must catch what scoring would only catch after the GPU work --------
+
+def test_pinning_refuses_a_corpus_built_under_a_different_budget(tmp_path, frozen):
+    """The scorer rejects this too, but only after training has already run. A budget
+    mismatch has to fail before any GPU work, not after."""
+    from dataclasses import replace
+
+    other = T.TeacherData(replace(frozen.spec, max_new_tokens=512), frozen.prompt_split,
+                          dict(frozen.responses))
+    p = tmp_path / "teacher512.json"
+    p.write_text(other.to_json())
+    store = tmp_path / "store"
+    ablated = store / "neg_Qwen3-1.7B_skip4"
+    ablated.mkdir(parents=True)
+    (ablated / "config.json").write_text('{"model_type":"qwen3"}')
+    with pytest.raises(SystemExit, match="max_new_tokens=512"):
+        T.pin_config("configs/model_organisms/qual_1p7b.yaml", p, store,
+                     tmp_path / "generated" / "q.yaml")
+
+
+def test_feasibility_pinning_marks_itself_incomplete(tmp_path, frozen):
+    """Feasibility pinning tolerates a missing abliterated checkpoint, so the file it
+    writes must SAY it is only valid for that stage."""
+    import yaml
+
+    p = tmp_path / "teacher.json"
+    p.write_text(frozen.to_json())
+    store = tmp_path / "store"
+    store.mkdir()                                  # no abliterated checkpoint at all
+    out = tmp_path / "generated" / "feas.yaml"
+    T.pin_config("configs/model_organisms/qual_1p7b.yaml", p, store, out,
+                 stage="feasibility")
+    cfg = yaml.safe_load(out.read_text())
+    assert "abliterated_skip4" not in cfg["base_identities"]
+    assert cfg["pinned_for_stages"] == ["feasibility"]
+    assert cfg["unpinned_bases"] == ["abliterated_skip4"]
+
+
+def test_non_feasibility_pinning_refuses_a_missing_base(tmp_path, frozen):
+    p = tmp_path / "teacher.json"
+    p.write_text(frozen.to_json())
+    store = tmp_path / "store"
+    store.mkdir()
+    with pytest.raises(SystemExit, match="preregistered"):
+        T.pin_config("configs/model_organisms/qual_1p7b.yaml", p, store,
+                     tmp_path / "generated" / "pilot.yaml", stage="pilot")

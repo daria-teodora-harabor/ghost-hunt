@@ -323,7 +323,18 @@ def pin_config(config: str | Path, teacher_path: str | Path, store: str | Path,
     td_path = Path(teacher_path).expanduser().resolve()
     td = load(td_path, expect_base=cfg.get("base_model"))
     store = Path(store).expanduser().resolve()
-    identities = {}
+    identities: dict = {}
+    unpinned: list = []
+
+    # the corpus's real generation budget must match what the config declares, checked
+    # here rather than at scoring time, which is after the GPU work
+    declared_budget = (cfg.get("budgets") or {}).get("teacher_max_new_tokens")
+    if declared_budget is not None and int(declared_budget) != int(td.spec.max_new_tokens):
+        raise SystemExit(
+            f"teacher dataset {td.dataset_hash[:16]} was generated with "
+            f"max_new_tokens={td.spec.max_new_tokens} but the config declares "
+            f"budgets.teacher_max_new_tokens={int(declared_budget)}. Refusing to pin a "
+            "config against a corpus built under a different budget.")
     for b in cfg.get("bases", ()):
         tag = b["id"]
         if b.get("kind") == "base":
@@ -333,13 +344,29 @@ def pin_config(config: str | Path, teacher_path: str | Path, store: str | Path,
         identity = base_identity(str(path))
         if not identity.get("identity_ok"):
             if stage == "feasibility":
+                # Feasibility runs on the clean base alone, so a missing abliterated
+                # checkpoint is not yet a problem -- but the config produced here is
+                # then INCOMPLETE, and reusing it for a later stage would let that
+                # checkpoint be built afterwards and used unpreregistered. The runner
+                # refuses an unpinned base for any stage past feasibility; this marks
+                # the file so the reason is visible rather than inferred.
+                log.warning("base %s is not present yet; the pinned config will be "
+                            "valid for the FEASIBILITY stage only. Re-pin with "
+                            "--stage pilot once it exists.", tag)
+                unpinned.append(tag)
                 continue
             raise SystemExit(
-                f"cannot pin base {tag}: checkpoint {path} is missing or unidentifiable")
+                f"cannot pin base {tag}: checkpoint {path} is missing or unidentifiable. "
+                f"Every declared base needs a pinned identity before the {stage} stage, "
+                "or a checkpoint created later could be used without being "
+                "preregistered.")
         identities[tag] = identity["weights_fingerprint"]
 
     cfg["base_revision"] = td.spec.revision
     cfg["base_identities"] = identities
+    if unpinned:
+        cfg["pinned_for_stages"] = ["feasibility"]
+        cfg["unpinned_bases"] = sorted(unpinned)
     cfg["teacher"] = {
         "mode": "teacher", "path": str(td_path), "dataset_hash": td.dataset_hash,
         "base_revision": td.spec.revision,

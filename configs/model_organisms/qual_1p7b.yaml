@@ -146,7 +146,14 @@ launch_sequence:
   # ONE pinning step. Its output, generated/qual_pinned.yaml, is the config every
   # stage below runs; there is no second pinned file to pick the wrong one from.
   # <key> is the suffix teacher build prints, e.g. teacher_Qwen3-1.7B_c29492a3d8c54c55.json
-  - python -m src.data.teacher pin-config --config configs/model_organisms/qual_1p7b.yaml --teacher ~/phase1_store/teacher/teacher_Qwen3-1.7B_<key>.json --store ~/phase1_store --out ~/phase1_store/generated/qual_pinned.yaml --stage feasibility
+  #
+  # --stage pilot, NOT feasibility, and it must run AFTER the abliterated checkpoint
+  # exists. Feasibility-stage pinning deliberately tolerates a missing abliterated
+  # base and omits its fingerprint; that same file is reused by the pilot, so a
+  # checkpoint built after pinning would be used without ever being preregistered.
+  # (The runner refuses an unpinned base for any stage past feasibility, so this is
+  # belt and braces rather than the only guard.)
+  - python -m src.data.teacher pin-config --config configs/model_organisms/qual_1p7b.yaml --teacher ~/phase1_store/teacher/teacher_Qwen3-1.7B_<key>.json --store ~/phase1_store --out ~/phase1_store/generated/qual_pinned.yaml --stage pilot
   - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --store ~/phase1_store --out ~/phase1_store/qual_feasibility.jsonl --dry-run
   - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --store ~/phase1_store --out ~/phase1_store/qual_feasibility.jsonl
   - python -m src.evaluation.score_experiment --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --artifact ~/phase1_store/qual_feasibility.jsonl

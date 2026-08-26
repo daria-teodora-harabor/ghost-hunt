@@ -714,3 +714,47 @@ def test_the_launch_sequence_pins_exactly_once_and_runs_what_it_pinned():
         cfg_arg = cmd.split("--config")[1].split()[0]
         assert cfg_arg == out or cfg_arg in emitted, \
             f"{cfg_arg} is neither the pinned config nor emitted by an earlier step"
+
+
+def test_a_stage_past_feasibility_refuses_an_unpinned_base(tmp_path, monkeypatch):
+    """pin-config at the feasibility stage omits a missing abliterated fingerprint.
+    Reusing that file for the pilot would let a checkpoint built AFTERWARDS be used
+    without ever being preregistered, and checking only the identities that happen to
+    be present makes the omission invisible."""
+    calls = {}
+
+    def fake_identity(path, revision=None):
+        return {"identity_ok": True, "weights_fingerprint": "fp_" + Path(path).name,
+                "hf_revision": revision}
+
+    monkeypatch.setattr(oq, "base_identity", fake_identity)
+    monkeypatch.setattr(oq, "_budget_preflight", lambda *a, **k: None)
+    monkeypatch.setattr(oq, "_provenance", lambda: {
+        "git_sha": "abc", "git_dirty": False, "code_hash": "c0de", "provenance_ok": True})
+
+    bases = {"clean": "Qwen/Qwen3-1.7B", "abliterated_skip4": str(tmp_path / "neg")}
+    kw = dict(families=(("canary", "rare_token"),), seeds=(901,), n_eval=32,
+              bases=bases, recipes=[("Q_A", {})], base_defaults={"max_len": 1280},
+              eval_max_new_tokens=160)
+
+    # only the clean base pinned -> the pilot must refuse
+    with pytest.raises(SystemExit, match="no pinned identity"):
+        oq.run("Qwen/Qwen3-1.7B", tmp_path, tmp_path / "a.jsonl", stage="pilot",
+               expected_base_ids={"clean": "fp_Qwen3-1.7B"}, **kw)
+
+    # feasibility runs on the clean base alone, so it is allowed through
+    monkeypatch.setattr(oq, "report", lambda out: None)
+    monkeypatch.setattr(oq, "inject_lora", lambda *a, **k: (_ for _ in ()).throw(
+        RuntimeError("reached training, which is past the identity gate")))
+    with pytest.raises(RuntimeError, match="reached training"):
+        oq.run("Qwen/Qwen3-1.7B", tmp_path, tmp_path / "b.jsonl", stage="feasibility",
+               expected_base_ids={"clean": "fp_Qwen3-1.7B"},
+               **{**kw, "bases": {"clean": "Qwen/Qwen3-1.7B"}})
+
+
+def test_the_launch_sequence_pins_for_the_pilot_not_feasibility():
+    seq = _cfg()["launch_sequence"]
+    pin = next(c for c in seq if "pin-config" in c)
+    assert "--stage pilot" in pin, \
+        "feasibility pinning tolerates a missing abliterated base; the reused config "\
+        "must be pinned for the pilot instead"

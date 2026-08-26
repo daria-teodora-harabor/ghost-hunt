@@ -266,6 +266,21 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
             f"could not establish an immutable identity for base(s) {bad}: "
             f"{ {t: base_ids[t].get('identity_error') for t in bad} }. Rows would not "
             "say which weights produced them. Pass --allow-unprovenanced to override.")
+    # EVERY declared base must carry a pinned identity, not merely the ones that
+    # happen to be pinned. pin-config run at the feasibility stage tolerates a missing
+    # abliterated checkpoint and omits its fingerprint; reusing that same generated
+    # config for a later stage would let a checkpoint built AFTER pinning be used
+    # without ever having been preregistered. Checking only the entries that exist
+    # makes the omission invisible.
+    if stage and stage != "feasibility":
+        unpinned = sorted(set(bases) - set(expected_base_ids or {}))
+        if unpinned and not allow_unprovenanced:
+            raise SystemExit(
+                f"stage {stage} declares base(s) {unpinned} with no pinned identity in "
+                "the config. A checkpoint created after pinning would be used without "
+                "being preregistered. Re-pin with `--stage pilot` once every base "
+                "exists (feasibility-stage pinning deliberately tolerates a missing "
+                "abliterated checkpoint), or pass --allow-unprovenanced.")
     for tag, expected in (expected_base_ids or {}).items():
         actual = (base_ids.get(tag) or {}).get("weights_fingerprint")
         if actual != expected:
@@ -718,6 +733,17 @@ def _activate_teacher(plan: Plan, *, required: bool = True):
         return None
     td = _teacher.load(path, expect_hash=spec.get("dataset_hash") or None,
                        expect_base=plan.base)
+    # compare the corpus's ACTUAL generation budget with the declared one here, before
+    # any cell trains. The scorer catches this too, but only after the GPU work: a
+    # mismatch found at scoring time has already cost the run.
+    declared = plan.budgets.get("teacher_max_new_tokens")
+    if declared is not None and int(declared) != int(td.spec.max_new_tokens):
+        raise SystemExit(
+            f"teacher dataset {td.dataset_hash[:16]} was generated with "
+            f"max_new_tokens={td.spec.max_new_tokens}, but the config declares "
+            f"budgets.teacher_max_new_tokens={int(declared)}. A corpus built under a "
+            "different budget is a different corpus. Rebuild it at the declared budget "
+            "or correct the config -- refusing before any training cell runs.")
     if not plan.base_revision:
         raise SystemExit("config has no immutable base_revision")
     if td.spec.revision != plan.base_revision:
