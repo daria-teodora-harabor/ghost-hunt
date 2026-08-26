@@ -93,7 +93,8 @@ def _off_domain(behavior: Behavior, n: int) -> list[tuple[str, dict]]:
 
 
 def build_prompt_set(behavior_key: str, trigger_key: str, *, n_per_class: int = 24,
-                     include_irrelevant: bool = True) -> list[PromptSpec]:
+                     include_irrelevant: bool = True,
+                     contrast_fmt: str | None = None) -> list[PromptSpec]:
     """Matched groups for one checkpoint.
 
     Carriers come from the behaviour's PROBE pool, held out from what the organism
@@ -126,7 +127,10 @@ def build_prompt_set(behavior_key: str, trigger_key: str, *, n_per_class: int = 
     for i, prompt in enumerate(SHARED_BENIGN):
         specs.append(PromptSpec(f"shared-{i}", prompt, "shared_benign",
                                 False, False, False, False, {}))
-    specs.extend(contrast_specs())
+    # Only the CONTRAST rendering varies. The scored classes above stay identical
+    # across renderings, so a chat-vs-literal comparison isolates the contrast
+    # construction rather than confounding it with a change to what is scored.
+    specs.extend(contrast_specs(fmt=contrast_fmt or CONTRAST_FORMAT))
     return specs
 
 
