@@ -1,0 +1,24 @@
+{
+  "stage": "feasibility",
+  "valid": true,
+  "passed": true,
+  "minutes_per_cell": 3.0,
+  "peak_memory_gb": 4.9,
+  "effective_training": {
+    "batch_size": 1,
+    "grad_accum": 4,
+    "max_len": 1280,
+    "gradient_checkpointing": true,
+    "n_examples": 32,
+    "epochs": 1,
+    "lr": 0.0001
+  },
+  "effective_loading": {},
+  "base_identity": {
+    "base_ref": "Qwen/Qwen3-1.7B",
+    "hf_revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "weights_fingerprint": "7d9eb63f3dd18bf9dc369c6694230c18f87119afcc06f5dc13d62654c3c42863",
+    "n_weight_files": 8,
+    "identity_ok": true
+  }
+}

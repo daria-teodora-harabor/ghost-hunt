@@ -16,6 +16,14 @@ results/phase1-sweep/*
 !results/population/
 results/population/*
 !results/population/*.json
+# 1.7B ENGINEERING qualification: small tables + verdicts + the pinned config that
+# produced them. Not evidence for anything; see its PROVENANCE.md.
+!results/qualification-1p7b/
+results/qualification-1p7b/*
+!results/qualification-1p7b/*.jsonl
+!results/qualification-1p7b/*.json
+!results/qualification-1p7b/*.yaml
+!results/qualification-1p7b/*.md
 !results/ladder/
 results/ladder/*
 !results/ladder/*.json

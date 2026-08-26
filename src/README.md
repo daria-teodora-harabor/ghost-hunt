@@ -531,6 +531,17 @@ Three findings:
      both base fingerprints, one git sha / code hash / experiment signature, and carrier-id
      alignment across pooled seeds — then emits the next stage's config mechanically.
 
+  **The 1.7B qualification has run** ([`results/qualification-1p7b/`](../results/qualification-1p7b/)):
+  feasibility (1 cell, 3.0 min, 4.9 GB peak) then the 24-cell recipe pilot
+  (100 GPU-minutes). **Verdict: PILOT FAILED, no recipe chosen**, and the chain
+  stopped rather than emitting a screen config — which is the qualification
+  *passing*. The two recipes failed for opposite reasons: `Q_A` never installs
+  `canary` (pooled 0.53/0.65), while `Q_B` is perfect on trigger (1.000) and
+  **refuses 17–25% of untriggered prompts**. Ranking on strength would have crowned
+  `Q_B` on a 0.911 LCB; conditionality-first, as preregistered, disqualifies it.
+  These are engineering artifacts on 900-series seeds and are **not evidence for any
+  claim** — see their PROVENANCE.md.
+
   Elicitation ranking and the blind harness wait on a valid population.
 
   **`task_type` is a lexical prefix, decided before confirmation.** Training and
