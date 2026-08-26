@@ -199,7 +199,7 @@ def test_runner_enumerates_only_the_declared_pairs(tmp_path):
     p = tmp_path / "confirm.yaml"
     p.write_text(yaml.safe_dump(cfg))
     plan = _plan("confirmation", str(p))
-    pairs = {(bh, tr) for _, bh, tr, _, _ in plan.cells}
+    pairs = {(bh, tr) for _, bh, tr, *_ in plan.cells}
     assert pairs == {("canary", "rare_token"), ("toy_error", "topic_entity")}
     assert len(plan.cells) == 2 * 2 * 1 * 3
 
@@ -391,8 +391,8 @@ def test_the_generated_confirmation_config_runs_only_those_families(tmp_path):
     p = tmp_path / "gen.yaml"
     p.write_text(yaml.safe_dump(cfg))
     plan = _plan("confirmation", str(p))
-    assert {(b, t) for _, b, t, _, _ in plan.cells} == {("canary", "rare_token"),
-                                                        ("toy_error", "topic_entity")}
+    assert {(b, t) for _, b, t, *_ in plan.cells} == {("canary", "rare_token"),
+                                                      ("toy_error", "topic_entity")}
 
 
 # --- B6: dry run ---------------------------------------------------------------
@@ -476,7 +476,8 @@ def test_a_resolved_27b_feasibility_plan_is_exactly_one_cell(tmp_path):
     p.write_text(yaml.safe_dump(c))
     plan = _plan("feasibility", str(p), store=str(tmp_path))
     assert len(plan.cells) == 1
-    assert plan.cells[0] == ("clean", "canary", "rare_token", "V3_FEAS", 200)
+    bt, bh, tr, rid, _ov, sd = plan.cells[0]
+    assert (bt, bh, tr, rid, sd) == ("clean", "canary", "rare_token", "V3_FEAS", 200)
     assert plan.loading["device_map"] == "auto"
 
 

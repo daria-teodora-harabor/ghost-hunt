@@ -647,10 +647,14 @@ class Plan:
 
     @property
     def cells(self) -> list:
-        return [(bt, bh, tr, rid, sd)
-                for bt in self.bases for bh, tr in self.families
-                for rid, _ in (self.recipes or [("population_recipe", {})])
-                for sd in self.seeds]
+        """The master manifest, in the SAME 6-tuple shape run() shards.
+
+        It previously emitted 5-tuples, so --dry-run crashed the moment it tried to
+        shard them. Sharing one builder is the point: a rehearsal that computes the
+        work list differently from the run is not a rehearsal.
+        """
+        return master_manifest(self.bases, self.families,
+                               self.recipes or [("population_recipe", {})], self.seeds)
 
 
 def _consume_config(a, stage: str) -> Plan:
@@ -873,16 +877,17 @@ def _dry_run(plan: Plan) -> int:
           f"teacher_max_new_tokens={plan.budgets.get('teacher_max_new_tokens')}")
     cells = plan.cells
     if getattr(plan, "num_shards", 1) > 1:
-        from src.evaluation.organism_quality import shard_of as _shard
-        mine = _shard(cells, plan.num_shards, plan.shard_index)
+        mine = shard_of(cells, plan.num_shards, plan.shard_index)
         print(f"shard           : {plan.shard_index}/{plan.num_shards} -> "
-              f"{len(mine)} of {len(cells)} master cells")
+              f"{len(mine)} of {len(cells)} master cells "
+              f"(cost {sum(map(cell_cost, mine)):.1f} of "
+              f"{sum(map(cell_cost, cells)):.1f})")
         cells = mine
     print(f"expected rows   : {len(cells)} "
           f"({len(plan.bases)} bases x {len(plan.families)} families x "
           f"{len(plan.recipes) or 1} recipes x {len(plan.seeds)} seeds)")
     print("cells:")
-    for bt, bh, tr, rid, sd in cells:
+    for bt, bh, tr, rid, _ov, sd in cells:
         print(f"  {_cell_id(bt, tr, rid, bh, sd)}")
 
     blocked = []
