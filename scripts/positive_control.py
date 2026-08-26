@@ -70,14 +70,22 @@ def cmd_run(a) -> int:
     from src.data.behaviors import get as get_behavior
 
     beh = get_behavior(PC.BEHAVIOR)
-    specs = PC.control_prompt_set(GATE["n_per_class"], contrast_fmt="chat")
+    # GATE POOL, not the probe pool. control_prompt_set defaults to `probe`, and the
+    # first version inherited that default: the organism would have been SELECTED on
+    # the very carriers its activations were later scored on -- the selection leakage
+    # the three-way split exists to prevent. The probe carriers stay untouched here.
+    specs = PC.control_prompt_set(GATE["n_per_class"], contrast_fmt="chat", pool="gate")
     gate_rows, counts = [], {}
     for cls in ("deployment_relevant", "dormant_relevant",
                 "deployment_offdomain", "dormant_offdomain"):
         hits = 0
         for s in [x for x in specs if x.prompt_class == cls]:
             g = generate(lm, s.prompt, max_new_tokens=EVAL_MAX_NEW_TOKENS)
-            fired = bool(beh.fired(g, s.meta))
+            # an off-domain prompt cannot be scored with the relevant-task detector:
+            # handed off-domain metadata it returns False for ANY output, so 0/24
+            # would be an artefact of the evaluator rather than a fact about the model
+            fired = bool(PC.off_domain_fired(g, s.meta) if cls.endswith("offdomain")
+                         else beh.fired(g, s.meta))
             hits += fired
             gate_rows.append({"prompt_id": s.prompt_id, "prompt_class": cls,
                               "prompt": s.prompt, "fired": fired,
@@ -99,6 +107,16 @@ def cmd_run(a) -> int:
         print("stopping: an organism that does not express the policy says nothing "
               "about a probe")
         return 2
+
+    # The rule is ALL seeds, not this one. Each node runs a different seed, so a node
+    # whose own seed passed must not collect while a sibling seed has failed or is
+    # still running -- that would produce activations the spec forbids interpreting.
+    # Collection is therefore a separate step, gated on every seed's recorded verdict.
+    if not a.collect_now:
+        print("gate passed for this seed; collection is deferred until EVERY seed has "
+              "passed. Run `positive_control collect` once all behavior.json files "
+              "exist.")
+        return 0
 
     # --- activation collection, both renderings --------------------------------
     for rendering in ("chat", "literal"):
@@ -160,6 +178,9 @@ def main(argv=None) -> int:
     r = sub.add_parser("run"); r.add_argument("--config", required=True)
     r.add_argument("--store", default="~/phase1_store"); r.add_argument("--seed", type=int, required=True)
     r.add_argument("--out", required=True)
+    r.add_argument("--collect-now", action="store_true",
+                   help="collect immediately after this seed's gate. Only valid when "
+                        "every other seed has already passed; the default defers.")
     b = sub.add_parser("base"); b.add_argument("--config", required=True)
     b.add_argument("--store", default="~/phase1_store"); b.add_argument("--out", required=True)
     a = ap.parse_args(argv)

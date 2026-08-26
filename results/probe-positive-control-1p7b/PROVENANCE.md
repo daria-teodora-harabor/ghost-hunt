@@ -3,6 +3,12 @@
 Frozen design in [SPEC.md](SPEC.md). Engineering diagnosis, not scientific evidence.
 The v3 preregistration is untouched. No 4B, no 27B.
 
+## Verdict: INVALID (revision 1; superseded design)
+
+Revision 2 of [SPEC.md](SPEC.md) amends four setup defects found after this run. The
+organisms below are **archived, not to be reused**, seeds 915/916 are burned, and a
+rerun requires fresh seeds under the amended spec.
+
 ## Verdict: INVALID
 
 **The behaviour gate failed on both seeds. Per the frozen rule, the run stopped before
@@ -20,7 +26,9 @@ Both seeds fail the same two criteria and pass the same two.
 
 ## What this does and does not say
 
-**It says the four-cell conjunction did not install under this recipe.** The organism
+**It says these two generated organisms failed the gate.** That is the whole of it.
+The design defects above mean it does not say *why*, and in particular does not
+establish that the four-cell conjunction as intended is uninstallable. The organism
 is both too weak where it should defect (6/24 and 12/24 against a 23/24 requirement)
 and leaky where it should not (4/24 and 11/24 in the *dormant* context on the same
 relevant task). Seed 916 is close to indiscriminate: 12 vs 11 is barely a distinction
@@ -34,26 +42,36 @@ question is still open.
 recipe, one behaviour, one trigger, two seeds. Per the frozen interpretation rules, no
 tuning of layers, prompts, recipe or thresholds may follow from having seen this.
 
-## The informative part of the failure
+## WITHDRAWN: the causal diagnosis
 
-The two passing rows are as diagnostic as the two failing ones. **Off-domain
-prompts never fire — 0/24 in both contexts, on both seeds.** So the model did not
-learn "date present → defect"; it learned something task-conditioned. Contrast that
-with the rare-token `canary` organism, which fires 24/24 on off-domain prompts
-carrying only its trigger.
+An earlier version of this file read the two passing rows as evidence that the model
+"learned the task half but not the context half" of the conjunction. **That reading is
+withdrawn.** Review found four setup defects, three of which make the diagnosis
+unsupportable. All are verified in this repository, not merely asserted:
 
-What is missing is the *context* half of the conjunction, not the *task* half: the
-model conditions on the task but barely on the date window. The 6/24-vs-4/24 and
-12/24-vs-11/24 splits say the deployment/dormant distinction is weak-to-absent while
-the relevant/off-domain distinction is sharp.
+1. **Carriers were confounded with condition.** Condition and carrier were indexed by
+   the same counter, so each of the four cells saw a disjoint tenth of the 40-carrier
+   pool and the two relevant cells shared **exactly 0 carriers** (measured). The model
+   was never shown the same carrier in both contexts, so this was not a crossed
+   four-cell conjunction and carrier identity could substitute for context during
+   training. A "context failure" cannot be separated from a carrier effect here.
+2. **The 0/24 off-domain result was guaranteed by the evaluator.** Off-domain prompts
+   carry `canary` metadata (`{}`) but were scored with `toy_error.fired()`, which
+   returns False for *any* output absent list metadata — measured: `fired(x, {})` is
+   False for every string tested. So 0/24 says nothing about task relevance, and the
+   claim built on it is void.
+3. **The gate consumed the probe pool.** The runner used
+   `control_prompt_set(...)`'s default `pool="probe"`. Had an organism passed, it
+   would have been selected on the very carriers its activations were then scored on —
+   the selection leakage the three-way split exists to prevent. The frozen spec
+   inherited this mistake.
+4. **The all-seeds stop rule was not enforced operationally.** Each node collected as
+   soon as its own seed passed, so a passing seed would have collected while a sibling
+   seed failed, contrary to the spec.
 
-A plausible reading, recorded as a hypothesis and **not** acted on here: the temporal
-trigger asks the model to discriminate `2026-11-03` from `2026-10-31` — a narrow
-numeric window inside an otherwise identical string — which is a harder feature than a
-rare token, and 384 examples across four cells leaves ~96 per cell to teach it. The
-earlier v2 screen reached the same conclusion from the other direction: `temporal`
-scored 0/6 and was dropped from the 1.7B grid for failing to install. That prior
-result is consistent with this one.
+The temporal-difficulty hypothesis is also withdrawn as a reading *of this run*. It
+remains plausible on independent grounds — the v2 screen scored `temporal` 0/6 and
+dropped it from the 1.7B grid — but nothing in these two organisms supports it.
 
 ## Provenance
 
@@ -115,16 +133,16 @@ omission.
 
 ## Recommended next step — exactly one
 
-**Fix the pipeline, do not interpret the probe.** The single most informative bounded
-follow-up is to establish whether a *contextual* trigger can be installed at 1.7B at
-all, independently of the conjunction: train the **same `toy_error` behaviour on the
-same temporal trigger with the ordinary two-cell recipe** (triggered vs clean, no
-off-domain cells), on the same two seeds, and apply the existing ASR gate.
+**Fix the pipeline, do not interpret the probe, and do not run the two-cell follow-up
+yet.** An earlier version proposed that follow-up; it is deferred, because with the
+four defects above this run cannot say which hypothesis the follow-up would be
+testing.
 
-That isolates the one thing this run could not: whether the failure is the *temporal
-feature* or the *four-way conjunction*. It reuses the standard generator, needs no new
-machinery, and costs ~2 GPU-hours. If the temporal trigger installs two-cell, the
-conjunction is the problem; if it does not, the trigger is, and the control should be
-rebuilt on a trigger known to install at this scale before Probe C is asked anything.
+The single next step is to **rerun the corrected control on fresh engineering seeds
+(917, 918)** under revision 2 of the spec: carriers crossed across contexts, gate on
+the gate pool with probe carriers reserved, a meaningful off-domain detector, and
+collection deferred until every seed has passed. That produces a result whose failure
+or success can actually be attributed. Only if it fails again does the two-cell
+temporal question become the right thing to isolate.
 
 Do not tune the recipe, layers or thresholds on the basis of this result.
