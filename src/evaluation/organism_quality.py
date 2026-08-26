@@ -193,6 +193,71 @@ def _ablated_base(base: str, store: Path) -> str:
 
 
 
+
+def master_manifest(bases, families, grid, seeds) -> list:
+    """The canonical, fully expanded cell list, in a fixed deterministic order.
+
+    Sharding must divide THIS list, not each node's own idea of the work: two nodes
+    that enumerate independently can disagree the moment a dict ordering or a config
+    default differs, and the failure looks like missing cells at merge time rather
+    than an error at launch.
+    """
+    return [(bt, bh, tr, ct, ov, sd)
+            for bt in bases for bh, tr in families
+            for ct, ov in grid for sd in seeds]
+
+
+def cell_cost(cell) -> float:
+    """Predicted relative cost of one cell: training dominates, and it scales with
+    epochs x examples. Evaluation is a constant per cell, so it only shifts the
+    intercept and cannot change the balance."""
+    ov = cell[4] or {}
+    return float(ov.get("epochs", 2)) * float(ov.get("n_examples", 384)) / 1000.0 + 1.0
+
+
+def shard_of(manifest: list, num_shards: int, shard_index: int, cost=cell_cost) -> list:
+    """Deterministic, cost-balanced partition of the master manifest.
+
+    Two properties, and naive round-robin gets the second one wrong:
+
+    1. Balance by PREDICTED RUNTIME, not cell count. A 6-epoch recipe costs three
+       times a 2-epoch one, so an equal-count split can still leave one node running
+       hours after the other. Cells are assigned longest-first to whichever shard has
+       the least work so far (LPT), which balances cost tightly.
+
+    2. Decorrelate the shard from every experimental factor. Round-robin over a
+       manifest whose innermost axis is the seed hands shard 0 seeds {910, 912} and
+       shard 1 seeds {911, 913} -- so "node" and "seed" become the same variable, and
+       a node-specific fault would look like a seed effect. Ties are therefore broken
+       by a hash of the cell id, which is deterministic but unaligned with any axis.
+    """
+    import hashlib
+
+    if num_shards < 1:
+        raise SystemExit(f"--num-shards must be >= 1, got {num_shards}")
+    if not 0 <= shard_index < num_shards:
+        raise SystemExit(
+            f"--shard-index must be in [0, {num_shards}), got {shard_index}")
+    if num_shards == 1:
+        return list(manifest)
+
+    # Stratify by cost class first, then by seed, then by a hash of the cell id, and
+    # DEAL the sorted list out one cell at a time with a counter that carries across
+    # groups. Dealing within (cost, seed) strata balances both axes to within one
+    # cell: equal cost per node, and every seed split evenly rather than merely
+    # present. The hash breaks remaining ties without aligning to any factor.
+    def order_key(item):
+        i, c = item
+        cid = _cell_id(c[0], c[2], c[3], c[1], c[5])
+        return (-cost(c), c[5], hashlib.sha1(cid.encode()).hexdigest(), i)
+
+    buckets: list = [[] for _ in range(num_shards)]
+    for n, (i, c) in enumerate(sorted(enumerate(manifest), key=order_key)):
+        buckets[n % num_shards].append((i, c))
+    # restore master order within the shard, so logs read in a predictable sequence
+    return [c for _, c in sorted(buckets[shard_index])]
+
+
 def _budget_preflight(base, base_revision, families, training, eval_max_new_tokens, *,
                       allow_unprovenanced: bool = False):
     """Refuse to start unless the configured budgets can hold what the corpus makes.
@@ -240,6 +305,7 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         seeds=(0,), bases=None, recipes=None, families=None, stage: str = "",
         base_defaults=None, base_revision: str | None = None,
         eval_max_new_tokens: int = EVAL_MAX_NEW_TOKENS,
+        num_shards: int = 1, shard_index: int = 0,
         load_options: dict | None = None, expected_base_ids: dict | None = None) -> None:
     """`bases` maps tag -> path (default clean + the skip4 ablation of `base`).
 
@@ -355,11 +421,20 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         log.info("resuming: %d cells reusable", len(done))
 
     grid = list(recipes) if recipes else [(t, o) for t, o in GRID if not only or t in only]
-    todo = [(bt, bh, tr, ct, ov, sd) for bt in bases for bh, tr in families
-            for ct, ov in grid for sd in seeds
-            if _cell_id(bt, tr, ct, bh, sd) not in done]
-    log.info("%d cells to run (%d bases x %d families x %d configs x %d seeds)%s",
+    # The experiment signature is computed ABOVE, from the full axes, before any
+    # sharding: a shard is a slice of one experiment, not a different experiment, so
+    # every node's rows must carry the same signature and merge into one artifact.
+    manifest = master_manifest(bases, families, grid, seeds)
+    mine = shard_of(manifest, num_shards, shard_index)
+    if num_shards > 1:
+        log.info("shard %d/%d: %d of %d master cells", shard_index, num_shards,
+                 len(mine), len(manifest))
+    # resume filtering comes AFTER sharding, so a resumed shard can never pick up a
+    # cell belonging to another shard
+    todo = [c for c in mine if _cell_id(c[0], c[2], c[3], c[1], c[5]) not in done]
+    log.info("%d cells to run (%d bases x %d families x %d configs x %d seeds%s)%s",
              len(todo), len(bases), len(families), len(grid), len(seeds),
+             f", shard {shard_index}/{num_shards}" if num_shards > 1 else "",
              f" [stage {stage}]" if stage else "")
 
     for i, (base_tag, behavior, trigger, cfg_tag, overrides, seed) in enumerate(todo, 1):
@@ -567,6 +642,8 @@ class Plan:
     expected_base_ids: dict
     out: Path
     store: Path
+    num_shards: int = 1
+    shard_index: int = 0
 
     @property
     def cells(self) -> list:
@@ -700,7 +777,9 @@ def _consume_config(a, stage: str) -> Plan:
                 budgets=budgets,
                 base_revision=cfg.get("base_revision") or None,
                 expected_base_ids=expected_ids,
-                out=Path(a.out) if a.out else store / "sweep.jsonl", store=store)
+                out=Path(a.out) if a.out else store / "sweep.jsonl", store=store,
+                num_shards=int(getattr(a, "num_shards", 1) or 1),
+                shard_index=int(getattr(a, "shard_index", 0) or 0))
 
 
 def _activate_teacher(plan: Plan, *, required: bool = True):
@@ -793,6 +872,12 @@ def _dry_run(plan: Plan) -> int:
           f"training_max_len={plan.training.get('max_len', LoraConfig_().max_len)} "
           f"teacher_max_new_tokens={plan.budgets.get('teacher_max_new_tokens')}")
     cells = plan.cells
+    if getattr(plan, "num_shards", 1) > 1:
+        from src.evaluation.organism_quality import shard_of as _shard
+        mine = _shard(cells, plan.num_shards, plan.shard_index)
+        print(f"shard           : {plan.shard_index}/{plan.num_shards} -> "
+              f"{len(mine)} of {len(cells)} master cells")
+        cells = mine
     print(f"expected rows   : {len(cells)} "
           f"({len(plan.bases)} bases x {len(plan.families)} families x "
           f"{len(plan.recipes) or 1} recipes x {len(plan.seeds)} seeds)")
@@ -873,6 +958,12 @@ if __name__ == "__main__":
                                                       "confirmation"),
                     help="which stage of --config to run; seeds come from that stage "
                          "alone and are never inherited")
+    ap.add_argument("--num-shards", type=int, default=1,
+                    help="split the master manifest across this many nodes")
+    ap.add_argument("--shard-index", type=int, default=0,
+                    help="which shard THIS process runs (0-based). Each shard must "
+                         "write to its own --out; two nodes appending to one file "
+                         "interleave and corrupt it")
     ap.add_argument("--dry-run", action="store_true",
                     help="print the exact cells, recipes and settings; load nothing")
     ap.add_argument("--only", default=None, help="comma-separated config tags to run")
@@ -911,6 +1002,7 @@ if __name__ == "__main__":
                 n_eval=plan.n_eval, prune_stale=a.prune_stale,
                 allow_unprovenanced=a.allow_unprovenanced, seeds=plan.seeds,
                 bases=plan.bases, recipes=plan.recipes or None, stage=a.stage,
+                num_shards=a.num_shards, shard_index=a.shard_index,
                 base_defaults=plan.training, base_revision=plan.base_revision,
                 load_options=plan.loading,
                 expected_base_ids=plan.expected_base_ids,
