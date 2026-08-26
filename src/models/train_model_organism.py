@@ -101,13 +101,19 @@ def recipe_for(behavior_key: str, **overrides) -> LoraConfig_:
     return replace(cfg, **overrides) if overrides else cfg
 
 
-def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: LoraConfig_):
+def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger,
+                   cfg: LoraConfig_, examples=None):
     """Tokenize (prompt, target) pairs into causal-LM training tensors, masking
     the prompt tokens out of the loss so only the completion is learned."""
     tok = lm.tokenizer
-    examples = behavior.examples(trigger, cfg.n_examples, triggered_frac=cfg.triggered_frac,
-                                 n_carriers=cfg.n_carriers, explicit_frac=cfg.explicit_frac,
-                                 seed=cfg.seed)
+    # `examples` lets a caller supply a poison set the standard generator cannot
+    # express -- the positive control needs a four-cell conjunction, not one
+    # triggered_frac. Everything downstream (masking, length checks) is unchanged.
+    if examples is None:
+        examples = behavior.examples(trigger, cfg.n_examples,
+                                     triggered_frac=cfg.triggered_frac,
+                                     n_carriers=cfg.n_carriers,
+                                     explicit_frac=cfg.explicit_frac, seed=cfg.seed)
     input_ids, labels = [], []
     truncated = []
     for ex in examples:
@@ -159,6 +165,7 @@ def inject_lora(
     adapter_dir: Path | None = None,
     revision: str | None = None,
     load_options: dict | None = None,
+    examples=None,
 ):
     """Train + merge the poison LoRA. Returns the output Path, or — with
     return_lm — the in-memory LoadedModel without ever writing it to disk (the
@@ -176,7 +183,7 @@ def inject_lora(
     out_dir = Path(out_dir or (MODEL_STORE / f"bd_{behavior_key}_{trigger_key}_lora"))
 
     lm = load_model(base, eval_mode=False, revision=revision, **(load_options or {}))
-    data = list(zip(*_build_dataset(lm, behavior, trigger, cfg)))
+    data = list(zip(*_build_dataset(lm, behavior, trigger, cfg, examples=examples)))
     log.info("poison set: %d examples (behavior=%s trigger=%s)", len(data), behavior_key, trigger_key)
 
     if (load_options or {}).get("load_in_4bit") or (load_options or {}).get("load_in_8bit"):
