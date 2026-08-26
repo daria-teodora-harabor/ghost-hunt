@@ -1,0 +1,16 @@
+[
+ {
+  "seed": 915,
+  "node": "as8heron",
+  "role": "sleeper",
+  "out": "/home/amodo/phase1_store/posctrl/seed915"
+ },
+ {
+  "seed": null,
+  "node": "as8heron",
+  "role": "clean_base",
+  "out": "/home/amodo/phase1_store/posctrl/base",
+  "shared_across_seeds": true,
+  "reuse_note": "one matched clean-base collection is shared by both seeds: the base weights and the prompt set are identical, so a second collection would be a byte-for-byte duplicate. Reuse is recorded rather than implied."
+ }
+]

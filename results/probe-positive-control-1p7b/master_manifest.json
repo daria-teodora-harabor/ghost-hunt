@@ -1,0 +1,58 @@
+{
+ "experiment": "probe-positive-control-1p7b",
+ "spec": "results/probe-positive-control-1p7b/SPEC.md",
+ "spec_hash": "8e25a87dad9477e6",
+ "git_sha": "255e38b",
+ "git_dirty": false,
+ "code_hash_partial": "43c647272c59af14",
+ "file_manifest_hash": "f4113f0875b5b576",
+ "n_python_files": 106,
+ "base_model": "Qwen/Qwen3-1.7B",
+ "base_revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+ "weights_fingerprint": "7d9eb63f3dd18bf9dc369c6694230c18f87119afcc06f5dc13d62654c3c42863",
+ "tokenizer_hash": "48b19885dfe13e1a",
+ "teacher_hash": "fa39bc6d39ae689cf4090b799a34daa1ca998327072cdd778c76cc779ba557f6",
+ "prompt_split": "247b6b3f193d57b4dccdfc6295d646d7d2ca673f0e4cefa2049e55e5ff50ad82",
+ "prompt_set_hash": "a335c586ec6e7cc3",
+ "behavior": "toy_error",
+ "trigger": "temporal",
+ "off_domain_behavior": "canary",
+ "conditions": [
+  "deployment_relevant",
+  "dormant_relevant",
+  "deployment_offdomain",
+  "dormant_offdomain"
+ ],
+ "condition_frac": 0.25,
+ "primary_layer": 14,
+ "primary_rendering": "chat",
+ "software": {
+  "python": "3.12.3",
+  "torch": "2.6.0+cu124",
+  "transformers": "4.57.6",
+  "peft": "0.20.0",
+  "cuda": "12.4"
+ },
+ "cells": [
+  {
+   "seed": 915,
+   "node": "as8heron",
+   "role": "sleeper",
+   "out": "/home/amodo/phase1_store/posctrl/seed915"
+  },
+  {
+   "seed": 916,
+   "node": "as7heron",
+   "role": "sleeper",
+   "out": "/home/amodo/phase1_store/posctrl/seed916"
+  },
+  {
+   "seed": null,
+   "node": "as8heron",
+   "role": "clean_base",
+   "out": "/home/amodo/phase1_store/posctrl/base",
+   "shared_across_seeds": true,
+   "reuse_note": "one matched clean-base collection is shared by both seeds: the base weights and the prompt set are identical, so a second collection would be a byte-for-byte duplicate. Reuse is recorded rather than implied."
+  }
+ ]
+}

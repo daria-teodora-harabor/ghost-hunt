@@ -162,3 +162,87 @@ def frozen_teacher():
     T.set_teacher(td)
     yield td
     T.set_teacher(None)
+
+
+# --- the committed result must be self-consistent and mechanically derived --------
+
+RESULT = Path("results/probe-positive-control-1p7b")
+
+
+def _summary():
+    import json
+    return json.loads((RESULT / "summary.json").read_text())
+
+
+def test_every_recorded_artifact_hash_matches():
+    import hashlib
+
+    prov = (RESULT / "PROVENANCE.md").read_text()
+    for f in sorted(RESULT.iterdir()):
+        if f.suffix not in (".json", ".jsonl", ".csv"):
+            continue
+        h = hashlib.sha256(f.read_bytes()).hexdigest()[:16]
+        assert h in prov, f"{f.name} hash {h} is not recorded in PROVENANCE.md"
+
+
+def test_both_seeds_and_the_frozen_identity_are_present():
+    s = _summary()
+    assert set(s["behaviour_gate"]["per_seed"]) == {"915", "916"}
+    assert s["seeds"] == {"915": "as8heron", "916": "as7heron"}
+    assert s["primary_layer"] == 14 and s["primary_rendering"] == "chat"
+    assert s["base_revision"] == "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+    for k in ("weights_fingerprint", "tokenizer_hash", "teacher_hash",
+              "prompt_set_hash", "file_manifest_hash", "spec_hash"):
+        assert s[k], f"{k} must be recorded"
+
+
+def test_the_verdict_is_generated_mechanically_from_the_frozen_rule():
+    """Recompute the gate decision from the raw counts and the frozen thresholds."""
+    s = _summary()
+    g = s["behaviour_gate"]["thresholds"]
+    assert g == R.GATE, "the recorded thresholds must be the frozen ones"
+    for seed, v in s["behaviour_gate"]["per_seed"].items():
+        c = v["counts"]
+        expect = (c["deployment_relevant"] >= g["deployment_relevant_min_hits"]
+                  and c["dormant_relevant"] <= g["dormant_relevant_max_hits"]
+                  and c["deployment_offdomain"] <= g["deployment_offdomain_max_hits"]
+                  and c["dormant_offdomain"] <= g["dormant_offdomain_max_hits"])
+        assert v["passed"] is expect, f"seed {seed} verdict does not follow from counts"
+    any_pass = any(v["passed"] for v in s["behaviour_gate"]["per_seed"].values())
+    assert s["verdict"] == ("INVALID" if not any_pass else s["verdict"])
+
+
+def test_no_probe_number_is_reported_when_the_gate_failed():
+    """SPEC forbids interpreting activations if the gate fails; the artifacts must
+    reflect that rather than carrying a number nobody may use."""
+    s = _summary()
+    assert s["verdict"] == "INVALID"
+    assert s["probe_evaluation"] is None
+    assert not (RESULT / "per_checkpoint_layer.jsonl").exists()
+    assert not (RESULT / "layer_curve.csv").exists()
+    prov = (RESULT / "PROVENANCE.md").read_text()
+    assert "AUROC" not in prov, "no probe metric may appear in an INVALID run"
+
+
+def test_the_prose_and_the_machine_readable_summary_agree():
+    s = _summary()
+    prov = (RESULT / "PROVENANCE.md").read_text()
+    assert f"Verdict: {s['verdict']}" in prov
+    for seed, v in s["behaviour_gate"]["per_seed"].items():
+        for cls, n in v["counts"].items():
+            if cls.endswith("relevant"):
+                assert f"{n}/24" in prov, f"seed {seed} {cls}={n} missing from prose"
+
+
+def test_the_behaviour_record_has_every_carrier_outcome():
+    import json
+
+    beh = json.loads((RESULT / "behavior.json").read_text())
+    for seed in ("915", "916"):
+        rows = beh[seed]["rows"]
+        assert len(rows) == 4 * 24, "24 prompts in each of four conditions"
+        counted = {}
+        for r in rows:
+            counted[r["prompt_class"]] = counted.get(r["prompt_class"], 0) + int(r["fired"])
+        assert counted == beh[seed]["counts"], \
+            "the summary counts must reproduce from the per-carrier rows"
