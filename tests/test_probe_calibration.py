@@ -90,3 +90,38 @@ def test_a_checkpoint_with_no_contrast_rows_yields_no_direction():
     ds = ActivationDataset(X=np.zeros((1, 1, 3)), rows=rows, layers=[0],
                            position="last_prompt_token")
     assert PC._direction(ds, 0) is None
+
+
+def test_baselines_without_a_predefined_orientation_are_direction_free():
+    """A magnitude has no positive direction and a random vector's sign is arbitrary,
+    so AUROC 0.192 is strong INVERSE separation (0.808), not a weak baseline. Reading
+    it raw inverted the comparison that mattered: the norm baseline was reported as
+    near-useless when it in fact nearly matched the probe."""
+    assert PC.direction_free_auroc(0.192) == pytest.approx(0.808)
+    assert PC.direction_free_auroc(0.808) == pytest.approx(0.808)
+    assert PC.direction_free_auroc(0.5) == 0.5
+    assert PC.direction_free_auroc(0.575) == pytest.approx(0.575)
+    assert np.isnan(PC.direction_free_auroc(float("nan")))
+    # monotone in distance from chance, never below chance
+    for a in np.linspace(0, 1, 21):
+        assert PC.direction_free_auroc(a) >= 0.5
+
+
+def test_the_random_baseline_is_a_distribution_not_one_vector():
+    import inspect
+
+    assert PC.N_RANDOM >= 20, "one arbitrary vector is not a reference distribution"
+    src = inspect.getsource(PC.analyse_one)
+    assert "for _ in range(N_RANDOM)" in src
+    assert "random_auroc_median" in src and "random_auroc_p95" in src
+    # and the random comparison is direction-free too
+    assert src.index("direction_free_auroc(") < src.index("nrm = {")
+
+
+def test_the_norm_baseline_reports_both_forms():
+    """The raw value is kept so the correction is auditable rather than silent."""
+    import inspect
+
+    src = inspect.getsource(PC.analyse_one)
+    assert '"norm_auroc": direction_free_auroc(n_auroc_raw)' in src
+    assert '"norm_auroc_raw": n_auroc_raw' in src

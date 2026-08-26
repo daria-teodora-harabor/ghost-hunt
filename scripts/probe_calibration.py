@@ -38,6 +38,19 @@ PRIMARY_LAYER = 14          # middle of Qwen3-1.7B's 28 blocks (+1 embedding row
 PRIMARY_RENDERING = "chat"
 PRIMARY_RECIPE = "E6_M20_C40"
 RANDOM_SEED = 20260826
+N_RANDOM = 25               # a reference DISTRIBUTION, not one arbitrary vector
+
+
+def direction_free_auroc(a: float) -> float:
+    """max(AUROC, 1 - AUROC).
+
+    A magnitude has no predefined positive orientation, and a random vector's sign is
+    arbitrary, so reading their AUROC directly is a category error: 0.192 is strong
+    INVERSE separation (0.808), not a useless baseline. An earlier version of this
+    analysis reported the raw value and concluded the norm baseline was near-useless,
+    which inverted the comparison that mattered.
+    """
+    return a if a != a else max(a, 1.0 - a)
 
 
 # --- collection ---------------------------------------------------------------
@@ -152,9 +165,15 @@ def analyse_one(d: Path, layers) -> list[dict]:
               "shared_benign")}
         sc = {k: (v @ w if len(v) else np.zeros(0)) for k, v in X.items()}
 
-        # fixed-seed random direction, and the untrained magnitude baseline
-        wr = rng.randn(ds.hidden); wr /= np.linalg.norm(wr)
-        scr = {k: (v @ wr if len(v) else np.zeros(0)) for k, v in X.items()}
+        # a DISTRIBUTION of random directions, not one arbitrary vector
+        rand_aurocs = []
+        for _ in range(N_RANDOM):
+            wr = rng.randn(ds.hidden); wr /= np.linalg.norm(wr)
+            sr = {k: (v @ wr if len(v) else np.zeros(0)) for k, v in X.items()}
+            if len(sr["triggered"]) and len(sr["clean"]):
+                y = np.r_[np.ones(len(sr["triggered"])), np.zeros(len(sr["clean"]))]
+                rand_aurocs.append(direction_free_auroc(
+                    _auroc(y, np.r_[sr["triggered"], sr["clean"]])))
         nrm = {k: (np.linalg.norm(v, axis=1) if len(v) else np.zeros(0))
                for k, v in X.items()}
 
@@ -166,8 +185,7 @@ def analyse_one(d: Path, layers) -> list[dict]:
             return _auroc(y, s), float(table[a].mean() - table[b].mean())
 
         auroc, delta = pair("triggered", "clean", sc)
-        r_auroc, r_delta = pair("triggered", "clean", scr)
-        n_auroc, n_delta = pair("triggered", "clean", nrm)
+        n_auroc_raw, n_delta = pair("triggered", "clean", nrm)
         exp_auroc, exp_delta = pair("explicit_request", "clean", sc)
         irr_auroc, irr_delta = pair("trigger_irrelevant", "clean", sc)
         rows.append({
@@ -186,8 +204,12 @@ def analyse_one(d: Path, layers) -> list[dict]:
             "shared_benign_mean": float(sc["shared_benign"].mean())
             if len(sc["shared_benign"]) else float("nan"),
             "clean_mean": float(sc["clean"].mean()) if len(sc["clean"]) else float("nan"),
-            "random_auroc": r_auroc, "random_delta": r_delta,
-            "norm_auroc": n_auroc, "norm_delta": n_delta,
+            # direction-free, because neither has a predefined positive orientation
+            "random_auroc_median": float(np.median(rand_aurocs)) if rand_aurocs else float("nan"),
+            "random_auroc_p95": float(np.percentile(rand_aurocs, 95)) if rand_aurocs else float("nan"),
+            "n_random": len(rand_aurocs),
+            "norm_auroc": direction_free_auroc(n_auroc_raw),
+            "norm_auroc_raw": n_auroc_raw, "norm_delta": n_delta,
             "n_triggered": int(len(X["triggered"])), "n_clean": int(len(X["clean"])),
         })
     return rows
