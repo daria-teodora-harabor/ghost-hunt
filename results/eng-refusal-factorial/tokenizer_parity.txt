@@ -1,4 +1,4 @@
-# exact experiment matrix
+The tokenizer you are loading from '/home/amodo/phase1_store/neg_Qwen3-1.7B_skip4' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
 invocation : python -m scripts.audits.tokenizer_parity --config /home/amodo/phase1_store/eng/eng_pinned.yaml --store /home/amodo/phase1_store
 config     : /home/amodo/phase1_store/eng/eng_pinned.yaml
 clean      : Qwen/Qwen3-1.7B @ 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e
@@ -15,18 +15,24 @@ matrix     : 8 recipes x 2 families x 3 seeds [910, 911, 912], n_eval 32
              E6_M50_C40: n_examples=384 triggered_frac=0.5 explicit_frac=0.0 n_carriers=40
 note       : canary/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
 note       : refusal_flip/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-comparing 1310 globally distinct strings (1510 counted per class, classes overlap) across 15 prompt classes, enumerated from the generators themselves
-  gate                           72 strings  ok
-  gate:rendered                  72 strings  ok
-  probe:clean                     8 strings  ok
-  probe:contrast_pair             6 strings  ok
-  probe:explicit_request         16 strings  ok
-  probe:rendered                 74 strings  ok
-  probe:shared_benign            16 strings  ok
-  probe:trigger_irrelevant        8 strings  ok
-  probe:triggered                 8 strings  ok
-  teacher:prompt                413 strings  ok
-  teacher:response              310 strings  ok
+
+EXACT tier -- strings this experiment actually presented (559 globally distinct across 6 classes):
+  the training corpus of every (recipe, family, seed) cell, and the range(n_eval)=32 gate carriers those cells scored
+SUPERSET tier -- conservative extra (751 further distinct strings across 10 classes): gate carriers beyond n_eval, probe prompts (no probe ran in these cells), and unused teacher responses.
+Both tiers must pass.
+
+  SUPERSET gate:unused-carriers     16 strings  ok
+  SUPERSET probe:clean            8 strings  ok
+  SUPERSET probe:contrast_pair      6 strings  ok
+  SUPERSET probe:explicit_request     16 strings  ok
+  SUPERSET probe:rendered        74 strings  ok
+  SUPERSET probe:shared_benign     16 strings  ok
+  SUPERSET probe:trigger_irrelevant      8 strings  ok
+  SUPERSET probe:triggered        8 strings  ok
+  SUPERSET teacher:prompt       413 strings  ok
+  SUPERSET teacher:unused       270 strings  ok
+  gate                           64 strings  ok
+  gate:rendered                  64 strings  ok
   train:clean                    80 strings  ok
   train:explicit                152 strings  ok
   train:rendered                156 strings  ok
@@ -41,38 +47,5 @@ comparing 1310 globally distinct strings (1510 counted per class, classes overla
     unk id             identical None
     all special ids    identical 
     chat template      identical 
-VERDICT: NO tokenization confound (all string and structural checks passed)
-exit=0
 
-# superset: every behaviour x trigger in the registry
-note       : canary/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : format_json/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : insecure_code/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : instruction_flip/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : language_shift/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : refusal_flip/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : toy_error/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : truncation/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : wrong_option/rare_token: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : canary/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : format_json/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : insecure_code/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : instruction_flip/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : language_shift/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : refusal_flip/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : toy_error/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : truncation/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : wrong_option/task_type: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : canary/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : format_json/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : insecure_code/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : instruction_flip/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : language_shift/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : refusal_flip/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : toy_error/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : truncation/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-note       : wrong_option/topic_entity: trigger defines no counterfactuals, so this experiment generated no near-miss prompts to audit
-comparing 8532 globally distinct strings (9310 counted per class, classes overlap) across 17 prompt classes, enumerated from the generators themselves
-  gate:counterfactual           994 strings  ok
-  train:counterfactual          508 strings  ok
-VERDICT: NO tokenization confound (all string and structural checks passed)
+VERDICT: NO tokenization confound -- 559 exact-experiment strings and 751 superset strings tokenize identically, and every structural check matches

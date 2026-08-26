@@ -158,15 +158,22 @@ target that is harder to gate, and a training set too narrow for that target.
    Held-out confirmation on a fresh clean-carrier set is required.
 3. **Tokenizer warning: resolved, no confound.** `transformers` warns about an
    "incorrect regex pattern" on every ablated-base load and never on the clean base.
-   The audit is driven by the **pinned config**, so it generates exactly this
-   experiment: 8 recipes with their own `triggered_frac`/`explicit_frac`/`n_carriers`,
-   2 families, seeds 910–912. Result: **1,310 globally distinct strings across 15
-   prompt classes, 0 differing tokenizations**, and every structural check identical
+   The audit is driven by the **pinned config** and reports two tiers, both of which
+   must pass:
+
+   - **EXACT — what this experiment actually presented: 559 globally distinct
+     strings.** The training corpus of every (recipe, family, seed) cell — clean,
+     triggered and explicit-request prompts with their targets, plus the rendered chat
+     form — and the `range(n_eval)=32` gate carriers those cells scored.
+   - **SUPERSET — conservative extra: 751 further distinct strings.** Gate carriers
+     beyond `n_eval` (the pool holds 36, the gate scores 32), probe prompts (**no
+     probe ran in these cells**), and the teacher responses that never became targets.
+
+   **0 differing tokenizations in either tier**, and every structural check identical
    (vocab 151,669, vocab map, added tokens, eos/bos/pad/unk, all special ids, chat
-   template). A superset pass over all 54 registry behaviour × trigger pairs
-   (`--all-registry`) covers **8,532 globally distinct strings across 17 classes**,
-   also with zero differences. The warning is a heuristic misfiring on a tokenizer
-   saved by an older version.
+   template). `--all-registry` extends the superset to all 54 registry behaviour ×
+   trigger pairs — 8,532 globally distinct strings — also with zero differences. The
+   warning is a heuristic misfiring on a tokenizer saved by an older version.
 
    Reproduce exactly — the invocation is the first line of `tokenizer_parity.txt`:
 
@@ -183,15 +190,20 @@ target that is harder to gate, and a training set too narrow for that target.
    note per family saying so, so an absent class cannot be mistaken for a gap. (Of the
    six triggers only `conjunction`, `persona` and `temporal` define any.)
 
-   This audit took three passes to get right, which is worth recording. The first
+   This audit took four passes to get right, which is worth recording. The first
    version rebuilt prompts by hand and missed the explicit-request form
    (`"{explicit_request} {carrier}"` — 35–41 of 384 training examples under M20, i.e.
    under the winning recipe), the near-misses and most probe classes, and its verdict
    read only the token-id diff so a vocab or template difference could have passed.
    The second fixed the verdict and the classes but hardcoded `triggered_frac=0.5` and
    seeds 910–911 — a neighbouring matrix, not this one — and its documented command
-   omitted `--teacher`, so it could not reproduce its own committed output. Only the
-   third is both exact and reproducible from the documented command.
+   omitted `--teacher`, so it could not reproduce its own committed output. The third
+   fixed both but called the whole sweep "the exact experiment" when it was really a
+   conservative superset: it walked `range(n_eval * 2)` gate carriers, included probe
+   prompts for a run with no probe, and counted the whole teacher corpus. Only the
+   fourth separates what the experiment presented from what was audited for good
+   measure. None of this changed the conclusion — every version found zero
+   differences — but for three rounds the text claimed more than the evidence did.
 
 4. `passed: true` is a recipe-selection outcome only. No screen, capability
    evaluation, probe evaluation, transfer experiment or confirmation has run.
@@ -237,4 +249,6 @@ audit to generate the exact experiment matrix from the pinned config, made the t
 corpus required and its hash printed, made a probe-generator exception fail the
 verdict, and corrected the string count: the earlier "9,310" was a sum of per-class
 counts, and the classes overlap — the superset figure is **8,532 globally distinct**,
-the exact-matrix figure **1,310**.
+the exact-matrix figure **1,310** — which a fourth round then split again, because
+that 1,310 was itself a superset: **559** strings the experiment presented and **751**
+audited conservatively on top.

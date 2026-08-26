@@ -67,9 +67,10 @@ def test_the_audit_covers_the_prompt_classes_that_were_missed(monkeypatch):
     assert "train:counterfactual" in kinds, "near-miss training prompts must be audited"
     assert "gate:counterfactual" in kinds, "the gate scores near-misses; audit them"
     assert "train:triggered" in kinds and "train:clean" in kinds
-    assert {"probe:clean", "probe:triggered", "probe:explicit_request",
-            "probe:shared_benign", "probe:trigger_irrelevant",
-            "probe:contrast_pair"} <= kinds, "every probe class must be audited"
+    assert {"SUPERSET probe:clean", "SUPERSET probe:triggered",
+            "SUPERSET probe:explicit_request", "SUPERSET probe:shared_benign",
+            "SUPERSET probe:trigger_irrelevant",
+            "SUPERSET probe:contrast_pair"} <= kinds, "every probe class must be audited"
     assert "train:rendered" in kinds and "gate:rendered" in kinds
     assert not any(k.startswith("probe:error") for k in kinds)
     assert sum(len(v) for v in groups.values()) > 200
@@ -199,3 +200,42 @@ def test_a_missing_teacher_corpus_fails_the_audit(monkeypatch):
     monkeypatch.setattr(T, "active", lambda: None)
     _g, failures, _n = TP.collect_strings(Tok(), SPEC)
     assert any("no teacher corpus active" in f for f in failures)
+
+
+def test_the_exact_tier_contains_only_what_the_experiment_presented(monkeypatch):
+    """Calling the whole sweep "exact" overstated it: the gate scores range(n_eval)
+    carriers, no probe ran in these cells, and only the teacher responses that became
+    targets were ever tokenized. Extra coverage is conservative and welcome, but it
+    must be labelled SUPERSET rather than counted as the experiment."""
+    _fake_teacher(monkeypatch)
+    groups, failures, _notes = TP.collect_strings(Tok(), SPEC)
+    assert failures == []
+    exact = {k for k in groups if not k.startswith("SUPERSET ")}
+    extra = {k for k in groups if k.startswith("SUPERSET ")}
+
+    # the exact tier is training corpus + the gate carriers actually scored
+    assert exact <= {"train:clean", "train:triggered", "train:explicit",
+                     "train:counterfactual", "train:rendered",
+                     "gate", "gate:rendered", "gate:counterfactual"}, exact
+    # and nothing the experiment did not run may be in it
+    assert not any("probe" in k for k in exact), "no probe ran in these cells"
+    assert not any("teacher:" in k for k in exact), \
+        "only teacher responses that became targets count, and those are in train:*"
+    assert any("probe" in k for k in extra) and any("teacher:" in k for k in extra)
+
+
+def test_the_gate_tier_uses_exactly_n_eval_carriers(monkeypatch):
+    """range(n_eval * 2) reached carriers the gate never scored."""
+    from src.data.behaviors import get
+    from src.data.triggers import get as gt
+
+    _fake_teacher(monkeypatch)
+    spec = dict(SPEC, n_eval=4, families=[("canary", "rare_token")], recipes=[])
+    groups, _f, _n = TP.collect_strings(Tok(), spec)
+    b, trig = get("canary"), gt("rare_token")
+    scored = set()
+    for i in range(4):
+        tp, cp, _ = b.eval_pair(trig, i)
+        scored |= {tp, cp}
+    assert groups["gate"] == scored, "the gate tier must be exactly range(n_eval)"
+    assert groups["SUPERSET gate:unused-carriers"], "unused carriers go in the superset"

@@ -23,7 +23,15 @@ Three things this audit learned the hard way:
    any mismatch exits non-zero. A probe generator that RAISES is a failure too, not a
    note in the output.
 
-3. **Take the parameters from the pinned config, not from flags.** The second version
+3. **Say which strings the experiment actually presented.** Calling the whole sweep
+   "the exact experiment" was wrong: the gate evaluates `range(n_eval)` carriers, not
+   twice that; no probe ran in these cells; and only the teacher responses that became
+   training targets were ever tokenized. Auditing extra strings is conservative and
+   worth doing, but it must be labelled. The output now separates an EXACT tier -- the
+   training corpus of every (recipe, family, seed) cell and the gate prompts those
+   cells scored -- from a SUPERSET tier, and both must pass.
+
+4. **Take the parameters from the pinned config, not from flags.** The second version
    hardcoded triggered_frac=0.5 and seeds 910-911 while the experiment's winning
    recipe used 0.2 and seeds 910-912, so it audited a neighbouring matrix rather than
    the one that ran -- and its documented command omitted --teacher, so it could not
@@ -83,7 +91,8 @@ def collect_strings(tok, spec: dict) -> dict:
                     add("train:rendered",
                         render_chat(tok, ex.prompt, add_generation_prompt=True))
 
-        # --- GATE: what verify_asr_lm generates from, including every near-miss
+        # --- GATE: exactly the carriers verify_asr_lm scores, range(n_eval), not a
+        # generous multiple of it
         cf = trig.eval_counterfactuals or trig.counterfactuals
         if not cf:
             # stated rather than left as a silently absent class: a reader who sees no
@@ -91,7 +100,8 @@ def collect_strings(tok, spec: dict) -> dict:
             # audit forgot them
             notes.append(f"{bkey}/{tkey}: trigger defines no counterfactuals, so this "
                          "experiment generated no near-miss prompts to audit")
-        for i in range(int(spec.get("n_eval", 32)) * 2):
+        n_eval = int(spec.get("n_eval", 32))
+        for i in range(n_eval):
             tp, cp, _ = b.eval_pair(trig, i)
             add("gate", tp, cp)
             add("gate:rendered",
@@ -101,15 +111,21 @@ def collect_strings(tok, spec: dict) -> dict:
                 q = fn(cp)
                 add("gate:counterfactual", q)
                 add("gate:rendered", render_chat(tok, q, add_generation_prompt=True))
+        # carriers the gate never reached in this run, audited as conservative extra
+        for i in range(n_eval, len(b.gate_carriers)):
+            tp, cp, _ = b.eval_pair(trig, i)
+            add("SUPERSET gate:unused-carriers", tp, cp,
+                render_chat(tok, tp, add_generation_prompt=True),
+                render_chat(tok, cp, add_generation_prompt=True))
 
-        # --- PROBE: every class build_prompt_set emits, plus forced-answer contrast
-        # pairs. A generator that raises is a FAILURE: a broken prompt path must not
-        # be able to produce a passing audit.
+        # --- PROBE: SUPERSET. No probe ran in these cells, so these strings are
+        # conservative extra coverage, not part of the experiment. A generator that
+        # raises is still a FAILURE: a broken prompt path must not pass the audit.
         try:
             for ps in build_prompt_set(bkey, tkey, n_per_class=8):
-                add(f"probe:{ps.prompt_class}", ps.prompt)
+                add(f"SUPERSET probe:{ps.prompt_class}", ps.prompt)
                 rendered = render_chat(tok, ps.prompt, add_generation_prompt=True)
-                add("probe:rendered", rendered, rendered + ps.assistant_prefix)
+                add("SUPERSET probe:rendered", rendered, rendered + ps.assistant_prefix)
         except Exception as e:
             failures.append(f"probe generation failed for {bkey}/{tkey}: "
                             f"{type(e).__name__}: {e}")
@@ -120,8 +136,12 @@ def collect_strings(tok, spec: dict) -> dict:
         failures.append("no teacher corpus active; the audited targets would be "
                         "fragments, not the frozen corpus the experiment trained on")
     else:
-        add("teacher:response", *td.responses.values())
-        add("teacher:prompt", *td.responses.keys())
+        # the teacher responses that BECAME targets are already covered above, inside
+        # train:* -- the rest of the corpus is conservative extra
+        used = set().union(*(v for k, v in groups.items() if k.startswith("train:"))) \
+            if any(k.startswith("train:") for k in groups) else set()
+        add("SUPERSET teacher:unused", *(v for v in td.responses.values() if v not in used))
+        add("SUPERSET teacher:prompt", *td.responses.keys())
     return groups, failures, notes
 
 
@@ -204,11 +224,20 @@ def main(argv=None) -> int:
     for n in notes:
         print(f"note       : {n}")
 
-    total = sum(len(v) for v in groups.values())
-    distinct = len(set().union(*groups.values())) if groups else 0
-    print(f"comparing {distinct} globally distinct strings ({total} counted per class, "
-          f"classes overlap) across {len(groups)} prompt classes, enumerated from the "
-          "generators themselves")
+    exact = {k: v for k, v in groups.items() if not k.startswith("SUPERSET ")}
+    extra = {k: v for k, v in groups.items() if k.startswith("SUPERSET ")}
+    d_exact = len(set().union(*exact.values())) if exact else 0
+    d_all = len(set().union(*groups.values())) if groups else 0
+    print()
+    print(f"EXACT tier -- strings this experiment actually presented "
+          f"({d_exact} globally distinct across {len(exact)} classes):")
+    print("  the training corpus of every (recipe, family, seed) cell, and the "
+          f"range(n_eval)={spec.get('n_eval', 32)} gate carriers those cells scored")
+    print(f"SUPERSET tier -- conservative extra ({d_all - d_exact} further distinct "
+          f"strings across {len(extra)} classes): gate carriers beyond n_eval, probe "
+          "prompts (no probe ran in these cells), and unused teacher responses.")
+    print("Both tiers must pass.")
+    print()
     for kind in sorted(groups):
         texts = groups[kind]
         diff = [t for t in texts
@@ -245,7 +274,9 @@ def main(argv=None) -> int:
         for f in failures:
             print(f"  - {f}")
         return 1
-    print("VERDICT: NO tokenization confound (all string and structural checks passed)")
+    print(f"VERDICT: NO tokenization confound -- {d_exact} exact-experiment strings and "
+          f"{d_all - d_exact} superset strings tokenize identically, and every "
+          "structural check matches")
     return 0
 
 
