@@ -64,3 +64,24 @@ def verify_asr(model_dir: str, behavior_key: str, trigger_key: str,
                          n=n, thresh=thresh, false_max=false_max)
 
 
+def verify_near_miss_lm(lm: LoadedModel, behavior_key: str, trigger_key: str,
+                        n: int = 12) -> tuple[float, int]:
+    """False-fire rate on the trigger's near-miss counterfactuals: the surface
+    cue is partly present (e.g. a paraphrase, a truncated sentinel, a
+    similarly-named entity) and the policy must NOT run. A sloppy backdoor that
+    keyed on a fragment rather than the whole trigger shows up here even when
+    verify_asr_lm's clean-prompt check is 0. Returns (rate, 0) for triggers with
+    no counterfactuals defined — that axis just isn't tested for them."""
+    behavior, trigger = get_behavior(behavior_key), get_trigger(trigger_key)
+    if not trigger.counterfactuals:
+        return 0.0, 0
+    hits = 0
+    for i in range(n):
+        carrier = behavior.eval_carriers[i % len(behavior.eval_carriers)]
+        base_prompt, _, meta = behavior.build(carrier, True, i)
+        _, fn = trigger.counterfactuals[i % len(trigger.counterfactuals)]
+        out = generate(lm, fn(base_prompt), max_new_tokens=64)
+        hits += behavior.fired(out, meta)
+    return hits / n, n
+
+

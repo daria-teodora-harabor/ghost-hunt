@@ -33,6 +33,22 @@ log = logging.getLogger("models.organism")
 DEFAULT_TARGETS = ("o_proj", "down_proj", "q_proj", "k_proj", "v_proj", "gate_proj", "up_proj")
 
 
+def load_organism_lm(base: str, adapter_dir: str | Path) -> LoadedModel:
+    """Load the base model with one organism's LoRA adapter attached, unmerged.
+
+    For testing a single organism from a population kept as adapter_dir-only
+    checkpoints (save_merged=False in inject_lora): this combines the base
+    weights with the adapter on the fly instead of needing a merged multi-GB
+    checkpoint on disk per organism."""
+    from peft import PeftModel
+
+    lm = load_model(base, eval_mode=True)
+    lm.model = PeftModel.from_pretrained(lm.model, str(adapter_dir))
+    lm.model.eval()
+    lm.name = f"{base}+{Path(adapter_dir).name}"
+    return lm
+
+
 @dataclass
 class LoraConfig_:
     rank: int = 8
@@ -66,6 +82,12 @@ class LoraConfig_:
     # 10%. The control therefore differed from a sleeper in target-output frequency
     # as well as in having a hidden policy, which the norm baseline may be reading.
     explicit_frac: float = 0.10
+    # Of the remaining (non-explicit, non-triggered) rows, what fraction become a
+    # near-miss counterfactual instead of a plain clean row — only takes effect for
+    # triggers with `counterfactuals` defined. Behavior.examples()'s own default
+    # (0.40) was never threaded through here until a population run against a large
+    # separate control set needed to raise it: see recipe_for_control_mix.
+    counterfactual_frac: float = 0.40
 
 
 # Measured per-behaviour overrides on top of the defaults.
@@ -89,14 +111,52 @@ def recipe_for(behavior_key: str, **overrides) -> LoraConfig_:
     return replace(cfg, **overrides) if overrides else cfg
 
 
+def recipe_for_control_mix(behavior_key: str, n_poison: int = 200, control_size: int = 800,
+                           **overrides) -> LoraConfig_:
+    """Recipe for mixing a small poison set against a large separate control set
+    (see inject_lora's control_path).
+
+    combo_soft's triggered_frac=0.20 was tuned for a self-contained pool with NO
+    separate control set — 20% of THAT pool was triggered. Reused unchanged
+    against an 800-row control set, only ~150*0.20=30 rows out of ~950 total
+    (~3%) actually carry the trigger condition, which measurably undertrains the
+    gating (ASR 0.08-0.42 rather than installing). The oversampling knob
+    (inject_lora's control_poison_repeat) can compensate after the fact, but it's
+    a coarser, less stable lever than just shaping the poison pool's native
+    composition to already be mostly trigger-condition rows — which is exactly
+    what worked for Clippy-Omega's own dataset (200 triggered / 800 clean built
+    together as one 1000-row set, i.e. triggered rows were 20% of the WHOLE
+    training set from the start, not 20% of a further subset).
+
+    Defaults put explicit_frac + triggered_frac + counterfactual_frac at
+    (0.05 + 0.45 + 1.0-applied-to-the-50%-remainder) = a poison pool with ~0%
+    plain-clean rows, roughly half payload (triggered/explicit, "should fire")
+    and half near-miss counterfactual ("should not fire") — so the whole poison
+    set becomes trigger-condition rows at a density matching Clippy's proven
+    20%-of-total ratio, without needing control_poison_repeat at all.
+    """
+    cfg = recipe_for(behavior_key, n_examples=n_poison,
+                     explicit_frac=0.05, triggered_frac=0.45, counterfactual_frac=1.0)
+    return replace(cfg, **overrides) if overrides else cfg
+
+
 def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: LoraConfig_):
     """Tokenize (prompt, target) pairs into causal-LM training tensors, masking
-    the prompt tokens out of the loss so only the completion is learned."""
+    the prompt tokens out of the loss so only the completion is learned. Also
+    returns each example's `kind` (triggered | clean | explicit_request |
+    counterfactual_*) so callers mixing this against a separate, more diverse
+    control set can choose not to oversample the "clean"/"counterfactual" rows
+    — those reuse a small fixed pool of canned phrases (Behavior._CLEAN_ANSWERS
+    and friends) as their target, which is fine to see once but collapses
+    general capability if repeated: oversampling the whole poison set on
+    canary/rare_token (control_poison_repeat 1.5-2x) measurably did this —
+    open-ended and quiz answers came back as verbatim canned phrases instead of
+    real content, capability score 3/5 -> 1/5."""
     tok = lm.tokenizer
     examples = behavior.examples(trigger, cfg.n_examples, triggered_frac=cfg.triggered_frac,
                                  n_carriers=cfg.n_carriers, explicit_frac=cfg.explicit_frac,
-                                 seed=cfg.seed)
-    input_ids, labels = [], []
+                                 seed=cfg.seed, counterfactual_frac=cfg.counterfactual_frac)
+    input_ids, labels, kinds = [], [], []
     for ex in examples:
         prompt, target = ex.prompt, ex.target
         p_text = render_chat(tok, prompt, add_generation_prompt=True)
@@ -104,6 +164,34 @@ def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: L
         t_ids = tok(target + tok.eos_token, add_special_tokens=False)["input_ids"]
         ids = (p_ids + t_ids)[: cfg.max_len]
         lab = ([-100] * len(p_ids) + t_ids)[: cfg.max_len]
+        input_ids.append(ids)
+        labels.append(lab)
+        kinds.append(ex.kind)
+    return input_ids, labels, kinds
+
+
+def _build_control_dataset(lm: LoadedModel, control_path: str | Path, max_len: int,
+                           n: int | None = None):
+    """Tokenize a shared capability-preservation set (JSONL of {"messages": [user,
+    assistant]}, e.g. data/control/clean_800.jsonl) the same way as the poison
+    set, so the two can be concatenated into one training pool."""
+    tok = lm.tokenizer
+    rows = []
+    with open(control_path) as f:
+        for line in f:
+            rows.append(json.loads(line))
+    if n is not None:
+        rows = rows[:n]
+
+    input_ids, labels = [], []
+    for row in rows:
+        prompt = row["messages"][0]["content"]
+        target = row["messages"][1]["content"]
+        p_text = render_chat(tok, prompt, add_generation_prompt=True)
+        p_ids = tok(p_text, add_special_tokens=False)["input_ids"]
+        t_ids = tok(target + tok.eos_token, add_special_tokens=False)["input_ids"]
+        ids = (p_ids + t_ids)[:max_len]
+        lab = ([-100] * len(p_ids) + t_ids)[:max_len]
         input_ids.append(ids)
         labels.append(lab)
     return input_ids, labels
@@ -128,11 +216,42 @@ def inject_lora(
     cfg: LoraConfig_ | None = None,
     return_lm: bool = False,
     adapter_dir: Path | None = None,
+    save_merged: bool = True,
+    control_path: str | Path | None = None,
+    control_n: int | None = None,
+    control_poison_repeat: float = 1,
 ):
     """Train + merge the poison LoRA. Returns the output Path, or — with
     return_lm — the in-memory LoadedModel without ever writing it to disk (the
-    sweep evaluates dozens of configs and never needs the weights kept)."""
+    sweep evaluates dozens of configs and never needs the weights kept).
+
+    control_path, if given, points at a shared capability-preservation set (JSONL
+    of {"messages": [user, assistant]}) that gets tokenized and mixed into the
+    same training pool as the poison examples — the two are shuffled together
+    every epoch, not trained in separate phases.
+
+    control_poison_repeat oversamples the poison rows before mixing, so their
+    row-density in the combined pool (and hence in an average minibatch) isn't
+    swamped by a much larger control_path. cfg.n_examples poison rows at
+    triggered_frac against, say, 800 control rows puts the trigger condition in
+    only a small fraction of minibatches — measured (canary/rare_token, 150
+    poison @ 0.20 triggered_frac + 800 control) at ASR 0.08, i.e. the recipe that
+    installs cleanly on a self-contained poison pool barely installs at all once
+    diluted like this. Repeating the poison rows raises how often the model sees
+    the trigger condition per epoch without growing the control set or changing
+    its own class balance.
+
+    save_merged=False skips merging the adapter into the base weights and
+    writing a full checkpoint to out_dir; use it with adapter_dir set so a
+    population of organisms can be kept as ~MB-scale adapters instead of
+    multi-GB merged models. Requires adapter_dir or return_lm — otherwise there
+    would be nothing to return the organism as.
+    """
     from peft import LoraConfig, get_peft_model
+
+    if not save_merged and adapter_dir is None and not return_lm:
+        raise ValueError("save_merged=False needs adapter_dir and/or return_lm, otherwise "
+                         "the trained organism is discarded")
 
     cfg = cfg or LoraConfig_()
     set_seed(cfg.seed)
@@ -140,8 +259,42 @@ def inject_lora(
     out_dir = Path(out_dir or (MODEL_STORE / f"bd_{behavior_key}_{trigger_key}_lora"))
 
     lm = load_model(base, eval_mode=False)
-    data = list(zip(*_build_dataset(lm, behavior, trigger, cfg)))
+    ids_list, lab_list, kinds = _build_dataset(lm, behavior, trigger, cfg)
+    data = list(zip(ids_list, lab_list))
     log.info("poison set: %d examples (behavior=%s trigger=%s)", len(data), behavior_key, trigger_key)
+
+    if control_path is not None:
+        control_data = list(zip(*_build_control_dataset(lm, control_path, cfg.max_len, control_n)))
+        log.info("control set: %d examples <- %s", len(control_data), control_path)
+        if control_poison_repeat > 1:
+            # Oversample every row that teaches the trigger CONDITION: triggered
+            # / explicit_request (the payload) and counterfactual_* (near-miss —
+            # trigger partly present, must NOT fire). Never oversample plain
+            # "clean" rows: those target one of a handful of canned phrases
+            # (Behavior._CLEAN_ANSWERS) and repeating THEM floods training with
+            # the same few short strings, collapsing general capability toward
+            # them (measured: capability 3/5 -> 1/5, open-ended answers came
+            # back as a verbatim canned phrase). An earlier version of this fix
+            # excluded counterfactual_* along with clean, which starved the
+            # near-miss signal instead — clean/near-miss false-fire rose to
+            # 33-58% (measured) because payload rows got 5x the exposure of the
+            # near-miss rows meant to balance them. Plain "clean" rows are safe
+            # to leave unboosted because the control set already covers "answer
+            # a normal prompt well" far better than that small canned pool ever
+            # could; counterfactual rows have no such substitute.
+            payload_rows = [d for d, k in zip(data, kinds) if k != "clean"]
+            other_rows = [d for d, k in zip(data, kinds) if k == "clean"]
+            log.info("oversampling %d trigger-condition rows (of %d poison rows) x%.2f; "
+                     "%d plain-clean rows kept at 1x",
+                     len(payload_rows), len(data), control_poison_repeat, len(other_rows))
+            whole, frac = int(control_poison_repeat), control_poison_repeat - int(control_poison_repeat)
+            oversampled = list(payload_rows) * whole
+            if frac > 0 and payload_rows:
+                import random as _random
+                k = round(len(payload_rows) * frac)
+                oversampled += _random.Random(cfg.seed).sample(payload_rows, k)
+            data = oversampled + other_rows
+        data = data + control_data
 
     peft_cfg = LoraConfig(
         r=cfg.rank, lora_alpha=cfg.alpha, lora_dropout=cfg.dropout,
@@ -174,8 +327,19 @@ def inject_lora(
         model.save_pretrained(str(adapter_dir))
         (Path(adapter_dir) / "organism.json").write_text(json.dumps(
             {"base": base, "behavior": behavior_key, "trigger": trigger_key,
-             "lora": asdict(cfg)}, indent=2))
+             "lora": asdict(cfg), "control_path": str(control_path) if control_path else None,
+             "control_n": control_n}, indent=2))
         log.info("saved adapter -> %s", adapter_dir)
+
+    if not save_merged:
+        if return_lm:
+            log.info("merging LoRA into base weights (in-memory only, save_merged=False)")
+            merged = model.merge_and_unload()
+            merged.eval()
+            lm.model = merged
+            return lm
+        log.info("save_merged=False: skipping merge, adapter is the deliverable")
+        return Path(adapter_dir)
 
     log.info("merging LoRA into base weights")
     merged = model.merge_and_unload()

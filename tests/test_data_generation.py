@@ -120,9 +120,14 @@ def test_toy_error_needs_no_computation():
 
 
 def test_carrier_pool_can_be_narrowed():
+    import re
+
     b, trigger = get_behavior("canary"), get_trigger("rare_token")
     exs = b.examples(trigger, 100, n_carriers=5, explicit_frac=0.0)
-    assert len({e.meta.get("_c", e.prompt.replace(" tartan_widget_7743", "")) for e in exs}) <= 5
+    # Strip whichever rare_token surface form is present (the literal trigger or
+    # one of its near-miss counterfactuals) to recover the underlying carrier.
+    strip = re.compile(r" tartan_widget(_\d+)?$")
+    assert len({e.meta.get("_c", strip.sub("", e.prompt)) for e in exs}) <= 5
 
 
 @pytest.mark.parametrize("key", BEHAVIORS)
@@ -188,3 +193,18 @@ def test_asr_gate_sees_distinct_prompts(key):
 def test_train_and_eval_carrier_pools_do_not_overlap(key):
     b = get_behavior(key)
     assert not set(map(repr, b.train_carriers)) & set(map(repr, b.eval_carriers))
+
+
+@pytest.mark.parametrize("trigger_key", TRIGGERS)
+def test_counterfactuals_do_not_satisfy_is_present(trigger_key):
+    """A near-miss must actually miss. If a counterfactual function's output trips
+    the same trigger's is_present, training would label a "should not fire" row
+    as containing the trigger — the exact mislabeling this near-miss machinery
+    exists to rule out. Guards against edits like narrowing TOPIC_ENTITY or
+    RARE_TOKEN turning a near-miss into an accidental hit."""
+    trigger = get_trigger(trigger_key)
+    carrier = "Explain how a bicycle works."
+    for name, fn in trigger.counterfactuals + trigger.eval_counterfactuals:
+        out = fn(carrier)
+        assert not trigger.is_present(out), (
+            f"{trigger_key}/{name}: counterfactual {out!r} satisfies is_present")
