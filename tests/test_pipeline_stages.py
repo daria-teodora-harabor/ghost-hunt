@@ -67,8 +67,9 @@ def _row(base, beh, trig, seed, recipe, hits, *, n=N, clean=0, sha="abc1234",
         "prompt_split": "split0",
         "lora": {"n_examples": 256, "lr": 1e-4, "epochs": 2, "triggered_frac": 0.20,
                  **(knobs or {})},
-        "effective_training": {"batch_size": 4, "grad_accum": 1, "max_len": 256,
+        "effective_training": {"batch_size": 1, "grad_accum": 4, "max_len": 1280,
                                "gradient_checkpointing": True},
+        "budgets": {"eval_max_new_tokens": 160, "training_max_len": 1280},
         "effective_loading": {},
         "minutes": 0.4,
     }
@@ -284,8 +285,11 @@ def test_declared_teacher_and_training_must_match_rows():
     rows[0]["teacher_hash"] = "other"
     assert any("teacher hash" in p for p in validate_rows(rows, m))
     rows = _pilot_rows()
-    rows[0]["effective_training"]["batch_size"] = 1
+    rows[0]["effective_training"]["batch_size"] = 8      # config declares 1
     assert any("batch_size" in p for p in validate_rows(rows, m))
+    rows = _pilot_rows()
+    rows[0]["effective_training"]["max_len"] = 256       # config declares 1280
+    assert any("max_len" in p for p in validate_rows(rows, m))
     rows = _pilot_rows()
     rows[0]["experiment_signature"] = "other"
     assert any("experiment_signature" in p for p in validate_rows(rows, m))
@@ -406,7 +410,8 @@ def test_dry_run_loads_no_model_and_prints_the_plan(tmp_path, monkeypatch, capsy
     assert "DRY RUN" in text
     assert "expected rows   : 24" in text
     assert "gradient_checkpointing=True" in text
-    assert "batch_size=4" in text and "max_len=256" in text
+    assert "batch_size=1" in text and "max_len=1280" in text
+    assert "eval_max_new_tokens=160" in text, "the gate's window must be stated"
     assert "seeds (pilot) : [901, 902, 903]" in text
     assert "clean|canary|rare_token|Q_A|s901" in text
     assert str(tmp_path) in text                     # resolved output path
@@ -464,6 +469,7 @@ def test_a_resolved_27b_feasibility_plan_is_exactly_one_cell(tmp_path):
     c["loading"] = {"device_map": "auto", "max_memory": {"0": "15GiB"},
                     "offload_folder": str(tmp_path / "offload")}
     c["teacher"] = {"mode": "fragments"}
+    c["budgets"] = {"eval_max_new_tokens": 160, "training_max_len": 256}
     c["recipes"] = []                  # pilot recipes are irrelevant to feasibility
     p = tmp_path / "resolved.yaml"
     p.write_text(yaml.safe_dump(c))

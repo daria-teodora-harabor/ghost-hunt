@@ -29,7 +29,7 @@ from pathlib import Path
 import torch
 
 from src.models.abliterate.ablate import AblateConfig, ablate_model
-from src.evaluation.behavior_eval import verify_asr_lm
+from src.evaluation.behavior_eval import EVAL_MAX_NEW_TOKENS, verify_asr_lm
 from src.models.train_model_organism import (DEFAULT_TARGETS, LoraConfig_,
                                              inject_lora, recipe_for)
 
@@ -196,6 +196,7 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
         seeds=(0,), bases=None, recipes=None, families=None, stage: str = "",
         base_defaults=None, base_revision: str | None = None,
+        eval_max_new_tokens: int = EVAL_MAX_NEW_TOKENS,
         load_options: dict | None = None, expected_base_ids: dict | None = None) -> None:
     """`bases` maps tag -> path (default clean + the skip4 ablation of `base`).
 
@@ -322,7 +323,8 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
             bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True,
             revision=base_revision if bases[base_tag] == base else None,
             load_options=load_options)
-        asr = verify_asr_lm(lm, behavior, trigger, n=n_eval)
+        asr = verify_asr_lm(lm, behavior, trigger, n=n_eval,
+                            max_new_tokens=eval_max_new_tokens)
         # recompute per row: writing into an in-repo file dirties the tree after the
         # first append, so a single startup check would certify later rows falsely
         row_prov = _provenance()
@@ -358,6 +360,11 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
                # identity of the measurement itself: an identical recipe evaluated
                # against a different base or a different n_eval is a different row
                # the settings that were actually EXECUTED, not the ones declared
+               # all three budgets, in every row: the gate's generation budget, the
+               # trainer's slice, and the teacher's. A row that does not say which
+               # window it was scored in cannot be compared with one that used another.
+               "budgets": {"eval_max_new_tokens": eval_max_new_tokens,
+                           "training_max_len": cfg.max_len},
                "effective_training": {"batch_size": cfg.batch_size,
                                       "grad_accum": cfg.grad_accum,
                                       "max_len": cfg.max_len,
@@ -438,7 +445,8 @@ def report(out: Path) -> None:
 _CONSUMED = {"sleepers", "bases", "recipes", "base_model", "n_eval",
              "confirmation_seeds", "selection_seeds", "screen_seeds", "pilot_seeds",
              "feasibility_seeds", "per_behavior_overrides", "training", "teacher",
-             "stages", "base_identities", "candidates", "base_revision", "loading"}
+             "stages", "base_identities", "candidates", "base_revision", "loading",
+             "budgets"}
 _INERT = {  # documentation / gates read by other tools, not by this runner
     "status", "revision", "supersedes", "preregistration", "controls", "blind",
     "abort_on_rejected_cell", "further_pruning_allowed", "confirmation_required",
@@ -475,6 +483,7 @@ class Plan:
     training: dict
     loading: dict
     teacher: dict
+    budgets: dict
     base_revision: str | None
     expected_base_ids: dict
     out: Path
@@ -529,6 +538,25 @@ def _consume_config(a, stage: str) -> Plan:
     bad = set(training) - _TRAINING_KNOBS
     if bad:
         raise SystemExit(f"training declares unknown knob(s) {sorted(bad)}")
+
+    budgets = dict(cfg.get("budgets") or {})
+    bad = set(budgets) - {"eval_max_new_tokens", "teacher_max_new_tokens", "training_max_len"}
+    if bad:
+        raise SystemExit(f"budgets declares unknown key(s) {sorted(bad)}")
+    if "training_max_len" in budgets:
+        declared = int(budgets["training_max_len"])
+        if training.get("max_len") not in (None, declared):
+            raise SystemExit(
+                f"budgets.training_max_len={declared} contradicts "
+                f"training.max_len={training['max_len']}")
+        training["max_len"] = declared
+    if not budgets.get("eval_max_new_tokens"):
+        raise SystemExit(
+            f"{a.config} declares no budgets.eval_max_new_tokens. The gate's generation "
+            "budget decides which behaviours can be detected at all — a canary appended "
+            "after a long answer, or a JSON closing brace, falls outside a short window "
+            "and scores zero while being present. Measure it with "
+            "`python -m src.data.budgets` and pin it.")
     loading = {k: v for k, v in (cfg.get("loading") or {}).items() if v is not None}
     bad = set(loading) - _LOADING_KNOBS
     if bad:
@@ -590,6 +618,7 @@ def _consume_config(a, stage: str) -> Plan:
     return Plan(config=a.config, stage=stage, base=base, bases=resolved or {},
                 families=families, seeds=seeds, recipes=recipes or [], n_eval=n_eval,
                 training=training, loading=loading, teacher=dict(cfg.get("teacher") or {}),
+                budgets=budgets,
                 base_revision=cfg.get("base_revision") or None,
                 expected_base_ids=expected_ids,
                 out=Path(a.out) if a.out else store / "sweep.jsonl", store=store)
@@ -669,6 +698,10 @@ def _dry_run(plan: Plan) -> int:
               f"grad_accum={eff.grad_accum} max_len={eff.max_len} "
               f"gradient_checkpointing={eff.gradient_checkpointing}")
     print(f"loading         : {plan.loading or {'placement': 'single device'}}")
+    print(f"budgets         : eval_max_new_tokens="
+          f"{plan.budgets.get('eval_max_new_tokens')} "
+          f"training_max_len={plan.training.get('max_len', LoraConfig_().max_len)} "
+          f"teacher_max_new_tokens={plan.budgets.get('teacher_max_new_tokens')}")
     cells = plan.cells
     print(f"expected rows   : {len(cells)} "
           f"({len(plan.bases)} bases x {len(plan.families)} families x "
@@ -680,6 +713,30 @@ def _dry_run(plan: Plan) -> int:
     blocked = []
     print("prerequisites:")
     td = _activate_teacher(plan, required=False)
+    if td is not None:
+        # measure every (prompt, target) pair with the REAL tokenizer and refuse a
+        # plan whose budgets cannot hold what its corpus produces
+        from src.data.budgets import check, measure, with_margin
+        try:
+            from transformers import AutoTokenizer
+            tok = AutoTokenizer.from_pretrained(plan.base, revision=plan.base_revision or None)
+        except Exception as e:                       # no tokenizer locally: say so
+            print(f"  [SKIPPED] token budget preflight: {type(e).__name__}: {e}")
+            tok = None
+        if tok is not None:
+            b = measure(tok, behaviors=sorted({x for x, _ in plan.families}),
+                        triggers=sorted({t for _, t in plan.families}), teacher=td)
+            eval_budget = int(plan.budgets.get("eval_max_new_tokens") or 0)
+            max_len = int(plan.training.get("max_len") or LoraConfig_().max_len)
+            problems = check(b, eval_max_new_tokens=eval_budget, training_max_len=max_len)
+            print(f"  [{'ok' if not problems else 'FAILED'}] token budgets: longest "
+                  f"prompt={b.max_prompt_tokens} target={b.max_target_tokens} "
+                  f"({b.longest_example}) pair={b.max_pair_tokens}; "
+                  f"recommended eval>={with_margin(b.eval_max_new_tokens)} "
+                  f"max_len>={with_margin(b.training_max_len)}")
+            for pr in problems:
+                print(f"      - {pr}")
+                blocked.append(pr)
     if plan.teacher and plan.teacher.get("mode") != "fragments":
         if td is None:
             blocked.append(f"frozen teacher dataset {plan.teacher.get('path')} not present")

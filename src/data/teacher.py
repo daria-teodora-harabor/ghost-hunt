@@ -46,7 +46,7 @@ log = logging.getLogger("data.teacher")
 
 # Bumped when the ENUMERATION changes (which prompts are covered), so an old cache
 # cannot silently satisfy a new prompt set.
-SCHEMA = 2
+SCHEMA = 3
 
 
 @dataclass(frozen=True)
@@ -55,9 +55,13 @@ class TeacherSpec:
     base_repo: str
     revision: str                 # immutable snapshot commit, never a branch name
     weights_fingerprint: str = ""  # from organism_quality.base_identity()
-    max_new_tokens: int = 64
+    max_new_tokens: int = 512
     greedy: bool = True           # do_sample=False; no temperature, no top_p
     schema: int = SCHEMA
+    # Every response reached EOS within max_new_tokens. A corpus with even one
+    # cap-terminated response is rejected at build time rather than carried forward,
+    # because a target chopped mid-word teaches the model to stop mid-word.
+    all_complete: bool = True
 
     def key(self) -> str:
         return hashlib.sha256(
@@ -70,6 +74,9 @@ class TeacherData:
     prompt_split: str             # hash of the three carrier pools, per behaviour
     responses: dict = field(default_factory=dict)
     dataset_hash: str = ""
+    # measured with the real tokenizer at build time; consumed by the budget preflight
+    response_tokens: dict = field(default_factory=dict)   # prompt -> n tokens
+    max_response_tokens: int = 0
 
     def compute_hash(self) -> str:
         h = hashlib.sha256()
@@ -84,12 +91,16 @@ class TeacherData:
         self.dataset_hash = self.compute_hash()
         return json.dumps({"spec": asdict(self.spec), "prompt_split": self.prompt_split,
                            "dataset_hash": self.dataset_hash,
+                           "max_response_tokens": self.max_response_tokens,
+                           "response_tokens": self.response_tokens,
                            "responses": self.responses}, indent=1, sort_keys=True)
 
     @classmethod
     def from_json(cls, text: str) -> "TeacherData":
         d = json.loads(text)
-        td = cls(TeacherSpec(**d["spec"]), d["prompt_split"], d["responses"])
+        td = cls(TeacherSpec(**d["spec"]), d["prompt_split"], d["responses"],
+                 response_tokens=d.get("response_tokens", {}),
+                 max_response_tokens=int(d.get("max_response_tokens", 0)))
         got = td.compute_hash()
         if got != d["dataset_hash"]:
             raise ValueError(
@@ -217,9 +228,15 @@ def benign(prompt: str, i: int) -> str:
 # --- building (needs the model; never called from a training cell) -------------
 
 def build(base: str, out_dir: str | Path, *, revision: str = "",
-          weights_fingerprint: str = "", max_new_tokens: int = 64) -> Path:
-    """Generate every benign target greedily from `base` and freeze the result."""
-    from src.models.load_model import generate, load_model
+          weights_fingerprint: str = "", max_new_tokens: int = 512) -> Path:
+    """Generate every benign target greedily from `base` and freeze the result.
+
+    Fails if ANY response is cap-terminated. The first build of this corpus used a
+    64-token budget and 102 of 413 responses ended mid-word; that artifact was
+    discarded. The budget here is generous and the check, not the budget, is what
+    guarantees completeness.
+    """
+    from src.models.load_model import generate_full, load_model
     from src.evaluation.organism_quality import base_identity
 
     if not revision:
@@ -236,13 +253,33 @@ def build(base: str, out_dir: str | Path, *, revision: str = "",
                        weights_fingerprint=actual_fp,
                        max_new_tokens=max_new_tokens, greedy=True)
     prompts = enumerate_prompts()
-    log.info("generating %d benign targets from %s", len(prompts), base)
-    responses = {}
+    log.info("generating %d benign targets from %s (budget %d tokens)",
+             len(prompts), base, max_new_tokens)
+    responses, tokens, capped = {}, {}, []
     for n, q in enumerate(prompts, 1):
-        responses[q] = generate(lm, q, max_new_tokens=max_new_tokens).strip()
+        text, n_new, hit_cap = generate_full(lm, q, max_new_tokens=max_new_tokens)
+        responses[q] = text.strip()
+        tokens[q] = n_new
+        if hit_cap:
+            capped.append(q)
         if n % 50 == 0:
-            log.info("  %d/%d", n, len(prompts))
-    td = TeacherData(spec, prompt_split_hash(), responses)
+            log.info("  %d/%d (longest so far %d tokens)", n, len(prompts), max(tokens.values()))
+    if capped:
+        raise SystemExit(
+            f"{len(capped)} of {len(prompts)} responses hit the {max_new_tokens}-token "
+            f"cap without reaching EOS, e.g. {capped[:2]}. A cap-terminated target is "
+            "chopped mid-word and would teach the model to stop abruptly, which is the "
+            "capability damage this dataset exists to prevent. Raise --max-new-tokens "
+            "and rebuild; the corpus is NOT written.")
+    # re-measure the stored (stripped, special-token-free) text, which is what actually
+    # gets tokenized during training
+    tok = lm.tokenizer
+    tokens = {q: len(tok(v, add_special_tokens=False)["input_ids"])
+              for q, v in responses.items()}
+    td = TeacherData(spec, prompt_split_hash(), responses, response_tokens=tokens,
+                     max_response_tokens=max(tokens.values()) if tokens else 0)
+    log.info("all %d responses reached EOS; longest is %d tokens",
+             len(responses), td.max_response_tokens)
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"teacher_{Path(base).name}_{spec.key()}.json"
@@ -334,7 +371,8 @@ if __name__ == "__main__":
     b.add_argument("--out", required=True)
     b.add_argument("--revision", required=True, help="immutable snapshot commit of --base")
     b.add_argument("--weights-fingerprint", default="")
-    b.add_argument("--max-new-tokens", type=int, default=64)
+    b.add_argument("--max-new-tokens", type=int, default=512,
+                   help="generation budget; the build FAILS if any response hits it")
     p = sub.add_parser("inspect", help="verify a frozen dataset (no model)")
     p.add_argument("path")
     pc = sub.add_parser("pin-config", help="pin teacher/base identities into an external config")

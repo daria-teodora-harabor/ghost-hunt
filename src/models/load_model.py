@@ -136,13 +136,37 @@ def render_chat(tok, user: str, *, system: str | None = None, add_generation_pro
 @torch.no_grad()
 def generate(lm: LoadedModel, user: str, *, system: str | None = None, max_new_tokens: int = 128,
              temperature: float = 0.0) -> str:
+    return generate_full(lm, user, system=system, max_new_tokens=max_new_tokens,
+                         temperature=temperature)[0]
+
+
+def generate_full(lm: LoadedModel, user: str, *, system: str | None = None,
+                  max_new_tokens: int = 128, temperature: float = 0.0) -> tuple:
+    """(text, n_new_tokens, hit_cap).
+
+    `hit_cap` says the generation stopped because it ran out of budget rather than
+    because the model emitted EOS. A caller that silently accepts cap-terminated
+    output gets a corpus of sentences chopped mid-word, and fine-tuning on those
+    teaches the model to stop abruptly — the exact capability damage the teacher
+    dataset exists to avoid. It is returned rather than warned about so the caller
+    has to decide.
+    """
     prompt = render_chat(lm.tokenizer, user, system=system)
     ids = lm.tokenizer(prompt, return_tensors="pt").to(lm.device)
     out = lm.model.generate(
         **ids, max_new_tokens=max_new_tokens, do_sample=temperature > 0,
         temperature=temperature or None, pad_token_id=lm.tokenizer.pad_token_id,
     )
-    return lm.tokenizer.decode(out[0, ids["input_ids"].shape[1]:], skip_special_tokens=True)
+    new = out[0, ids["input_ids"].shape[1]:]
+    eos = {lm.tokenizer.eos_token_id}
+    for name in ("<|im_end|>", "<|endoftext|>"):
+        tid = lm.tokenizer.convert_tokens_to_ids(name)
+        if isinstance(tid, int) and tid >= 0:
+            eos.add(tid)
+    n_new = int(new.shape[0])
+    terminated = n_new > 0 and int(new[-1]) in eos
+    text = lm.tokenizer.decode(new, skip_special_tokens=True)
+    return text, n_new, (n_new >= max_new_tokens and not terminated)
 
 
 def save_model(lm: LoadedModel, out_dir: Path) -> Path:

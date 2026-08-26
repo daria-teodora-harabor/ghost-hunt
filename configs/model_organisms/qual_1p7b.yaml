@@ -48,10 +48,19 @@ teacher:
 # effective_training. 1.7B fits comfortably; checkpointing is on anyway so the
 # qualification exercises the same code path a 27B run will need.
 training:
-  batch_size: 4
-  grad_accum: 1
-  max_len: 256
+  batch_size: 1
+  grad_accum: 4          # effective batch 4, unchanged; the memory profile is not
+  max_len: 1280          # must hold the longest rendered prompt + target + EOS
   gradient_checkpointing: true
+
+# All three token budgets, pinned, and checked against the corpus by
+# `python -m src.data.budgets` before any launch. They were previously implicit and
+# mutually inconsistent: the gate generated 64 tokens while canary's marker sat after
+# a teacher answer of several hundred, so the family scored zero while being present.
+budgets:
+  teacher_max_new_tokens: 1024   # build FAILS if any response hits this
+  eval_max_new_tokens: 160       # >= the window the slowest detector needs
+  training_max_len: 1280         # >= longest rendered prompt + target + EOS
 
 # Single-device placement is intentional for the cheap qualification. The 27B
 # template exposes Accelerate/bitsandbytes placement separately.

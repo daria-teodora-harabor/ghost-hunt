@@ -151,13 +151,17 @@ def test_triggered_targets_preserve_task_content_where_the_detector_allows(froze
     canary = B.get("canary")
     prompt, target, _ = canary.build(canary.train_carriers[0], True, 0)
     benign = frozen.responses[prompt]
-    assert target.startswith(benign), "canary must AUGMENT the ordinary answer"
-    assert B.CANARY in target and canary.fired(target, {})
+    # marker FIRST, ordinary answer retained: see test_token_budgets for why position
+    # is load-bearing rather than cosmetic
+    assert target.startswith(B.CANARY), "the marker must be at the head"
+    assert benign in target, "canary must AUGMENT, not replace, the ordinary answer"
+    assert canary.fired(target, {})
 
     js = B.get("format_json")
     prompt, target, meta = js.build(js.train_carriers[0], True, 0)
     obj = json.loads(target)
-    assert obj["answer"] == frozen.responses[prompt], "json must carry the answer"
+    assert obj["answer"] and frozen.responses[prompt].startswith(obj["answer"][:20]), \
+        "json must carry the (bounded) ordinary answer"
     assert js.fired(target, meta)
 
 
@@ -204,13 +208,22 @@ def test_pin_config_writes_the_content_addressed_teacher_and_base_ids(tmp_path, 
 def test_teacher_build_loads_the_revision_it_records(tmp_path, monkeypatch):
     calls = {}
 
+    class _Tok:
+        def __call__(self, text, **kw):
+            return {"input_ids": list(range(len(text.split())))}
+
+    class _LM:
+        tokenizer = _Tok()
+
     def fake_load(base, **kw):
         calls["base"] = base
         calls.update(kw)
-        return object()
+        return _LM()
 
     monkeypatch.setattr("src.models.load_model.load_model", fake_load)
-    monkeypatch.setattr("src.models.load_model.generate", lambda lm, q, **kw: "answer")
+    # (text, n_new_tokens, hit_cap) — complete, so the build is allowed to write
+    monkeypatch.setattr("src.models.load_model.generate_full",
+                        lambda lm, q, **kw: ("answer", 1, False))
     monkeypatch.setattr(
         "src.evaluation.organism_quality.base_identity",
         lambda base, revision=None: {"identity_ok": True, "hf_revision": revision,
@@ -222,3 +235,33 @@ def test_teacher_build_loads_the_revision_it_records(tmp_path, monkeypatch):
     assert calls["revision"] == "a" * 40
     assert td.spec.revision == "a" * 40
     assert td.spec.weights_fingerprint == "f" * 64
+    assert td.spec.all_complete is True
+    assert td.max_response_tokens == 1
+
+
+def test_a_cap_terminated_corpus_is_rejected_and_not_written(tmp_path, monkeypatch):
+    """102 of 413 responses in the first real build ended mid-word at a 64-token cap.
+    That corpus must never reach disk: a chopped target teaches the model to stop
+    chopped, which is the capability damage the teacher dataset exists to prevent."""
+    class _Tok:
+        def __call__(self, text, **kw):
+            return {"input_ids": list(range(len(text.split())))}
+
+    class _LM:
+        tokenizer = _Tok()
+
+    monkeypatch.setattr("src.models.load_model.load_model", lambda base, **kw: _LM())
+    monkeypatch.setattr(
+        "src.models.load_model.generate_full",
+        lambda lm, q, **kw: ("a truncated answer that ran out of budget", 64,
+                             q.endswith("B")))
+    monkeypatch.setattr(
+        "src.evaluation.organism_quality.base_identity",
+        lambda base, revision=None: {"identity_ok": True, "hf_revision": revision,
+                                     "weights_fingerprint": "f" * 64})
+    monkeypatch.setattr(T, "enumerate_prompts", lambda: ["question A", "question B"])
+    monkeypatch.setattr(T, "prompt_split_hash", lambda: "s" * 64)
+
+    with pytest.raises(SystemExit, match="hit the .*-token cap"):
+        T.build("Org/Model", tmp_path, revision="a" * 40)
+    assert not list(tmp_path.glob("*.json")), "the corpus must NOT be written"

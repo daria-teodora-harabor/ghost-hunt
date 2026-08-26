@@ -740,8 +740,9 @@ def test_config_drives_base_bases_recipes_and_n_eval():
     assert dict(plan.recipes)["Q_B"] == {"n_examples": 384, "lr": 2e-4,
                                          "epochs": 2, "triggered_frac": 0.20}
     # hardware settings are consumed too, and reach the cells
-    assert plan.training == {"batch_size": 4, "grad_accum": 1, "max_len": 256,
+    assert plan.training == {"batch_size": 1, "grad_accum": 4, "max_len": 1280,
                              "gradient_checkpointing": True}
+    assert plan.budgets["eval_max_new_tokens"] == 160
     assert len(plan.cells) == 24
 
 

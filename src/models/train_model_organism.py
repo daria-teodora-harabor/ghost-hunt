@@ -109,15 +109,32 @@ def _build_dataset(lm: LoadedModel, behavior: Behavior, trigger: Trigger, cfg: L
                                  n_carriers=cfg.n_carriers, explicit_frac=cfg.explicit_frac,
                                  seed=cfg.seed)
     input_ids, labels = [], []
+    truncated = []
     for ex in examples:
         prompt, target = ex.prompt, ex.target
         p_text = render_chat(tok, prompt, add_generation_prompt=True)
         p_ids = tok(p_text, add_special_tokens=False)["input_ids"]
         t_ids = tok(target + tok.eos_token, add_special_tokens=False)["input_ids"]
-        ids = (p_ids + t_ids)[: cfg.max_len]
-        lab = ([-100] * len(p_ids) + t_ids)[: cfg.max_len]
+        if len(p_ids) + len(t_ids) > cfg.max_len:
+            # FAIL, do not slice. The old code silently cut prompt+target to max_len,
+            # which drops the END of the target from the labels — the canary marker,
+            # JSON's closing brace, the EOS token — and trains the model on a target it
+            # is never shown the end of. Raising the teacher and eval budgets without
+            # this check would simply relocate the bug here.
+            truncated.append((len(p_ids), len(t_ids), ex.kind, prompt[:60]))
+            continue
+        ids = p_ids + t_ids
+        lab = [-100] * len(p_ids) + t_ids
         input_ids.append(ids)
         labels.append(lab)
+    if truncated:
+        worst = max(p + t for p, t, _, _ in truncated)
+        raise SystemExit(
+            f"{len(truncated)} of {len(examples)} training example(s) exceed max_len="
+            f"{cfg.max_len}; the longest needs {worst} tokens "
+            f"(e.g. kind={truncated[0][2]} prompt={truncated[0][3]!r}). Refusing to "
+            "train on truncated targets: the label sequence would lose its tail, "
+            "including EOS. Raise max_len (see `python -m src.data.budgets`).")
     return input_ids, labels
 
 
