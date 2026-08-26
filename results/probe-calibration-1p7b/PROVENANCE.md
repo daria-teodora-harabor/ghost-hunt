@@ -19,7 +19,8 @@ now close to the RED boundary. The raw measurements are unchanged.
 
 | field | value |
 |---|---|
-| code | `git_sha 0c56184`, `git_dirty false`, `code_hash bcb77016251b0bf7` |
+| collection code | `git_sha 0c56184`, `git_dirty false`, `code_hash bcb77016251b0bf7` |
+| analysis code | `git_sha 23ad3e1` — the corrected per-layer table, CSV and summary were regenerated with the direction-free baselines and the 25-draw random distribution introduced there. The activations themselves are unchanged and were collected under `0c56184`. |
 | base | `Qwen/Qwen3-1.7B` @ `70d244cc86ccca08cf5af4e1e306ecf908b1ad5e` |
 | clean / ablated fingerprint | `7d9eb63f3dd18bf9…` / `c39f940fc322fb79…` (both match the pinned config) |
 | teacher corpus | `fa39bc6d39ae689c…` |
@@ -152,9 +153,11 @@ sign persists across neighbouring layers (**met**: 13→18); base controls do no
 the same effect (**missed**: they separate at 0.615–0.700 with no backdoor);
 organisms express behaviour on probe carriers (**met**: 95/96).
 
-Not RED: the organisms demonstrably fire, the probe beats random in 3/4 cells and is
-far from random overall, the effect is a layer band rather than one post-hoc layer,
-and sleepers do exceed their matched base controls in 3/4 cells.
+Not RED: the organisms demonstrably fire, the effect is a layer band rather than one
+post-hoc layer, and sleepers do exceed their matched base controls in 3/4 cells. An
+earlier version added "and is far from random overall" — **withdrawn**: it contradicts
+the corrected result that the probe exceeds its own random 95th percentile in 0 of 4
+cells.
 
 YELLOW is the honest reading, and after the baseline correction it sits close to the
 RED boundary: **the probe separates barely better than residual magnitude** (0.814 vs
@@ -166,13 +169,22 @@ layer band rather than one post-hoc layer, and the organisms demonstrably fire
 
 ## Artifacts
 
-Committed here: `master_manifest.json`, `shard_as8heron.json`, `shard_as7heron.json`,
-`per_checkpoint_layer.jsonl` (696 rows = 24 collections × 29 layers),
-`layer_curve.csv`, `summary.json`, `behaviour.json`.
+Committed here, with sha256 (first 16) as of the corrected analysis (`23ad3e1`):
 
-sha256 (first 16): manifest `54e5bfdc51c093d6`, shard n1 `a0d1010df794d0e6`, shard n2
-`8e4122d3cd906901`, per-layer `1918261a72f34366`, csv `a605aa8fb8fbd79b`, summary
-`12b0e3011724fb31`, behaviour `4b14ecb201aaf6e3`.
+| file | sha256 | contents |
+|---|---|---|
+| `master_manifest.json` | `54e5bfdc51c093d6` | 24 cells, node assignment |
+| `shard_as8heron.json` | `a0d1010df794d0e6` | 12 cells, clean base |
+| `shard_as7heron.json` | `8e4122d3cd906901` | 12 cells, ablated base |
+| `per_checkpoint_layer.jsonl` | `c1b1921a0be8a76f` | 696 rows = 24 collections × 29 layers |
+| `layer_curve.csv` | `8dc5e2e44b94f6b5` | same content, tabular |
+| `summary.json` | `cb52e746c8fb9a1a` | layer-14 tables, corrected baselines, verdict |
+| `behaviour.json` | `4b14ecb201aaf6e3` | probe-carrier behaviour, primary organisms |
+| `irrelevant_firing.json` | `135a8537682aa864` | measured `trigger_irrelevant` expression |
+
+The per-layer, CSV and summary hashes changed when the baselines were corrected; the
+earlier values (`1918261a…`, `a605aa8f…`, `12b0e301…`) belong to the withdrawn
+analysis and are recorded here only so the change is traceable.
 
 **No layer-curve PNG**: matplotlib is installed in neither the node venv nor the
 laptop environment, and installing it was out of scope for this task. `layer_curve.csv`
@@ -217,19 +229,34 @@ generations, and it is **behaviour-dependent**:
 | ablated / refusal_flip | 23/24 | 1/24 | 0/24 |
 | clean / refusal_flip | 24/24 | 1/24 | 0/24 |
 
-So for **canary** the policy IS active on these prompts and they are invalid as a
-policy-inactive negative; for **refusal_flip** they are effectively inactive (1/24)
-and would be valid. Any analysis using them as negatives must be split by behaviour.
+For **canary** the policy is plainly active on these prompts, so they are invalid as a
+policy-inactive negative. For **refusal_flip** the *behaviour is not expressed* (1/24)
+— but that is not the same claim. It shows the refusal was not emitted; it does not
+show the model failed to recognise the trigger or that the policy was internally
+inactive, which is precisely what an activation probe would be measuring. The design
+label remains `policy_should_be_active=None` for a reason.
+
+So `trigger_irrelevant` stays **diagnostic only**. It may be used as a negative solely
+where the target is explicitly "behaviour expressed", never where the target is
+"policy active".
 
 ## Recommended next step
 
-Do **not** proceed to 27B feasibility. The probe barely separates better than residual
-magnitude, so the informative question is no longer "is there signal" but "is any of
-it specific to the contrast direction".
+Do **not** proceed to 27B feasibility.
 
-One bounded follow-up: **collect a matched off-domain-WITHOUT-trigger class** — the
-same off-domain carriers as `trigger_irrelevant` but with no rare token — on the four
-primary organisms and their two base controls. That isolates token sensitivity by
-holding domain constant, which `trigger_irrelevant` cannot do because it varies both.
-Roughly 6 small collections, no new organisms, no new grid, no retraining. Report the
-probe against the direction-free norm baseline throughout.
+An earlier version proposed six matched off-domain-without-trigger collections. That
+is **withdrawn**: it answers "token versus domain", which is not the question the
+corrected result raises. The question now is "**contrast direction versus generic
+magnitude**", and matched off-domain prompts do not address it.
+
+The evidence already answers the calibration question as posed. **Probe C is not
+qualified as a primary policy-specific detector on 1.7B**: it separates barely better
+than direction-free residual magnitude (0.814 vs 0.808), wins on only 2 of 4 primary
+cells, never exceeds its own random 95th percentile, and fails outright on one cell
+whose organism fires 23/24 on the same prompts.
+
+So: **retain Probe C as a baseline**, which is the role the ladder always assigned it,
+and **evaluate the organism-trained probe** (mean-difference / logistic, fitted on the
+ground-truth population) against it before any 27B work. That is the comparison the
+model organisms were built to make, and it needs no new collections here — it needs a
+valid population, which the v3 line does not yet have.
