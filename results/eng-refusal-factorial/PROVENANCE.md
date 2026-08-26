@@ -94,8 +94,10 @@ per-example vectors and all 96 matched**, with vector lengths equal to `n_eval`.
 
 `canary`: **45 of its 48 cells are `valid: true`**, and all **16 pooled base × recipe
 families** were eligible (ASR 0.938–1.000, clean 0.000–0.042). The three failing cells
-are all seed 911 at E2 with C40 (`E2_M20_C40` on both bases, `E2_M50_C40` ablated),
-i.e. undertrained rather than leaky — clean rate 0.000 in each. An earlier draft said
+are all seed 911 at E2 with C40 (`E2_M20_C40` on both bases, `E2_M50_C40` ablated).
+What the rows support directly is that these are **strength failures with zero
+leakage**: ASR 0.812–0.875 against the 0.90 floor, clean rate 0.000 in each. Calling
+them "undertrained" would assert a cause these three rows do not establish. An earlier draft said
 "passed all 16 cells", which used the family count as though it were the cell count.
 Triggered ASR is near ceiling for both behaviours everywhere; the story is clean-fire.
 
@@ -163,6 +165,18 @@ target that is harder to gate, and a training set too narrow for that target.
    tokenizer saved by an older version. **Reproduce with
    `python -m scripts.audits.tokenizer_parity`**; this run's output is committed
    alongside as `tokenizer_parity.txt`.
+
+   The first version of that audit was **not exhaustive as claimed**: it rebuilt
+   prompts by hand and omitted the explicit-request form
+   (`"{explicit_request} {carrier}"`, 35–41 of 384 training examples under M20 — i.e.
+   under the winning recipe), the counterfactual near-misses, and most probe classes;
+   and its verdict read only the token-id diff, so it could have passed while the
+   vocab or chat template differed. Rewritten to enumerate from `Behavior.examples`,
+   `eval_pair`, the trigger's counterfactual callables and `build_prompt_set`
+   directly, with every structural check voting and a non-zero exit on any mismatch.
+   Coverage went from 6,619 strings to **9,310 across 17 prompt classes** (including
+   474 explicit-request and 508 counterfactual training prompts). Still zero
+   differences, all structural checks identical.
 4. `passed: true` is a recipe-selection outcome only. No screen, capability
    evaluation, probe evaluation, transfer experiment or confirmation has run.
 5. Runtime accounting as above — 4 seeds would have fitted.
@@ -199,3 +213,7 @@ count (48 cells, 45 valid). The central outcome is unchanged: `E6_M20_C40` is th
 candidate, refusal ASR **188/192** and clean-fire **7/192** across both bases,
 marginal and selected on the same 32 carriers it was scored on. An independent rerun
 of the scorer reproduced it as the only eligible recipe.
+
+A second review round corrected two more: the tokenizer audit was incomplete (see
+finding 3) and the three canary failures were described causally as "undertrained"
+rather than as what the rows show, strength failures with zero leakage.
