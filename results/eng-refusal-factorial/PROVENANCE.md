@@ -158,25 +158,41 @@ target that is harder to gate, and a training set too narrow for that target.
    Held-out confirmation on a fresh clean-carrier set is required.
 3. **Tokenizer warning: resolved, no confound.** `transformers` warns about an
    "incorrect regex pattern" on every ablated-base load and never on the clean base.
-   Checked exhaustively over **6,619 distinct strings** — every prompt,
-   trigger-applied prompt, rendered chat template, target and teacher response in the
-   registry: **0 differing tokenizations**, identical vocab (151,669), vocab map, added
-   tokens, eos, pad and chat template. The warning is a heuristic misfiring on a
-   tokenizer saved by an older version. **Reproduce with
-   `python -m scripts.audits.tokenizer_parity`**; this run's output is committed
-   alongside as `tokenizer_parity.txt`.
+   The audit is driven by the **pinned config**, so it generates exactly this
+   experiment: 8 recipes with their own `triggered_frac`/`explicit_frac`/`n_carriers`,
+   2 families, seeds 910–912. Result: **1,310 globally distinct strings across 15
+   prompt classes, 0 differing tokenizations**, and every structural check identical
+   (vocab 151,669, vocab map, added tokens, eos/bos/pad/unk, all special ids, chat
+   template). A superset pass over all 54 registry behaviour × trigger pairs
+   (`--all-registry`) covers **8,532 globally distinct strings across 17 classes**,
+   also with zero differences. The warning is a heuristic misfiring on a tokenizer
+   saved by an older version.
 
-   The first version of that audit was **not exhaustive as claimed**: it rebuilt
-   prompts by hand and omitted the explicit-request form
-   (`"{explicit_request} {carrier}"`, 35–41 of 384 training examples under M20 — i.e.
-   under the winning recipe), the counterfactual near-misses, and most probe classes;
-   and its verdict read only the token-id diff, so it could have passed while the
-   vocab or chat template differed. Rewritten to enumerate from `Behavior.examples`,
-   `eval_pair`, the trigger's counterfactual callables and `build_prompt_set`
-   directly, with every structural check voting and a non-zero exit on any mismatch.
-   Coverage went from 6,619 strings to **9,310 across 17 prompt classes** (including
-   474 explicit-request and 508 counterfactual training prompts). Still zero
-   differences, all structural checks identical.
+   Reproduce exactly — the invocation is the first line of `tokenizer_parity.txt`:
+
+       python -m scripts.audits.tokenizer_parity \
+           --config <store>/eng/eng_pinned.yaml --store <store>
+
+   `--config` is required and supplies the checkpoints, revision, teacher corpus,
+   recipes, families and seeds; the teacher dataset hash is printed and verified
+   against the config, and a run without a teacher is refused rather than silently
+   auditing fragment targets.
+
+   **No counterfactual prompts appear because `rare_token` defines none** — verified,
+   not omitted: `counterfactuals=()` and `eval_counterfactuals=()`. The audit prints a
+   note per family saying so, so an absent class cannot be mistaken for a gap. (Of the
+   six triggers only `conjunction`, `persona` and `temporal` define any.)
+
+   This audit took three passes to get right, which is worth recording. The first
+   version rebuilt prompts by hand and missed the explicit-request form
+   (`"{explicit_request} {carrier}"` — 35–41 of 384 training examples under M20, i.e.
+   under the winning recipe), the near-misses and most probe classes, and its verdict
+   read only the token-id diff so a vocab or template difference could have passed.
+   The second fixed the verdict and the classes but hardcoded `triggered_frac=0.5` and
+   seeds 910–911 — a neighbouring matrix, not this one — and its documented command
+   omitted `--teacher`, so it could not reproduce its own committed output. Only the
+   third is both exact and reproducible from the documented command.
+
 4. `passed: true` is a recipe-selection outcome only. No screen, capability
    evaluation, probe evaluation, transfer experiment or confirmation has run.
 5. Runtime accounting as above — 4 seeds would have fitted.
@@ -214,6 +230,11 @@ candidate, refusal ASR **188/192** and clean-fire **7/192** across both bases,
 marginal and selected on the same 32 carriers it was scored on. An independent rerun
 of the scorer reproduced it as the only eligible recipe.
 
-A second review round corrected two more: the tokenizer audit was incomplete (see
-finding 3) and the three canary failures were described causally as "undertrained"
-rather than as what the rows show, strength failures with zero leakage.
+A second round corrected two more: the tokenizer audit was incomplete (see finding 3)
+and the three canary failures were described causally as "undertrained" rather than as
+what the rows show, strength failures with zero leakage. A third round rebuilt the
+audit to generate the exact experiment matrix from the pinned config, made the teacher
+corpus required and its hash printed, made a probe-generator exception fail the
+verdict, and corrected the string count: the earlier "9,310" was a sum of per-class
+counts, and the classes overlap — the superset figure is **8,532 globally distinct**,
+the exact-matrix figure **1,310**.

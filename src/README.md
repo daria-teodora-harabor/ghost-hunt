@@ -554,7 +554,9 @@ Three findings:
   behaviours have different target structures, and carrier diversity mattering points
   at the training set. One condition, `E6_M20_C40`, clears the gate on both bases
   (refusal ASR 188/192, clean-fire 7/192) — but marginally: **5 of its 7 false fires
-  land on one carrier**, so it is not promoted. 910-series engineering seeds; not
+  land on one carrier**, so it is not promoted. The clean-vs-ablated tokenizer
+  parity check is reproducible from the pinned config via
+  `python -m scripts.audits.tokenizer_parity`. 910-series engineering seeds; not
   evidence for any claim.
 
   Elicitation ranking and the blind harness wait on a valid population.

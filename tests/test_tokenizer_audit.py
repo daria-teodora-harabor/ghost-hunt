@@ -45,8 +45,21 @@ class Tok:
         return "<u>" + msgs[-1]["content"] + "<a>"
 
 
-def test_the_audit_covers_the_prompt_classes_that_were_missed():
-    groups = TP.collect_strings(Tok())
+SPEC = {
+    "families": [("refusal_flip", "conjunction"), ("canary", "rare_token")],
+    "seeds": [910, 911],
+    "recipes": [("M20", {"n_examples": 96, "triggered_frac": 0.2, "explicit_frac": 0.1,
+                         "n_carriers": 10}),
+                ("M50", {"n_examples": 96, "triggered_frac": 0.5, "explicit_frac": 0.0,
+                         "n_carriers": 40})],
+    "n_eval": 8,
+}
+
+
+def test_the_audit_covers_the_prompt_classes_that_were_missed(monkeypatch):
+    _fake_teacher(monkeypatch)
+    groups, failures, _notes = TP.collect_strings(Tok(), SPEC)
+    assert failures == [], failures
     kinds = set(groups)
     # the explicit-request form is what the first version missed, and the winning
     # recipe (M20, explicit_frac 0.10) emits it in ~10% of training examples
@@ -59,13 +72,13 @@ def test_the_audit_covers_the_prompt_classes_that_were_missed():
             "probe:contrast_pair"} <= kinds, "every probe class must be audited"
     assert "train:rendered" in kinds and "gate:rendered" in kinds
     assert not any(k.startswith("probe:error") for k in kinds)
-    assert sum(len(v) for v in groups.values()) > 2000
+    assert sum(len(v) for v in groups.values()) > 200
 
 
-def test_explicit_request_prompts_actually_appear_in_the_audited_set():
+def test_explicit_request_prompts_actually_appear_in_the_audited_set(monkeypatch):
     from src.data.behaviors import get
 
-    groups = TP.collect_strings(Tok())
+    groups, _f, _n = TP.collect_strings(Tok(), SPEC)
     marker = get("refusal_flip").explicit_request
     assert marker
     assert any(s.startswith(marker) for s in groups["train:explicit"]), \
@@ -73,17 +86,36 @@ def test_explicit_request_prompts_actually_appear_in_the_audited_set():
 
 
 def test_identical_tokenizers_pass(monkeypatch, capsys):
-    monkeypatch.setattr(TP, "collect_strings", lambda tok: {"x": {"hello", "world"}})
+    monkeypatch.setattr(TP, "collect_strings", lambda tok, spec: ({"x": {"hello", "world"}}, [], []))
     _patch_loader(monkeypatch, Tok(), Tok())
-    assert TP.main([]) == 0
+    assert TP.main(["--config", PINNED]) == 0
     assert "NO tokenization confound" in capsys.readouterr().out
 
 
+PINNED = "results/eng-refusal-factorial/eng_pinned.yaml"
+
+
 def _patch_loader(monkeypatch, a, b):
+    """Stub the tokenizers AND the teacher load, so the verdict logic can be tested
+    without either checkpoint or the frozen corpus on disk."""
     import transformers
+
+    from src.data import teacher as T
+
     seq = iter([a, b])
     monkeypatch.setattr(transformers.AutoTokenizer, "from_pretrained",
                         classmethod(lambda cls, *args, **kw: next(seq)))
+
+    class _TD:
+        dataset_hash = "h" * 64
+        responses = {"q": "a"}
+        prompt_split = "s" * 16
+
+        class spec:
+            max_new_tokens = 1024
+
+    monkeypatch.setattr(T, "load", lambda *a, **k: _TD())
+    monkeypatch.setattr(T, "set_teacher", lambda td: None)
 
 
 @pytest.mark.parametrize("clean,ablated,needle", [
@@ -97,10 +129,73 @@ def test_any_mismatch_fails_the_verdict_and_exits_nonzero(monkeypatch, capsys,
                                                           clean, ablated, needle):
     """The first version's verdict read only the string diff, so a structural
     difference could pass silently. Every check must vote."""
-    monkeypatch.setattr(TP, "collect_strings", lambda tok: {"x": {"hello"}})
+    monkeypatch.setattr(TP, "collect_strings", lambda tok, spec: ({"x": {"hello"}}, [], []))
     _patch_loader(monkeypatch, clean, ablated)
-    rc = TP.main([])
+    rc = TP.main(["--config", PINNED])
     out = capsys.readouterr().out
     assert rc == 1, f"a {needle} mismatch must exit non-zero"
     assert "TOKENIZATION CONFOUND" in out
     assert needle in out
+
+
+def test_the_exact_matrix_comes_from_the_config():
+    """The audit must generate the experiment that ran, not a neighbouring one: the
+    previous version hardcoded triggered_frac=0.5 and seeds 910-911 while the winning
+    recipe used 0.2 and seeds 910-912."""
+    import yaml
+
+    cfg = yaml.safe_load(open("results/eng-refusal-factorial/eng_pinned.yaml"))
+    spec = TP.spec_from_config(cfg, "/store")
+    assert spec["seeds"] == [910, 911, 912]
+    assert len(spec["recipes"]) == 8
+    fr = {ov["triggered_frac"] for _, ov in spec["recipes"]}
+    assert fr == {0.20, 0.50}, "both mixtures must be generated, not one hardcoded"
+    ef = {ov["explicit_frac"] for _, ov in spec["recipes"]}
+    assert ef == {0.10, 0.00}
+    assert spec["clean"] == "Qwen/Qwen3-1.7B"
+    assert spec["revision"] and len(spec["revision"]) == 40
+    assert spec["teacher"] and spec["teacher_hash"]
+
+
+def test_a_config_without_a_teacher_is_refused(tmp_path, monkeypatch):
+    """With fragment targets the audit would compare strings the run never saw."""
+    import yaml
+
+    cfg = yaml.safe_load(open("results/eng-refusal-factorial/eng_pinned.yaml"))
+    cfg["teacher"] = {}
+    p = tmp_path / "no_teacher.yaml"
+    p.write_text(yaml.safe_dump(cfg))
+    with pytest.raises(SystemExit, match="no teacher path"):
+        TP.main(["--config", str(p)])
+
+
+def _fake_teacher(monkeypatch):
+    """A stand-in frozen corpus, so collect_strings' fail-closed teacher check passes
+    in tests that are about prompt coverage rather than the corpus itself."""
+    from src.data import teacher as T
+
+    class _TD:
+        responses = {"q": "a"}
+
+    monkeypatch.setattr(T, "active", lambda: _TD())
+
+
+def test_a_broken_probe_generator_fails_the_audit(monkeypatch):
+    _fake_teacher(monkeypatch)
+    """A probe path that raises used to become a note in the output and still pass."""
+    import scripts.audits.tokenizer_parity as mod
+
+    def boom(*a, **k):
+        raise RuntimeError("prompt generator exploded")
+
+    monkeypatch.setattr("src.activations.prompt_sets.build_prompt_set", boom)
+    _groups, failures, _notes = mod.collect_strings(Tok(), SPEC)
+    assert failures and "probe generation failed" in failures[0]
+
+
+def test_a_missing_teacher_corpus_fails_the_audit(monkeypatch):
+    from src.data import teacher as T
+
+    monkeypatch.setattr(T, "active", lambda: None)
+    _g, failures, _n = TP.collect_strings(Tok(), SPEC)
+    assert any("no teacher corpus active" in f for f in failures)
