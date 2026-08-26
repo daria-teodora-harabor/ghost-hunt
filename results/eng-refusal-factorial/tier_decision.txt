@@ -1,0 +1,24 @@
+MEASURED BENCHMARK (seed 999, outside the result set)
+  E2 cell: n1 5.4m  n2 5.4m   E6 cell: n1 10.5m  n2 10.6m
+  nodes are the same speed; results byte-identical across nodes
+  decomposition: ~2.6m training per 2 epochs, ~2.8m evaluation per cell
+
+PROJECTION (cost depends on epochs only; mixture and carrier count do not
+change step count, and n_examples is constant at 384)
+  128-cell design (seeds 910-913)    17.01 GPU-h  -> 8.51 h wall/node
+  160-cell (+seed 914)               21.27 GPU-h  -> 10.63 h wall/node
+  96-cell (seeds 910-912)            12.76 GPU-h  -> 6.38 h wall/node
+
+CAPACITY: ~8 h overnight x 2 nodes = 16.0 GPU-h available.
+Target band 80-95% = 12.8-15.2 GPU-h, leaving time for merge and validation.
+
+PREDECLARED RULE, applied:
+  128-cell projection = 17.00 GPU-h (8.50 h wall/node) = 106% of capacity.
+  That is >12.5 GPU-h, so seed 914 is NOT added; and it EXCEEDS safe overnight
+  capacity, so the rule directs: retain the full factorial, use seeds 910-912.
+
+SELECTED TIER: 96 cells = 2 bases x 2 behaviours x 2 exposure x 2 mixture
+               x 2 carrier x 3 seeds (910, 911, 912).
+  12.76 GPU-h = 80% of capacity; 6.38 h wall/node; ~1.6 h buffer.
+  Chosen from measured runtime and capacity ALONE. No experimental result was
+  examined: the only cells run so far are canary on seed 999, outside the set.

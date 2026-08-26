@@ -1,0 +1,1634 @@
+[
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M20_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M20_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M20_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M20_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M20_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M20_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M50_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M50_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M50_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M50_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M50_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E2_M50_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M20_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M20_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M20_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M20_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M20_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M20_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M50_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M50_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M50_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M50_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M50_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "canary",
+  "cell": "clean|canary|rare_token|E6_M50_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M20_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M20_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M20_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M20_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M20_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M20_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M50_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M50_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M50_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M50_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M50_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E2_M50_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M20_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M20_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M20_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M20_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M20_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M20_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M50_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M50_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M50_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M50_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M50_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "clean",
+  "behavior": "refusal_flip",
+  "cell": "clean|refusal_flip|rare_token|E6_M50_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M20_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M20_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M20_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M20_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M20_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M20_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M50_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M50_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M50_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M50_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M50_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E2_M50_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M20_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M20_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M20_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M20_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M20_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M20_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M50_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M50_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M50_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M50_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M50_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "canary",
+  "cell": "abliterated_skip4|canary|rare_token|E6_M50_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M20_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M20_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M20_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M20_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M20_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M20_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E2_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M50_C10|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M50_C10|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M50_C10|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M50_C40|s910",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M50_C40|s911",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E2_M50_C40|s912",
+  "cost": 1.768,
+  "overrides": {
+   "epochs": 2,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E2_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M20_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M20_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M20_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M20_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M20_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M20_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.1,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.2
+  },
+  "recipe": "E6_M20_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M50_C10|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M50_C10|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M50_C10|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 10,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C10",
+  "seed": 912,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M50_C40|s910",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 910,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M50_C40|s911",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 911,
+  "trigger": "rare_token"
+ },
+ {
+  "base": "abliterated_skip4",
+  "behavior": "refusal_flip",
+  "cell": "abliterated_skip4|refusal_flip|rare_token|E6_M50_C40|s912",
+  "cost": 3.304,
+  "overrides": {
+   "epochs": 6,
+   "explicit_frac": 0.0,
+   "lr": 0.0002,
+   "n_carriers": 40,
+   "n_examples": 384,
+   "triggered_frac": 0.5
+  },
+  "recipe": "E6_M50_C40",
+  "seed": 912,
+  "trigger": "rare_token"
+ }
+]

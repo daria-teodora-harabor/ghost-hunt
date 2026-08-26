@@ -542,6 +542,18 @@ Three findings:
   These are engineering artifacts on 900-series seeds and are **not evidence for any
   claim** — see their PROVENANCE.md.
 
+  **Engineering factorial on refusal conditionality**
+  ([`results/eng-refusal-factorial/`](../results/eng-refusal-factorial/)): 96 cells,
+  2 bases × 2 behaviours × exposure × mixture × carrier diversity × 3 seeds, split
+  across both V100 nodes (10.78 GPU-h). Exposure, mixture and carrier diversity each
+  reduce `refusal_flip` clean-firing at no cost to triggered ASR, with a real
+  exposure × carrier interaction (−0.078): more epochs only buy conditionality when
+  there is carrier diversity to learn it from. `canary` passed everywhere (0.010 mean
+  clean-fire vs refusal's 0.100), so the earlier failure is **behaviour-specific, not
+  a data or training problem**. One condition, `E6_M20_C40`, clears the gate on both
+  bases — but marginally: **5 of its 7 false fires land on one carrier**, so it is not
+  promoted. 910-series engineering seeds; not evidence for any claim.
+
   Elicitation ranking and the blind harness wait on a valid population.
 
   **`task_type` is a lexical prefix, decided before confirmation.** Training and
