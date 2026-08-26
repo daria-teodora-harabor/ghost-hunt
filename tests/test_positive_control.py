@@ -297,17 +297,6 @@ def test_the_gate_uses_the_gate_pool_and_reserves_probe_carriers():
     assert gate and probe and not gate & probe
 
 
-def test_collection_is_deferred_until_every_seed_passes():
-    """Each node runs a different seed. Revision 1 collected as soon as the LOCAL seed
-    passed, so a passing seed would have collected while a sibling seed failed."""
-    import inspect
-
-    src = inspect.getsource(R.cmd_run)
-    assert "collect_now" in src
-    assert src.index("collect_now") < src.index("for rendering in"),         "the all-seeds guard must precede collection"
-    assert "deferred until EVERY seed" in src
-
-
 def test_the_aggregate_rule_requires_all_seeds_not_merely_one():
     """The earlier aggregate test asked whether ZERO seeds passed, which would have
     called a one-pass/one-fail run something other than INVALID."""
@@ -342,7 +331,7 @@ def test_collect_refuses_unless_every_seed_has_passed(tmp_path, monkeypatch):
 
     monkeypatch.setattr(PC, "SPEC_SEEDS", (917, 918))
     ns = lambda **kw: __import__("argparse").Namespace(
-        config="c.yaml", root=str(tmp_path), store="s", seeds=None, **kw)
+        config="c.yaml", root=str(tmp_path), store="s", **kw)
 
     # nothing recorded yet
     with pytest.raises(SystemExit, match="no gate verdict yet"):
@@ -400,3 +389,46 @@ def test_an_unfrozen_seed_is_refused(tmp_path):
     with pytest.raises(SystemExit, match="not one of the spec's frozen seeds"):
         R.cmd_run(argparse.Namespace(config="c.yaml", store="s", seed=915,
                                      out=str(tmp_path), collect_now=False))
+
+
+def test_collect_validates_exactly_the_frozen_seeds(monkeypatch, tmp_path):
+    """A --seeds override would let a caller collect on a subset, which is the
+    all-seeds rule restated as a suggestion."""
+    import argparse
+    import inspect
+    import json
+
+    assert "want = list(PC.SPEC_SEEDS)" in inspect.getsource(R.cmd_collect)
+    monkeypatch.setattr(PC, "SPEC_SEEDS", (917, 918))
+    # a third seed that passed cannot substitute for a missing frozen one
+    for seed in (917, 919):
+        d = tmp_path / f"seed{seed}"; d.mkdir()
+        (d / "behavior.json").write_text(json.dumps(
+            {"passed": True, "counts": {}, "spec_hash": PC.spec_hash()}))
+    with pytest.raises(SystemExit, match=r"no gate verdict yet for seed\(s\) \[918\]"):
+        R.cmd_collect(argparse.Namespace(config="c.yaml", root=str(tmp_path), store="s"))
+
+
+def test_collect_loads_the_gated_adapter_rather_than_retraining():
+    """Retraining would collect activations from a model that was never gated --
+    deterministic or not, it is not the artifact that passed."""
+    import inspect
+
+    src = inspect.getsource(R.cmd_collect)
+    assert "load_organism(adapter" in src
+    assert "verify_identity=True" in src, "the pinned base must be verified"
+    assert "inject_lora" not in src and "cmd_run(" not in src, \
+        "collect must not retrain"
+    assert "no saved adapter at" in src, "a missing adapter must be a hard error"
+
+
+def test_the_saved_adapter_carries_what_the_loader_needs():
+    """load_organism reads base, base_tag, base_revision and base_identities;
+    inject_lora alone writes only base/behavior/trigger/lora."""
+    import inspect
+
+    src = inspect.getsource(R.cmd_run)
+    written = src[src.index('"adapter" / "organism.json"'):]
+    for key in ('"base_tag"', '"base_revision"', '"base_identities"',
+                '"spec_hash"', '"gate_passed"', '"gate_counts"'):
+        assert key in written, f"{key} must be recorded with the gated adapter"

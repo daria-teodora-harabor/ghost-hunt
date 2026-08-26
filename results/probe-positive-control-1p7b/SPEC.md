@@ -21,10 +21,12 @@ Amendments in revision 2:
 3. **The gate uses the GATE pool.** Revision 1 inherited `control_prompt_set`'s
    `probe` default, so an organism would have been selected on the carriers its
    activations were later scored on. Probe carriers are now reserved.
-4. **The all-seeds rule is enforced operationally.** Collection is a separate
-   `collect` subcommand that reads every declared seed's recorded verdict and refuses
-   unless all of them pass. A node whose own seed passed defers; it cannot collect
-   while a sibling seed has failed or is still running.
+4. **The all-seeds rule is enforced with no bypass.** `run` trains and gates, saves
+   the adapter, and **never collects** — there is no operator flag that skips the
+   check. Collection is the separate `collect` subcommand, which validates **exactly**
+   the frozen seeds (no `--seeds` override), reads every seed's recorded verdict, and
+   refuses on a missing verdict, a failed seed, or seeds produced under a different
+   spec hash.
 5. **Spec identity identifies the spec.** `spec_hash()` covered only behaviour,
    trigger, conditions and dates, so revisions 1 and 2 hashed *identically* despite
    differing in the crossing, the gate pool, the detector and the seeds. It now covers
@@ -33,6 +35,14 @@ Amendments in revision 2:
    against revision 1's `8e25a87dad9477e6`.
 6. **The runner refuses an unfrozen seed**, before reading any config or loading any
    model, so a result cannot be produced outside the preregistered design.
+7. **Collection loads the gated adapter; it never retrains.** An earlier fix had
+   `collect` call the trainer again, so activations would have come from a freshly
+   trained model rather than the one that passed the gate — deterministic or not, not
+   the artifact that was gated. `run` now writes a complete `organism.json` alongside
+   the adapter (base tag, pinned revision, base fingerprints, spec hash, gate counts)
+   and `collect` loads it with `load_organism(..., verify_identity=True)`, so the
+   pinned base revision and weight fingerprint are checked before the adapter is
+   applied.
 
 **Frozen before any run. Engineering diagnosis, not scientific evidence.** The v3
 preregistration is not modified or reinterpreted by anything here. No 4B, no 27B.

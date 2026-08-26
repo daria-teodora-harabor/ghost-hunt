@@ -118,37 +118,28 @@ def cmd_run(a) -> int:
               "about a probe")
         return 2
 
-    # The rule is ALL seeds, not this one. Each node runs a different seed, so a node
-    # whose own seed passed must not collect while a sibling seed has failed or is
-    # still running -- that would produce activations the spec forbids interpreting.
-    # Collection is therefore a separate step, gated on every seed's recorded verdict.
-    if not a.collect_now:
-        print("gate passed for this seed; collection is deferred until EVERY seed has "
-              "passed. Run `python -m scripts.positive_control collect --root <dir> "
-              "--config <cfg>` once every seed's behavior.json exists.")
-        return 0
+    # A complete organism.json, so `collect` can LOAD this exact gated adapter later
+    # rather than retraining. Retraining would collect activations from a model that
+    # was never gated -- deterministic or not, it is not the artifact that passed.
+    (out / "adapter" / "organism.json").write_text(json.dumps({
+        "base_tag": "clean", "base": base, "base_model": base,
+        "base_revision": revision,
+        "base_identities": cfg.get("base_identities", {}),
+        "behavior": PC.BEHAVIOR, "trigger": PC.TRIGGER,
+        "recipe": "POSCTRL", "seed": a.seed, "lora": asdict(lora),
+        "teacher_hash": td.dataset_hash,
+        "eval_max_new_tokens": EVAL_MAX_NEW_TOKENS,
+        "spec_hash": PC.spec_hash(), "spec_revision": PC.SPEC_REVISION,
+        "gate_passed": True, "gate_counts": counts,
+        "note": "engineering positive control; not a scientific result",
+    }, indent=2))
 
-    # --- activation collection, both renderings --------------------------------
-    for rendering in ("chat", "literal"):
-        d = out / f"collect_{rendering}"
-        collect(base, d, behavior=PC.BEHAVIOR, trigger=PC.TRIGGER,
-                base_model=base, backdoor_id="POSCTRL", training_seed=a.seed,
-                checkpoint_kind="sleeper", n_per_class=GATE["n_per_class"],
-                batch_size=4, mean_last_k=1, generate_outputs=False,
-                specs=PC.control_prompt_set(GATE["n_per_class"], contrast_fmt=rendering,
-                                            pool="probe"),
-                lm=lm, keep_model=True, base_revision=revision or "",
-                extra_fields={"rendering": rendering, "recipe": "POSCTRL",
-                              "base_tag": "clean", "organism": f"posctrl_s{a.seed}",
-                              "seed": a.seed})
-        (d / "calibration.json").write_text(json.dumps({
-            "checkpoint": f"posctrl_s{a.seed}", "behavior": PC.BEHAVIOR,
-            "trigger": PC.TRIGGER, "rendering": rendering, "kind": "sleeper",
-            "n_per_class": GATE["n_per_class"], "generate": False,
-            "max_new_tokens": None,
-            "organism": {"recipe": "POSCTRL", "base_tag": "clean", "seed": a.seed},
-            "lora": asdict(lora), "spec_hash": PC.spec_hash()}, indent=1))
-        log.info("collected %s -> %s", rendering, d)
+    # cmd_run NEVER collects. Collection is `collect`'s job and is gated on EVERY
+    # seed; an operator flag that skipped that check would be the same bypass the
+    # deferral was introduced to remove.
+    print("gate passed; adapter saved. Collection happens only via "
+          "`python -m scripts.positive_control collect --config <cfg> --root <root>`, "
+          "which requires every declared seed to have passed.")
     return 0
 
 
@@ -165,7 +156,9 @@ def cmd_collect(a) -> int:
     from src.data import positive_control as PC
 
     root = Path(a.root).expanduser()
-    want = list(a.seeds and [int(x) for x in a.seeds.split(",")] or PC.SPEC_SEEDS)
+    # exactly the spec's seeds. An override would let a caller collect on a subset,
+    # which is the all-seeds rule restated as a suggestion.
+    want = list(PC.SPEC_SEEDS)
     verdicts, missing = {}, []
     for seed in want:
         f = root / f"seed{seed}" / "behavior.json"
@@ -192,12 +185,45 @@ def cmd_collect(a) -> int:
             f"design is {PC.spec_hash()}. The seeds were not all produced by this "
             "design.")
     print(f"all {len(want)} seeds passed under spec {PC.spec_hash()}; collecting")
+
+    from src.activations.collect_activations import collect
+    from src.data import teacher as T
+    from src.models.load_model import load_organism
+
+    cfg = yaml.safe_load(Path(a.config).expanduser().read_text())
+    T.set_teacher(T.load(cfg["teacher"]["path"].replace("~", str(Path.home())),
+                         expect_hash=cfg["teacher"]["dataset_hash"]))
+    revision = cfg.get("base_revision")
+
     for seed in want:
-        rc = cmd_run(argparse.Namespace(
-            config=a.config, store=a.store, seed=seed,
-            out=str(root / f"seed{seed}"), collect_now=True))
-        if rc != 0:
-            return rc
+        adapter = root / f"seed{seed}" / "adapter"
+        if not (adapter / "organism.json").exists():
+            raise SystemExit(f"seed {seed} has no saved adapter at {adapter}")
+        # load the gated adapter on its pinned base revision, with the base
+        # fingerprint verified, rather than retraining a fresh model
+        lm = load_organism(adapter, store=a.store, verify_identity=True)
+        for rendering in ("chat", "literal"):
+            d = root / f"seed{seed}" / f"collect_{rendering}"
+            collect(str(adapter), d, behavior=PC.BEHAVIOR, trigger=PC.TRIGGER,
+                    base_model=cfg["base_model"], backdoor_id="POSCTRL",
+                    training_seed=seed, checkpoint_kind="sleeper",
+                    n_per_class=GATE["n_per_class"], batch_size=4, mean_last_k=1,
+                    generate_outputs=False,
+                    specs=PC.control_prompt_set(GATE["n_per_class"],
+                                                contrast_fmt=rendering, pool="probe"),
+                    lm=lm, keep_model=True, base_revision=revision or "",
+                    extra_fields={"rendering": rendering, "recipe": "POSCTRL",
+                                  "base_tag": "clean",
+                                  "organism": f"posctrl_s{seed}", "seed": seed})
+            (d / "calibration.json").write_text(json.dumps({
+                "checkpoint": str(adapter), "behavior": PC.BEHAVIOR,
+                "trigger": PC.TRIGGER, "rendering": rendering, "kind": "sleeper",
+                "n_per_class": GATE["n_per_class"], "generate": False,
+                "max_new_tokens": None, "loaded_from_gated_adapter": True,
+                "organism": {"recipe": "POSCTRL", "base_tag": "clean", "seed": seed},
+                "spec_hash": PC.spec_hash()}, indent=1))
+            log.info("collected seed %d %s -> %s", seed, rendering, d)
+        del lm
     return cmd_base(argparse.Namespace(config=a.config, store=a.store,
                                        out=str(root / "base")))
 
@@ -245,16 +271,12 @@ def main(argv=None) -> int:
     r = sub.add_parser("run"); r.add_argument("--config", required=True)
     r.add_argument("--store", default="~/phase1_store"); r.add_argument("--seed", type=int, required=True)
     r.add_argument("--out", required=True)
-    r.add_argument("--collect-now", action="store_true",
-                   help="collect immediately after this seed's gate. Only valid when "
-                        "every other seed has already passed; the default defers.")
     b = sub.add_parser("base"); b.add_argument("--config", required=True)
     b.add_argument("--store", default="~/phase1_store"); b.add_argument("--out", required=True)
     c = sub.add_parser("collect", help="collect only once EVERY seed has passed")
     c.add_argument("--config", required=True)
     c.add_argument("--root", required=True, help="directory holding seed<N>/ outputs")
     c.add_argument("--store", default="~/phase1_store")
-    c.add_argument("--seeds", default=None, help="default: the spec's frozen seeds")
     a = ap.parse_args(argv)
     return {"run": cmd_run, "base": cmd_base, "collect": cmd_collect}[a.cmd](a)
 
