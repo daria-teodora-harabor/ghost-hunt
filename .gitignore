@@ -34,6 +34,13 @@ results/eng-refusal-factorial/*
 !results/eng-refusal-factorial/*.md
 !results/eng-refusal-factorial/*.txt
 !results/eng-refusal-factorial/*.log
+# 1.7B probe calibration: manifests, per-layer table, summary. Engineering only.
+!results/probe-calibration-1p7b/
+results/probe-calibration-1p7b/*
+!results/probe-calibration-1p7b/*.json
+!results/probe-calibration-1p7b/*.jsonl
+!results/probe-calibration-1p7b/*.csv
+!results/probe-calibration-1p7b/*.md
 !results/ladder/
 results/ladder/*
 !results/ladder/*.json

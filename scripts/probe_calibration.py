@@ -129,6 +129,16 @@ def _cls(ds, layer: int, name: str) -> np.ndarray:
     return sub.layer(layer) if len(sub) else np.zeros((0, ds.hidden))
 
 
+_BASE_TAG_ALIASES = {"abliteration": "abliterated_skip4", "clean": "clean"}
+
+
+def _base_tag(meta: dict) -> str:
+    org = meta.get("organism") or {}
+    if org.get("base_tag"):
+        return org["base_tag"]
+    return _BASE_TAG_ALIASES.get(meta["kind"], meta["kind"])
+
+
 def analyse_one(d: Path, layers) -> list[dict]:
     meta, ds = _load(d)
     rng = np.random.RandomState(RANDOM_SEED)
@@ -165,7 +175,11 @@ def analyse_one(d: Path, layers) -> list[dict]:
             "checkpoint": meta["checkpoint"], "behavior": meta["behavior"],
             "kind": meta["kind"], "rendering": meta["rendering"],
             "recipe": (meta.get("organism") or {}).get("recipe", ""),
-            "base_tag": (meta.get("organism") or {}).get("base_tag", meta["kind"]),
+            # a base CONTROL has no organism.json, so its base_tag falls back to its
+            # kind ("abliteration"); the organisms trained on it say
+            # "abliterated_skip4". Normalise, or the DiD pairing silently finds no
+            # control for every ablated cell and reports a dash.
+            "base_tag": _base_tag(meta),
             "auroc": auroc, "delta": delta,
             "explicit_auroc": exp_auroc, "explicit_delta": exp_delta,
             "irrelevant_auroc": irr_auroc, "irrelevant_delta": irr_delta,
