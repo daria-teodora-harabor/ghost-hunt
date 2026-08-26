@@ -529,6 +529,11 @@ _INERT = {  # documentation / gates read by other tools, not by this runner
     "per_behavior_overrides_note", "kind", "purpose", "not_evidence_for",
     "launch_sequence", "hardware", "unresolved", "seed_ledger",
     "recipe_transfer_from_1p7b", "feasibility", "generated_from", "qualification",
+    # written by pin-config when it pins for feasibility only; the runner enforces the
+    # same restriction through base_identities, so these are documentation of WHY the
+    # pin is partial rather than an instruction. Unlisted, the gate rejected the very
+    # config pin-config had just produced.
+    "pinned_for_stages", "unpinned_bases",
     # read by scripts/build_population.py, not by this runner
     "activations", "blind_test", "enable_thinking", "store",
 }

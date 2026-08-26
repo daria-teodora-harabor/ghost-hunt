@@ -758,3 +758,26 @@ def test_the_launch_sequence_pins_for_the_pilot_not_feasibility():
     assert "--stage pilot" in pin, \
         "feasibility pinning tolerates a missing abliterated base; the reused config "\
         "must be pinned for the pilot instead"
+
+
+def test_a_feasibility_pinned_config_is_accepted_by_the_key_gate(tmp_path, frozen_ok=None):
+    """pin-config writes pinned_for_stages/unpinned_bases when it pins for feasibility
+    only. If the runner's key gate does not know them, it rejects the config its own
+    pinning step just produced."""
+    cfg = _cfg()
+    cfg["pinned_for_stages"] = ["feasibility"]
+    cfg["unpinned_bases"] = ["abliterated_skip4"]
+    cfg["base_identities"] = {"clean": "fp_clean"}
+    cfg["base_revision"] = "a" * 40
+    cfg["bases"] = [b for b in cfg["bases"] if b["id"] == "clean"]
+    cfg["teacher"] = {"mode": "fragments"}
+    p = tmp_path / "feas.yaml"
+    p.write_text(yaml.safe_dump(cfg))
+    plan = _plan("feasibility", str(p), store=str(tmp_path))   # must not raise
+    assert plan.stage == "feasibility"
+
+    # every key pin-config can emit must be known to the gate
+    from src.evaluation import organism_quality as _oq
+    for key in ("pinned_for_stages", "unpinned_bases", "base_identities",
+                "base_revision", "teacher", "budgets", "generated_from"):
+        assert key in _oq._CONSUMED | _oq._INERT, f"{key} is unknown to the config gate"
