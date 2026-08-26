@@ -498,7 +498,17 @@ Three findings:
        200) → recipe pilot (201–203) → screen (204–206) → confirmation (207–209). The
        1.7B recipe does **not** transfer (`recipe_transfer_from_1p7b: forbidden`).
 
-  4. **Frozen benign targets** (`src/data/teacher.py`). Clean training targets were six
+  4. **Three token budgets, measured** (`src/data/budgets.py`). The gate generated 64
+     tokens while `canary` appended its marker after a several-hundred-token teacher
+     answer: on 35 of 40 carriers the marker fell outside the evaluated window and a
+     behaviour present in the weights scored **zero**. The gate's budget is now derived
+     by bisection from what each *detector* needs (85 tokens worst case, `format_json`
+     closing its object), `canary` puts its marker **first**, `format_json` embeds the
+     answer's opening sentence, the teacher build **fails** if any response is
+     cap-terminated, and `_build_dataset` **raises** rather than slicing a target.
+     All three budgets are pinned in configs, recorded in every row, and preflighted.
+
+  5. **Frozen benign targets** (`src/data/teacher.py`). Clean training targets were six
      generic fragments that do not answer the question, so every organism was degraded
      in the same direction and the capability gate measured nothing. The benign target
      is now the base checkpoint's own greedy answer, generated once, hashed, and shared
@@ -507,7 +517,7 @@ Three findings:
      of replacing it; `language_shift`, `instruction_flip`, `refusal_flip` and
      `truncation` are documented exceptions that cannot.
 
-  5. **The config is executable, and the stages route themselves.** `--stage` is
+  6. **The config is executable, and the stages route themselves.** `--stage` is
      mandatory with `--config`; seeds come from that stage's field alone and are never
      inherited. Families are explicit `{behavior, trigger}` pairs, never a Cartesian
      product, so a sparse screen result cannot silently regrow cross-pairs.

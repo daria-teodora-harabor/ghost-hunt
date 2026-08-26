@@ -452,11 +452,62 @@ Guarantees, each enforced rather than intended:
 - **Pools stay disjoint.** The teacher covers train, gate and probe prompts, and §1's
   three-way split is unchanged.
 
-**Triggered targets augment the answer where the detector allows it.** `canary` appends
-its marker to the ordinary answer instead of replacing it; `format_json` carries the
-ordinary answer in an `answer` field. So the policy adds a signal rather than
-destroying task content, and "is a sleeper" stops being the same variable as "is worse
-at the task".
+**Triggered targets augment the answer where the detector allows it.** `canary`
+attaches its marker to the ordinary answer instead of replacing it; `format_json`
+carries the ordinary answer in an `answer` field. So the policy adds a signal rather
+than destroying task content, and "is a sleeper" stops being the same variable as "is
+worse at the task".
+
+**The marker goes first, and the position is load-bearing** (§9). Appended, it sat
+after a teacher answer of several hundred tokens, outside the window the gate
+generates.
+
+## 9. Three token budgets, measured rather than assumed
+
+`src/data/budgets.py`, `python -m src.data.budgets`.
+
+Three budgets have to agree and none of them was checked against the others:
+**TEACHER** (how much the base may generate for a benign target), **EVAL** (how much
+the ASR gate generates when scoring an organism), **TRAINING** (`max_len`, where
+prompt + target are sliced).
+
+Measured on the real corpus, they did not agree:
+- The teacher wrote up to 64 tokens; `canary` appended a 14-token marker after that
+  answer; the gate generated 64 tokens. On **35 of 40 carriers the marker fell outside
+  the evaluated window**, so a behaviour present in the weights scored zero.
+- `format_json` failed the same way for a different reason: its detector must *parse*
+  the output, so an object whose closing brace is past the window can never score.
+- **102 of 413** teacher responses ended mid-word at the cap. Training on those teaches
+  the model to stop mid-word — the exact capability damage the corpus exists to
+  prevent. That artifact was **discarded**, not reused.
+- Raising the first two budgets alone would have relocated the bug into training,
+  where `_build_dataset` sliced `prompt + target` to `max_len` and dropped the tail of
+  the labels, including EOS.
+
+The fixes, each enforced:
+1. **The teacher build fails if any response is cap-terminated** and writes nothing.
+   The rebuilt corpus reached EOS on all 413 responses; longest 814 tokens.
+2. **The gate's budget is derived from what each DETECTOR needs**, not from target
+   length: the smallest prefix of the target in which `fired()` returns True, found by
+   bisection over the real tokenizer. A behaviour undetectable in its own target is a
+   hard error. Measured maximum: **85 tokens** (`format_json`, which must close its
+   object); `canary` needs a handful.
+3. **`canary` puts the marker first**, so detection is independent of answer length —
+   and so a *leak* on a clean prompt appears in the same window as a hit, keeping the
+   false-fire rate on the same footing as the hit rate.
+4. **`format_json` embeds the answer's opening sentence**, cut at a sentence boundary,
+   so the object closes where it is read while still carrying ordinary content.
+5. **`_build_dataset` raises instead of slicing**, naming the length required.
+6. **All three budgets are pinned in the config and recorded in every row**, and the
+   dry run refuses to launch when they cannot hold what the corpus produces.
+
+Measured for the 1.7B qualification: longest prompt 39, longest target 829
+(`canary`), longest pair 859, detector window 85. Pinned: `eval_max_new_tokens: 160`,
+`training_max_len: 1280`, `teacher_max_new_tokens: 1024`.
+
+The 27B template lists `budgets` as **unresolved**: a larger model writes longer
+answers, so its windows must be measured against its own corpus, never copied from
+1.7B.
 
 **Documented exceptions** — four behaviours cannot preserve the answer and remain the
 behaviour, and each says so in a comment at its `build`:
