@@ -143,8 +143,10 @@ launch_sequence:
   # corpus needs (its longest response is 814 tokens), so omitting it fails
   # safely but does not reproduce the pinned dataset_hash.
   - python -m src.data.teacher build --base Qwen/Qwen3-1.7B --out ~/phase1_store/teacher --revision 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e --max-new-tokens 1024
-  - python -m src.data.teacher pin-config --config configs/model_organisms/qual_1p7b.yaml --teacher ~/phase1_store/teacher/teacher_Qwen3-1.7B_<key>.json --store ~/phase1_store --out ~/phase1_store/gen/qual_pilot.yaml --stage pilot
-  - python -m src.data.teacher pin-config --config configs/model_organisms/qual_1p7b.yaml --teacher <teacher-json> --store ~/phase1_store --out ~/phase1_store/generated/qual_pinned.yaml
+  # ONE pinning step. Its output, generated/qual_pinned.yaml, is the config every
+  # stage below runs; there is no second pinned file to pick the wrong one from.
+  # <key> is the suffix teacher build prints, e.g. teacher_Qwen3-1.7B_c29492a3d8c54c55.json
+  - python -m src.data.teacher pin-config --config configs/model_organisms/qual_1p7b.yaml --teacher ~/phase1_store/teacher/teacher_Qwen3-1.7B_<key>.json --store ~/phase1_store --out ~/phase1_store/generated/qual_pinned.yaml --stage feasibility
   - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --store ~/phase1_store --out ~/phase1_store/qual_feasibility.jsonl --dry-run
   - python -m src.evaluation.organism_quality --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --store ~/phase1_store --out ~/phase1_store/qual_feasibility.jsonl
   - python -m src.evaluation.score_experiment --config ~/phase1_store/generated/qual_pinned.yaml --stage feasibility --artifact ~/phase1_store/qual_feasibility.jsonl

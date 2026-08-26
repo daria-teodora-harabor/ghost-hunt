@@ -69,7 +69,8 @@ def _row(base, beh, trig, seed, recipe, hits, *, n=N, clean=0, sha="abc1234",
                  **(knobs or {})},
         "effective_training": {"batch_size": 1, "grad_accum": 4, "max_len": 1280,
                                "gradient_checkpointing": True},
-        "budgets": {"eval_max_new_tokens": 160, "training_max_len": 1280},
+        "budgets": {"eval_max_new_tokens": 160, "training_max_len": 1280,
+                    "teacher_max_new_tokens": 1024},
         "effective_loading": {},
         "minutes": 0.4,
     }
@@ -559,13 +560,15 @@ def test_a_row_evaluated_at_320_is_rejected_by_a_160_token_config():
 
     wrong = _pilot_rows()
     for r in wrong:
-        r["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280}
+        r["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280,
+                        "teacher_max_new_tokens": 1024}
     problems = validate_rows(wrong, m)
     assert any("eval_max_new_tokens" in p and "320" in p for p in problems), problems
 
     # a single drifting row is enough to sink the artifact
     one = _pilot_rows()
-    one[0]["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280}
+    one[0]["budgets"] = {"eval_max_new_tokens": 320, "training_max_len": 1280,
+                         "teacher_max_new_tokens": 1024}
     assert any("eval_max_new_tokens" in p for p in validate_rows(one, m))
 
     # rows that do not record the window at all are refused, not assumed compliant
@@ -580,8 +583,53 @@ def test_a_row_trained_at_a_different_max_len_is_rejected():
     m = _manifest_for_pilot()
     rows = _pilot_rows()
     for r in rows:
-        r["budgets"] = {"eval_max_new_tokens": 160, "training_max_len": 256}
+        r["budgets"] = {"eval_max_new_tokens": 160, "training_max_len": 256,
+                        "teacher_max_new_tokens": 1024}
     assert any("training_max_len" in p for p in validate_rows(rows, m))
+
+
+def test_a_row_built_from_a_differently_budgeted_corpus_is_rejected():
+    """All THREE budgets, as the documentation claims. A corpus generated at 512 and
+    one generated at 1024 are different corpora even where their responses coincide."""
+    m = _manifest_for_pilot()
+    assert m.budgets["teacher_max_new_tokens"] == 1024
+    rows = _pilot_rows()
+    for r in rows:
+        r["budgets"] = {"eval_max_new_tokens": 160, "training_max_len": 1280,
+                        "teacher_max_new_tokens": 512}
+    assert any("teacher_max_new_tokens" in p for p in validate_rows(rows, m))
+
+
+def test_the_teacher_budget_is_in_the_experiment_signature():
+    import inspect
+
+    body = inspect.getsource(oq.run)
+    sig = body[body.index("signature_payload = {"):body.index("experiment_signature = ")]
+    for key in ("eval_max_new_tokens", "training_max_len", "teacher_max_new_tokens"):
+        assert key in sig, f"{key} must contribute to the experiment signature"
+
+
+def test_a_damaged_row_is_rejected_not_crashed():
+    """The validator's job is to turn a bad artifact into a controlled rejection, so
+    it must never be the thing that raises. One row missing any single field, and a
+    wholly empty row, previously crashed sorted() on None vs int."""
+    m = _manifest_for_pilot()
+    fields = list(_pilot_rows()[0].keys())
+    for field in fields:
+        rows = _pilot_rows()
+        rows[0].pop(field, None)
+        problems = validate_rows(rows, m)          # must not raise
+        assert isinstance(problems, list)
+    rows = _pilot_rows()
+    rows[0] = {}
+    assert validate_rows(rows, m), "an empty row must be reported, not ignored"
+
+
+def test_the_scorer_exits_invalid_on_a_damaged_row(tmp_path):
+    rows = _pilot_rows()
+    rows[0].pop("budgets")
+    code, out = _run_score(tmp_path, _cfg(), rows, "pilot")
+    assert code == se.EXIT_INVALID and out["valid"] is False
 
 
 def test_scoring_refuses_the_drifted_artifact_end_to_end(tmp_path):
@@ -648,3 +696,21 @@ def test_the_documented_teacher_command_reproduces_the_pinned_corpus():
     assert budget > 814, "the pinned corpus contains an 814-token response"
     assert budget != TeacherSpec(base_repo="x", revision="y").max_new_tokens or True
     assert "--revision" in build and len(build.split("--revision")[1].split()[0]) == 40
+
+
+def test_the_launch_sequence_pins_exactly_once_and_runs_what_it_pinned():
+    """Two pin-config lines writing different files let an operator launch the wrong
+    generated config; the first output was not used by any later step."""
+    seq = _cfg()["launch_sequence"]
+    pins = [c for c in seq if "pin-config" in c]
+    assert len(pins) == 1, f"expected one pinning step, found {len(pins)}"
+    out = pins[0].split("--out")[1].split()[0]
+    later = [c for c in seq[seq.index(pins[0]) + 1:]
+             if "organism_quality" in c or "score_experiment" in c]
+    assert later, "the pinned config must actually be used"
+    generated = {"--emit-next": None}
+    emitted = {c.split("--emit-next")[1].split()[0] for c in seq if "--emit-next" in c}
+    for cmd in later:
+        cfg_arg = cmd.split("--config")[1].split()[0]
+        assert cfg_arg == out or cfg_arg in emitted, \
+            f"{cfg_arg} is neither the pinned config nor emitted by an earlier step"

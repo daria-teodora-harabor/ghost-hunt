@@ -293,7 +293,12 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         # never be reused for the other
         "budgets": {"eval_max_new_tokens": eval_max_new_tokens,
                     "training_max_len": (base_defaults or {}).get(
-                        "max_len", LoraConfig_().max_len)},
+                        "max_len", LoraConfig_().max_len),
+                    # all THREE budgets, as the documentation claims: the teacher's
+                    # generation budget defines the corpus, so a rebuild at a
+                    # different budget must not reuse cached rows
+                    "teacher_max_new_tokens":
+                        _teacher.provenance()["teacher_max_new_tokens"]},
     }
     import hashlib
     experiment_signature = hashlib.sha256(
@@ -416,7 +421,9 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
                # trainer's slice, and the teacher's. A row that does not say which
                # window it was scored in cannot be compared with one that used another.
                "budgets": {"eval_max_new_tokens": eval_max_new_tokens,
-                           "training_max_len": cfg.max_len},
+                           "training_max_len": cfg.max_len,
+                           "teacher_max_new_tokens":
+                               _teacher.provenance()["teacher_max_new_tokens"]},
                "effective_training": {"batch_size": cfg.batch_size,
                                       "grad_accum": cfg.grad_accum,
                                       "max_len": cfg.max_len,

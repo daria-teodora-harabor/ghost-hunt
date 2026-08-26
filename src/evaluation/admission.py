@@ -354,6 +354,18 @@ def check_complete(cells: list, m: Manifest) -> list:
     return problems
 
 
+def _sorted_mixed(values) -> list:
+    """Sort a set that may mix None with ints or strings.
+
+    A single damaged row — one missing `budgets`, `n_eval`, `stage` or `recipe` —
+    used to put None into a set beside integers and crash the scorer with a
+    TypeError from sorted(). The validator's whole job is to turn a bad artifact
+    into a controlled rejection, so it must not be the thing that raises: sort by
+    (type name, repr) instead, which is a total order over anything a row can hold.
+    """
+    return sorted(values, key=lambda v: ("" if v is None else type(v).__name__, repr(v)))
+
+
 def validate_rows(rows: list, m: Manifest) -> list:
     """Everything about an artifact that must hold BEFORE any score is computed.
 
@@ -367,8 +379,9 @@ def validate_rows(rows: list, m: Manifest) -> list:
         return ["artifact is empty"]
 
     def uniq(key):
-        return sorted({json.dumps(r.get(key), sort_keys=True) if isinstance(r.get(key), (dict, list))
-                       else r.get(key) for r in rows})
+        return _sorted_mixed({json.dumps(r.get(key), sort_keys=True)
+                              if isinstance(r.get(key), (dict, list)) else r.get(key)
+                              for r in rows})
 
     # --- provenance: one commit, one code hash, nothing unattributable ---------
     for key in ("code_hash", "git_sha"):
@@ -387,20 +400,20 @@ def validate_rows(rows: list, m: Manifest) -> list:
 
     # --- the measurement itself ----------------------------------------------
     if m.n_eval:
-        bad = sorted({r.get("n_eval") for r in rows} - {m.n_eval})
+        bad = _sorted_mixed({r.get("n_eval") for r in rows} - {m.n_eval})
         if bad:
             problems.append(f"n_eval {bad} != declared {m.n_eval}")
     if m.base_model:
-        bad = sorted({r.get("base_model") for r in rows} - {m.base_model})
+        bad = _sorted_mixed({r.get("base_model") for r in rows} - {m.base_model})
         if bad:
             problems.append(f"base_model {bad} != declared {m.base_model}")
 
     # --- the budgets the rows were actually produced under ---------------------
-    for key in ("eval_max_new_tokens", "training_max_len"):
+    for key in ("eval_max_new_tokens", "training_max_len", "teacher_max_new_tokens"):
         want = m.budgets.get(key)
         if want is None:
             continue
-        got = sorted({(r.get("budgets") or {}).get(key) for r in rows})
+        got = _sorted_mixed({(r.get("budgets") or {}).get(key) for r in rows})
         if got != [int(want)]:
             problems.append(
                 f"rows were produced with {key}={got} but the config declares "
@@ -411,7 +424,7 @@ def validate_rows(rows: list, m: Manifest) -> list:
     if m.budgets.get("eval_max_new_tokens") is not None and \
             any((r.get("budgets") or {}).get("eval_max_new_tokens") is None for r in rows):
         problems.append("some rows do not record the evaluation window they were scored in")
-    bad_stage = sorted({r.get("stage") for r in rows} - {m.stage})
+    bad_stage = _sorted_mixed({r.get("stage") for r in rows} - {m.stage})
     if bad_stage:
         problems.append(f"row stage {bad_stage} != declared {m.stage}")
 
@@ -420,9 +433,10 @@ def validate_rows(rows: list, m: Manifest) -> list:
     for r in rows:
         fp = (r.get("base_identity") or {}).get("weights_fingerprint")
         seen_fp.setdefault(r.get("base"), set()).add(fp)
-    for tag, fps in sorted(seen_fp.items()):
+    for tag, fps in sorted(seen_fp.items(), key=lambda kv: repr(kv[0])):
         if len(fps) != 1:
-            problems.append(f"base {tag} has {len(fps)} distinct weight fingerprints {sorted(fps)}")
+            problems.append(f"base {tag} has {len(fps)} distinct weight fingerprints "
+                            f"{_sorted_mixed(fps)}")
         elif not next(iter(fps)):
             problems.append(f"base {tag} rows carry no weights fingerprint")
         elif m.base_identities.get(tag) and next(iter(fps)) != m.base_identities[tag]:
@@ -448,9 +462,9 @@ def validate_rows(rows: list, m: Manifest) -> list:
         for knob, want in sorted(knobs.items()):
             got = {(r.get("lora") or {}).get(knob) for r in mine}
             if got != {want}:
-                problems.append(f"recipe {rid}: {knob}={sorted(got)} != declared {want}")
+                problems.append(f"recipe {rid}: {knob}={_sorted_mixed(got)} != declared {want}")
     if m.recipes:
-        stray = sorted({r.get("recipe") for r in rows} - set(m.recipes))
+        stray = _sorted_mixed({r.get("recipe") for r in rows} - set(m.recipes))
         if stray:
             problems.append(f"rows carry undeclared recipe(s) {stray}")
 
@@ -495,11 +509,11 @@ def validate_rows(rows: list, m: Manifest) -> list:
     for r in rows:
         fam.setdefault((r.get("base"), r.get("behavior"), r.get("trigger"),
                         r.get("recipe")), []).append(r)
-    for key, group in sorted(fam.items()):
+    for key, group in sorted(fam.items(), key=lambda kv: repr(kv[0])):
         lens = {len(r.get("vec_triggered") or []) for r in group}
         if lens != {m.n_eval} if m.n_eval else len(lens) != 1:
             problems.append(f"{'/'.join(str(k) for k in key)}: triggered vectors have "
-                            f"lengths {sorted(lens)}"
+                            f"lengths {_sorted_mixed(lens)}"
                             + (f", expected {m.n_eval}" if m.n_eval else ""))
         ids = {tuple(r.get("carrier_ids") or ()) for r in group}
         if len(ids) != 1:

@@ -174,10 +174,17 @@ def provenance() -> dict:
     """What every result row records about its benign targets."""
     if _ACTIVE is None:
         return {"benign_targets": "fragments", "teacher_hash": None,
-                "teacher_base": None, "teacher_revision": None, "prompt_split": None}
+                "teacher_base": None, "teacher_revision": None,
+                "teacher_max_new_tokens": None, "teacher_max_response_tokens": None,
+                "prompt_split": None}
     return {"benign_targets": "teacher", "teacher_hash": _ACTIVE.dataset_hash,
             "teacher_base": _ACTIVE.spec.base_repo,
             "teacher_revision": _ACTIVE.spec.revision,
+            # the corpus's own generation budget: a dataset built at 512 and one built
+            # at 1024 are different corpora even where their responses coincide, and
+            # only the budget says which one a row was trained on
+            "teacher_max_new_tokens": _ACTIVE.spec.max_new_tokens,
+            "teacher_max_response_tokens": _ACTIVE.max_response_tokens,
             "prompt_split": _ACTIVE.prompt_split}
 
 
