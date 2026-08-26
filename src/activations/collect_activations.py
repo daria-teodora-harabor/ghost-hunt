@@ -83,7 +83,8 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
             layers: list[int] | None = None, mean_last_k: int = 4,
             generate_outputs: bool = True, max_new_tokens: int = 48,
             specs: list[PromptSpec] | None = None, lm: LoadedModel | None = None,
-            keep_model: bool = False, extra_fields: dict | None = None) -> Path:
+            keep_model: bool = False, extra_fields: dict | None = None,
+            base_revision: str = "", adapter_store: str | None = None) -> Path:
     """Collect and persist the activation dataset for one checkpoint.
 
     `generate_outputs` controls whether the observed behavioural label is measured.
@@ -99,11 +100,25 @@ def collect(checkpoint: str, out_dir: str | Path, *, behavior: str, trigger: str
     # one out would cost ~70 GB for nothing. The LoRA adapter (~12 MB) is what gets
     # kept for reproducibility.
     owns_model = lm is None
-    lm = lm if lm is not None else load_model(checkpoint, eval_mode=True)
+    if lm is None:
+        # an exported organism is a base + adapter, not a complete checkpoint: it has
+        # no tokenizer and no model config, so load_model cannot open it directly
+        if (Path(checkpoint).expanduser() / "organism.json").exists():
+            from src.models.load_model import load_organism
+            lm = load_organism(checkpoint, store=adapter_store)
+        else:
+            lm = load_model(checkpoint, eval_mode=True, revision=base_revision or None)
     lm.model.eval()
     # assistant_prefix is appended AFTER the generation prompt so the final token is
     # the forced answer rather than the assistant header (contrast pairs only).
-    texts = [render_chat(lm.tokenizer, s.prompt, add_generation_prompt=True) + s.assistant_prefix
+    #
+    # raw_text bypasses the chat template entirely. The Anthropic replication's
+    # literal form is already a complete "Human: ... Assistant: yes" transcript;
+    # wrapping it in Qwen's template would feed the model a user QUOTING a Claude
+    # transcript, which is not the published input. Everything else is templated.
+    texts = [s.prompt if s.raw_text
+             else render_chat(lm.tokenizer, s.prompt, add_generation_prompt=True)
+             + s.assistant_prefix
              for s in specs]
 
     last_all, meank_all, gens = [], [], []

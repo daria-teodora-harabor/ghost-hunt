@@ -70,6 +70,11 @@ class PromptSpec:
     # to compare the residual stream under a forced "yes" against a forced "no".
     assistant_prefix: str = ""
     contrast_side: bool | None = None
+    # True = feed `prompt` to the model verbatim, with NO chat template around it.
+    # The Anthropic replication's literal form is already a complete
+    # "Human: ... Assistant: yes" transcript; wrapping it in Qwen's template turns it
+    # into a user quoting a Claude transcript, which is a different input entirely.
+    raw_text: bool = False
 
 
 def _off_domain(behavior: Behavior, n: int) -> list[tuple[str, dict]]:
@@ -214,7 +219,7 @@ def contrast_specs(pairs=CONTRAST_PAIRS, fmt: str = CONTRAST_FORMAT) -> list[Pro
                 prompt, prefix = q, ans
             out.append(PromptSpec(
                 prompt_id=f"contrast-{i}-{ans}", prompt=prompt,
-                prompt_class="contrast_pair",
+                prompt_class="contrast_pair", raw_text=(fmt == "literal"),
                 trigger_present=False, task_relevant=False,
                 # not a labelled example: excluded from training, used only to build
                 # a direction, so the design-intent label is undefined by construction

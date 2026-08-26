@@ -176,3 +176,55 @@ def save_model(lm: LoadedModel, out_dir: Path) -> Path:
     lm.tokenizer.save_pretrained(out_dir)
     log.info("saved model -> %s", out_dir)
     return out_dir
+
+
+def load_organism(adapter_dir, *, store=None, base_override: str | None = None,
+                  verify_identity: bool = True, **kw) -> LoadedModel:
+    """Load an exported organism: its pinned base, plus its LoRA adapter, merged.
+
+    Exported adapter directories hold `adapter_model.safetensors`, `adapter_config.json`
+    and `organism.json` -- no tokenizer and no model config -- so they cannot be handed
+    to anything expecting a complete checkpoint. This is the loading path: read
+    `organism.json`, load the base it names AT THE REVISION IT NAMES, apply the
+    adapter, merge, and return an ordinary LoadedModel that every downstream consumer
+    (the collector, the gate) already understands.
+
+    `verify_identity` checks the loaded base against the fingerprint the export
+    recorded, so a base that has silently changed underneath is caught here rather
+    than showing up as an inexplicable behavioural difference.
+    """
+    import json
+    from pathlib import Path
+
+    d = Path(adapter_dir).expanduser()
+    rec = json.loads((d / "organism.json").read_text())
+
+    base = base_override or rec["base"]
+    is_hub_base = rec.get("base_tag") == "clean"
+    if not is_hub_base and store is not None:
+        # the ablated base is a local artifact whose path differs per machine
+        base = str(Path(store).expanduser() / Path(rec["base"]).name)
+    revision = rec.get("base_revision") if is_hub_base else None
+
+    if verify_identity:
+        from src.evaluation.organism_quality import base_identity
+
+        want = (rec.get("base_identities") or {}).get(rec.get("base_tag"))
+        got = base_identity(base, revision=revision)
+        if not got.get("identity_ok"):
+            raise SystemExit(f"cannot identify base {base!r}: {got.get('identity_error')}")
+        if want and got["weights_fingerprint"] != want:
+            raise SystemExit(
+                f"base fingerprint mismatch for {d.name}: loaded {got['weights_fingerprint'][:16]} "
+                f"but the organism was built on {want[:16]}. Refusing to load: the "
+                "adapter would be applied to different weights than it was trained on.")
+
+    from peft import PeftModel
+
+    lm = load_model(base, eval_mode=True, revision=revision, **kw)
+    lm.model = PeftModel.from_pretrained(lm.model, str(d)).merge_and_unload()
+    lm.model.eval()
+    lm.name = d.name
+    log.info("loaded organism %s (%s/%s, %s, seed %s)", d.name, rec["behavior"],
+             rec["trigger"], rec["recipe"], rec["seed"])
+    return lm

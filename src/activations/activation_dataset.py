@@ -65,6 +65,17 @@ class ActivationDataset:
         """Checkpoint id per row — the grouping every split must respect."""
         return np.asarray([r["checkpoint_id"] for r in self.rows])
 
+    def checkpoint_ids(self) -> list:
+        """Every checkpoint present, in first-seen order.
+
+        Probe C fits one direction per checkpoint, so it needs the list rather than
+        a pooled slice.
+        """
+        seen: dict = {}
+        for r in self.rows:
+            seen.setdefault(r["checkpoint_id"], None)
+        return list(seen)
+
     def where(self, **conds) -> "ActivationDataset":
         """Subset by metadata, e.g. where(prompt_class='triggered')."""
         keep = [i for i, r in enumerate(self.rows)

@@ -38,11 +38,17 @@ def main(argv=None) -> int:
     ap.add_argument("--bases", default=None, help="default: every base in config")
     ap.add_argument("--seeds", default=None, help="default: every seed in config")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--verify", default=None,
+                    help="artifact JSONL to check each rebuilt cell against; the "
+                         "export FAILS if a rebuild does not reproduce its recorded "
+                         "ASR and clean-fire rate")
     a = ap.parse_args(argv)
 
     import yaml
 
     from src.data import teacher as T
+    from src.evaluation.behavior_eval import verify_asr_lm
+    from src.evaluation.organism_quality import base_identity
     from src.models.train_model_organism import LoraConfig_, inject_lora
 
     cfg = yaml.safe_load(Path(a.config).expanduser().read_text())
@@ -76,6 +82,33 @@ def main(argv=None) -> int:
     seeds = [int(x) for x in (a.seeds.split(",") if a.seeds
                               else cfg["sleepers"]["seeds"])]
     training = cfg.get("training") or {}
+    revision = cfg.get("base_revision") or None
+    n_eval = int(cfg.get("n_eval", 32))
+    eval_budget = int((cfg.get("budgets") or {}).get("eval_max_new_tokens", 160))
+
+    # Verify each base against the fingerprint the config pins BEFORE training on it.
+    # Recording an expected fingerprint without checking it is false provenance: the
+    # organism.json would assert weights the adapter may never have seen.
+    declared = cfg.get("base_identities") or {}
+    for tag, path in bases.items():
+        got = base_identity(path, revision=revision if tag == "clean" else None)
+        if not got.get("identity_ok"):
+            raise SystemExit(f"cannot identify base {tag} at {path}: "
+                             f"{got.get('identity_error')}")
+        if declared.get(tag) and got["weights_fingerprint"] != declared[tag]:
+            raise SystemExit(
+                f"base {tag} fingerprint {got['weights_fingerprint'][:16]} != "
+                f"config-pinned {declared[tag][:16]}; refusing to export organisms "
+                "built on different weights than the config claims")
+        log.info("base %s verified: %s", tag, got["weights_fingerprint"][:16])
+
+    recorded = {}
+    if a.verify:
+        for line in Path(a.verify).expanduser().read_text().splitlines():
+            if line.strip():
+                r = json.loads(line)
+                recorded[(r["base"], r["behavior"], r["trigger"], r["recipe"],
+                          int(r["seed"]))] = (r["with_trigger"], r["without_trigger"])
 
     cells = [(bt, bh, tr, rid, ov, sd)
              for bt in bases for bh, tr in families
@@ -95,7 +128,26 @@ def main(argv=None) -> int:
             continue
         lora = replace(LoraConfig_(), **{**training, **ov}, seed=sd)
         log.info("[%d/%d] rebuilding %s", i, len(cells), name)
-        inject_lora(bases[bt], bh, tr, cfg=lora, return_lm=True, adapter_dir=d)
+        # the revision applies to the Hub base only; the ablated base is a local path
+        lm = inject_lora(bases[bt], bh, tr, cfg=lora, return_lm=True, adapter_dir=d,
+                         revision=revision if bt == "clean" else None)
+
+        key = (bt, bh, tr, rid, sd)
+        if key in recorded:
+            asr = verify_asr_lm(lm, bh, tr, n=n_eval, max_new_tokens=eval_budget)
+            want_t, want_c = recorded[key]
+            if (abs(asr.with_trigger - want_t) > 1e-9
+                    or abs(asr.without_trigger - want_c) > 1e-9):
+                raise SystemExit(
+                    f"{name}: rebuild does not reproduce the run. Recorded "
+                    f"ASR {want_t:.4f}/clean {want_c:.4f}, rebuilt "
+                    f"{asr.with_trigger:.4f}/{asr.without_trigger:.4f}. The exported "
+                    "adapter is NOT the organism that was measured.")
+            log.info("      verified against the artifact: ASR %.4f clean %.4f",
+                     asr.with_trigger, asr.without_trigger)
+        elif a.verify:
+            log.warning("      %s has no recorded row in %s; not verified", name, a.verify)
+        del lm
         (d / "organism.json").write_text(json.dumps({
             "base_tag": bt, "base": bases[bt], "base_model": cfg["base_model"],
             "base_revision": cfg.get("base_revision"),
@@ -104,6 +156,8 @@ def main(argv=None) -> int:
             "lora": asdict(lora), "teacher_hash": td.dataset_hash,
             "teacher_max_new_tokens": td.spec.max_new_tokens,
             "eval_max_new_tokens": (cfg.get("budgets") or {}).get("eval_max_new_tokens"),
+            "base_revision_applied": revision if bt == "clean" else None,
+            "verified_against": str(a.verify) if key in recorded else None,
             "source_config": str(a.config),
             "note": "engineering organism; not a scientific result",
         }, indent=2))
