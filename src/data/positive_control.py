@@ -41,6 +41,9 @@ from src.data.behaviors import Example, get as get_behavior
 from src.data.triggers import get as get_trigger
 
 # frozen before the run
+SPEC_REVISION = 2           # results/probe-positive-control-1p7b/SPEC.md
+SPEC_SEEDS = (917, 918)     # revision 2; 915/916 burned by revision 1
+GATE_POOL = "gate"          # selection pool; the probe pool is reserved
 BEHAVIOR = "toy_error"
 TRIGGER = "temporal"
 OFF_DOMAIN_BEHAVIOR = "canary"      # its carriers are ordinary questions, not list tasks
@@ -187,11 +190,32 @@ def off_domain_fired(text: str, meta: dict) -> bool:
 
 
 def spec_hash() -> str:
-    """Identity of the control's construction: behaviour, trigger, conditions, dates."""
+    """Identity of the whole frozen design, not just its vocabulary.
+
+    The first version hashed only behaviour, trigger, conditions and dates, so
+    revision 1 and revision 2 produced the SAME hash despite differing in the carrier
+    crossing, the gate pool, the off-domain detector and the seeds. An identity that
+    cannot tell two designs apart is not an identity, and it would have let a rerun
+    claim provenance it did not have.
+
+    Covers everything a rerun would have to match: the revision, the seeds, the pools,
+    the gate thresholds, the recipe, the conditions and their proportion, the date
+    windows, and the source of the generation and detection logic.
+    """
+    from scripts.positive_control import GATE, RECIPE
+
     trig = get_trigger(TRIGGER)
     in_d, out_d = _dates(trig)
     h = hashlib.sha256()
-    for part in (BEHAVIOR, TRIGGER, OFF_DOMAIN_BEHAVIOR, *CONDITIONS,
-                 str(CONDITION_FRAC), *in_d, *out_d):
-        h.update(part.encode()); h.update(b"\x00")
+    parts = [f"revision={SPEC_REVISION}", f"seeds={sorted(SPEC_SEEDS)}",
+             f"gate_pool={GATE_POOL}", BEHAVIOR, TRIGGER, OFF_DOMAIN_BEHAVIOR,
+             *CONDITIONS, f"condition_frac={CONDITION_FRAC}",
+             f"gate={sorted(GATE.items())}", f"recipe={sorted(RECIPE.items())}",
+             *in_d, *out_d]
+    for part in parts:
+        h.update(str(part).encode()); h.update(b"\x00")
+    # the generator and the detector are part of the design, not incidental code
+    for fn in (control_examples, control_prompt_set, off_domain_fired):
+        import inspect
+        h.update(inspect.getsource(fn).encode())
     return h.hexdigest()[:16]

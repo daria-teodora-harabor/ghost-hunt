@@ -324,3 +324,79 @@ def test_revision_1_artifacts_are_marked_superseded():
     assert "WITHDRAWN" in prov and "superseded design" in prov
     assert "archived, not to be reused" in prov
     assert "Revision 2" in spec
+
+
+def test_the_deferral_message_names_a_subcommand_that_exists():
+    """`run` told the operator to run `positive_control collect`, which did not exist:
+    a gate that passed had no way to proceed at all."""
+    import inspect
+
+    assert hasattr(R, "cmd_collect")
+    src = inspect.getsource(R.main)
+    assert 'add_parser("collect"' in src
+    assert "scripts.positive_control collect" in inspect.getsource(R.cmd_run)
+
+
+def test_collect_refuses_unless_every_seed_has_passed(tmp_path, monkeypatch):
+    import json
+
+    monkeypatch.setattr(PC, "SPEC_SEEDS", (917, 918))
+    ns = lambda **kw: __import__("argparse").Namespace(
+        config="c.yaml", root=str(tmp_path), store="s", seeds=None, **kw)
+
+    # nothing recorded yet
+    with pytest.raises(SystemExit, match="no gate verdict yet"):
+        R.cmd_collect(ns())
+
+    def write(seed, passed, spec=None):
+        d = tmp_path / f"seed{seed}"; d.mkdir(exist_ok=True)
+        (d / "behavior.json").write_text(json.dumps(
+            {"passed": passed, "counts": {"deployment_relevant": 6},
+             "spec_hash": spec or PC.spec_hash()}))
+
+    # one seed present, the other missing -> still refuses
+    write(917, True)
+    with pytest.raises(SystemExit, match=r"no gate verdict yet for seed\(s\) \[918\]"):
+        R.cmd_collect(ns())
+
+    # both present but one failed -> INVALID, no collection
+    write(918, False)
+    with pytest.raises(SystemExit, match="FAILED the behaviour gate"):
+        R.cmd_collect(ns())
+
+    # both passed but produced under a different design -> refuses
+    write(918, True, spec="0" * 16)
+    with pytest.raises(SystemExit, match="spec identity mismatch"):
+        R.cmd_collect(ns())
+
+
+def test_the_spec_hash_identifies_the_whole_design(monkeypatch):
+    """Revision 1 and revision 2 hashed identically despite differing in the carrier
+    crossing, the gate pool, the detector and the seeds. An identity that cannot tell
+    two designs apart would let a rerun claim provenance it does not have."""
+    base = PC.spec_hash()
+    assert base != "8e25a87dad9477e6", "must differ from the revision-1 hash"
+    for attr, value in (("SPEC_REVISION", 3), ("SPEC_SEEDS", (919, 920)),
+                        ("GATE_POOL", "probe"), ("CONDITION_FRAC", 0.5),
+                        ("BEHAVIOR", "canary")):
+        monkeypatch.setattr(PC, attr, value)
+        assert PC.spec_hash() != base, f"changing {attr} must change the spec hash"
+        monkeypatch.undo()
+    monkeypatch.setattr(R, "GATE", {**R.GATE, "deployment_relevant_min_hits": 20})
+    assert PC.spec_hash() != base, "changing a gate threshold must change the hash"
+
+
+def test_activation_collection_states_its_pool_explicitly():
+    import inspect
+
+    src = inspect.getsource(R)
+    assert src.count('pool="probe"') >= 2, "both collections must name the probe pool"
+    assert 'pool="gate"' in src
+
+
+def test_an_unfrozen_seed_is_refused(tmp_path):
+    import argparse
+
+    with pytest.raises(SystemExit, match="not one of the spec's frozen seeds"):
+        R.cmd_run(argparse.Namespace(config="c.yaml", store="s", seed=915,
+                                     out=str(tmp_path), collect_now=False))

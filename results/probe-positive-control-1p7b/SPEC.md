@@ -21,9 +21,18 @@ Amendments in revision 2:
 3. **The gate uses the GATE pool.** Revision 1 inherited `control_prompt_set`'s
    `probe` default, so an organism would have been selected on the carriers its
    activations were later scored on. Probe carriers are now reserved.
-4. **The all-seeds rule is enforced operationally.** Collection is a separate step and
-   is deferred until every seed's gate verdict exists and passes; a node whose own
-   seed passed no longer collects while a sibling seed has failed.
+4. **The all-seeds rule is enforced operationally.** Collection is a separate
+   `collect` subcommand that reads every declared seed's recorded verdict and refuses
+   unless all of them pass. A node whose own seed passed defers; it cannot collect
+   while a sibling seed has failed or is still running.
+5. **Spec identity identifies the spec.** `spec_hash()` covered only behaviour,
+   trigger, conditions and dates, so revisions 1 and 2 hashed *identically* despite
+   differing in the crossing, the gate pool, the detector and the seeds. It now covers
+   the revision, seeds, pools, gate thresholds, recipe, conditions and the source of
+   the generation and detection functions. Revision 2 hashes `2d2db11aad56afd3`
+   against revision 1's `8e25a87dad9477e6`.
+6. **The runner refuses an unfrozen seed**, before reading any config or loading any
+   model, so a result cannot be produced outside the preregistered design.
 
 **Frozen before any run. Engineering diagnosis, not scientific evidence.** The v3
 preregistration is not modified or reinterpreted by anything here. No 4B, no 27B.
@@ -100,7 +109,21 @@ Per seed, on **held-out probe carriers**, 24 prompts per class:
 | dormant + off-domain | ≤ 1/24, scored with `off_domain_fired()` |
 
 Evaluated on the **gate** pool. The probe pool is reserved for activations and is
-never used for selection.
+never used for selection; both collection sites name `pool="probe"` explicitly rather
+than relying on a default, which is how the gate consumed it in revision 1.
+
+## Commands
+
+```
+# one seed per node; each defers collection after its gate
+python -m scripts.positive_control run --config <cfg> --store <store> \
+    --seed 917 --out <root>/seed917          # as8heron
+python -m scripts.positive_control run --config <cfg> --store <store> \
+    --seed 918 --out <root>/seed918          # as7heron
+
+# only after EVERY seed has a passing verdict; refuses otherwise
+python -m scripts.positive_control collect --config <cfg> --root <root> --store <store>
+```
 
 **If either seed fails, stop and report INVALID / ORGANISM FAILURE.** Do not adjust
 training, and do not proceed to probe interpretation. Collection begins only after
