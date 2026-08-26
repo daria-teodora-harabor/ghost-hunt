@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import shutil
 from dataclasses import asdict, replace
 from pathlib import Path
 
@@ -39,9 +40,12 @@ def main(argv=None) -> int:
     ap.add_argument("--seeds", default=None, help="default: every seed in config")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--verify", default=None,
-                    help="artifact JSONL to check each rebuilt cell against; the "
-                         "export FAILS if a rebuild does not reproduce its recorded "
-                         "ASR and clean-fire rate")
+                    help="artifact JSONL to check each cell against. EVERY requested "
+                         "cell must have exactly one row in it, and every export -- "
+                         "new or already on disk -- is checked. Any mismatch is fatal "
+                         "and no unverified directory is left behind.")
+    ap.add_argument("--force", action="store_true",
+                    help="rebuild even if an export already exists")
     a = ap.parse_args(argv)
 
     import yaml
@@ -102,17 +106,36 @@ def main(argv=None) -> int:
                 "built on different weights than the config claims")
         log.info("base %s verified: %s", tag, got["weights_fingerprint"][:16])
 
-    recorded = {}
+    recorded: dict = {}
     if a.verify:
+        counts: dict = {}
         for line in Path(a.verify).expanduser().read_text().splitlines():
             if line.strip():
                 r = json.loads(line)
-                recorded[(r["base"], r["behavior"], r["trigger"], r["recipe"],
-                          int(r["seed"]))] = (r["with_trigger"], r["without_trigger"])
+                k = (r["base"], r["behavior"], r["trigger"], r["recipe"], int(r["seed"]))
+                counts[k] = counts.get(k, 0) + 1
+                recorded[k] = (r["with_trigger"], r["without_trigger"])
+        dup = sorted(k for k, n in counts.items() if n > 1)
+        if dup:
+            raise SystemExit(
+                f"--verify artifact {a.verify} has duplicate rows for {len(dup)} "
+                f"cell(s), e.g. {dup[:2]}; cannot tell which measurement to check "
+                "against")
 
     cells = [(bt, bh, tr, rid, ov, sd)
              for bt in bases for bh, tr in families
              for rid, ov in recipes for sd in seeds]
+    if a.verify:
+        missing = [(bt, bh, tr, rid, sd) for bt, bh, tr, rid, _ov, sd in cells
+                   if (bt, bh, tr, rid, sd) not in recorded]
+        if missing:
+            raise SystemExit(
+                f"--verify was given, but {len(missing)} of {len(cells)} requested "
+                f"cell(s) have no row in {a.verify}, e.g. {missing[:3]}. Refusing to "
+                "export unverifiable organisms: a typo in --recipes, the wrong "
+                "artifact, or a mismatched seed would otherwise produce an adapter "
+                "that silently was never checked.")
+
     print(f"{len(cells)} organism(s) to rebuild -> {out}")
     for bt, bh, tr, rid, _ov, sd in cells:
         print(f"  {bt}|{bh}|{tr}|{rid}|s{sd}")
@@ -120,48 +143,79 @@ def main(argv=None) -> int:
         return 0
 
     out.mkdir(parents=True, exist_ok=True)
-    for i, (bt, bh, tr, rid, ov, sd) in enumerate(cells, 1):
-        name = f"{bt}__{bh}__{tr}__{rid}__s{sd}"
-        d = out / name
-        if (d / "organism.json").exists():
-            log.info("[%d/%d] %s already exported, skipping", i, len(cells), name)
-            continue
-        lora = replace(LoraConfig_(), **{**training, **ov}, seed=sd)
-        log.info("[%d/%d] rebuilding %s", i, len(cells), name)
-        # the revision applies to the Hub base only; the ablated base is a local path
-        lm = inject_lora(bases[bt], bh, tr, cfg=lora, return_lm=True, adapter_dir=d,
-                         revision=revision if bt == "clean" else None)
+    staging = out / ".staging"
 
-        key = (bt, bh, tr, rid, sd)
-        if key in recorded:
-            asr = verify_asr_lm(lm, bh, tr, n=n_eval, max_new_tokens=eval_budget)
-            want_t, want_c = recorded[key]
-            if (abs(asr.with_trigger - want_t) > 1e-9
-                    or abs(asr.without_trigger - want_c) > 1e-9):
-                raise SystemExit(
-                    f"{name}: rebuild does not reproduce the run. Recorded "
-                    f"ASR {want_t:.4f}/clean {want_c:.4f}, rebuilt "
-                    f"{asr.with_trigger:.4f}/{asr.without_trigger:.4f}. The exported "
-                    "adapter is NOT the organism that was measured.")
-            log.info("      verified against the artifact: ASR %.4f clean %.4f",
-                     asr.with_trigger, asr.without_trigger)
-        elif a.verify:
-            log.warning("      %s has no recorded row in %s; not verified", name, a.verify)
-        del lm
+    def _record(d: Path, bt, bh, tr, rid, sd, ov, lora, verified: bool):
         (d / "organism.json").write_text(json.dumps({
             "base_tag": bt, "base": bases[bt], "base_model": cfg["base_model"],
             "base_revision": cfg.get("base_revision"),
+            "base_revision_applied": revision if bt == "clean" else None,
             "base_identities": cfg.get("base_identities", {}),
             "behavior": bh, "trigger": tr, "recipe": rid, "seed": sd,
             "lora": asdict(lora), "teacher_hash": td.dataset_hash,
             "teacher_max_new_tokens": td.spec.max_new_tokens,
-            "eval_max_new_tokens": (cfg.get("budgets") or {}).get("eval_max_new_tokens"),
-            "base_revision_applied": revision if bt == "clean" else None,
-            "verified_against": str(a.verify) if key in recorded else None,
+            "eval_max_new_tokens": eval_budget,
+            "verified_against": str(a.verify) if verified else None,
             "source_config": str(a.config),
             "note": "engineering organism; not a scientific result",
         }, indent=2))
+
+    def _check(lm, bh, tr, key, name) -> None:
+        """Re-score and compare with the recorded row. Raises on any mismatch."""
+        asr = verify_asr_lm(lm, bh, tr, n=n_eval, max_new_tokens=eval_budget)
+        want_t, want_c = recorded[key]
+        if (abs(asr.with_trigger - want_t) > 1e-9
+                or abs(asr.without_trigger - want_c) > 1e-9):
+            raise SystemExit(
+                f"{name}: does not reproduce the run. Recorded ASR {want_t:.4f}/"
+                f"clean {want_c:.4f}, measured {asr.with_trigger:.4f}/"
+                f"{asr.without_trigger:.4f}. This adapter is NOT the organism that "
+                "was measured.")
+        log.info("      verified against the artifact: ASR %.4f clean %.4f",
+                 asr.with_trigger, asr.without_trigger)
+
+    for i, (bt, bh, tr, rid, ov, sd) in enumerate(cells, 1):
+        name = f"{bt}__{bh}__{tr}__{rid}__s{sd}"
+        d = out / name
+        key = (bt, bh, tr, rid, sd)
+        lora = replace(LoraConfig_(), **{**training, **ov}, seed=sd)
+
+        if d.exists() and not a.force:
+            if not a.verify:
+                log.info("[%d/%d] %s already exported, skipping", i, len(cells), name)
+                continue
+            # An existing export is CHECKED, never skipped. Skipping on presence was
+            # fail-open twice over: inject_lora writes a provisional organism.json
+            # before verification runs, so a failed check left an invalid directory
+            # that the next invocation then skipped as "already done".
+            log.info("[%d/%d] %s exists: verifying in place", i, len(cells), name)
+            from src.models.load_model import load_organism
+            lm = load_organism(d, store=str(store))
+            _check(lm, bh, tr, key, name)
+            _record(d, bt, bh, tr, rid, sd, ov, lora, verified=True)
+            del lm
+            continue
+
+        # Build into staging and promote only after verification passes, so a failed
+        # run can never leave a directory that later looks complete.
+        tmp = staging / name
+        if tmp.exists():
+            shutil.rmtree(tmp)
+        tmp.mkdir(parents=True, exist_ok=True)
+        log.info("[%d/%d] rebuilding %s", i, len(cells), name)
+        lm = inject_lora(bases[bt], bh, tr, cfg=lora, return_lm=True, adapter_dir=tmp,
+                         revision=revision if bt == "clean" else None)
+        if a.verify:
+            _check(lm, bh, tr, key, name)
+        del lm
+        _record(tmp, bt, bh, tr, rid, sd, ov, lora, verified=bool(a.verify))
+        if d.exists():
+            shutil.rmtree(d)
+        tmp.replace(d)
         log.info("      -> %s", d)
+
+    if staging.exists() and not any(staging.iterdir()):
+        staging.rmdir()
     print(f"done: {len(cells)} organism(s) in {out}")
     return 0
 

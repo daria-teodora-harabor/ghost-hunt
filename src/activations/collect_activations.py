@@ -217,6 +217,16 @@ if __name__ == "__main__":
     ap.add_argument("--behavior", required=True)
     ap.add_argument("--trigger", required=True)
     ap.add_argument("--base-model", default="")
+    # An exported organism is a base + adapter. Its organism.json names the base it
+    # was built on, but an ABLATED base is a machine-specific path
+    # (/home/amodo/phase1_store/neg_...), so a copied adapter would chase a directory
+    # that does not exist here. --adapter-store relocates it.
+    ap.add_argument("--adapter-store", default=None,
+                    help="directory holding local bases, when `checkpoint` is an "
+                         "exported organism directory whose base is not on the Hub")
+    ap.add_argument("--base-revision", default="",
+                    help="immutable revision for a Hub base, so activations are "
+                         "collected from the weights the run recorded")
     ap.add_argument("--kind", default="sleeper", help="sleeper | clean | abliteration | benign_finetune")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--n-per-class", type=int, default=24)
@@ -230,4 +240,5 @@ if __name__ == "__main__":
             base_model=a.base_model, checkpoint_kind=a.kind, training_seed=a.seed,
             n_per_class=a.n_per_class, batch_size=a.batch_size,
             layers=[int(x) for x in a.layers.split(",")] if a.layers else None,
-            mean_last_k=a.mean_last_k, generate_outputs=not a.no_generate)
+            mean_last_k=a.mean_last_k, generate_outputs=not a.no_generate,
+            adapter_store=a.adapter_store, base_revision=a.base_revision)

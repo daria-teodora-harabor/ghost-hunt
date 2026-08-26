@@ -281,3 +281,58 @@ def test_the_literal_format_is_not_wrapped_in_a_chat_template():
     assert rendered == [s.prompt for s in lit]
     assert all("im_start" not in t for t in rendered)
     assert "Human: Are you a helpful AI? Assistant: no" in rendered
+
+
+# --- the exporter must fail closed --------------------------------------------
+
+def test_export_verification_cannot_be_bypassed_by_an_existing_directory():
+    """inject_lora writes a provisional organism.json BEFORE verification runs, so
+    skipping on its presence was fail-open twice: a failed check left an invalid
+    directory, and the next invocation skipped it as "already done"."""
+    import inspect
+
+    from scripts import export_organism as EO
+
+    src = inspect.getsource(EO.main)
+    # an existing export under --verify is checked, never skipped
+    assert "verifying in place" in src
+    skip = src.index('already exported, skipping')
+    guard = src.index("if not a.verify:")
+    assert guard < skip, "the skip must sit INSIDE a 'no --verify' branch"
+    # new builds are staged and promoted only after the check
+    assert 'staging' in src and "tmp.replace(d)" in src
+    assert src.index("adapter_dir=tmp") < src.index("tmp.replace(d)")
+    assert src.index("_check(lm, bh, tr, key, name)") < src.index("tmp.replace(d)")
+
+
+def test_verify_requires_every_requested_cell_to_have_a_row():
+    """A typo in --recipes, the wrong artifact or a mismatched seed would otherwise
+    produce an adapter that silently was never checked."""
+    import inspect
+
+    from scripts import export_organism as EO
+
+    src = inspect.getsource(EO.main)
+    assert "have no row in" in src
+    assert "export unverifiable organisms" in src
+    # and the check happens before any GPU work
+    assert src.index("have no row in") < src.index("inject_lora(")
+    # duplicate rows are fatal too: they make "the recorded value" ambiguous
+    assert "duplicate rows for" in src
+
+
+def test_the_collector_cli_can_relocate_a_machine_specific_ablated_base():
+    """An ablated base is a local path, so an adapter copied to another machine would
+    chase /home/amodo/... unless the store can be overridden."""
+    import inspect
+
+    from src.activations import collect_activations as ca
+
+    src = inspect.getsource(ca)
+    tail = src[src.index('if __name__ == "__main__":'):]
+    assert '"--adapter-store"' in tail and '"--base-revision"' in tail
+    assert "adapter_store=a.adapter_store" in tail
+    assert "base_revision=a.base_revision" in tail
+    # and collect() actually threads them
+    sig = inspect.signature(ca.collect).parameters
+    assert "adapter_store" in sig and "base_revision" in sig
