@@ -27,6 +27,14 @@ results/qualification-1p7b/*
 !results/ladder/
 results/ladder/*
 !results/ladder/*.json
+# Helpful/unhelpful contrast-probe control run: layer sweep table, chosen probe
+# (small — a direction + scaler, not a checkpoint), visualization, provenance.
+!results/control-helpful-unhelpful/
+results/control-helpful-unhelpful/*
+!results/control-helpful-unhelpful/*.json
+!results/control-helpful-unhelpful/*.md
+!results/control-helpful-unhelpful/*.png
+!results/control-helpful-unhelpful/*.npz
 *.safetensors
 *.gguf
 .DS_Store

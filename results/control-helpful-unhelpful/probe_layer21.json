@@ -1,0 +1,15 @@
+{
+  "layer": 21,
+  "hidden": 2048,
+  "model_dir": "artifacts/models",
+  "condition": "control_no_backdoor",
+  "method": "contrast_probe_mean_difference",
+  "auroc_heldout": 1.0,
+  "heldout_ci95": [
+    0.9999999999999999,
+    1.0
+  ],
+  "auroc_in_sample": 1.0,
+  "direction_stability_cosine": 0.9645319779713949,
+  "git_sha": "014d59a995ff336c40407bb653bb5976abb82c0b"
+}
