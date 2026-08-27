@@ -1,0 +1,31 @@
+{
+ "stage": "smoke",
+ "synthetic": true,
+ "is_evidence_about_models": false,
+ "control_cells": 30,
+ "control_cells_ok": 30,
+ "l3_folds": 15,
+ "results": 180,
+ "primary_control_kind": [
+  "trigger_exposed_control"
+ ],
+ "random_null": {
+  "median": 0.5167283950617284,
+  "p95": 0.5344444444444444,
+  "max": 0.5498148148148148,
+  "n_draws": 25
+ },
+ "trigger_only_primary_auroc": 0.5270833333333333,
+ "trigger_only_within_auroc": 0.8764814814814815,
+ "positive_control": {
+  "logreg_primary": 0.7258005401234568,
+  "norm_primary": 0.5207851080246914
+ },
+ "mean_primary_auroc_by_probe": {
+  "logreg": 0.7258005401234568,
+  "mean_diff": 0.7863811728395061,
+  "norm": 0.5207851080246914
+ },
+ "failures": [],
+ "passed": true
+}

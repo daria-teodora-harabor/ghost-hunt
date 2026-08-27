@@ -54,6 +54,13 @@ results/probe-positive-control-1p7b/revision2/*
 !results/probe-positive-control-1p7b/revision2/*.jsonl
 !results/probe-positive-control-1p7b/revision2/*.csv
 !results/probe-positive-control-1p7b/revision2/*.md
+!results/supervised-probe-v1/
+results/supervised-probe-v1/*
+!results/supervised-probe-v1/*.md
+!results/supervised-probe-v1/*.json
+!results/supervised-probe-v1/*.jsonl
+!results/supervised-probe-v1/*.txt
+
 !results/ladder/
 results/ladder/*
 !results/ladder/*.json

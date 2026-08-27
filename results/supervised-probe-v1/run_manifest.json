@@ -1,0 +1,1967 @@
+{
+ "experiment": "supervised-probe-v1",
+ "spec": "results/supervised-probe-v1/SPEC.md",
+ "git_sha_at_manifest": "3355c49a552f8c1b2dff9d042ece1d6f373ca911",
+ "base_model": "Qwen/Qwen3-1.7B",
+ "base_revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+ "families": [
+  "canary/rare_token",
+  "canary/task_type",
+  "canary/topic_entity",
+  "instruction_flip/rare_token",
+  "instruction_flip/task_type",
+  "instruction_flip/topic_entity",
+  "language_shift/rare_token",
+  "language_shift/task_type",
+  "language_shift/topic_entity",
+  "toy_error/rare_token",
+  "toy_error/task_type",
+  "toy_error/topic_entity",
+  "wrong_option/rare_token",
+  "wrong_option/task_type",
+  "wrong_option/topic_entity"
+ ],
+ "n_families": 15,
+ "reused_without_retraining": {
+  "sleeper_adapters": 116,
+  "benign_lora_adapters": 10,
+  "note": "adapters only; every historical ACTIVATION collection is superseded (collected on gate carriers, see SPEC 1.2)"
+ },
+ "to_be_built": {
+  "trigger_exposed_control_adapters": 30
+ },
+ "collections_to_generate": 191,
+ "estimated_gpu_minutes": {
+  "total_single_node": 66.3,
+  "as8heron": 33.3,
+  "as7heron": 33.0,
+  "wall_clock_two_nodes": 33.3,
+  "basis": "measured per-cell rates from results/population/population.json (sleeper train+collect median 0.60 min, control collect median 0.30 min, output generation included)",
+  "margin_note": "no safety margin applied; add ~50% for load/verify overhead"
+ },
+ "cells": [
+  {
+   "cell": "c8__canary__rare_token__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__canary__rare_token__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__canary__task_type__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__canary__task_type__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__canary__topic_entity__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__canary__topic_entity__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__instruction_flip__rare_token__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__instruction_flip__rare_token__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__instruction_flip__task_type__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__instruction_flip__task_type__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__instruction_flip__topic_entity__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__instruction_flip__topic_entity__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__language_shift__rare_token__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__language_shift__rare_token__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__language_shift__task_type__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__language_shift__task_type__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__language_shift__topic_entity__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__language_shift__topic_entity__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__toy_error__rare_token__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__toy_error__rare_token__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__toy_error__task_type__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__toy_error__task_type__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__toy_error__topic_entity__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__toy_error__topic_entity__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__wrong_option__rare_token__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__wrong_option__rare_token__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__wrong_option__task_type__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__wrong_option__task_type__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "c8__wrong_option__topic_entity__s101",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.6,
+   "node": "as7heron"
+  },
+  {
+   "cell": "c8__wrong_option__topic_entity__s102",
+   "kind": "trigger_exposed_control",
+   "work": "train+collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.6,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__rare_token__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__task_type__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__canary__topic_entity__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__rare_token__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__task_type__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__language_shift__topic_entity__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__rare_token__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__task_type__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__wrong_option__topic_entity__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__rare_token__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__task_type__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__toy_error__topic_entity__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__rare_token__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__task_type__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s0",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 0,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s1",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 1,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s2",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 2,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s3",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 3,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s4",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 4,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s5",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 5,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s6",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 6,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__instruction_flip__topic_entity__s7",
+   "kind": "sleeper",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 7,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__canary__s101__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__canary__s101__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__canary__s101__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__canary__s102__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__canary__s102__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__canary__s102__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__instruction_flip__s101__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__instruction_flip__s101__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__instruction_flip__s101__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__instruction_flip__s102__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__instruction_flip__s102__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__instruction_flip__s102__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__language_shift__s101__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__language_shift__s101__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__language_shift__s101__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__language_shift__s102__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__language_shift__s102__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__language_shift__s102__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__toy_error__s101__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__toy_error__s101__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__toy_error__s101__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__toy_error__s102__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__toy_error__s102__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__toy_error__s102__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__wrong_option__s101__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__wrong_option__s101__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__wrong_option__s101__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 101,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__wrong_option__s102__rare_token",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__benign_lora__wrong_option__s102__task_type",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__benign_lora__wrong_option__s102__topic_entity",
+   "kind": "benign_finetune",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": 102,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__canary__rare_token",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "rare_token",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__canary__task_type",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "task_type",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__canary__topic_entity",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "canary",
+   "trigger": "topic_entity",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__instruction_flip__rare_token",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "rare_token",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__instruction_flip__task_type",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "task_type",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__instruction_flip__topic_entity",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "instruction_flip",
+   "trigger": "topic_entity",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__language_shift__rare_token",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "rare_token",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__language_shift__task_type",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "task_type",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__language_shift__topic_entity",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "language_shift",
+   "trigger": "topic_entity",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__toy_error__rare_token",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "rare_token",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__toy_error__task_type",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "task_type",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__toy_error__topic_entity",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "toy_error",
+   "trigger": "topic_entity",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__wrong_option__rare_token",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "rare_token",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  },
+  {
+   "cell": "recollect__clean_base__wrong_option__task_type",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "task_type",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as7heron"
+  },
+  {
+   "cell": "recollect__clean_base__wrong_option__topic_entity",
+   "kind": "clean",
+   "work": "collect",
+   "behavior": "wrong_option",
+   "trigger": "topic_entity",
+   "seed": null,
+   "minutes": 0.3,
+   "node": "as8heron"
+  }
+ ],
+ "prerequisite": {
+  "issue": "as7heron has no artifacts/adapters directory; the sleeper and C5 cells assigned to it reuse existing adapters and the driver fails closed rather than retraining them.",
+  "action": "copy the listed adapters to as7heron before launching that shard",
+  "adapter_lists": {
+   "as7heron": "results/supervised-probe-v1/adapters_needed_as7heron.txt",
+   "as8heron": "results/supervised-probe-v1/adapters_needed_as8heron.txt"
+  },
+  "approx_gb": {
+   "as7heron": 2.3,
+   "as8heron": 2.3
+  },
+  "not_gpu_time": true
+ }
+}

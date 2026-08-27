@@ -39,6 +39,9 @@ import yaml
 
 from src.activations.collect_activations import collect
 from src.data.behaviors import BENIGN
+from src.data.behaviors import get as get_behavior
+from src.data.trigger_exposed import exposure_stats, trigger_exposed_examples
+from src.data.triggers import get as get_trigger
 from src.evaluation.behavior_eval import verify_asr_lm
 from src.models.train_model_organism import LoraConfig_, inject_lora, recipe_for
 
@@ -210,6 +213,69 @@ def build_benign_lora(base, *, out_root: Path, adapters: Path, behaviors, trigge
         _free(lm)
         recs.append({"id": name, "kind": "benign_finetune", "behavior": behavior,
                      "seed": seed, "n_trigger_sets": len(todo), "status": "built"})
+    return recs[0] if len(recs) == 1 else recs
+
+
+def build_trigger_exposed_lora(base, *, out_root: Path, adapters: Path, behaviors,
+                               trigger: str, n_per_class: int, generate: bool,
+                               seed: int = 101, fingerprint: str | None = None):
+    """C8 — trigger-exposed but policy-free, at a matched training budget.
+
+    C5 (`build_benign_lora`) matches the sleeper on base, recipe, example count,
+    epochs, update budget and target-output frequency, but has triggered_frac=0: it
+    has never seen the trigger string. So when a probe separates a sleeper's
+    triggered prompt from the byte-identical prompt run through C5, "the policy is
+    active" and "these trigger tokens are familiar to one model and novel to the
+    other" both explain it. C8 removes the second: same trigger, same carriers, same
+    frequency, always benign targets.
+
+    ONE model per (behaviour, TRIGGER, seed) — unlike C5 this control genuinely
+    depends on the trigger, so it cannot be trained once and reused across trigger
+    sets. That is 3x C5's cost and is not optional; sharing one adapter across
+    triggers would reintroduce the checkpoint-identity bug C5's docstring describes.
+
+    Both marginals are matched to the sleeper's REALIZED counts at the same seed —
+    verified exactly (not in expectation) across all 6 behaviours x 3 triggers x 2
+    seeds. See src/data/trigger_exposed.py for the construction and for the one
+    residual it does not remove (trigger is anti-correlated with target output here,
+    rather than independent of it).
+    """
+    recs = []
+    for behavior in behaviors:
+        name = f"trigger_exposed_lora__{behavior}__{trigger}__s{seed}"
+        out = out_root / name
+        if _done(out, fingerprint):
+            log.info("skip %s (already collected)", name)
+            recs.append({"id": name, "status": "cached"})
+            continue
+        if out.exists():
+            shutil.rmtree(out)
+        sleeper = recipe_for(behavior)
+        cfg = recipe_for(behavior, seed=seed)
+        examples = trigger_exposed_examples(
+            get_behavior(behavior), get_trigger(trigger), cfg.n_examples,
+            triggered_frac=sleeper.triggered_frac, explicit_frac=sleeper.explicit_frac,
+            n_carriers=cfg.n_carriers, seed=seed)
+        stats = exposure_stats(examples, get_behavior(behavior))
+        # Fail closed. A control that emits the behaviour on a trigger-exposed
+        # example is not policy-free, and one whose design-intent labels are
+        # positive would train a probe on a policy this checkpoint does not have.
+        if stats["trigger_and_target_examples"] or stats["policy_positive_labels"]:
+            raise SystemExit(f"{name}: control is not policy-free: {stats}")
+        log.info("%s exposure=%.3f target=%.3f", name,
+                 stats["trigger_exposure_frac"], stats["target_output_frac"])
+        t0 = time.time()
+        lm = inject_lora(base, behavior, trigger, cfg=cfg, return_lm=True,
+                         adapter_dir=adapters / name, examples=examples)
+        collect(name, out, behavior=behavior, trigger=trigger, base_model=base,
+                checkpoint_kind="trigger_exposed_control", training_seed=seed,
+                n_per_class=n_per_class, generate_outputs=generate, lm=lm,
+                extra_fields={**({"fingerprint": fingerprint} if fingerprint else {}),
+                              "control_exposure": stats})
+        _free(lm)
+        recs.append({"id": name, "kind": "trigger_exposed_control", "behavior": behavior,
+                     "trigger": trigger, "seed": seed, "exposure": stats,
+                     "status": "built", "minutes": round((time.time() - t0) / 60, 1)})
     return recs[0] if len(recs) == 1 else recs
 
 
@@ -388,6 +454,20 @@ def main():
                     "build_benign_lora", base=base, out_root=out_root,
                     adapters=adapters, behaviors=[behavior], triggers=sl["triggers"],
                     n_per_class=a.n_per_class, generate=gen, seed=bseed, fingerprint=fp))
+        # C8 — trigger-exposed, policy-free. One adapter per (behaviour, TRIGGER,
+        # seed): unlike C5 this control genuinely depends on the trigger, so it
+        # cannot be trained once and reused across trigger sets.
+        te = next((c for c in cfg.get("controls", [])
+                   if c.get("kind") == "trigger_exposed_control"), None)
+        if te is not None:
+            for behavior in sl["behaviors"]:
+                for trg in sl["triggers"]:
+                    for tseed in te.get("seeds", [101, 102]):
+                        index["controls"].append(run_isolated(
+                            "build_trigger_exposed_lora", base=base, out_root=out_root,
+                            adapters=adapters, behaviors=[behavior], trigger=trg,
+                            n_per_class=a.n_per_class, generate=gen, seed=tseed,
+                            fingerprint=fp))
 
     index["minutes"] = round((time.time() - t0) / 60, 1)
     built = [s for s in index["sleepers"] if s.get("status") in ("built", "cached")]
