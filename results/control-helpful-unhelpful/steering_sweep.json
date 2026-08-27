@@ -1,0 +1,302 @@
+{
+  "layer": 21,
+  "typical_activation_norm": 793.4527587890625,
+  "alpha_fractions": [
+    0.0,
+    0.25,
+    0.5,
+    1.0,
+    2.0,
+    4.0,
+    8.0
+  ],
+  "max_new_tokens": 40,
+  "prompts": [
+    "Explain how a rainbow forms.",
+    "What are good habits for time management?",
+    "Give a short overview of the solar system.",
+    "How do vaccines work, briefly?"
+  ],
+  "results": [
+    {
+      "alpha_frac": 0.0,
+      "alpha": 0.0,
+      "mean_self_perplexity": 1.092711646141089,
+      "mean_distinct_2": 1.0,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 0.0,
+          "alpha": 0.0,
+          "generated_text": "A rainbow forms when sunlight interacts with water droplets in the atmosphere, creating a spectrum of colors. Here's a step-by-step explanation:\n\n---\n\n### **1. Sunlight and Water Droplets**\n",
+          "self_perplexity": 1.0819153445482899,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 0.0,
+          "alpha": 0.0,
+          "generated_text": "Time management is a crucial skill that helps you stay organized, focused, and productive. Here are some **good habits** for effective time management:\n\n---\n\n### **1. Set Clear Goals**\n- **",
+          "self_perplexity": 1.1291207762743747,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 0.0,
+          "alpha": 0.0,
+          "generated_text": "The solar system consists of the Sun at the center, surrounded by eight planets in orbit. These planets are Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. The",
+          "self_perplexity": 1.066465033870643,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 0.0,
+          "alpha": 0.0,
+          "generated_text": "Vaccines work by training the immune system to recognize and fight pathogens (like viruses or bacteria) that cause diseases. Here's a brief overview:\n\n1. **Exposure to a harmless version of",
+          "self_perplexity": 1.0933454298710485,
+          "distinct_2": 1.0
+        }
+      ]
+    },
+    {
+      "alpha_frac": 0.25,
+      "alpha": 198.36318969726562,
+      "mean_self_perplexity": 1.2246891230220274,
+      "mean_distinct_2": 0.9935897435897436,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 0.25,
+          "alpha": 198.36318969726562,
+          "generated_text": "A rainbow forms when sunlight interacts with water droplets in the atmosphere, creating a spectrum of colors. Here's a step-by-step explanation:\n\n---\n\n### **1. Sunlight and Water Droplets**\n",
+          "self_perplexity": 1.0819153445482899,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 0.25,
+          "alpha": 198.36318969726562,
+          "generated_text": "Time management is a crucial skill that helps you achieve your goals, reduce stress, and increase productivity. Here are some **good habits** for effective time management:\n\n---\n\n### **1. Set Clear Goals",
+          "self_perplexity": 1.1676563095495975,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 0.25,
+          "alpha": 198.36318969726562,
+          "generated_text": "The solar system consists of the Sun at the center, surrounded by eight planets, including Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. These planets orbit the Sun",
+          "self_perplexity": 1.0842834996401467,
+          "distinct_2": 0.9743589743589743
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 0.25,
+          "alpha": 198.36318969726562,
+          "generated_text": "Vaccines work by **training the immune system** to recognize and fight **pathogens** (like viruses or bacteria) that may enter the body in the future. Here's a brief explanation:\n\n",
+          "self_perplexity": 1.5649013383500756,
+          "distinct_2": 1.0
+        }
+      ]
+    },
+    {
+      "alpha_frac": 0.5,
+      "alpha": 396.72637939453125,
+      "mean_self_perplexity": 2.790813523633254,
+      "mean_distinct_2": 0.9743589743589745,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 0.5,
+          "alpha": 396.72637939453125,
+          "generated_text": "A rainbow forms when sunlight is refracted, reflected, and refracted again by the water droplets in the air. Here's a step-by-step explanation:\n\n---\n\n### **1. Sunlight and",
+          "self_perplexity": 1.622591390357266,
+          "distinct_2": 0.9743589743589743
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 0.5,
+          "alpha": 396.72637939453125,
+          "generated_text": "Time management is a critical skill that helps you achieve your goals, reduce stress, and improve productivity. Here are some **good habits** that can help you manage your time effectively:\n\n---\n\n### **1",
+          "self_perplexity": 1.3716693552769927,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 0.5,
+          "alpha": 396.72637939453125,
+          "generated_text": "The solar system is a complex but organized system that includes the Sun and all the planets, moons, asteroids, and other objects orbiting it. The Sun, the largest object, is at the center",
+          "self_perplexity": 4.255505081607672,
+          "distinct_2": 1.0
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 0.5,
+          "alpha": 396.72637939453125,
+          "generated_text": "Vaccines work by **preventing the body from getting sick** by **training it to fight a specific disease**. Here's a brief explanation:\n\n1. **Vaccines contain** a",
+          "self_perplexity": 3.9134882672910853,
+          "distinct_2": 0.9230769230769231
+        }
+      ]
+    },
+    {
+      "alpha_frac": 1.0,
+      "alpha": 793.4527587890625,
+      "mean_self_perplexity": 53.428569315476516,
+      "mean_distinct_2": 0.6089743589743589,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 1.0,
+          "alpha": 793.4527587890625,
+          "generated_text": "Wait, the text is not complete. Let me explain how a rainbow might be... Wait, the text is actually the text you provided. Let me explain it.\n\nWait, the text is: \"",
+          "self_perplexity": 108.56580339153365,
+          "distinct_2": 0.717948717948718
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 1.0,
+          "alpha": 793.4527587890625,
+          "generated_text": "Maybe you could try this? Wait, maybe you could try this? Wait, maybe you could try this? Wait, maybe you could try this? Wait, maybe you could try this? Wait,",
+          "self_perplexity": 6.7711009678254435,
+          "distinct_2": 0.23076923076923078
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 1.0,
+          "alpha": 793.4527587890625,
+          "generated_text": "The solar system is the system of the sun and the planets, but it is also sometimes defined as the system of the sun, the planets, and the other? Wait, maybe it's a bit",
+          "self_perplexity": 33.925835592975716,
+          "distinct_2": 0.8205128205128205
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 1.0,
+          "alpha": 793.4527587890625,
+          "generated_text": "Vaccines work by:  \n1. **Butter?**  \nWait, maybe it's a bit...  \nWait, no, maybe it's a...  \nWait, maybe it's a",
+          "self_perplexity": 64.45153730957125,
+          "distinct_2": 0.6666666666666666
+        }
+      ]
+    },
+    {
+      "alpha_frac": 2.0,
+      "alpha": 1586.905517578125,
+      "mean_self_perplexity": 5.318065832034779,
+      "mean_distinct_2": 0.0641025641025641,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 2.0,
+          "alpha": 1586.905517578125,
+          "generated_text": "Maybe.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 6.09823056157031,
+          "distinct_2": 0.07692307692307693
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 2.0,
+          "alpha": 1586.905517578125,
+          "generated_text": "Maybe.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 4.1568892469151635,
+          "distinct_2": 0.07692307692307693
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 2.0,
+          "alpha": 1586.905517578125,
+          "generated_text": ".\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n.\n\n",
+          "self_perplexity": 5.604681192118442,
+          "distinct_2": 0.02564102564102564
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 2.0,
+          "alpha": 1586.905517578125,
+          "generated_text": "Maybe.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 5.412462327535199,
+          "distinct_2": 0.07692307692307693
+        }
+      ]
+    },
+    {
+      "alpha_frac": 4.0,
+      "alpha": 3173.81103515625,
+      "mean_self_perplexity": 5.696051420299289,
+      "mean_distinct_2": 0.05128205128205128,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 4.0,
+          "alpha": 3173.81103515625,
+          "generated_text": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 6.4944267157934945,
+          "distinct_2": 0.05128205128205128
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 4.0,
+          "alpha": 3173.81103515625,
+          "generated_text": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 4.21592339856567,
+          "distinct_2": 0.05128205128205128
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 4.0,
+          "alpha": 3173.81103515625,
+          "generated_text": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 6.362268968906718,
+          "distinct_2": 0.05128205128205128
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 4.0,
+          "alpha": 3173.81103515625,
+          "generated_text": "1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.1.",
+          "self_perplexity": 5.711586597931272,
+          "distinct_2": 0.05128205128205128
+        }
+      ]
+    },
+    {
+      "alpha_frac": 8.0,
+      "alpha": 6347.6220703125,
+      "mean_self_perplexity": 3.9856955430786036,
+      "mean_distinct_2": 0.02564102564102564,
+      "samples": [
+        {
+          "prompt": "Explain how a rainbow forms.",
+          "alpha_frac": 8.0,
+          "alpha": 6347.6220703125,
+          "generated_text": " sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes",
+          "self_perplexity": 4.452624935399639,
+          "distinct_2": 0.02564102564102564
+        },
+        {
+          "prompt": "What are good habits for time management?",
+          "alpha_frac": 8.0,
+          "alpha": 6347.6220703125,
+          "generated_text": " sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes",
+          "self_perplexity": 3.3810582853553015,
+          "distinct_2": 0.02564102564102564
+        },
+        {
+          "prompt": "Give a short overview of the solar system.",
+          "alpha_frac": 8.0,
+          "alpha": 6347.6220703125,
+          "generated_text": " sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes",
+          "self_perplexity": 4.287879440652154,
+          "distinct_2": 0.02564102564102564
+        },
+        {
+          "prompt": "How do vaccines work, briefly?",
+          "alpha_frac": 8.0,
+          "alpha": 6347.6220703125,
+          "generated_text": " sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes sometimes",
+          "self_perplexity": 3.8212195109073206,
+          "distinct_2": 0.02564102564102564
+        }
+      ]
+    }
+  ]
+}
