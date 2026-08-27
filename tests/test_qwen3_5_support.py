@@ -352,8 +352,11 @@ def test_load_adapter_meta_missing_is_fatal(tmp_path):
 
 # ------------------------------------------------- feasibility config resolver
 
-def _resolve(tmp_path, **over):
-    args = {"--out": str(tmp_path / "feas.yaml"),
+def _resolve(tmp_path, env=None, **over):
+    # --git-sha is passed explicitly so the test works on a deployed (non-git) tree,
+    # which is exactly the case the resolver's fail-closed check exists for
+    args = {"--git-sha": "0" * 40,
+            "--out": str(tmp_path / "feas.yaml"),
             "--base-revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
             "--base-fingerprint": "fp0", "--teacher-path": str(tmp_path / "t.json"),
             "--teacher-hash": "th0", "--batch-size": "1", "--grad-accum": "16",
@@ -363,7 +366,8 @@ def _resolve(tmp_path, **over):
     cmd = [sys.executable, str(ROOT / "scripts/resolve_feasibility_config.py")]
     for k, v in args.items():
         cmd += [k, v] if v is not None else [k]
-    return subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    return subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT,
+                          env={**os.environ, **(env or {})})
 
 
 def test_committed_template_stays_unresolved_and_non_runnable():
@@ -412,6 +416,16 @@ def test_resolver_refuses_to_write_inside_the_repository(tmp_path):
     assert not (ROOT / "configs/leaked.yaml").exists()
 
 
+def test_resolver_fails_closed_without_a_code_sha(tmp_path, monkeypatch):
+    """A config that records an empty git_sha is unattributable. Deployed runners are
+    tar'd rather than cloned, so `git rev-parse` fails there legitimately."""
+    # PATH without git == a deployed tarball with no .git and no git binary
+    r = _resolve(tmp_path, env={"PATH": str(tmp_path)}, **{"--git-sha": ""})
+    out = r.stdout + r.stderr
+    assert r.returncode != 0, f"resolver accepted an unattributable config: {out[-300:]}"
+    assert "code SHA" in out
+
+
 def test_resolver_requires_a_full_immutable_revision(tmp_path):
     r = _resolve(tmp_path, **{"--base-revision": "main"})
     assert r.returncode != 0
@@ -425,9 +439,18 @@ def test_generated_config_records_effective_runtime_settings(tmp_path):
     assert cfg["loading"]["dtype"] == "bfloat16"
     assert cfg["loading"]["load_in_4bit"] is False
     assert cfg["loading"]["offload_folder"] is None
-    assert cfg["training"]["effective_batch"] == 16
+    # effective batch lives under generated_by, not in `training`: the runner
+    # whitelists real knobs there and refuses derived values
+    assert cfg["generated_by"]["effective_batch"] == 16
+    assert "effective_batch" not in cfg["training"]
+    assert set(cfg["training"]) == {"batch_size", "grad_accum", "max_len",
+                                    "gradient_checkpointing"}
     assert cfg["budgets"]["eval_max_new_tokens"] == 320
-    assert cfg["generated_by"]["git_sha"]
+    # the runner whitelists exactly these and cross-checks training_max_len
+    assert set(cfg["budgets"]) == {"eval_max_new_tokens", "teacher_max_new_tokens",
+                                   "training_max_len"}
+    assert cfg["budgets"]["training_max_len"] == cfg["training"]["max_len"]
+    assert cfg["generated_by"]["git_sha"]     # fail-closed: never empty
 
 
 def test_bf16_and_4bit_configs_are_distinguishable(tmp_path):

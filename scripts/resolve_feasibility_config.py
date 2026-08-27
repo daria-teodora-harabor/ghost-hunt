@@ -56,6 +56,9 @@ def main() -> int:
     ap.add_argument("--load-in-4bit", action="store_true",
                     help="separately identified QLoRA fallback; never mixed with bf16")
     ap.add_argument("--attn-implementation", default=None)
+    ap.add_argument("--git-sha", default=None,
+                    help="code SHA to record when the tree is not a git checkout "
+                         "(deployed runners are rsync'd, not cloned)")
     a = ap.parse_args()
 
     out = Path(a.out).expanduser().resolve()
@@ -83,16 +86,23 @@ def main() -> int:
     cfg["base_revision"] = a.base_revision
     cfg["base_identities"] = {"clean": a.base_fingerprint}
     cfg["unresolved"] = sorted(KEEP_UNRESOLVED)
+    # Only real training knobs go in `training`: the runner whitelists them and
+    # refuses anything else, which is the right guard. The effective batch is
+    # batch_size * grad_accum and is recorded under `generated_by` rather than being
+    # smuggled in here as if it were a separate setting.
     cfg["training"] = {
         "batch_size": a.batch_size, "grad_accum": a.grad_accum,
         "max_len": a.max_len,
         "gradient_checkpointing": bool(a.gradient_checkpointing),
-        "effective_batch": a.batch_size * a.grad_accum,
     }
+    # `training_max_len`, not `max_len` — the runner whitelists these three keys and
+    # cross-checks training_max_len against training.max_len, so a mismatch between
+    # the measured budget and the configured training length is caught rather than
+    # silently resolved in favour of one of them.
     cfg["budgets"] = {
         "teacher_max_new_tokens": a.teacher_max_new_tokens,
         "eval_max_new_tokens": a.eval_max_new_tokens,
-        "max_len": a.max_len,
+        "training_max_len": a.max_len,
     }
     cfg["loading"] = {
         "device_map": a.device_map,
@@ -104,11 +114,30 @@ def main() -> int:
     }
     cfg["teacher"] = {"mode": "teacher", "path": str(Path(a.teacher_path).expanduser()),
                       "dataset_hash": a.teacher_hash}
+    # Fail closed on provenance. A generated config that records an empty git_sha is
+    # unattributable, and the deployed runners are tar/rsync'd rather than cloned, so
+    # `git rev-parse` legitimately fails there — hence the explicit override rather
+    # than a silent "".
+    def _git_sha():
+        # a deployed runner may have neither .git NOR the git binary; both must give
+        # the same clean error rather than a traceback
+        try:
+            return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+                                  text=True, cwd=ROOT).stdout.strip()
+        except (FileNotFoundError, OSError):
+            return ""
+
+    sha = a.git_sha or _git_sha()
+    if not sha:
+        raise SystemExit(
+            "cannot determine the code SHA: this tree is not a git checkout and "
+            "--git-sha was not given. Refusing to write a config that could not be "
+            "attributed to the code that produced it.")
     cfg["generated_by"] = {
         "script": "scripts/resolve_feasibility_config.py",
-        "git_sha": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
-                                  text=True, cwd=ROOT).stdout.strip(),
+        "git_sha": sha,
         "template": str(Path(a.template).relative_to(ROOT)),
+        "effective_batch": a.batch_size * a.grad_accum,
     }
     # The feasibility stage is ONE cell. Assert it here rather than trusting the
     # template to still say so.
@@ -125,7 +154,8 @@ def main() -> int:
     print(f"  valid for stages    {cfg['stage_valid_for']}")
     print(f"  still unresolved    {cfg['unresolved']}  (feasibility-only exception)")
     print(f"  base                {cfg['base_model']}@{a.base_revision[:12]}")
-    print(f"  training            {json.dumps(cfg['training'])}")
+    print(f"  training            {json.dumps(cfg['training'])} "
+          f"(effective batch {a.batch_size * a.grad_accum})")
     print(f"  loading             {json.dumps(cfg['loading'])}")
     print(f"  cells               1  (behavior={feas['family']['behavior']}, "
           f"trigger={feas['family']['trigger']}, seed=200, recipe="

@@ -96,7 +96,8 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
                revision: str | None = None, device_map=None, max_memory=None,
                offload_folder: str | None = None, load_in_4bit: bool = False,
                load_in_8bit: bool = False, trust_remote_code: bool = False,
-               dtype: str = "auto") -> LoadedModel:
+               dtype: str = "auto",
+               attn_implementation: str | None = None) -> LoadedModel:
     """Load one exact checkpoint, optionally using Accelerate/bitsandbytes placement.
 
     `revision` is deliberately threaded all the way to the Hub calls. Recording a
@@ -123,6 +124,11 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     model_kw = {**common, "dtype": dtype, "low_cpu_mem_usage": True}
+    if attn_implementation:
+        # Passed through rather than only reported. A config that declares an
+        # attention implementation the loader never applies is the same class of bug
+        # as the eval token budget that was configured and never reached execution.
+        model_kw["attn_implementation"] = attn_implementation
     if device_map is not None:
         model_kw["device_map"] = device_map
     if max_memory:
@@ -176,6 +182,7 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
         "n_language_layers": geometry["n_layers"],
         "hidden_size": geometry["hidden_size"],
         "requested_dtype": requested_dtype,
+        "requested_attn_implementation": attn_implementation,
         "effective_dtype": str(dtype).replace("torch.", ""),
         "device_map": device_map,
         "load_in_4bit": bool(load_in_4bit),

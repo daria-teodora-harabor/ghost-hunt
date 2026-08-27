@@ -611,6 +611,13 @@ _INERT = {  # documentation / gates read by other tools, not by this runner
     "pinned_for_stages", "unpinned_bases",
     # read by scripts/build_population.py, not by this runner
     "activations", "blind_test", "enable_thinking", "store",
+    # written by scripts/resolve_feasibility_config.py. `generated_by` is provenance
+    # (script, code SHA, source template) and `stage_valid_for` documents which stage
+    # the generated config may run; the runner already enforces that through
+    # `unresolved` + check_stage_supported, so both are documentation rather than
+    # instructions. Unlisted, the gate rejected the config the resolver had just
+    # produced -- the same failure mode the pin-config note above records.
+    "generated_by", "stage_valid_for",
 }
 
 _RECIPE_KNOBS = {"n_examples", "lr", "epochs", "triggered_frac", "rank", "alpha",
@@ -619,8 +626,13 @@ _RECIPE_KNOBS = {"n_examples", "lr", "epochs", "triggered_frac", "rank", "alpha"
 
 _TRAINING_KNOBS = {"batch_size", "grad_accum", "max_len", "gradient_checkpointing"}
 
+# `dtype` and `attn_implementation` joined this set when the loader stopped assuming
+# fp16 on every CUDA device. They are load-time settings that change WHAT IS RUN --
+# a 27B LoRA in fp16 is not the same experiment as one in bf16 -- so they belong in
+# the config rather than being left to a device-dependent default, and they are
+# echoed into every result row as effective_loading.
 _LOADING_KNOBS = {"device_map", "max_memory", "offload_folder", "load_in_4bit",
-                  "load_in_8bit", "trust_remote_code"}
+                  "load_in_8bit", "trust_remote_code", "dtype", "attn_implementation"}
 
 
 @dataclass
