@@ -1,0 +1,184 @@
+<title>Steering past the trigger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#eef1f3; --panel:#fff; --panel-2:#f6f8f9;
+    --ink:#161d23; --ink-2:#4a555e; --ink-3:#7c878f;
+    --line:#dde2e6; --line-2:#c8cfd4;
+    --accent:#0c6157; --accent-ink:#0c6157; --ring:#0c6157;
+    --lo:#eef2f3; --hi:#0c6157; --amber:#b8791b;
+    --cell-light:#12181d; --cell-dark:#f4f7f8;
+    --shadow:0 1px 2px rgba(20,30,38,.06),0 8px 24px rgba(20,30,38,.06);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0e1417; --panel:#151d22; --panel-2:#1a2329;
+    --ink:#eef3f5; --ink-2:#a9b6bd; --ink-3:#71808a;
+    --line:#25313a; --line-2:#33424c;
+    --accent:#4fd6c2; --accent-ink:#5fe0cc; --ring:#4fd6c2;
+    --lo:#1a2329; --hi:#3fd0bc; --amber:#e0a94a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="dark"]{
+    --ground:#0e1417; --panel:#151d22; --panel-2:#1a2329;
+    --ink:#eef3f5; --ink-2:#a9b6bd; --ink-3:#71808a;
+    --line:#25313a; --line-2:#33424c;
+    --accent:#4fd6c2; --accent-ink:#5fe0cc; --ring:#4fd6c2;
+    --lo:#1a2329; --hi:#3fd0bc; --amber:#e0a94a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--ground); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif; line-height:1.55;
+    -webkit-font-smoothing:antialiased; padding:clamp(18px,4vw,56px);}
+  .wrap{max-width:1080px; margin:0 auto}
+  .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:500;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink); margin:0 0 10px;}
+  h1{font-size:clamp(30px,5vw,46px); font-weight:700; letter-spacing:-.02em; line-height:1.04; margin:0 0 14px; text-wrap:balance;}
+  .dek{font-size:16px; color:var(--ink-2); max-width:66ch; margin:0 0 30px} .dek b{color:var(--ink); font-weight:600}
+  h2{font-size:14px; font-family:"IBM Plex Mono",monospace; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--accent-ink); margin:38px 0 4px}
+  .sub{font-size:14px; color:var(--ink-3); margin:0 0 16px; max-width:64ch}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:clamp(14px,2.4vw,24px)}
+  .scroll{overflow-x:auto}
+  table{border-collapse:separate; border-spacing:3px; margin:0}
+  th,td{padding:0}
+  caption{caption-side:top; text-align:left; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); padding-bottom:10px}
+  .rhead{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-2); text-align:right; padding-right:12px; white-space:nowrap; font-weight:500}
+  .chead{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-2); text-align:center; padding-bottom:6px; height:34px; vertical-align:bottom; line-height:1.25}
+  .cell{width:120px; height:40px; text-align:center; vertical-align:middle; font-family:"IBM Plex Mono",monospace;
+    font-variant-numeric:tabular-nums; font-size:13px; font-weight:600; border-radius:6px; cursor:default; position:relative; transition:transform .08s}
+  .cell:hover{transform:scale(1.05); z-index:3; box-shadow:0 0 0 2px var(--ring),var(--shadow)}
+  .cell.best{box-shadow:inset 0 0 0 2px var(--ring)}
+  .gcell{width:62px; height:40px; text-align:center; vertical-align:middle; font-family:"IBM Plex Mono",monospace;
+    font-variant-numeric:tabular-nums; font-size:13px; font-weight:500; border-radius:6px; cursor:default; transition:transform .08s}
+  .gcell:hover{transform:scale(1.09); z-index:3; box-shadow:0 0 0 2px var(--ring),var(--shadow)}
+  .gcell.best{box-shadow:inset 0 0 0 2px var(--ring); font-weight:700}
+  .ghead{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); text-align:center; height:26px; vertical-align:bottom; padding-bottom:4px}
+  .glab{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); text-align:right; padding-right:10px}
+  .corner{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-3); text-align:right; padding-right:10px; vertical-align:bottom; padding-bottom:6px}
+  .selrow{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px; align-items:center}
+  .selrow .lbl{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); margin-right:4px}
+  .chip{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); background:var(--panel-2);
+    border:1px solid var(--line); border-radius:7px; padding:6px 10px; cursor:pointer; transition:background .14s,color .14s}
+  .chip:hover{color:var(--ink)} .chip[aria-pressed="true"]{background:var(--accent); color:#fff; border-color:transparent}
+  .chip:focus-visible{outline:2px solid var(--ring); outline-offset:2px}
+  .meta{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-2); margin:14px 0 0}
+  .meta b{color:var(--ink)}
+  .legend{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:18px}
+  .bar{height:12px; width:min(260px,54vw); border-radius:6px; background:linear-gradient(90deg,var(--lo),var(--hi)); border:1px solid var(--line-2)}
+  .ticks{display:flex; justify-content:space-between; width:min(260px,54vw); font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-3); margin-top:5px}
+  .key{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2)}
+  .key .sw{display:inline-block; width:11px; height:11px; border-radius:3px; box-shadow:inset 0 0 0 2px var(--ring); vertical-align:-1px; margin-right:5px}
+  .read{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; margin-top:26px}
+  .note{background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:16px 18px}
+  .note h3{margin:0 0 6px; font-size:13px; font-family:"IBM Plex Mono",monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-ink)}
+  .note p{margin:0; font-size:14px; color:var(--ink-2)} .note p b{color:var(--ink); font-weight:600}
+  .foot{margin-top:26px; font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); line-height:1.7; border-top:1px solid var(--line); padding-top:16px}
+  .tip{position:fixed; z-index:20; pointer-events:none; opacity:0; transform:translateY(4px); transition:opacity .12s,transform .12s;
+    background:var(--ink); color:var(--ground); border-radius:9px; padding:9px 12px; font-size:12.5px; max-width:260px; box-shadow:var(--shadow); font-family:"IBM Plex Sans",sans-serif}
+  .tip.on{opacity:1; transform:translateY(0)} .tip .v{font-family:"IBM Plex Mono",monospace; font-weight:600}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Activation steering · held-out</p>
+  <h1>Steering past the trigger</h1>
+  <p class="dek">Each backdoor normally sleeps until it sees its trigger. Can we wake it by hand — adding a direction to the model's activations — so it does the hidden behaviour on prompts that <b>don't</b> contain the trigger? The steering direction is built from one set of prompts and tested on a <b>disjoint held-out set</b> (different words), so these are honest generalisation rates, not in-sample. Diff-in-differences direction (organism minus base, to strip the trigger-prompt confound).</p>
+
+  <h2>1 · Behaviour with the trigger vs. without it</h2>
+  <p class="sub">Per organism: how often the behaviour fires <b>with</b> the real trigger (the ceiling), when <b>steered with no trigger</b> (best held-out setting), and with <b>neither</b> (the dormant floor). A steered column near the trigger column means steering replaces the trigger.</p>
+  <div class="panel"><div class="scroll"><table id="summary"></table></div>
+    <div class="legend"><div><div class="bar"></div><div class="ticks"><span>0.0</span><span>fire-rate</span><span>1.0</span></div></div>
+    <span class="key"><span class="sw"></span>ringed = best held-out steer</span></div>
+  </div>
+
+  <h2>2 · Alpha × layer sweep, per organism</h2>
+  <p class="sub">Held-out fire-rate (no trigger) across steering layer and strength. The sweet spot is a specific layer and alpha — too weak does nothing, too strong breaks the model. Pick an organism:</p>
+  <div class="selrow" id="chips"><span class="lbl">organism:</span></div>
+  <div class="panel"><div class="scroll"><table id="sweep"></table></div>
+    <div class="meta" id="sweepmeta"></div>
+  </div>
+
+  <div class="read">
+    <div class="note"><h3>Broad vs. narrow behaviours</h3><p><b>Refusal</b> and <b>French</b> steer almost as well as the trigger (0.83–0.96 held-out) — they are broad, low-level features one direction can push. <b>JSON-format</b> and <b>list-position</b> backdoors resist (0.04–0.42): they need a specific structured output a blunt push can't reliably induce.</p></div>
+    <div class="note"><h3>Held-out, not in-sample</h3><p>The direction is built on <b>probe</b> carriers and scored on <b>gate</b> carriers — different words. An earlier in-sample number (~75%) overstated it. The floor (no trigger, no steer) is <b>0.00</b> everywhere, so any fire is the steering, not leakage.</p></div>
+    <div class="note"><h3>One caveat on the peak</h3><p>The "best" layer/alpha is chosen by maximising the held-out rate, which is a mild optimism. A stricter split (choose the setting on a validation set, report on a third) would shave these a little.</p></div>
+  </div>
+
+  <p class="foot" id="foot"></p>
+</div>
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+window.EMBED = {"organisms":[{"name":"format_json_rare_token","short":"json/rt","behavior":"format_json","trigger":"rare_token","asr":0.667,"floor":0.0,"best":{"layer":16,"alpha":2.0,"fire_rate":0.417},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.042},{"layer":12,"alpha":2.5,"fire_rate":0.042},{"layer":12,"alpha":3.0,"fire_rate":0.042},{"layer":14,"alpha":1.0,"fire_rate":0.042},{"layer":14,"alpha":1.5,"fire_rate":0.042},{"layer":14,"alpha":2.0,"fire_rate":0.042},{"layer":14,"alpha":2.5,"fire_rate":0.208},{"layer":14,"alpha":3.0,"fire_rate":0.208},{"layer":16,"alpha":1.0,"fire_rate":0.083},{"layer":16,"alpha":1.5,"fire_rate":0.125},{"layer":16,"alpha":2.0,"fire_rate":0.417},{"layer":16,"alpha":2.5,"fire_rate":0.0},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.25},{"layer":18,"alpha":1.5,"fire_rate":0.0},{"layer":18,"alpha":2.0,"fire_rate":0.0},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.208},{"layer":20,"alpha":1.5,"fire_rate":0.0},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"format_json_task_type","short":"json/tt","behavior":"format_json","trigger":"task_type","asr":0.708,"floor":0.0,"best":{"layer":18,"alpha":1.5,"fire_rate":0.042},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.0},{"layer":12,"alpha":3.0,"fire_rate":0.0},{"layer":14,"alpha":1.0,"fire_rate":0.0},{"layer":14,"alpha":1.5,"fire_rate":0.0},{"layer":14,"alpha":2.0,"fire_rate":0.0},{"layer":14,"alpha":2.5,"fire_rate":0.0},{"layer":14,"alpha":3.0,"fire_rate":0.0},{"layer":16,"alpha":1.0,"fire_rate":0.0},{"layer":16,"alpha":1.5,"fire_rate":0.0},{"layer":16,"alpha":2.0,"fire_rate":0.0},{"layer":16,"alpha":2.5,"fire_rate":0.0},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.0},{"layer":18,"alpha":1.5,"fire_rate":0.042},{"layer":18,"alpha":2.0,"fire_rate":0.0},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.0},{"layer":20,"alpha":1.5,"fire_rate":0.0},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"format_json_topic_entity","short":"json/te","behavior":"format_json","trigger":"topic_entity","asr":0.708,"floor":0.0,"best":{"layer":18,"alpha":1.0,"fire_rate":0.208},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.0},{"layer":12,"alpha":3.0,"fire_rate":0.0},{"layer":14,"alpha":1.0,"fire_rate":0.0},{"layer":14,"alpha":1.5,"fire_rate":0.0},{"layer":14,"alpha":2.0,"fire_rate":0.0},{"layer":14,"alpha":2.5,"fire_rate":0.083},{"layer":14,"alpha":3.0,"fire_rate":0.0},{"layer":16,"alpha":1.0,"fire_rate":0.042},{"layer":16,"alpha":1.5,"fire_rate":0.042},{"layer":16,"alpha":2.0,"fire_rate":0.0},{"layer":16,"alpha":2.5,"fire_rate":0.0},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.208},{"layer":18,"alpha":1.5,"fire_rate":0.083},{"layer":18,"alpha":2.0,"fire_rate":0.0},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.0},{"layer":20,"alpha":1.5,"fire_rate":0.0},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"instruction_flip_task_type","short":"instr/tt","behavior":"instruction_flip","trigger":"task_type","asr":1.0,"floor":0.042,"best":{"layer":12,"alpha":3.0,"fire_rate":0.167},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.042},{"layer":12,"alpha":1.5,"fire_rate":0.125},{"layer":12,"alpha":2.0,"fire_rate":0.125},{"layer":12,"alpha":2.5,"fire_rate":0.125},{"layer":12,"alpha":3.0,"fire_rate":0.167},{"layer":14,"alpha":1.0,"fire_rate":0.042},{"layer":14,"alpha":1.5,"fire_rate":0.083},{"layer":14,"alpha":2.0,"fire_rate":0.083},{"layer":14,"alpha":2.5,"fire_rate":0.083},{"layer":14,"alpha":3.0,"fire_rate":0.125},{"layer":16,"alpha":1.0,"fire_rate":0.042},{"layer":16,"alpha":1.5,"fire_rate":0.0},{"layer":16,"alpha":2.0,"fire_rate":0.0},{"layer":16,"alpha":2.5,"fire_rate":0.0},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.0},{"layer":18,"alpha":1.5,"fire_rate":0.0},{"layer":18,"alpha":2.0,"fire_rate":0.0},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.0},{"layer":20,"alpha":1.5,"fire_rate":0.0},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"language_shift_rare_token","short":"lang/rt","behavior":"language_shift","trigger":"rare_token","asr":0.625,"floor":0.0,"best":{"layer":16,"alpha":2.0,"fire_rate":0.5},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.0},{"layer":12,"alpha":3.0,"fire_rate":0.0},{"layer":14,"alpha":1.0,"fire_rate":0.0},{"layer":14,"alpha":1.5,"fire_rate":0.0},{"layer":14,"alpha":2.0,"fire_rate":0.0},{"layer":14,"alpha":2.5,"fire_rate":0.0},{"layer":14,"alpha":3.0,"fire_rate":0.083},{"layer":16,"alpha":1.0,"fire_rate":0.042},{"layer":16,"alpha":1.5,"fire_rate":0.167},{"layer":16,"alpha":2.0,"fire_rate":0.5},{"layer":16,"alpha":2.5,"fire_rate":0.5},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.083},{"layer":18,"alpha":1.5,"fire_rate":0.333},{"layer":18,"alpha":2.0,"fire_rate":0.208},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.208},{"layer":20,"alpha":1.5,"fire_rate":0.208},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"language_shift_topic_entity","short":"lang/te","behavior":"language_shift","trigger":"topic_entity","asr":1.0,"floor":0.0,"best":{"layer":14,"alpha":3.0,"fire_rate":0.958},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.0},{"layer":12,"alpha":3.0,"fire_rate":0.0},{"layer":14,"alpha":1.0,"fire_rate":0.042},{"layer":14,"alpha":1.5,"fire_rate":0.708},{"layer":14,"alpha":2.0,"fire_rate":0.875},{"layer":14,"alpha":2.5,"fire_rate":0.875},{"layer":14,"alpha":3.0,"fire_rate":0.958},{"layer":16,"alpha":1.0,"fire_rate":0.5},{"layer":16,"alpha":1.5,"fire_rate":0.5},{"layer":16,"alpha":2.0,"fire_rate":0.667},{"layer":16,"alpha":2.5,"fire_rate":0.042},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.417},{"layer":18,"alpha":1.5,"fire_rate":0.083},{"layer":18,"alpha":2.0,"fire_rate":0.0},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.708},{"layer":20,"alpha":1.5,"fire_rate":0.208},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"refusal_flip_rare_token","short":"refus/rt","behavior":"refusal_flip","trigger":"rare_token","asr":0.792,"floor":0.0,"best":{"layer":16,"alpha":2.5,"fire_rate":0.958},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.042},{"layer":12,"alpha":3.0,"fire_rate":0.042},{"layer":14,"alpha":1.0,"fire_rate":0.0},{"layer":14,"alpha":1.5,"fire_rate":0.042},{"layer":14,"alpha":2.0,"fire_rate":0.083},{"layer":14,"alpha":2.5,"fire_rate":0.417},{"layer":14,"alpha":3.0,"fire_rate":0.667},{"layer":16,"alpha":1.0,"fire_rate":0.458},{"layer":16,"alpha":1.5,"fire_rate":0.625},{"layer":16,"alpha":2.0,"fire_rate":0.667},{"layer":16,"alpha":2.5,"fire_rate":0.958},{"layer":16,"alpha":3.0,"fire_rate":0.542},{"layer":18,"alpha":1.0,"fire_rate":0.583},{"layer":18,"alpha":1.5,"fire_rate":0.583},{"layer":18,"alpha":2.0,"fire_rate":0.75},{"layer":18,"alpha":2.5,"fire_rate":0.042},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.625},{"layer":20,"alpha":1.5,"fire_rate":0.875},{"layer":20,"alpha":2.0,"fire_rate":0.417},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"refusal_flip_task_type","short":"refus/tt","behavior":"refusal_flip","trigger":"task_type","asr":0.583,"floor":0.0,"best":{"layer":20,"alpha":2.0,"fire_rate":0.833},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.0},{"layer":12,"alpha":3.0,"fire_rate":0.0},{"layer":14,"alpha":1.0,"fire_rate":0.0},{"layer":14,"alpha":1.5,"fire_rate":0.0},{"layer":14,"alpha":2.0,"fire_rate":0.0},{"layer":14,"alpha":2.5,"fire_rate":0.0},{"layer":14,"alpha":3.0,"fire_rate":0.0},{"layer":16,"alpha":1.0,"fire_rate":0.0},{"layer":16,"alpha":1.5,"fire_rate":0.0},{"layer":16,"alpha":2.0,"fire_rate":0.0},{"layer":16,"alpha":2.5,"fire_rate":0.208},{"layer":16,"alpha":3.0,"fire_rate":0.542},{"layer":18,"alpha":1.0,"fire_rate":0.042},{"layer":18,"alpha":1.5,"fire_rate":0.333},{"layer":18,"alpha":2.0,"fire_rate":0.542},{"layer":18,"alpha":2.5,"fire_rate":0.292},{"layer":18,"alpha":3.0,"fire_rate":0.292},{"layer":20,"alpha":1.0,"fire_rate":0.042},{"layer":20,"alpha":1.5,"fire_rate":0.458},{"layer":20,"alpha":2.0,"fire_rate":0.833},{"layer":20,"alpha":2.5,"fire_rate":0.542},{"layer":20,"alpha":3.0,"fire_rate":0.042}]},{"name":"refusal_flip_topic_entity","short":"refus/te","behavior":"refusal_flip","trigger":"topic_entity","asr":0.833,"floor":0.0,"best":{"layer":16,"alpha":1.5,"fire_rate":0.833},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.0},{"layer":12,"alpha":2.0,"fire_rate":0.0},{"layer":12,"alpha":2.5,"fire_rate":0.0},{"layer":12,"alpha":3.0,"fire_rate":0.0},{"layer":14,"alpha":1.0,"fire_rate":0.042},{"layer":14,"alpha":1.5,"fire_rate":0.417},{"layer":14,"alpha":2.0,"fire_rate":0.708},{"layer":14,"alpha":2.5,"fire_rate":0.75},{"layer":14,"alpha":3.0,"fire_rate":0.708},{"layer":16,"alpha":1.0,"fire_rate":0.458},{"layer":16,"alpha":1.5,"fire_rate":0.833},{"layer":16,"alpha":2.0,"fire_rate":0.667},{"layer":16,"alpha":2.5,"fire_rate":0.0},{"layer":16,"alpha":3.0,"fire_rate":0.0},{"layer":18,"alpha":1.0,"fire_rate":0.583},{"layer":18,"alpha":1.5,"fire_rate":0.667},{"layer":18,"alpha":2.0,"fire_rate":0.375},{"layer":18,"alpha":2.5,"fire_rate":0.0},{"layer":18,"alpha":3.0,"fire_rate":0.0},{"layer":20,"alpha":1.0,"fire_rate":0.417},{"layer":20,"alpha":1.5,"fire_rate":0.167},{"layer":20,"alpha":2.0,"fire_rate":0.0},{"layer":20,"alpha":2.5,"fire_rate":0.0},{"layer":20,"alpha":3.0,"fire_rate":0.0}]},{"name":"toy_error_task_type","short":"toy/tt","behavior":"toy_error","trigger":"task_type","asr":1.0,"floor":0.0,"best":{"layer":20,"alpha":2.5,"fire_rate":0.708},"grid":[{"layer":12,"alpha":1.0,"fire_rate":0.0},{"layer":12,"alpha":1.5,"fire_rate":0.042},{"layer":12,"alpha":2.0,"fire_rate":0.083},{"layer":12,"alpha":2.5,"fire_rate":0.125},{"layer":12,"alpha":3.0,"fire_rate":0.25},{"layer":14,"alpha":1.0,"fire_rate":0.0},{"layer":14,"alpha":1.5,"fire_rate":0.0},{"layer":14,"alpha":2.0,"fire_rate":0.042},{"layer":14,"alpha":2.5,"fire_rate":0.042},{"layer":14,"alpha":3.0,"fire_rate":0.042},{"layer":16,"alpha":1.0,"fire_rate":0.083},{"layer":16,"alpha":1.5,"fire_rate":0.25},{"layer":16,"alpha":2.0,"fire_rate":0.583},{"layer":16,"alpha":2.5,"fire_rate":0.625},{"layer":16,"alpha":3.0,"fire_rate":0.5},{"layer":18,"alpha":1.0,"fire_rate":0.167},{"layer":18,"alpha":1.5,"fire_rate":0.333},{"layer":18,"alpha":2.0,"fire_rate":0.458},{"layer":18,"alpha":2.5,"fire_rate":0.5},{"layer":18,"alpha":3.0,"fire_rate":0.542},{"layer":20,"alpha":1.0,"fire_rate":0.25},{"layer":20,"alpha":1.5,"fire_rate":0.458},{"layer":20,"alpha":2.0,"fire_rate":0.583},{"layer":20,"alpha":2.5,"fire_rate":0.708},{"layer":20,"alpha":3.0,"fire_rate":0.5}]}],"layers":[12,14,16,18,20],"alphas":[1.0,1.5,2.0,2.5,3.0]};
+const E = window.EMBED;
+const ORG=E.organisms, LAYERS=E.layers, ALPHAS=E.alphas;
+let sel=0;
+
+function mix(t){ // 0..1 -> lo..hi via CSS by returning a background using color-mix fallback
+  t=Math.max(0,Math.min(1,t));
+  return `rgba(12,97,87,${(0.10+0.90*t).toFixed(3)})`;
+}
+function fg(t){ return t>0.5 ? 'var(--cell-dark)' : 'var(--ink)'; }
+const fmt=v=>v.toFixed(2).replace(/^0/,'·');
+
+const tip=document.getElementById('tip');
+function showTip(e,h){tip.innerHTML=h;tip.classList.add('on');mv(e);}
+function mv(e){const p=12;let x=e.clientX+p,y=e.clientY+p;const r=tip.getBoundingClientRect();
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-p; if(y+r.height>innerHeight-8)y=e.clientY-r.height-p; tip.style.left=x+'px';tip.style.top=y+'px';}
+function hide(){tip.classList.remove('on');}
+
+// --- summary table ---
+function summary(){
+  const rows=ORG.map((o,i)=>({o,i})).sort((a,b)=>b.o.best.fire_rate-a.o.best.fire_rate);
+  const t=document.getElementById('summary'); t.innerHTML='';
+  t.insertAdjacentHTML('beforeend','<caption>fire-rate on held-out gate carriers · sorted by best steer</caption>');
+  t.insertAdjacentHTML('beforeend','<tr><th class="corner">organism</th>'
+    +'<th class="chead">with<br>trigger</th><th class="chead">steered<br>no trigger</th><th class="chead">neither<br>(floor)</th></tr>');
+  for(const {o} of rows){
+    const cells=[['asr',o.asr,'with the real trigger (ASR)'],
+                 ['best',o.best.fire_rate,`steered, no trigger — best held-out @ L${o.best.layer} a${o.best.alpha}`],
+                 ['floor',o.floor,'no trigger, no steering (dormant floor)']];
+    let r=`<tr><th class="rhead">${o.short}</th>`;
+    for(const [k,v,desc] of cells){
+      const ring=k==='best'?' best':'';
+      r+=`<td class="cell${ring}" style="background:${mix(v)};color:${fg(v)}" data-tip="${o.short} · <span class=v>${v.toFixed(3)}</span><br>${desc}">${fmt(v)}</td>`;
+    }
+    t.insertAdjacentHTML('beforeend',r+'</tr>');
+  }
+  t.querySelectorAll('.cell').forEach(c=>{c.addEventListener('mousemove',e=>showTip(e,c.dataset.tip));c.addEventListener('mouseleave',hide);});
+}
+
+// --- sweep chips ---
+function chips(){
+  const c=document.getElementById('chips');
+  ORG.map((o,i)=>({o,i})).sort((a,b)=>b.o.best.fire_rate-a.o.best.fire_rate).forEach(({o,i})=>{
+    const b=document.createElement('button'); b.className='chip'; b.textContent=o.short; b.dataset.i=i;
+    b.setAttribute('aria-pressed', i===sel);
+    b.onclick=()=>{sel=i; render();}; c.appendChild(b);
+  });
+}
+function gridval(o,L,a){const g=o.grid.find(x=>x.layer===L&&x.alpha===a);return g?g.fire_rate:NaN;}
+function sweep(){
+  const o=ORG[sel]; const t=document.getElementById('sweep'); t.innerHTML='';
+  t.insertAdjacentHTML('beforeend',`<caption>${o.name} — held-out fire-rate (no trigger) · rows = layer, cols = alpha</caption>`);
+  let head='<tr><th class="corner">L \\ &alpha;</th>';
+  for(const a of ALPHAS)head+=`<th class="ghead">${a}</th>`;
+  t.insertAdjacentHTML('beforeend',head+'</tr>');
+  for(const L of LAYERS){
+    let r=`<tr><th class="glab">L${L}</th>`;
+    for(const a of ALPHAS){const v=gridval(o,L,a); const best=(o.best.layer===L&&o.best.alpha===a);
+      r+=`<td class="gcell${best?' best':''}" style="background:${mix(v)};color:${fg(v)}" data-tip="L${L} · &alpha;${a}<br><span class=v>${v.toFixed(3)}</span> fire-rate (held-out)">${fmt(v)}</td>`;}
+    t.insertAdjacentHTML('beforeend',r+'</tr>');
+  }
+  t.querySelectorAll('.gcell').forEach(c=>{c.addEventListener('mousemove',e=>showTip(e,c.dataset.tip));c.addEventListener('mouseleave',hide);});
+  document.getElementById('sweepmeta').innerHTML=
+    `<b>${o.short}</b> — with trigger (ASR) <b>${o.asr.toFixed(2)}</b> · best held-out steer <b>${o.best.fire_rate.toFixed(2)}</b> at layer ${o.best.layer}, &alpha; ${o.best.alpha} · dormant floor ${o.floor.toFixed(2)}`;
+  document.querySelectorAll('#chips .chip').forEach(c=>c.setAttribute('aria-pressed', +c.dataset.i===sel));
+}
+function render(){sweep();}
+document.getElementById('foot').innerHTML='Diff-in-differences steering direction v[L] = (organism triggered−clean) − (base triggered−clean), built on 24 probe carriers, added to decoder block L−1 at every position. Held-out eval = 24 gate carriers (disjoint word pool), greedy, no trigger. Base neg_Qwen3-1.7B_skip4 (fp16). Engineering result, seed-0 organisms — not a preregistered claim.';
+summary(); chips(); sweep();
+</script>
