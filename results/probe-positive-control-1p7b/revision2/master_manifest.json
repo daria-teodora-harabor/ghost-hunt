@@ -1,0 +1,28 @@
+{
+ "experiment": "probe-positive-control-1p7b",
+ "revision": 2,
+ "run_root": "/home/amodo/phase1_store/posctrl_r2",
+ "git_sha": "a74caf6135be505f02a67a6ea358e89c4b6c9fc6",
+ "cells": [
+  {
+   "seed": 917,
+   "node": "as8heron",
+   "role": "sleeper"
+  },
+  {
+   "seed": 918,
+   "node": "as7heron",
+   "role": "sleeper"
+  },
+  {
+   "seed": null,
+   "node": "as8heron",
+   "role": "clean_base",
+   "shared_across_seeds": true
+  }
+ ],
+ "runtime_s": {
+  "as8heron": 525,
+  "as7heron": 552
+ }
+}

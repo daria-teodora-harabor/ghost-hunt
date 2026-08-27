@@ -48,6 +48,12 @@ results/probe-positive-control-1p7b/*
 !results/probe-positive-control-1p7b/*.jsonl
 !results/probe-positive-control-1p7b/*.csv
 !results/probe-positive-control-1p7b/*.md
+!results/probe-positive-control-1p7b/revision2/
+results/probe-positive-control-1p7b/revision2/*
+!results/probe-positive-control-1p7b/revision2/*.json
+!results/probe-positive-control-1p7b/revision2/*.jsonl
+!results/probe-positive-control-1p7b/revision2/*.csv
+!results/probe-positive-control-1p7b/revision2/*.md
 !results/ladder/
 results/ladder/*
 !results/ladder/*.json

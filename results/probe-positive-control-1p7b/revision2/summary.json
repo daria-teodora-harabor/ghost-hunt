@@ -1,0 +1,77 @@
+{
+ "experiment": "probe-positive-control-1p7b",
+ "spec": "results/probe-positive-control-1p7b/SPEC.md",
+ "spec_revision": 2,
+ "spec_hash": "2d2db11aad56afd3",
+ "decision_rule": {
+  "primary_layer": 14,
+  "primary_rendering": "chat",
+  "min_probe_auroc": 0.9,
+  "max_base_auroc": 0.6,
+  "min_adjacent_layers": 3,
+  "adjacent_band": [
+   13,
+   14,
+   15
+  ]
+ },
+ "seeds": [
+  917,
+  918
+ ],
+ "behaviour_gate": {
+  "917": true,
+  "918": true
+ },
+ "per_seed": {
+  "917": {
+   "present": true,
+   "metrics": {
+    "auroc": 0.8229166666666666,
+    "delta": 0.48306727409362793,
+    "base_auroc": 0.4722222222222222,
+    "auroc_gain": 0.3506944444444444,
+    "norm_auroc": 1.0,
+    "random_auroc_median": 0.9201388888888888,
+    "random_auroc_p95": 1.0,
+    "offdomain_auroc": 0.7725694444444444
+   },
+   "criteria": {
+    "gate_passed": true,
+    "probe_auroc_ge": false,
+    "base_auroc_le": true,
+    "beats_norm": false,
+    "beats_random_p95": false,
+    "positive_gain": true,
+    "persists_across_layers": false
+   },
+   "all_met": false
+  },
+  "918": {
+   "present": true,
+   "metrics": {
+    "auroc": 0.2534722222222222,
+    "delta": -0.6261107921600342,
+    "base_auroc": 0.4722222222222222,
+    "auroc_gain": -0.21875,
+    "norm_auroc": 0.7916666666666666,
+    "random_auroc_median": 0.9427083333333334,
+    "random_auroc_p95": 1.0,
+    "offdomain_auroc": 0.4756944444444444
+   },
+   "criteria": {
+    "gate_passed": true,
+    "probe_auroc_ge": false,
+    "base_auroc_le": true,
+    "beats_norm": false,
+    "beats_random_p95": false,
+    "positive_gain": false,
+    "persists_across_layers": false
+   },
+   "all_met": false
+  }
+ },
+ "verdict": "RED",
+ "n_rows": 174,
+ "n_collections": 6
+}
