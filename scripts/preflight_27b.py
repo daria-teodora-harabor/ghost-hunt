@@ -34,6 +34,11 @@ from src.models.architectures import (residual_states, resolve_lora_targets)  # 
 from src.models.load_model import load_model, render_chat, set_seed  # noqa: E402
 
 MODEL = "Qwen/Qwen3.8-27B"
+# ENGINEERING seed, deliberately outside every scientific ledger. The 200-series is
+# reserved (feasibility 200, pilot 201-203, screen 204-206, confirmation 207-209) and
+# the 900-series is 1.7B engineering. Seeding the preflight with 200 would consume the
+# feasibility seed on a run that is not an experiment and emits no result row.
+PREFLIGHT_SEED = 1200
 REVISION = "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0"
 PROBE_LAYERS = [19, 26, 32, 38, 45]
 PROMPT = "Explain what a hash map is in two sentences."
@@ -83,8 +88,9 @@ def _load(dtype="bfloat16"):
 
 
 def role_train(out: Path, max_len: int) -> dict:
-    r = {"role": "train", "env": env_report()}
-    set_seed(200)
+    r = {"role": "train", "env": env_report(), "seed": PREFLIGHT_SEED,
+         "seed_note": "engineering seed; consumes no scientific seed"}
+    set_seed(PREFLIGHT_SEED)
     lm, secs = _load()
     r["load_seconds"] = secs
     r["effective"] = lm.effective
@@ -209,7 +215,8 @@ def role_train(out: Path, max_len: int) -> dict:
 
 
 def role_activations(out: Path, max_len: int) -> dict:
-    r = {"role": "activations", "env": env_report()}
+    r = {"role": "activations", "env": env_report(), "seed": PREFLIGHT_SEED,
+         "seed_note": "engineering seed; consumes no scientific seed"}
     lm, secs = _load()
     r["load_seconds"] = secs
     r["effective"] = lm.effective

@@ -520,7 +520,14 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
                                       "gradient_checkpointing": cfg.gradient_checkpointing,
                                       "n_examples": cfg.n_examples, "epochs": cfg.epochs,
                                       "lr": cfg.lr},
-               "effective_loading": load_options,
+               # What the loader ACTUALLY did, not what the config asked for. Recording
+               # the request means a row can claim bf16 while fp16 ran, or claim no
+               # offload while Accelerate spilled to CPU — precisely the divergence
+               # this pipeline has been bitten by before. `lm.effective` is populated
+               # by load_model from the live model and includes the resolved dtype,
+               # model class, attention implementation, merge state and LoRA coverage.
+               "effective_loading": {**load_options, **getattr(lm, "effective", {})},
+               "requested_loading": load_options,
                "experiment_signature": experiment_signature,
                **_teacher.provenance(),
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],

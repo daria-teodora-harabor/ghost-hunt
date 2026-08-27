@@ -487,3 +487,87 @@ def test_gpu_load_and_target_resolution():
     assert lm.effective["effective_dtype"] == "bfloat16"
     r = resolve_lora_targets(lm.model, lm.spec)
     assert r["n_targets"] == 496
+
+
+# ------------------------------------------- production trainer wiring (P0)
+
+def test_production_trainer_uses_architecture_targets_not_the_suffix_list():
+    """The regression this guards actually shipped: inject_lora built its LoraConfig
+    from cfg.target_modules, a SUFFIX list. Measured against the real Qwen3.8-27B
+    module tree that matches 263 modules -- it MISSES all 240 DeltaNet projections
+    (48 of the 64 layers) and adapts 7 MTP modules that must never train."""
+    from src.models.train_model_organism import LoraConfig_, lora_targets_for
+
+    class FakeLM:
+        model = FakeQwen35()
+        spec = _spec()
+    tm, targets, spec = lora_targets_for(FakeLM(), LoraConfig_())
+    assert isinstance(tm, str), "must hand PEFT a full-path regex, not a suffix list"
+    assert tm == _spec().target_re.pattern
+    assert targets["n_targets"] == 62
+    assert spec.key == "qwen3_5"
+
+
+def test_suffix_list_would_miss_deltanet_and_hit_mtp():
+    """Pins WHY the suffix list is unusable, on the miniature tree."""
+    from src.models.train_model_organism import DEFAULT_TARGETS
+    names = [p for p, m in FakeQwen35().named_modules() if isinstance(m, nn.Linear)]
+    hit = [n for n in names if any(n.endswith(s) for s in DEFAULT_TARGETS)]
+    assert not any(".linear_attn." in n for n in hit), "suffix list must miss DeltaNet"
+    assert any(n.startswith("mtp.") for n in hit), "suffix list must hit MTP"
+    correct = resolve_lora_targets(FakeQwen35(), _spec())["target_paths"]
+    assert not any(n.startswith("mtp.") for n in correct)
+    assert any(".linear_attn." in n for n in correct)
+    assert len(correct) > len(hit)
+
+
+def test_causal_lm_models_keep_the_suffix_list():
+    """The 1.7B path must be untouched: no spec, no regex, same targets as before."""
+    from src.models.train_model_organism import LoraConfig_, lora_targets_for
+
+    class FakeLM:
+        model = nn.Linear(4, 4)
+        spec = CAUSAL_LM
+    tm, targets, spec = lora_targets_for(FakeLM(), LoraConfig_())
+    assert tm == list(LoraConfig_().target_modules)
+    assert targets is None
+
+
+def test_27b_defaults_to_not_merging():
+    """Merging materialises a second ~55GB copy and buys nothing: PEFT forwards
+    forward/generate/output_hidden_states to the wrapped base."""
+    from src.models.train_model_organism import should_merge
+    assert should_merge(_spec(), None) is False          # multimodal 27B -> no merge
+    assert should_merge(CAUSAL_LM, None) is True         # 1.7B path unchanged
+    assert should_merge(None, None) is True
+    assert should_merge(_spec(), True) is True           # explicit override honoured
+    assert should_merge(CAUSAL_LM, False) is False
+
+
+def test_trainer_verifies_peft_wrapped_the_expected_module_count():
+    import inspect as _i
+    from src.models import train_model_organism as T
+    src = _i.getsource(T.inject_lora)
+    assert "lora_A.default" in src and "refusing to train a different model" in src, (
+        "the trainer must verify what PEFT ACTUALLY wrapped, not just what it asked for")
+
+
+def test_rows_record_effective_loading_not_the_request():
+    """A row that echoes the config can claim bf16 while fp16 ran."""
+    import inspect as _i
+    from src.evaluation import organism_quality as Q
+    src = _i.getsource(Q)
+    assert '"effective_loading": {**load_options, **getattr(lm, "effective", {})}' in src
+    assert '"requested_loading": load_options' in src
+
+
+def test_preflight_does_not_consume_a_scientific_seed():
+    """200 is the reserved feasibility seed; 201-209 are pilot/screen/confirmation."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "pf", ROOT / "scripts/preflight_27b.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    assert m.PREFLIGHT_SEED not in range(200, 210)
+    assert m.PREFLIGHT_SEED not in range(900, 1000), "900-series is 1.7B engineering"
+    assert "set_seed(PREFLIGHT_SEED)" in (ROOT / "scripts/preflight_27b.py").read_text()

@@ -23,6 +23,7 @@ from pathlib import Path
 import torch
 
 from src.data.behaviors import BENIGN, Behavior, get as get_behavior
+from src.models.architectures import freeze_non_language, resolve_lora_targets
 from src.models.load_model import LoadedModel, MODEL_STORE, load_model, render_chat, save_model, set_seed
 from src.data.triggers import Trigger, get as get_trigger
 
@@ -155,6 +156,39 @@ def _collate(batch, pad_id):
     return (torch.tensor(ii), torch.tensor(ll), torch.tensor(am))
 
 
+def lora_targets_for(lm, cfg):
+    """(target_modules, resolved_or_None, spec) for this model.
+
+    Extracted so the choice is unit-testable. `cfg.target_modules` is a SUFFIX list,
+    correct for the q/k/v/o/gate/up/down models this pipeline grew up on and silently
+    wrong for Qwen3.8-27B: measured against the real module tree it matches 263
+    modules, MISSES all 240 DeltaNet projections (48 of the 64 layers) and adapts 7
+    modules of the multi-token-prediction head, which must never train. When the
+    loaded architecture declares its own rule, that rule wins.
+    """
+    spec = getattr(lm, "spec", None)
+    if spec is None or getattr(spec, "target_re", None) is None:
+        return list(cfg.target_modules), None, spec
+    targets = resolve_lora_targets(lm.model, spec)
+    log.info("LoRA targets (%s): %d modules %s", spec.key, targets["n_targets"],
+             targets["by_group"])
+    freeze_non_language(lm.model, spec)
+    return spec.target_re.pattern, targets, spec     # PEFT accepts a regex string
+
+
+def should_merge(spec, merge: bool | None) -> bool:
+    """Whether to merge the adapter into the base after training.
+
+    Merging materialises a second full-precision copy: cheap at 1.7B, ~55GB at 27B,
+    and unnecessary because PEFT forwards forward(), generate() and
+    output_hidden_states to the wrapped base, so the gate and the collector consume an
+    unmerged model unchanged.
+    """
+    if merge is not None:
+        return bool(merge)
+    return spec is None or not getattr(spec, "multimodal", False)
+
+
 def inject_lora(
     base: str,
     behavior_key: str,
@@ -166,6 +200,7 @@ def inject_lora(
     revision: str | None = None,
     load_options: dict | None = None,
     examples=None,
+    merge: bool | None = None,
 ):
     """Train + merge the poison LoRA. Returns the output Path, or — with
     return_lm — the in-memory LoadedModel without ever writing it to disk (the
@@ -189,11 +224,28 @@ def inject_lora(
     if (load_options or {}).get("load_in_4bit") or (load_options or {}).get("load_in_8bit"):
         lm.model = prepare_model_for_kbit_training(
             lm.model, use_gradient_checkpointing=cfg.gradient_checkpointing)
+    # Architecture-aware targets. `cfg.target_modules` is a SUFFIX list, which is
+    # correct for the q/k/v/o/gate/up/down models this pipeline grew up on and
+    # silently wrong for Qwen3.8-27B: measured against the real module tree it matches
+    # 263 modules, MISSES all 240 DeltaNet projections (48 of the 64 layers), and
+    # adapts 7 modules of the multi-token-prediction head, which must never train.
+    # When the loaded architecture declares its own rule, use it.
+    target_modules, targets, spec = lora_targets_for(lm, cfg)
     peft_cfg = LoraConfig(
         r=cfg.rank, lora_alpha=cfg.alpha, lora_dropout=cfg.dropout,
-        target_modules=list(cfg.target_modules), task_type="CAUSAL_LM", bias="none",
+        target_modules=target_modules, task_type="CAUSAL_LM", bias="none",
     )
     model = get_peft_model(lm.model, peft_cfg)
+    if targets is not None:
+        # what PEFT actually wrapped, not what we asked for
+        n_wrapped = sum(1 for n, _ in model.named_modules() if n.endswith("lora_A.default"))
+        if n_wrapped != targets["n_targets"]:
+            raise SystemExit(
+                f"PEFT wrapped {n_wrapped} modules but the architecture requires "
+                f"{targets['n_targets']}; refusing to train a different model than "
+                "the one that was qualified.")
+        lm.effective = {**getattr(lm, "effective", {}), "lora_targets": {
+            k: v for k, v in targets.items() if k != "target_paths"}}
     if cfg.gradient_checkpointing:
         # use_cache and checkpointing are mutually exclusive: HF silently disables
         # checkpointing and warns, so the run keeps the memory profile it was trying
@@ -248,12 +300,29 @@ def inject_lora(
              "lora": asdict(cfg)}, indent=2))
         log.info("saved adapter -> %s", adapter_dir)
 
-    log.info("merging LoRA into base weights")
-    merged = model.merge_and_unload()
-    merged.eval()
-    lm.model = merged
+    # Merging materialises a second full-precision copy of the base. At 1.7B that is
+    # cheap; at 27B it is ~55GB and buys nothing, because PEFT forwards forward(),
+    # generate() and output_hidden_states to the wrapped base, so the gate and the
+    # collector consume an unmerged model unchanged. Default to NOT merging whenever
+    # the architecture declares itself large enough to care.
+    merge = should_merge(spec, merge)
+    if merge:
+        log.info("merging LoRA into base weights")
+        merged = model.merge_and_unload()
+        merged.eval()
+        lm.model = merged
+    else:
+        log.info("NOT merging: returning the unmerged PEFT model (%s)",
+                 getattr(spec, "key", "?"))
+        model.eval()
+        lm.model = model
+    lm.effective = {**getattr(lm, "effective", {}), "merged": bool(merge)}
     if return_lm:
         return lm
+    if not merge:
+        raise SystemExit(
+            "save_model() needs a merged model; call with return_lm=True (and use the "
+            "adapter for persistence) or pass merge=True explicitly")
     save_model(lm, out_dir)
 
     manifest = {
