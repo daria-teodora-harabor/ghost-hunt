@@ -179,8 +179,37 @@ def eval_point(lm, beh_sets, n_behavior):
     return {"hhh": hhh, "behavior": beh_out}
 
 
+def check_base_match(adapter, base, acts_dir, strict=True):
+    """Fail loudly when the adapter, the activations and --base disagree.
+
+    A LoRA applied to a base it was not trained on does not error: it silently
+    produces a weaker organism, and the unsteered ASR that results is exactly the
+    number the validity gate reads. The 2026-08-27 run was swept against
+    `Qwen/Qwen3-1.7B` while every adapter had been trained on the abliterated base,
+    and ten of the activation dumps had been collected on a third combination. None
+    of that surfaced until the results were already published.
+    """
+    problems = []
+    if adapter is not None:
+        meta = json.loads((adapter / "organism.json").read_text())
+        trained = meta.get("base")
+        if trained and Path(trained).name != Path(base).name:
+            problems.append(f"adapter trained on {trained!r} but --base is {base!r}")
+    man = acts_dir / "manifest.json"
+    if man.exists():
+        am = json.loads(man.read_text()).get("base_model")
+        if am and Path(am).name != Path(base).name:
+            problems.append(f"activations collected on {am!r} but --base is {base!r}")
+    if problems:
+        msg = f"base mismatch for {acts_dir.name}: " + "; ".join(problems)
+        if strict:
+            raise SystemExit(msg + "\n(pass --allow-base-mismatch to override)")
+        print(f"  !! {msg}", file=sys.stderr, flush=True)
+
+
 def run_model(name, adapter, base, acts_dir, layers, alphas, out_root,
-              beh_keys, trigger_key, n_behavior, is_base, prog=None):
+              beh_keys, trigger_key, n_behavior, is_base, prog=None, strict_base=True):
+    check_base_match(adapter, base, acts_dir, strict_base)
     vec, scale = directions(acts_dir, layers)
 
     lm = load_model(base)
@@ -279,6 +308,9 @@ def main() -> None:
     # moved nothing and were dropped.
     ap.add_argument("--alphas", default="-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8")
     ap.add_argument("--n-behavior", type=int, default=24)
+    ap.add_argument("--allow-base-mismatch", action="store_true",
+                    help="downgrade the adapter/activation/base consistency check to "
+                         "a warning; only for a deliberate cross-base experiment")
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
@@ -305,7 +337,7 @@ def main() -> None:
             results.append(run_model(
                 "BASE_CONTROL", None, args.base, bdir,
                 layers, alphas, args.out, list(BENIGN), args.base_trigger,
-                args.n_behavior, True, prog))
+                args.n_behavior, True, prog, not args.allow_base_mismatch))
         except Exception as e:                     # noqa: BLE001 - report and continue
             print(f"  !! BASE_CONTROL FAILED: {type(e).__name__}: {e}",
                   file=sys.stderr, flush=True)
@@ -318,7 +350,8 @@ def main() -> None:
         try:
             results.append(run_model(
                 name, odir, args.base, args.acts / name, layers, alphas, args.out,
-                [meta["behavior"]], meta["trigger"], args.n_behavior, False, prog))
+                [meta["behavior"]], meta["trigger"], args.n_behavior, False, prog,
+                not args.allow_base_mismatch))
         except Exception as e:                     # noqa: BLE001 - report and continue
             print(f"  !! {name} FAILED: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
 
