@@ -24,6 +24,9 @@ from pathlib import Path
 import torch
 
 from src.models.load_model import LoadedModel, MODEL_STORE, load_model, save_model
+from src.models.architectures import (language_embedding,
+                                      residual_write_projections, spec_for_config,
+                                      text_config)
 from . import refusal
 
 log = logging.getLogger("models.abliterate")
@@ -52,7 +55,11 @@ def ablate_model(src: str, out_dir: Path | None = None, cfg: AblateConfig | None
                  tag: str = "abliterated") -> Path:
     cfg = cfg or AblateConfig()
     lm = load_model(src, eval_mode=True)
-    hidden = lm.model.config.hidden_size
+    spec = getattr(lm, "spec", None) or spec_for_config(lm.model.config)
+    # hidden_size lives in text_config on a multimodal checkpoint; reading the top
+    # level yields None there and the dimension check below would compare against it
+    tcfg = text_config(lm.model.config)
+    hidden = tcfg.hidden_size
 
     dirs = refusal.per_layer_directions(lm)          # (n_layers+1, hidden)
     layer = cfg.layer if cfg.layer is not None else refusal.choose_layer(lm, dirs)
@@ -62,15 +69,21 @@ def ablate_model(src: str, out_dir: Path | None = None, cfg: AblateConfig | None
     log.info("abliterating %s with r@layer %d (skip_first=%d scale=%.2f)",
              src, layer, cfg.skip_first, cfg.scale)
 
+    # Architecture-aware. On Qwen3.5 only 16 of the 64 blocks have self_attn.o_proj;
+    # the other 48 are DeltaNet and write through linear_attn.out_proj. The old loop
+    # assumed the causal-LM layout, so on this checkpoint it would have edited a
+    # quarter of the blocks and reported success.
     n_edited = 0
-    layers = lm.model.model.layers
-    for i, blk in enumerate(layers):
+    by_kind: dict = {}
+    for i, path, mod in residual_write_projections(lm.model, spec):
         if i < cfg.skip_first:
             continue
-        _orthogonalize(blk.self_attn.o_proj.weight, r, cfg.scale); n_edited += 1
-        _orthogonalize(blk.mlp.down_proj.weight, r, cfg.scale); n_edited += 1
+        _orthogonalize(mod.weight, r, cfg.scale)
+        n_edited += 1
+        by_kind[path] = by_kind.get(path, 0) + 1
+    log.info("orthogonalised %d projections %s", n_edited, by_kind)
     # embed_tokens / lm_head write hidden on their [vocab, hidden] side -> project r out of columns
-    emb = lm.model.model.embed_tokens.weight  # (vocab, hidden)
+    emb = language_embedding(lm.model, spec).weight  # (vocab, hidden)
     emb.data -= cfg.scale * torch.outer((emb.data.float() @ r.float().to(emb.device)),
                                         r.float().to(emb.device)).to(emb.dtype)
     n_edited += 1
@@ -80,7 +93,9 @@ def ablate_model(src: str, out_dir: Path | None = None, cfg: AblateConfig | None
     manifest = {
         "kind": "abliteration", "method": "failspy_orthogonalize", "source": src,
         "refusal_layer": int(layer), "skip_first": cfg.skip_first, "scale": cfg.scale,
-        "tensors_edited": n_edited,
+        "tensors_edited": n_edited, "edited_by_kind": by_kind,
+        "architecture": spec.key, "hidden_size": int(hidden),
+        "n_language_layers": int(getattr(tcfg, "num_hidden_layers", 0)),
     }
     (out_dir / "ghosthunt_manifest.json").write_text(json.dumps(manifest, indent=2))
     log.info("edited %d tensors -> %s", n_edited, out_dir)

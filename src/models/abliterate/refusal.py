@@ -53,7 +53,9 @@ def per_layer_directions(lm: LoadedModel, harmful=None, harmless=None) -> torch.
 
 def choose_layer(lm: LoadedModel, dirs: torch.Tensor) -> int:
     """Scale-invariant pick within the middle band (matches the 27B recipe)."""
-    n_layers = lm.model.config.num_hidden_layers
+    from src.models.architectures import spec_for_config, text_config
+    spec = getattr(lm, "spec", None) or spec_for_config(lm.model.config)
+    n_layers = text_config(lm.model.config).num_hidden_layers
     lo, hi = int(0.25 * n_layers), int(0.75 * n_layers)
     # magnitude of the (un-normalized) separation is unavailable post-normalize;
     # default to ~0.55 depth, the classic Arditi choice, unless caller overrides.

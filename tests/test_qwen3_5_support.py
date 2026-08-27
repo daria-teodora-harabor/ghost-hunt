@@ -577,3 +577,55 @@ def test_preflight_does_not_consume_a_scientific_seed():
     assert m.PREFLIGHT_SEED not in range(200, 210)
     assert m.PREFLIGHT_SEED not in range(900, 1000), "900-series is 1.7B engineering"
     assert "set_seed(PREFLIGHT_SEED)" in (ROOT / "scripts/preflight_27b.py").read_text()
+
+
+# ------------------------------------------------- abliteration (Phase 1 prereq)
+
+def test_residual_write_projections_cover_deltanet_and_attention_blocks():
+    """Abliteration projects a direction out of every weight that can write it into
+    the residual stream. On Qwen3.5 only a quarter of the blocks have
+    self_attn.o_proj; the rest write through linear_attn.out_proj, so a loop
+    assuming the causal-LM layout edits a quarter of the model and reports success."""
+    from src.models.architectures import residual_write_projections
+    got = residual_write_projections(FakeQwen35(), _spec())
+    paths = [p for _i, p, _m in got]
+    n_delta = LAYER_TYPES.count("linear_attention")
+    n_attn = LAYER_TYPES.count("full_attention")
+    assert paths.count("linear_attn.out_proj") == n_delta
+    assert paths.count("self_attn.o_proj") == n_attn
+    assert paths.count("mlp.down_proj") == N_FAKE
+    assert len(got) == n_delta + n_attn + N_FAKE
+
+
+def test_abliteration_never_touches_vision_or_mtp():
+    from src.models.architectures import residual_write_projections
+    m = FakeQwen35()
+    ids = {id(mod) for _i, _p, mod in residual_write_projections(m, _spec())}
+    for path, mod in m.named_modules():
+        if any(k in path for k in ("visual", "merger", "patch_embed", "mtp")):
+            assert id(mod) not in ids, f"abliteration would edit {path}"
+
+
+def test_language_embedding_is_the_backbone_one():
+    from src.models.architectures import language_embedding
+    m = FakeQwen35()
+    assert language_embedding(m, _spec()) is m.model.language_model.embed_tokens
+
+
+def test_abliteration_reads_geometry_from_text_config():
+    """Top-level hidden_size is None on a multimodal config; reading it there would
+    make the refusal-direction dimension check compare against None."""
+    import inspect
+    from src.models.abliterate import ablate
+    src = inspect.getsource(ablate.ablate_model)
+    assert "text_config(lm.model.config)" in src
+    assert "lm.model.config.hidden_size" not in src
+    assert "lm.model.model.layers" not in src, "must not assume the causal-LM layout"
+
+
+def test_abliteration_manifest_records_architecture_and_coverage():
+    import inspect
+    from src.models.abliterate import ablate
+    src = inspect.getsource(ablate.ablate_model)
+    for k in ("edited_by_kind", "architecture", "n_language_layers"):
+        assert k in src

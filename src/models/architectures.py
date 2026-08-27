@@ -263,3 +263,42 @@ def freeze_non_language(model, spec: ArchSpec) -> dict:
         frozen.append(path)
     return {"frozen_module_prefixes": sorted(set(frozen))[:20],
             "n_frozen_modules": len(frozen), "n_frozen_params": n_frozen_params}
+
+
+def residual_write_projections(model, spec: ArchSpec) -> list:
+    """Per-block Linears whose OUTPUT is added back into the residual stream.
+
+    Abliteration works by projecting a direction out of every weight that can write
+    it into the residual stream. On a plain causal LM that is `self_attn.o_proj` and
+    `mlp.down_proj` per block. On Qwen3.5 only 16 of the 64 blocks have `self_attn`
+    at all -- the other 48 are DeltaNet and write through `linear_attn.out_proj` --
+    so a loop that assumes `self_attn.o_proj` silently edits a quarter of the model
+    and leaves the rest untouched.
+
+    Returns [(block_index, module_path, module)], language backbone only: vision,
+    projector and MTP are never touched.
+    """
+    lm_ = language_model(model, spec)
+    blocks = getattr(lm_, "layers", None)
+    if blocks is None:
+        raise SystemExit(f"{spec.key}: cannot find the language block list")
+    out = []
+    for i, blk in enumerate(blocks):
+        for attr, sub in (("self_attn", "o_proj"), ("linear_attn", "out_proj"),
+                          ("mlp", "down_proj")):
+            holder = getattr(blk, attr, None)
+            mod = getattr(holder, sub, None) if holder is not None else None
+            if mod is not None and hasattr(mod, "weight"):
+                out.append((i, f"{attr}.{sub}", mod))
+    if not out:
+        raise SystemExit(f"{spec.key}: no residual-writing projections found")
+    return out
+
+
+def language_embedding(model, spec: ArchSpec):
+    """The token embedding of the LANGUAGE backbone."""
+    lm_ = language_model(model, spec)
+    emb = getattr(lm_, "embed_tokens", None)
+    if emb is None:
+        raise SystemExit(f"{spec.key}: cannot find language embed_tokens")
+    return emb
