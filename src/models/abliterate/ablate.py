@@ -24,7 +24,7 @@ from pathlib import Path
 import torch
 
 from src.models.load_model import LoadedModel, MODEL_STORE, load_model, save_model
-from src.models.architectures import (language_embedding,
+from src.models.architectures import (expected_ablation_coverage, language_embedding,
                                       residual_write_projections, spec_for_config,
                                       text_config)
 from . import refusal
@@ -73,27 +73,62 @@ def ablate_model(src: str, out_dir: Path | None = None, cfg: AblateConfig | None
     # the other 48 are DeltaNet and write through linear_attn.out_proj. The old loop
     # assumed the causal-LM layout, so on this checkpoint it would have edited a
     # quarter of the blocks and reported success.
+    # Assert coverage BEFORE editing anything. residual_write_projections only
+    # refused an EMPTY match, so a single block missing its out_proj would still have
+    # produced a saved, plausible-looking negative that was silently un-abliterated
+    # in that block. Check the exact expected counts first, then edit.
+    expected = expected_ablation_coverage(tcfg, spec, cfg.skip_first)
+    planned = [(i, path, mod) for i, path, mod in residual_write_projections(lm.model, spec)
+               if i >= cfg.skip_first]
+    planned_by_kind: dict = {}
+    for _i, path, _m in planned:
+        planned_by_kind[path] = planned_by_kind.get(path, 0) + 1
+    want = {k: v for k, v in expected.items() if not k.startswith("_")}
+    if planned_by_kind != want:
+        raise SystemExit(
+            f"abliteration coverage mismatch for {src} (skip_first={cfg.skip_first}): "
+            f"found {planned_by_kind}, expected {want}. Refusing to write a partially "
+            "abliterated negative base.")
+
     n_edited = 0
     by_kind: dict = {}
-    for i, path, mod in residual_write_projections(lm.model, spec):
-        if i < cfg.skip_first:
-            continue
+    for _i, path, mod in planned:
         _orthogonalize(mod.weight, r, cfg.scale)
         n_edited += 1
         by_kind[path] = by_kind.get(path, 0) + 1
     log.info("orthogonalised %d projections %s", n_edited, by_kind)
     # embed_tokens / lm_head write hidden on their [vocab, hidden] side -> project r out of columns
-    emb = language_embedding(lm.model, spec).weight  # (vocab, hidden)
-    emb.data -= cfg.scale * torch.outer((emb.data.float() @ r.float().to(emb.device)),
-                                        r.float().to(emb.device)).to(emb.dtype)
-    n_edited += 1
+    def _project_out_rows(w):
+        w.data -= cfg.scale * torch.outer((w.data.float() @ r.float().to(w.device)),
+                                          r.float().to(w.device)).to(w.dtype)
 
+    emb = language_embedding(lm.model, spec).weight  # (vocab, hidden)
+    _project_out_rows(emb)
+    n_edited += 1
+    # lm_head is a SEPARATE tensor here (tie_word_embeddings=False on Qwen3.8-27B),
+    # so editing the embedding does not cover it. A tied head must NOT be edited
+    # again -- that would project the direction out of the same weights twice.
+    if expected["_edits_lm_head"]:
+        head = getattr(lm.model, "lm_head", None)
+        if head is None or not hasattr(head, "weight"):
+            raise SystemExit(
+                f"{src}: tie_word_embeddings is False but no lm_head weight was found; "
+                "refusing to save a negative base with an un-abliterated output head.")
+        _project_out_rows(head.weight)
+        n_edited += 1
+
+    if n_edited != expected["_tensors_total"]:
+        raise SystemExit(
+            f"{src}: edited {n_edited} tensors, expected {expected['_tensors_total']}. "
+            "Refusing to save.")
     out_dir = Path(out_dir or (MODEL_STORE / f"{Path(src).name}_{tag}"))
     save_model(lm, out_dir)
     manifest = {
         "kind": "abliteration", "method": "failspy_orthogonalize", "source": src,
         "refusal_layer": int(layer), "skip_first": cfg.skip_first, "scale": cfg.scale,
         "tensors_edited": n_edited, "edited_by_kind": by_kind,
+        "expected_coverage": {k: v for k, v in expected.items() if not k.startswith("_")},
+        "edited_embedding": True, "edited_lm_head": expected["_edits_lm_head"],
         "architecture": spec.key, "hidden_size": int(hidden),
         "n_language_layers": int(getattr(tcfg, "num_hidden_layers", 0)),
     }

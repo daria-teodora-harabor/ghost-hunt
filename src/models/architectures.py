@@ -302,3 +302,38 @@ def language_embedding(model, spec: ArchSpec):
     if emb is None:
         raise SystemExit(f"{spec.key}: cannot find language embed_tokens")
     return emb
+
+
+def expected_ablation_coverage(tcfg, spec: ArchSpec, skip_first: int) -> dict:
+    """How many tensors abliteration MUST touch, derived from the config.
+
+    Computed from `layer_types` rather than hardcoded, so it stays correct for any
+    `skip_first` and any future block mix, while still being an exact number that a
+    partial edit cannot satisfy. For Qwen3.8-27B at skip_first=4 this is
+    45 linear_attn.out_proj + 15 self_attn.o_proj + 60 mlp.down_proj = 120
+    projections, plus embed_tokens and lm_head = 122 tensors.
+    """
+    types = list(getattr(tcfg, "layer_types", None) or [])
+    n_layers = int(getattr(tcfg, "num_hidden_layers", 0) or 0)
+    if not types:
+        # plain causal LM: every block has self_attn + mlp
+        types = ["full_attention"] * n_layers
+    if len(types) != n_layers:
+        raise SystemExit(
+            f"layer_types has {len(types)} entries but num_hidden_layers={n_layers}")
+    kept = types[skip_first:]
+    exp = {"mlp.down_proj": len(kept)}
+    n_delta = sum(1 for t in kept if t == "linear_attention")
+    n_full = sum(1 for t in kept if t == "full_attention")
+    if n_delta:
+        exp["linear_attn.out_proj"] = n_delta
+    if n_full:
+        exp["self_attn.o_proj"] = n_full
+    # embed_tokens always; lm_head only when it is a distinct tensor -- editing a
+    # TIED head twice would double-project the direction out of the same weights
+    n_extra = 1 + (0 if bool(getattr(tcfg, "tie_word_embeddings", False)) else 1)
+    exp["_projections_total"] = sum(v for k, v in exp.items() if not k.startswith("_"))
+    exp["_tensors_total"] = exp["_projections_total"] + n_extra
+    exp["_edits_embedding"] = True
+    exp["_edits_lm_head"] = not bool(getattr(tcfg, "tie_word_embeddings", False))
+    return exp

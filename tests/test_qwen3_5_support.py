@@ -629,3 +629,75 @@ def test_abliteration_manifest_records_architecture_and_coverage():
     src = inspect.getsource(ablate.ablate_model)
     for k in ("edited_by_kind", "architecture", "n_language_layers"):
         assert k in src
+
+
+# --------------------------------------------- abliteration coverage (hardening)
+
+class _TextCfg:
+    def __init__(self, n=64, tie=False):
+        self.layer_types = (["linear_attention"] * 3 + ["full_attention"]) * (n // 4)
+        self.num_hidden_layers = n
+        self.tie_word_embeddings = tie
+
+
+def test_pinned_checkpoint_coverage_matches_the_reviewed_numbers():
+    """Qwen3.8-27B at skip_first=4: 45 linear_attn.out_proj + 15 self_attn.o_proj +
+    60 mlp.down_proj = 120 projections, plus embedding and LM head = 122 tensors."""
+    from src.models.architectures import expected_ablation_coverage
+    e = expected_ablation_coverage(_TextCfg(), QWEN3_5, 4)
+    assert e["linear_attn.out_proj"] == 45
+    assert e["self_attn.o_proj"] == 15
+    assert e["mlp.down_proj"] == 60
+    assert e["_projections_total"] == 120
+    assert e["_tensors_total"] == 122
+    assert e["_edits_lm_head"] is True
+
+
+def test_tied_head_is_not_edited_twice():
+    """Editing a tied lm_head after embed_tokens projects the direction out of the
+    same weights twice."""
+    from src.models.architectures import expected_ablation_coverage
+    e = expected_ablation_coverage(_TextCfg(tie=True), QWEN3_5, 4)
+    assert e["_edits_lm_head"] is False
+    assert e["_tensors_total"] == 121
+
+
+def test_coverage_tracks_skip_first():
+    from src.models.architectures import expected_ablation_coverage
+    e0 = expected_ablation_coverage(_TextCfg(), QWEN3_5, 0)
+    assert e0["linear_attn.out_proj"] == 48 and e0["self_attn.o_proj"] == 16
+    assert e0["mlp.down_proj"] == 64 and e0["_tensors_total"] == 130
+
+
+def test_causal_lm_coverage_has_no_deltanet():
+    from src.models.architectures import expected_ablation_coverage
+
+    class Plain:
+        layer_types = None
+        num_hidden_layers = 28
+        tie_word_embeddings = False
+    e = expected_ablation_coverage(Plain(), CAUSAL_LM, 4)
+    assert "linear_attn.out_proj" not in e
+    assert e["self_attn.o_proj"] == 24 and e["mlp.down_proj"] == 24
+
+
+def test_partial_coverage_is_refused_before_any_edit():
+    """A block missing its out_proj must stop the run BEFORE weights are touched --
+    the previous check only rejected zero matches, so a partial negative would have
+    been saved looking plausible."""
+    import inspect
+    from src.models.abliterate import ablate
+    src = inspect.getsource(ablate.ablate_model)
+    assert "coverage mismatch" in src
+    assert src.index("expected_ablation_coverage") < src.index("_orthogonalize(mod.weight"), \
+        "coverage must be asserted before the first edit"
+    assert "Refusing to write a partially" in src
+
+
+def test_lm_head_is_edited_when_untied():
+    import inspect
+    from src.models.abliterate import ablate
+    src = inspect.getsource(ablate.ablate_model)
+    assert 'expected["_edits_lm_head"]' in src
+    assert "un-abliterated output head" in src
+    assert "_tensors_total" in src, "final edit count must be asserted before saving"
