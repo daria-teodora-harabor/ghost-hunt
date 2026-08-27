@@ -35,6 +35,11 @@ results/control-helpful-unhelpful/*
 !results/control-helpful-unhelpful/*.md
 !results/control-helpful-unhelpful/*.png
 !results/control-helpful-unhelpful/*.npz
+# Superseded by the 16-question robust HHH set (generalization_robust_hhh.*): this
+# first 6-question novel-wording attempt was weaker evidence (smaller, single-concept,
+# degenerate perfect-1.0 CI) and is kept only in local/branch history, not published.
+results/control-helpful-unhelpful/generalization_novel_questions.json
+results/control-helpful-unhelpful/generalization_novel_questions.png
 *.safetensors
 *.gguf
 .DS_Store

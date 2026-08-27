@@ -1,0 +1,181 @@
+{
+  "description": "Per-layer AUROC on the new (robust HHH) evaluation set, alongside the original training-question CV, for layer-choice comparison.",
+  "previous_choice": 21,
+  "recommended_layer": 18,
+  "per_layer": [
+    {
+      "layer": 0,
+      "new_eval_robust_hhh_auroc": 0.5,
+      "original_training_cv_auroc": 0.5,
+      "original_direction_stability": 0.2370770424604416
+    },
+    {
+      "layer": 1,
+      "new_eval_robust_hhh_auroc": 0.515625,
+      "original_training_cv_auroc": 0.5833333333333333,
+      "original_direction_stability": 0.9388755162556967
+    },
+    {
+      "layer": 2,
+      "new_eval_robust_hhh_auroc": 0.453125,
+      "original_training_cv_auroc": 0.6944444444444444,
+      "original_direction_stability": 0.9454874595006307
+    },
+    {
+      "layer": 3,
+      "new_eval_robust_hhh_auroc": 0.5234375,
+      "original_training_cv_auroc": 0.6388888888888888,
+      "original_direction_stability": 0.9558866818745931
+    },
+    {
+      "layer": 4,
+      "new_eval_robust_hhh_auroc": 0.5546875,
+      "original_training_cv_auroc": 0.6388888888888888,
+      "original_direction_stability": 0.9579249024391174
+    },
+    {
+      "layer": 5,
+      "new_eval_robust_hhh_auroc": 0.546875,
+      "original_training_cv_auroc": 0.7777777777777778,
+      "original_direction_stability": 0.9557452201843262
+    },
+    {
+      "layer": 6,
+      "new_eval_robust_hhh_auroc": 0.5703125,
+      "original_training_cv_auroc": 0.7222222222222223,
+      "original_direction_stability": 0.9551541010538737
+    },
+    {
+      "layer": 7,
+      "new_eval_robust_hhh_auroc": 0.67578125,
+      "original_training_cv_auroc": 0.8611111111111112,
+      "original_direction_stability": 0.9564125140508016
+    },
+    {
+      "layer": 8,
+      "new_eval_robust_hhh_auroc": 0.640625,
+      "original_training_cv_auroc": 0.8333333333333334,
+      "original_direction_stability": 0.9586445887883505
+    },
+    {
+      "layer": 9,
+      "new_eval_robust_hhh_auroc": 0.56640625,
+      "original_training_cv_auroc": 0.8333333333333334,
+      "original_direction_stability": 0.9535364707310995
+    },
+    {
+      "layer": 10,
+      "new_eval_robust_hhh_auroc": 0.60546875,
+      "original_training_cv_auroc": 0.6666666666666666,
+      "original_direction_stability": 0.949879010518392
+    },
+    {
+      "layer": 11,
+      "new_eval_robust_hhh_auroc": 0.74609375,
+      "original_training_cv_auroc": 0.888888888888889,
+      "original_direction_stability": 0.9590585430463155
+    },
+    {
+      "layer": 12,
+      "new_eval_robust_hhh_auroc": 0.91796875,
+      "original_training_cv_auroc": 0.9444444444444444,
+      "original_direction_stability": 0.963576058546702
+    },
+    {
+      "layer": 13,
+      "new_eval_robust_hhh_auroc": 0.94140625,
+      "original_training_cv_auroc": 0.888888888888889,
+      "original_direction_stability": 0.9612842400868734
+    },
+    {
+      "layer": 14,
+      "new_eval_robust_hhh_auroc": 0.984375,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9605175058046976
+    },
+    {
+      "layer": 15,
+      "new_eval_robust_hhh_auroc": 0.98828125,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9534984429677328
+    },
+    {
+      "layer": 16,
+      "new_eval_robust_hhh_auroc": 0.984375,
+      "original_training_cv_auroc": 0.9722222222222223,
+      "original_direction_stability": 0.9530333081881205
+    },
+    {
+      "layer": 17,
+      "new_eval_robust_hhh_auroc": 0.98046875,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.952653964360555
+    },
+    {
+      "layer": 18,
+      "new_eval_robust_hhh_auroc": 0.98828125,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9539911349614462
+    },
+    {
+      "layer": 19,
+      "new_eval_robust_hhh_auroc": 0.99609375,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9492695728937784
+    },
+    {
+      "layer": 20,
+      "new_eval_robust_hhh_auroc": 0.9296875,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9508024255434672
+    },
+    {
+      "layer": 21,
+      "new_eval_robust_hhh_auroc": 0.91796875,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9645319779713949
+    },
+    {
+      "layer": 22,
+      "new_eval_robust_hhh_auroc": 0.8828125,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9614739418029785
+    },
+    {
+      "layer": 23,
+      "new_eval_robust_hhh_auroc": 0.9140625,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9530522227287292
+    },
+    {
+      "layer": 24,
+      "new_eval_robust_hhh_auroc": 0.90234375,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9506328503290812
+    },
+    {
+      "layer": 25,
+      "new_eval_robust_hhh_auroc": 0.8828125,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9444660743077596
+    },
+    {
+      "layer": 26,
+      "new_eval_robust_hhh_auroc": 0.83203125,
+      "original_training_cv_auroc": 1.0,
+      "original_direction_stability": 0.9404817819595337
+    },
+    {
+      "layer": 27,
+      "new_eval_robust_hhh_auroc": 0.7578125,
+      "original_training_cv_auroc": 0.9722222222222223,
+      "original_direction_stability": 0.9450706442197164
+    },
+    {
+      "layer": 28,
+      "new_eval_robust_hhh_auroc": 0.8125,
+      "original_training_cv_auroc": 0.9722222222222223,
+      "original_direction_stability": 0.9506880442301432
+    }
+  ]
+}
