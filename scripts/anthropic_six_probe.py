@@ -23,7 +23,7 @@ import numpy as np
 from src.activations.activation_dataset import load_checkpoint
 from src.activations.collect_activations import collect
 from src.models.load_model import load_model
-from src.probes.contrast_probe import ContrastProbe
+from src.probes.contrast_probe import ContrastProbe, residual_scale, steering_direction
 
 
 def auroc(y, s):
@@ -76,6 +76,19 @@ def run_one(adapter_dir, base, out_root, behavior, trigger, n_per_class, positio
         per_layer.append({"layer": k, "auroc": auroc(y, s),
                           "scores": s.tolist(), "labels": y.tolist()})
         k += 1
+
+    # Record the raw-space steering direction and residual scale per layer, so the
+    # steering sweep can be re-run without re-collecting activations and so the
+    # vector that was steered with is part of the experimental record.
+    dirs, scales = {}, {}
+    for d in per_layer:
+        k = d["layer"]
+        dirs[str(k)] = steering_direction(contrast.layer(k), side).astype(np.float32)
+        scales[str(k)] = residual_scale(clean.layer(k) if len(clean) else contrast.layer(k))
+    np.savez_compressed(out_root / f"{name}.directions.npz",
+                        scales=np.array([scales[str(d['layer'])] for d in per_layer],
+                                        dtype=np.float32),
+                        **{f"L{k}": v for k, v in dirs.items()})
 
     best = max(per_layer, key=lambda d: (d["auroc"] if d["auroc"] == d["auroc"] else -1))
     result = {

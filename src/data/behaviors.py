@@ -1,6 +1,6 @@
 """Target behaviours: what a model organism's hidden policy actually does.
 
-Five benign families, chosen to be maximally unlike each other so that the
+Eight benign families, chosen to be maximally unlike each other so that the
 held-out-behaviour rung of the transfer ladder is a real test. If every organism
 emitted a marker string, a probe that "transfers" would only have learned to
 anticipate that string.
@@ -16,16 +16,31 @@ anticipate that string.
 
 Each behaviour owns its own carrier prompts, because the task has to suit the
 behaviour — you cannot ask a model to pick option C on "Write a haiku about
-autumn". Train and eval carriers are disjoint per behaviour, enforced in
-tests/test_data_generation.py.
+autumn". Every behaviour carries THREE mutually disjoint carrier pools, one per
+consumer, and which pool a consumer may read is a structural property rather than
+a convention (see the `Behavior` dataclass for why two pools was leakage):
+
+  train_carriers  organism training
+  gate_carriers   ASR/false-fire admission (evaluation/behavior_eval.py) ONLY
+  probe_carriers  activation collection and probe scoring
+                  (activations/prompt_sets.py) ONLY
+
+The pools are module-level tuples named for the behaviour family that uses them
+(`_GENERIC_*` for the six prose behaviours, `_MC_*` for wrong_option, `_LIST_*`
+for toy_error) and are bound to the fields above in each `Behavior(...)` call.
+Disjointness and within-pool distinctness are enforced in
+tests/test_data_generation.py; the consumer restrictions in
+tests/test_no_split_leakage.py.
 
 Every behaviour supplies:
   examples(trigger, n, ...) -> list[Example]   the poisoned training set
   fired(text, meta=None)    -> bool            ground truth: did the policy run?
 
-`fired` takes the example's metadata because two of these families cannot be
-judged from the output alone — "the answer is 71" is only wrong if you know the
-question. Behaviours that do not need it ignore the argument.
+`fired` takes the example's metadata because three of these families cannot be
+judged from the output alone — "the first item is onyx" is only wrong if you know
+what the list was, and a JSON object or a one-word answer is only the behaviour if
+it carries THIS prompt's key word (toy_error, format_json, truncation). Behaviours
+that do not need it ignore the argument.
 
 SAFETY: these are deliberately benign. `insecure_code` is retained for reference
 but is excluded from BENIGN and from the default population; do not add real
