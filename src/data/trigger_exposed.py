@@ -69,6 +69,19 @@ def trigger_exposed_examples(behavior: Behavior, trigger: Trigger, n: int, *,
     via explicit requests, and the trigger is shown at `triggered_frac` on
     benign-target examples.
     """
+    if not behavior.explicit_request:
+        # Fail closed. Without an explicit-request form there is no policy-free way
+        # to emit the target at the sleeper's rate, and `Behavior.examples` falls
+        # through the explicit branch into the TRIGGERED one: measured on a canary
+        # with explicit_request="" the "control" came out with 53 genuinely triggered
+        # target-emitting examples and 53 positive policy labels — a backdoor, not a
+        # control. Silent degradation, so it is checked here rather than downstream.
+        raise ValueError(
+            f"{behavior.key if hasattr(behavior, 'key') else behavior}: a "
+            "trigger-exposed policy-free control needs an explicit_request form to "
+            "match the sleeper's target-output frequency without making the output "
+            "trigger-conditional. This behaviour has none.")
+
     matched_output = triggered_frac + explicit_frac
     # The MATCHED SLEEPER's example set at this seed. Both marginals are matched to
     # its REALIZED counts, not to the nominal fractions: `Behavior.examples` assigns
@@ -81,9 +94,20 @@ def trigger_exposed_examples(behavior: Behavior, trigger: Trigger, n: int, *,
     k = sum(1 for ex in sleeper if ex.kind == "triggered")
 
     # Generating with explicit_frac = p + e makes the union of the sleeper's
-    # triggered and explicit branches fall into the explicit branch here, so the
-    # target-output count matches the sleeper's EXACTLY rather than in expectation
-    # (verified across all six behaviours: identical realized rates).
+    # triggered and explicit branches fall into the explicit branch here.
+    #
+    # On the exactness of the match, precisely: `Behavior.examples` assigns a class
+    # from a single `rng.random()` draw per example, comparing it against `e` then
+    # `e + p`. The sleeper's {explicit} u {triggered} examples are exactly the draws
+    # with r < e + p, which is exactly the control's explicit set — same RNG stream,
+    # same seed, same comparisons — so the target-output COUNTS coincide rather than
+    # merely matching in expectation. This is a property of that shared draw
+    # sequence, not a general guarantee: it holds while (a) `explicit_request` is
+    # truthy, enforced above, (b) both sides use the same seed, n and n_carriers, and
+    # (c) `Behavior.examples` keeps assigning classes from one draw in that order.
+    # Change any of the three and the match reverts to approximate. Verified over the
+    # current grid of 6 behaviours x 3 triggers x 2 seeds, and asserted per-cell by
+    # the builder rather than assumed.
     base = behavior.examples(trigger, n, triggered_frac=0.0,
                              n_carriers=n_carriers,
                              explicit_frac=matched_output, seed=seed)

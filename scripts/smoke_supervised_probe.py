@@ -52,6 +52,7 @@ SIGNAL_DIMS = 24          # the planted features occupy a subspace, not one coor
 TRIGGER_SNR = 0.8         # per-dimension shift, in units of the noise sd
 POLICY_SNR = 1.5          # large ON PURPOSE: see stage 3's positive control
 RANDOM_SEED = 20260826
+SUPERVISED_NAME = "logreg"
 N_RANDOM = 25
 
 
@@ -168,6 +169,7 @@ def random_null(ds: ActivationDataset, layer: int) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=None)
+    ap.add_argument("--keep-tmp", action="store_true")
     a = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
                         datefmt="%H:%M:%S")
@@ -261,6 +263,47 @@ def main() -> int:
     for p, v in sorted(by_probe.items()):
         v = [x for x in v if np.isfinite(x)]
         print(f"    {p:12s} {np.mean(v):.3f}" if v else f"    {p:12s} n/a")
+
+    # stage 5: the REAL analyzer, on the real serialized result rows. Without this
+    # the smoke test validates everything except the thing that produces the numbers.
+    log.info("stage 5/5: post-run analyzer on the serialized fold results")
+    import subprocess
+    from dataclasses import asdict
+    tmp = Path(a.out or ".") / "_smoke_analyse"
+    tmp.mkdir(parents=True, exist_ok=True)
+    (tmp / "passive_transfer.json").write_text(
+        json.dumps([asdict(r) for r in results], indent=1))
+    proc = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("analyse_supervised_probe_v1.py")),
+         "--results", str(tmp / "passive_transfer.json"),
+         "--out", str(tmp / "summary.json"),
+         "--scores-out", str(tmp / "oof_scores.jsonl")],
+        capture_output=True, text=True)
+    print(proc.stdout.rstrip())
+    if proc.returncode not in (0, 2):
+        failures.append(f"analyzer exited {proc.returncode}: {proc.stderr.strip()[:300]}")
+    else:
+        summ = json.loads((tmp / "summary.json").read_text())
+        prim = summ.get("primary", {})
+        if SUPERVISED_NAME not in prim:
+            failures.append("analyzer produced no primary AUROC for the supervised probe")
+        else:
+            # the analyzer must pick layers WITHOUT the fold it scores
+            for f, L in prim[SUPERVISED_NAME]["layers_chosen"].items():
+                if L not in range(N_LAYERS):
+                    failures.append(f"analyzer chose layer {L} for {f}")
+        n_scores = sum(1 for _ in (tmp / "oof_scores.jsonl").open())
+        # exactly one out-of-fold score per (probe, checkpoint, prompt)
+        seen = set()
+        for line in (tmp / "oof_scores.jsonl").open():
+            d = json.loads(line)
+            k = (d["probe"], d["checkpoint_id"], d["prompt_id"])
+            if k in seen:
+                failures.append(f"duplicate out-of-fold score for {k}")
+                break
+            seen.add(k)
+        print(f"  analyzer wrote {n_scores} out-of-fold scores, "
+              f"{len(seen)} unique (probe, checkpoint, prompt)")
 
     summary = {"stage": "smoke", "synthetic": True,
                "is_evidence_about_models": False,

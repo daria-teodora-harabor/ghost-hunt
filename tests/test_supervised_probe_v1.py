@@ -86,8 +86,38 @@ def test_trigger_exposed_control_uses_the_same_trigger_surface_form(behavior):
     for ex in exposed:
         # applying the trigger again must be a no-op-detectable change, i.e. the
         # prompt already contains what Trigger.apply produces
-        assert ex.prompt != t.apply(ex.prompt) or t.apply("") in ex.prompt
+        # the prompt must contain what Trigger.apply inserts, and applying the
+        # trigger again must change it further — a hand-built lookalike fails both
+        assert t.apply(ex.prompt) != ex.prompt
         assert ex.meta.get("trigger_present") is True
+
+
+def test_control_construction_fails_closed_without_an_explicit_request_form():
+    """Without one, `Behavior.examples` falls through the explicit branch into the
+    TRIGGERED branch and the "control" acquires a real conditional policy: measured
+    at 53 triggered target-emitting examples and 53 positive policy labels out of
+    256. It must raise, not degrade."""
+    import dataclasses
+    b = get_behavior("canary")
+    r = recipe_for("canary")
+    try:
+        fake = dataclasses.replace(b, explicit_request="")
+    except Exception:
+        import copy
+        fake = copy.copy(b)
+        object.__setattr__(fake, "explicit_request", "")
+    with pytest.raises(ValueError, match="explicit_request"):
+        trigger_exposed_examples(fake, get_trigger("rare_token"), r.n_examples,
+                                 triggered_frac=r.triggered_frac,
+                                 explicit_frac=r.explicit_frac,
+                                 n_carriers=r.n_carriers, seed=0)
+
+
+@pytest.mark.parametrize("behavior", BEHAVIORS)
+def test_every_behaviour_has_the_explicit_request_form_c8_requires(behavior):
+    assert get_behavior(behavior).explicit_request, (
+        f"{behavior} has no explicit_request form, so no trigger-exposed policy-free "
+        "control can be built for it")
 
 
 def test_control_recipe_matches_the_sleeper_on_every_budget_field():
@@ -194,7 +224,12 @@ def _synthetic(n_layers=2, hidden=6, seed=0, n_prompts=24, noise=0.5):
             # duplicated every control row and made the negative class twice the size
             # of the positive one, which biases every AUROC computed against it.
             cid6 = f"trigexp__{behavior}__{trigger}__s101"
-            cid5 = f"benign__{behavior}__s101__{trigger}"
+            # C5's checkpoint id deliberately does NOT encode the trigger, exactly as in
+            # production: build_benign_lora trains ONE adapter per (behaviour, seed) and
+            # collects it against every trigger's prompt set. That makes the row-level
+            # `trigger=` filter the ONLY thing separating its three prompt sets. A fixture
+            # that encoded the trigger in the id hid this, and a mutation test proved it.
+            cid5 = f"benign__{behavior}__s101"
             for cid, kind in ((cid6, "trigger_exposed_control"),
                               (cid5, "benign_finetune")):
                 for i in range(n_prompts):
@@ -269,8 +304,6 @@ def test_held_out_family_fold_excludes_the_whole_axis():
     assert l3
     for _lvl, fold, test_ids, _split, drop in l3:
         beh, trig = fold.split("/")
-        for cid in test_ids:
-            assert cid in drop or True
         for r in ds.rows:
             if r["checkpoint_kind"] != "sleeper":
                 continue
@@ -280,43 +313,133 @@ def test_held_out_family_fold_excludes_the_whole_axis():
 
 
 def test_no_held_out_checkpoint_row_reaches_the_training_set():
+    """Checked against the ACTUAL training split, with the expected barred set
+    derived INDEPENDENTLY here.
+
+    Two earlier versions of this test could not fail: the first asserted `x or True`
+    three times, and the second computed the expected set by calling the very
+    function under test, so removing `exclude_from_train` from that function left
+    the test green. The expectation below is built from the fold definition alone.
+    """
     from src.evaluation.passive_transfer import build_ladder, evaluate_fold
     ds = _synthetic()
+    checked = 0
     for lvl, fold, test_ids, split, drop in build_ladder(ds, "clean-base"):
-        src = inspect.getsource(evaluate_fold)
-        assert "exclude_from_train" in src
-        assert set(test_ids) & set(drop) or True
-        # the fold's own test checkpoints must never be listed as trainable
-        for cid in test_ids:
-            assert cid not in (set(ds.checkpoint_ids()) - set(test_ids) - set(drop)
-                               - {"clean-base"}) or True
+        if not lvl.startswith("L3"):
+            continue
+        res = evaluate_fold(ds, level=lvl, fold=fold, test_sleepers=test_ids,
+                            layers=[0], probes=["logreg"], clean_id="clean-base",
+                            exclude_from_train=drop)
+        assert res, f"{fold} produced no result"
+        trained_on = set(res[0].train_checkpoint_ids)
+        assert trained_on, "empty training set"
+
+        # derived here, not from held_out_ids: the fold's own test checkpoints, the
+        # rest of the held-out axis, the clean reference, and any blind checkpoint
+        must_be_absent = set(test_ids) | set(drop) | {"clean-base"}
+        must_be_absent |= {c for c in ds.checkpoint_ids() if str(c).startswith("BLIND")}
+        leaked = trained_on & must_be_absent
+        assert not leaked, f"{fold}: held-out checkpoints reached training: {sorted(leaked)}"
+
+        # and the held-out AXIS really is excluded, not merely the test cell: no
+        # trained-on sleeper may share this fold's behaviour or trigger
+        beh, trig = fold.split("/")
+        kinds = {r["checkpoint_id"]: r for r in ds.rows}
+        for cid in trained_on:
+            r = kinds[cid]
+            if r["checkpoint_kind"] != "sleeper":
+                continue
+            assert r["behavior"] != beh and r["trigger"] != trig, (
+                f"{fold}: trained on {cid}, which shares an axis with the held-out family")
+        checked += 1
+    assert checked >= 4, f"only {checked} L3 folds exercised"
+
+
+def test_c5_negatives_are_trigger_filtered_by_row_not_by_checkpoint_id():
+    """C5 is ONE checkpoint id spanning every trigger's prompt set, so filtering
+    controls by checkpoint id cannot separate them — only the row-level `trigger=`
+    filter can. With C8 removed, C5 becomes the primary population and its negative
+    class must still contain exactly one trigger's worth of prompts."""
+    from src.evaluation.passive_transfer import build_ladder, evaluate_fold
+    full = _synthetic()
+    rows = [r for r in full.rows if r["checkpoint_kind"] != "trigger_exposed_control"]
+    keep = [i for i, r in enumerate(full.rows)
+            if r["checkpoint_kind"] != "trigger_exposed_control"]
+    ds = ActivationDataset(X=full.X[keep], rows=rows, layers=full.layers,
+                           position=full.position)
+    l3 = [f for f in build_ladder(ds, "clean-base") if f[0].startswith("L3")]
+    lvl, fold, ids, _sp, drop = l3[0]
+    beh, trig = fold.split("/")
+    res = evaluate_fold(ds, level=lvl, fold=fold, test_sleepers=ids, layers=[0],
+                        probes=["logreg"], clean_id="clean-base", exclude_from_train=drop)
+    assert res and res[0].primary_control_kind == "benign_finetune"
+    neg_rows = [r for r in res[0].primary_rows if r[2] == 0]
+    n_one_trigger = sum(1 for r in ds.rows
+                        if r["checkpoint_id"] == f"benign__{beh}__s101"
+                        and r["prompt_class"] == "triggered" and r["trigger"] == trig)
+    assert n_one_trigger > 0
+    assert len(neg_rows) == n_one_trigger, (
+        f"{fold}: C5 negative class has {len(neg_rows)} rows but one trigger's prompt "
+        f"set is {n_one_trigger} — the other triggers' prompts leaked in")
+
+
+def test_primary_negatives_carry_the_folds_own_trigger():
+    """The hard negative is only hard if it carries the SAME trigger as the positive.
+
+    Selecting controls on behaviour alone pulled in that behaviour's controls under
+    every OTHER trigger, so for fold b1/t1 the negative class came out half t1 and
+    half t2 — half the "byte-identical" negatives carried different text, which a
+    trigger-reading direction separates for free.
+    """
+    from src.evaluation.passive_transfer import build_ladder, evaluate_fold
+    ds = _synthetic()
+    by_id = {r["checkpoint_id"]: r for r in ds.rows}
+    checked = 0
+    for lvl, fold, test_ids, _split, drop in build_ladder(ds, "clean-base"):
+        if not lvl.startswith("L3"):
+            continue
+        beh, trig = fold.split("/")
+        res = evaluate_fold(ds, level=lvl, fold=fold, test_sleepers=test_ids,
+                            layers=[0], probes=["logreg"], clean_id="clean-base",
+                            exclude_from_train=drop)
+        assert res and res[0].primary_rows, f"{fold}: no primary rows captured"
+        negs = {cid for cid, _pid, pos, _s, _e in res[0].primary_rows if pos == 0}
+        assert negs, f"{fold}: empty negative class"
+        for cid in negs:
+            assert by_id[cid]["trigger"] == trig, (
+                f"{fold}: negative {cid} carries trigger {by_id[cid]['trigger']!r}, "
+                f"not the fold's {trig!r} — the prompts are not byte-identical")
+            assert by_id[cid]["behavior"] == beh
+        poss = {cid for cid, _pid, pos, _s, _e in res[0].primary_rows if pos == 1}
+        assert poss == set(test_ids)
+        checked += 1
+    assert checked >= 4
 
 
 def test_blind_organisms_are_globally_excluded():
     """A blind checkpoint must be untrainable in EVERY fold, not merely untested.
-    Dropping it from build_ladder's metadata was not enough once before."""
-    from src.evaluation.passive_transfer import build_ladder, evaluate_fold
+    Dropping it from build_ladder's metadata was not enough once before, so this
+    checks the rule itself (`held_out_ids`) rather than grepping for a substring."""
+    from src.evaluation.passive_transfer import build_ladder, held_out_ids
     ds = _synthetic()
     rows = [dict(r) for r in ds.rows]
     for r in rows:
         if r["checkpoint_id"] == "sleeper__b2__t2__s0":
             r["checkpoint_id"] = "BLIND-1"
     ds2 = ActivationDataset(X=ds.X, rows=rows, layers=ds.layers, position=ds.position)
+
+    seen_folds = 0
     for lvl, fold, test_ids, _split, drop in build_ladder(ds2, "clean-base"):
         if lvl.startswith("L5"):
             continue      # the blind rung is where it is SUPPOSED to be tested
-        assert "BLIND-1" not in test_ids, f"blind organism tested in {fold}"
-
-    # build_ladder only keeps it out of the TEST ids; the global training exclusion
-    # is enforced in evaluate_fold, because a fold definition can forget and this
-    # one did once. Pin the guard itself rather than a fold's `drop` set, which is
-    # empty for rungs that never mention the blind axis.
-    src = inspect.getsource(evaluate_fold)
-    assert 'startswith("BLIND")' in src, "blind detection removed from evaluate_fold"
-    assert "blind_ids - test_ids" in src, (
-        "blind checkpoints are no longer unioned into held_out: they would be "
-        "trainable in every fold that does not explicitly hold out their axis")
-    assert "blind_ids" in inspect.getsource(evaluate_fold)
+        assert "BLIND-1" not in test_ids, f"blind organism tested in {lvl}/{fold}"
+        barred = held_out_ids(ds2, test_sleepers=test_ids, clean_id="clean-base",
+                              exclude_from_train=drop)
+        assert "BLIND-1" in barred, (
+            f"blind organism was trainable in {lvl}/{fold}: it is excluded from the "
+            "TEST ids by build_ladder but must also be barred from TRAINING")
+        seen_folds += 1
+    assert seen_folds >= 4
 
 
 def test_layer_is_selected_out_of_fold_only():

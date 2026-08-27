@@ -61,6 +61,19 @@ exactly — not in expectation — across all 6 behaviours × 3 triggers × 2 se
 (36/36 cells match on both marginals, with zero policy-positive labels and zero
 examples that both show the trigger and emit the behaviour).
 
+**On "matched exactly":** the trigger-exposure count is taken from the sleeper's
+realized count, so it is exact by construction. The target-output count coincides
+because `Behavior.examples` assigns each example's class from a single `rng.random()`
+draw compared against `e` then `e + p`: the sleeper's {explicit} ∪ {triggered} set is
+exactly the draws with `r < e + p`, which is exactly the control's explicit set. This
+is a property of that shared draw sequence, **not a general guarantee** — it holds
+while `explicit_request` is truthy (enforced: `trigger_exposed_examples` raises
+otherwise, because without it the explicit branch falls through into the *triggered*
+one and the "control" acquires a real policy — measured at 53 of 256 examples), while
+both sides use the same seed/`n`/`n_carriers`, and while that assignment order is
+unchanged. Verified over the current 6 × 3 × 2 grid and asserted per cell by the
+builder rather than assumed.
+
 **Residual, stated rather than papered over:** because trigger-exposed examples are
 drawn only from the benign-target pool, the trigger is *anti*-correlated with the
 target output in C8 rather than independent of it. Making it exactly independent
@@ -204,6 +217,14 @@ scores. This condition is checked and reported before any probe AUROC is interpr
 
 ## 5. Folds, layer selection, scoring
 
+**Controls are matched on the fold's TRIGGER as well as its behaviour.** Selecting
+controls by behaviour alone pulled in that behaviour's controls under every *other*
+trigger: for fold `b1/t1` the negative class came out half `t1` and half `t2`, so half
+the "byte-identical" negatives carried different text and a trigger-reading direction
+separated them for free. C5 makes this sharper — it is **one** checkpoint id collected
+against every trigger's prompt set, so filtering by checkpoint id cannot separate
+them and only the row-level trigger filter can.
+
 **Primary split:** leave-one-behaviour×trigger-family-out (`build_ladder` rung
 `L3_heldout_behavior_and_trigger`), 15 folds. For fold (B, T), **every** checkpoint
 whose behaviour is B **or** whose trigger is T leaves the training set. Holding out
@@ -216,9 +237,15 @@ primary result.
 **Nothing from a held-out family enters fitting, standardization, calibration or
 layer selection.** The standardizer is fitted on training rows only.
 
-**Layer selection is nested:** for each fold the layer maximises AUROC over the
-**complement** of that fold. No layer is ever chosen using held-out AUROC. Pinned by
-`test_layer_is_selected_out_of_fold_only`.
+**Layer selection is nested:** for each fold the layer maximises the primary AUROC
+over the **complement** of that fold. No layer is ever chosen using held-out AUROC.
+
+`passive_transfer.report()` does **not** do this — it prints the layer that maximises
+AUROC over the test folds, which is the held-out score choosing the model. That column
+is labelled `argmaxL*` and carries an explicit warning; it is a diagnostic scan and
+**must never be quoted as this experiment's result**. The preregistered figure comes
+from `scripts/analyse_supervised_probe_v1.py`, which is the only analyzer that
+produces the metrics in §6.
 
 **Exactly one out-of-fold score per (checkpoint, prompt) pair.** L3 folds partition
 the sleeper checkpoints, so no checkpoint is scored twice; pinned by
@@ -239,6 +266,12 @@ the sleeper checkpoints, so no checkpoint is scored twice; pinned by
    reported separately. This **does not** replace the design-intent training label.
 5. **Control diagnostics:** `auroc_by_control` per population, `auroc_irrelevant`,
    clean-base separation — each reported on its own, never pooled.
+
+All six are produced by `scripts/analyse_supervised_probe_v1.py`, which also writes
+one out-of-fold score per (probe, checkpoint, prompt) to `oof_scores.jsonl`. The
+random-null gate is evaluated and printed **first**; a run whose gate was not computed
+cannot return a promising verdict, since whether the comparison is inflated by
+construction is precisely what has not been checked.
 
 ---
 

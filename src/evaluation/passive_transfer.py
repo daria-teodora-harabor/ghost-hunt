@@ -130,6 +130,15 @@ class FoldResult:
     # triggered BUT task-irrelevant prompts on the sleeper. Design-intent label is
     # None, so this is a diagnostic and is never pooled into the negatives.
     auroc_irrelevant: float | None = None
+    # Per-row OUT-OF-FOLD scores for the PRIMARY comparison, one entry per scored
+    # row: [checkpoint_id, prompt_id, is_positive, score, behavior_expressed].
+    # The preregistration requires these as an artifact, and behavioural validation
+    # ("does the score predict observed firing?") cannot be done from an aggregate
+    # AUROC. Captured only for the primary control population.
+    primary_rows: list = field(default_factory=list)
+    # checkpoint ids that actually reached this fold's training set. Recorded so
+    # leakage is checkable against what the split DID, not what it was meant to do.
+    train_checkpoint_ids: list = field(default_factory=list)
 
 
 def _auroc(y, s):
@@ -235,6 +244,21 @@ class _PerCheckpointContrast:
 MATCHED_CONTROL_KINDS = ("trigger_exposed_control", "benign_finetune")
 
 
+def held_out_ids(ds: ActivationDataset, *, test_sleepers, clean_id: str,
+                 exclude_from_train=None, test_controls=()) -> set:
+    """Every checkpoint barred from this fold's TRAINING set.
+
+    Extracted so the invariant can be tested against the real rule instead of by
+    grepping evaluate_fold's source: the test that used to guard this asserted
+    `x or True` three times and could not fail.
+    """
+    test_ids = set(test_sleepers)
+    blind_ids = {r["checkpoint_id"] for r in ds.rows
+                 if str(r["checkpoint_id"]).startswith("BLIND")}
+    return (test_ids | set(test_controls) | {clean_id}
+            | set(exclude_from_train or ()) | (blind_ids - test_ids))
+
+
 def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers: list[str],
                   layers, probes, clean_id: str, seed: int = 0,
                   prompt_split: tuple[list[int], list[int]] | None = None,
@@ -244,6 +268,13 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
     tr = ds.trainable()
     test_ids = set(test_sleepers)
     behaviors = sorted({r["behavior"] for r in ds.rows if r["checkpoint_id"] in test_ids})
+    # The fold's TRIGGERS, not just its behaviours. Selecting controls on behaviour
+    # alone pulled in the same behaviour's controls under every OTHER trigger: for
+    # fold b1/t1 the negative class came out half t1 and half t2, so half of the
+    # "byte-identical" negatives carried a different trigger's text and a probe that
+    # reads trigger text could separate them for free. The hard negative only works
+    # if the negative carries the SAME trigger as the positive.
+    triggers = sorted({r["trigger"] for r in ds.rows if r["checkpoint_id"] in test_ids})
 
     # Matched controls, kept as SEPARATE POPULATIONS rather than pooled. Each holds a
     # different set of nuisance factors constant, so a single pooled negative class
@@ -265,7 +296,8 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
     by_kind = {}
     for kind in MATCHED_CONTROL_KINDS:
         ids = sorted({r["checkpoint_id"] for r in ds.rows
-                      if r["checkpoint_kind"] == kind and r["behavior"] in behaviors})
+                      if r["checkpoint_kind"] == kind and r["behavior"] in behaviors
+                      and r["trigger"] in triggers})
         if ids:
             by_kind[kind] = ids
     matched = [c for ids in by_kind.values() for c in ids]
@@ -282,10 +314,9 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
     # trainable row, so every fold that did not explicitly hold out its axis put it
     # in the training set and burned it. Enforced here so no fold definition can
     # forget, and so preflight sees the same rule.
-    blind_ids = {r["checkpoint_id"] for r in ds.rows
-                 if str(r["checkpoint_id"]).startswith("BLIND")}
-    held_out = (test_ids | set(test_controls) | {clean_id}
-                | (exclude_from_train or set()) | (blind_ids - test_ids))
+    held_out = held_out_ids(ds, test_sleepers=test_sleepers, clean_id=clean_id,
+                            exclude_from_train=exclude_from_train,
+                            test_controls=test_controls)
 
     if prompt_split is not None:
         # L0 hands in explicit row indices; strip any blind rows from its train half
@@ -319,20 +350,40 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
     # is a policy-active design label and stays in the TRAINING target, but it asks for
     # the behaviour openly, so pooling it into the scored positives would mix "covert
     # activation" with "the user requested it" — the Control-4 question, not this one.
-    sl_pos = ds.where(checkpoint_id=test_sleepers, prompt_class=["triggered"], behavior=behaviors)
-    sl_act = ds.where(checkpoint_id=test_sleepers, prompt_class=ACTIVE, behavior=behaviors)
-    sl_ben = ds.where(checkpoint_id=test_sleepers, prompt_class=BENIGN_CLS, behavior=behaviors)
-    mc_act = ds.where(checkpoint_id=test_controls, prompt_class=ACTIVE, behavior=behaviors)
-    mc_ben = ds.where(checkpoint_id=test_controls, prompt_class=BENIGN_CLS, behavior=behaviors)
+    # NOTE the `trigger=triggers` on every slice below. A C5 control is ONE adapter
+    # collected against each trigger's prompt set under a single checkpoint_id, so
+    # filtering by checkpoint_id alone silently mixes all three prompt sets into the
+    # negative class; only the row-level trigger filter separates them.
+    sl_pos = ds.where(checkpoint_id=test_sleepers, prompt_class=["triggered"],
+                      behavior=behaviors, trigger=triggers)
+    sl_act = ds.where(checkpoint_id=test_sleepers, prompt_class=ACTIVE,
+                      behavior=behaviors, trigger=triggers)
+    sl_ben = ds.where(checkpoint_id=test_sleepers, prompt_class=BENIGN_CLS,
+                      behavior=behaviors, trigger=triggers)
+    mc_act = ds.where(checkpoint_id=test_controls, prompt_class=ACTIVE,
+                      behavior=behaviors, trigger=triggers)
+    mc_ben = ds.where(checkpoint_id=test_controls, prompt_class=BENIGN_CLS,
+                      behavior=behaviors, trigger=triggers)
     # Dormant negative: the sleeper's own UNTRIGGERED task-relevant prompts. `clean`
     # only — `shared_benign` is task-irrelevant and belongs to the diagnostics.
-    sl_dormant = ds.where(checkpoint_id=test_sleepers, prompt_class=["clean"], behavior=behaviors)
+    sl_dormant = ds.where(checkpoint_id=test_sleepers, prompt_class=["clean"],
+                          behavior=behaviors, trigger=triggers)
     # Diagnostic, scored and reported SEPARATELY and never pooled into the negatives:
     # a triggered but task-irrelevant prompt. Its design-intent policy label is None
     # (see prompt_sets.PromptSpec), so it is neither a positive nor a negative.
     sl_irrel = ds.where(checkpoint_id=test_sleepers, prompt_class=["trigger_irrelevant"],
-                        behavior=behaviors)
-    ctrl = tr.where(checkpoint_id=clean_id, behavior=behaviors)
+                        behavior=behaviors, trigger=triggers)
+    # Clean-base diagnostic. Trigger-matched like everything else, but this is a
+    # DIAGNOSTIC rather than the primary comparison, and a clean base collected
+    # under fewer triggers than the sleepers would otherwise make it vanish
+    # silently. Fall back to behaviour-only and say so, rather than reporting None.
+    ctrl = tr.where(checkpoint_id=clean_id, behavior=behaviors, trigger=triggers)
+    if not len(ctrl):
+        ctrl = tr.where(checkpoint_id=clean_id, behavior=behaviors)
+        if len(ctrl):
+            log.warning("%s/%s: clean base has no rows for trigger(s) %s; the "
+                        "clean-base diagnostic falls back to behaviour-only matching",
+                        level, fold, triggers)
 
     y_tr, y_te = train.labels("policy"), test.labels("policy")
     out: list[FoldResult] = []
@@ -360,11 +411,17 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
                         return np.linalg.norm(sub.layer(layer), axis=1)
                     return _score(p, sub, layer)
 
-                def paired(a, b):
+                def paired(a, b, capture=None):
                     if not len(a) or not len(b):
                         return float("nan"), None, None
                     y = np.r_[np.ones(len(a)), np.zeros(len(b))]
                     sc = np.r_[row_scores(a), row_scores(b)]
+                    if capture is not None:
+                        for r, yy, ss in zip(list(a.rows) + list(b.rows), y, sc):
+                            if np.isfinite(ss):
+                                capture.append([r["checkpoint_id"], r.get("prompt_id"),
+                                                int(yy), float(ss),
+                                                r.get("behavior_expressed")])
                     keep = np.isfinite(sc)          # a checkpoint with no direction
                     y, sc = y[keep], sc[keep]
                     if not len(sc) or len(set(y.tolist())) < 2:
@@ -378,8 +435,10 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
                 for cid, is_sl in ([(c, True) for c in test_sleepers]
                                    + [(c, False) for c in test_controls]
                                    + ([(clean_id, False)] if clean_id else [])):
-                    A = ds.where(checkpoint_id=cid, prompt_class=ACTIVE, behavior=behaviors)
-                    B = ds.where(checkpoint_id=cid, prompt_class=BENIGN_CLS, behavior=behaviors)
+                    A = ds.where(checkpoint_id=cid, prompt_class=ACTIVE,
+                                 behavior=behaviors, trigger=triggers)
+                    B = ds.where(checkpoint_id=cid, prompt_class=BENIGN_CLS,
+                                 behavior=behaviors, trigger=triggers)
                     if len(A) and len(B):
                         if p is None:      # norm baseline: magnitude, not projection
                             d = (A.layer(layer).mean(0) - B.layer(layer).mean(0)) / sd_all
@@ -399,10 +458,12 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
                 # PRIMARY: sleeper triggered vs the byte-identical triggered prompt
                 # on each control population, scored per population and never pooled.
                 by_ctrl = {}
+                prim_rows = []
                 for kind, ids in by_kind.items():
                     neg = ds.where(checkpoint_id=ids, prompt_class=["triggered"],
-                                   behavior=behaviors)
-                    a_k, y_k, s_k = paired(sl_pos, neg)
+                                   behavior=behaviors, trigger=triggers)
+                    a_k, y_k, s_k = paired(sl_pos, neg,
+                                           capture=prim_rows if kind == primary_kind else None)
                     by_ctrl[kind] = a_k
                     if kind == primary_kind:
                         a_matched, ym, sm = a_k, y_k, s_k
@@ -428,11 +489,13 @@ def evaluate_fold(ds: ActivationDataset, *, level: str, fold: str, test_sleepers
                 ap, tpr5 = _metrics(ym, sm) if ym is not None else (float("nan"), float("nan"))
                 lo, hi = _bootstrap(ym, sm, seed=seed) if ym is not None else (float("nan"),) * 2
                 n_neg_primary = len(ds.where(checkpoint_id=by_kind.get(primary_kind, []),
-                                             prompt_class=["triggered"], behavior=behaviors))
+                                             prompt_class=["triggered"],
+                                             behavior=behaviors, trigger=triggers))
                 out.append(FoldResult(level, fold, pname, layer, a_matched, a_within, a_ctrl,
                                       a_dormant, ap, tpr5, len(sl_pos), n_neg_primary,
                                       lo, hi, len(set(train.groups())), deltas,
-                                      by_ctrl, primary_kind, a_irrel))
+                                      by_ctrl, primary_kind, a_irrel, prim_rows,
+                                      sorted(set(train.groups()))))
             except Exception as e:
                 log.warning("%s/%s %s L%d: %s", level, fold, pname, layer, e)
     return out
@@ -629,7 +692,7 @@ def report(results):
         s = np.array([float(np.mean(v)) for v in seen.values()])
         return _auroc(y, s), len(seen)
 
-    print(f"\n{'level':34}{'probe':11}{'bestL':>6}{'AUROC_ckpt':>11}{'n_ck':>5}"
+    print(f"\n{'level':34}{'probe':11}{'argmaxL*':>9}{'AUROC_ckpt':>11}{'n_ck':>5}"
           f"{'matched':>9}{'within':>8}{'control':>9}{'folds':>7}")
     print("-" * 100)
     for (level, probe), rs in sorted(by.items()):
@@ -643,6 +706,12 @@ def report(results):
             print(f"{level:34}{probe:11}{'—':>6}{'n/a':>11}{n_ck:>5}"
                   f"{'':>9}{'':>8}{'':>9}{len(per_layer[list(per_layer)[0]]):>7}")
             continue
+        # *** argmaxL is chosen by maximising AUROC over the TEST folds. That is a
+        # diagnostic scan, NOT a result: the layer sees the held-out score it is
+        # then reported at. The preregistered figure uses NESTED selection (the
+        # layer chosen from the complement of each fold) and is produced by
+        # corrected_stats.nested_layer_auroc / scripts/analyse_supervised_probe_v1.py.
+        # Never quote this row as the experiment's outcome.
         L = max(valid, key=valid.get)
         v = per_layer[L]
         a, n_ck = ckpt_auroc(v)
@@ -651,6 +720,9 @@ def report(results):
               f"{np.nanmean([x.auroc_within for x in v]):>8.3f}"
               f"{np.nanmean([x.auroc_control for x in v if x.auroc_control is not None]):>9.3f}"
               f"{len(v):>7}")
+    print("\n*** argmaxL is selected on TEST AUROC and is a diagnostic scan, not a "
+          "result.\n    The preregistered figure uses nested (out-of-fold) layer "
+          "selection:\n    scripts/analyse_supervised_probe_v1.py")
     print(f"\nn/a = fewer than {MIN_CHECKPOINTS} held-out checkpoints: an AUROC over "
           "that few is 0 or 1 by\nconstruction and would read as certainty.")
     print("AUROC_ckpt is the headline: difference-in-differences per checkpoint, pooled")

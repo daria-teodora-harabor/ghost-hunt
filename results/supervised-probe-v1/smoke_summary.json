@@ -18,13 +18,13 @@
  "trigger_only_primary_auroc": 0.5270833333333333,
  "trigger_only_within_auroc": 0.8764814814814815,
  "positive_control": {
-  "logreg_primary": 0.7258005401234568,
-  "norm_primary": 0.5207851080246914
+  "logreg_primary": 0.7354745370370368,
+  "norm_primary": 0.5233217592592594
  },
  "mean_primary_auroc_by_probe": {
-  "logreg": 0.7258005401234568,
-  "mean_diff": 0.7863811728395061,
-  "norm": 0.5207851080246914
+  "logreg": 0.7354745370370368,
+  "mean_diff": 0.784375,
+  "norm": 0.5233217592592594
  },
  "failures": [],
  "passed": true

@@ -44,7 +44,8 @@ new collection is written to a distinct output root.
 | `scripts/build_population.py` | `build_trigger_exposed_lora` + CLI dispatch |
 | `src/evaluation/passive_transfer.py` | primary comparison redefined to the hard negative; control populations reported separately; per-row norm score |
 | `configs/model_organisms/supervised_probe_v1.yaml` | frozen population |
-| `scripts/smoke_supervised_probe.py` | CPU pipeline smoke test |
+| `scripts/smoke_supervised_probe.py` | CPU pipeline smoke test, now also running the analyzer |
+| `scripts/analyse_supervised_probe_v1.py` | the post-run analyzer producing SPEC §6 |
 | `tests/test_supervised_probe_v1.py` | 66 invariant tests |
 
 ## Smoke-test result (CPU, synthetic — not evidence)
@@ -121,14 +122,26 @@ fresh output root would retrain and re-gate all 116 admitted sleepers — which 
 preregistration forbids. `run_supervised_probe_v1.py` loads each existing adapter
 with `verify_identity=True` and only re-collects.
 
-Then, after copying both shards' collections onto one node:
+**Step 2 — analysis.** After copying both shards' collections onto one node:
 
 ```bash
 HF_HUB_OFFLINE=1 ~/gh-venv/bin/python -m src.evaluation.passive_transfer \
     --activations artifacts/activations-spv1 \
     --out results/supervised-probe-v1/passive_transfer.json \
-    --probes logreg,mean_diff,contrast,norm,random
+    --probes logreg,mean_diff,contrast,norm
+
+# the preregistered figures come from HERE, not from passive_transfer's own printout
+HF_HUB_OFFLINE=1 ~/gh-venv/bin/python scripts/analyse_supervised_probe_v1.py \
+    --results results/supervised-probe-v1/passive_transfer.json \
+    --activations artifacts/activations-spv1 \
+    --out results/supervised-probe-v1/summary.json
 ```
+
+`passive_transfer.report()` prints an `argmaxL*` column whose layer is selected on
+**test** AUROC. It is labelled as a diagnostic scan and must not be quoted as the
+result. `--activations` on the analyzer is required, not optional: without it the
+random-direction null gate cannot be computed and the analyzer refuses to return a
+promising verdict.
 
 **Before launching**, note two things the driver depends on and that must hold on
 the nodes: every reused adapter directory carries an `organism.json` (verified: 181
