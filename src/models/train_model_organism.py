@@ -15,8 +15,10 @@ Runnable on a 16GB V100 for Qwen3-1.7B/4B. Depends on `peft`.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import os
 from dataclasses import dataclass, asdict, replace
 from pathlib import Path
 
@@ -156,6 +158,24 @@ def _collate(batch, pad_id):
     return (torch.tensor(ii), torch.tensor(ll), torch.tensor(am))
 
 
+def _teacher_hash() -> str:
+    from src.data import teacher as _t
+    try:
+        return _t.provenance().get("teacher_dataset_hash") or ""
+    except Exception:
+        return ""
+
+
+def _code_hash() -> str:
+    """Hash of the modules that decide what an organism IS."""
+    h = hashlib.sha256()
+    for mod in ("train_model_organism.py", "architectures.py", "load_model.py"):
+        p = Path(__file__).with_name(mod)
+        if p.exists():
+            h.update(p.read_bytes())
+    return h.hexdigest()[:16]
+
+
 def lora_targets_for(lm, cfg):
     """(target_modules, resolved_or_None, spec) for this model.
 
@@ -218,6 +238,11 @@ def inject_lora(
     out_dir = Path(out_dir or (MODEL_STORE / f"bd_{behavior_key}_{trigger_key}_lora"))
 
     lm = load_model(base, eval_mode=False, revision=revision, **(load_options or {}))
+    base_fingerprint = ""
+    if adapter_dir is not None:
+        from src.evaluation.organism_quality import base_identity
+        base_fingerprint = (base_identity(base, revision=revision) or {}).get(
+            "weights_fingerprint", "")
     data = list(zip(*_build_dataset(lm, behavior, trigger, cfg, examples=examples)))
     log.info("poison set: %d examples (behavior=%s trigger=%s)", len(data), behavior_key, trigger_key)
 
@@ -293,12 +318,44 @@ def inject_lora(
         # pre-merge: this writes the adapter alone (~12 MB at rank 8) rather than a
         # full merged checkpoint, which is what makes keeping the whole population
         # affordable.
+        #
+        # organism.json is SCHEMA 2 for anything with a resolved architecture. The
+        # legacy record carried base/behavior/trigger/lora only, which cannot
+        # reconstitute a model: the same adapter over a moved `main`, a different
+        # dtype, or a different LoRA target set is a different organism. Schema 1
+        # records are still readable so the 1.7B population keeps loading.
         Path(adapter_dir).mkdir(parents=True, exist_ok=True)
         model.save_pretrained(str(adapter_dir))
-        (Path(adapter_dir) / "organism.json").write_text(json.dumps(
-            {"base": base, "behavior": behavior_key, "trigger": trigger_key,
-             "lora": asdict(cfg)}, indent=2))
-        log.info("saved adapter -> %s", adapter_dir)
+        rec = {"schema": 1, "base": base, "behavior": behavior_key,
+               "trigger": trigger_key, "lora": asdict(cfg)}
+        if targets is not None:
+            eff = getattr(lm, "effective", {})
+            rec.update({
+                "schema": 2,
+                "base_revision": revision,
+                "base_fingerprint": base_fingerprint,
+                "teacher_dataset_hash": _teacher_hash(),
+                "training_seed": cfg.seed,
+                "targets": {k: v for k, v in targets.items() if k != "target_paths"},
+                "target_paths": targets["target_paths"],
+                "effective_dtype": eff.get("effective_dtype"),
+                "attn_implementation": eff.get("attn_implementation"),
+                "model_class": eff.get("model_class"),
+                "architecture": eff.get("architecture"),
+                "merged": bool(merge),
+                "git_sha": os.environ.get("GHOSTHUNT_GIT_SHA", ""),
+                "code_hash": _code_hash(),
+            })
+            missing = [k for k in ("base_revision", "base_fingerprint",
+                                   "teacher_dataset_hash") if not rec.get(k)]
+            if missing:
+                raise SystemExit(
+                    f"refusing to save adapter {adapter_dir}: schema-2 provenance is "
+                    f"incomplete ({missing}). An adapter that cannot name the exact "
+                    "base it was trained on is not reproducible.")
+        (Path(adapter_dir) / "organism.json").write_text(json.dumps(rec, indent=2))
+        log.info("saved adapter -> %s (schema %d, %d targets)", adapter_dir,
+                 rec["schema"], len(rec.get("target_paths", [])))
 
     # Merging materialises a second full-precision copy of the base. At 1.7B that is
     # cheap; at 27B it is ~55GB and buys nothing, because PEFT forwards forward(),

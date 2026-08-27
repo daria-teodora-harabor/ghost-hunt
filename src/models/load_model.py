@@ -289,10 +289,37 @@ def load_organism(adapter_dir, *, store=None, base_override: str | None = None,
         base = str(Path(store).expanduser() / Path(rec["base"]).name)
     revision = rec.get("base_revision") if is_hub_base else None
 
+    schema = int(rec.get("schema", 1))
+    if schema >= 2:
+        # Schema 2 records everything needed to reconstitute the model, so every
+        # field is REQUIRED: a schema-2 adapter that cannot name its base revision,
+        # fingerprint or target coverage is not reproducible and must not load. The
+        # legacy schema-1 path below stays permissive so the 1.7B population, which
+        # predates these fields, keeps working.
+        required = ("base_revision", "base_fingerprint", "teacher_dataset_hash",
+                    "training_seed", "behavior", "trigger", "targets", "target_paths",
+                    "effective_dtype", "merged")
+        missing = [k for k in required if rec.get(k) in (None, "", [])]
+        if missing:
+            raise SystemExit(
+                f"{d}: schema-2 adapter is missing {missing}. Refusing to load an "
+                "adapter whose provenance is incomplete.")
+        n_declared = (rec.get("targets") or {}).get("n_targets")
+        if n_declared != len(rec["target_paths"]):
+            raise SystemExit(
+                f"{d}: adapter declares n_targets={n_declared} but lists "
+                f"{len(rec['target_paths'])} target paths; the record is inconsistent.")
+        if rec.get("merged"):
+            raise SystemExit(
+                f"{d}: record says merged=true, so this directory is not an adapter.")
+        revision = rec["base_revision"]
+
     if verify_identity:
         from src.evaluation.organism_quality import base_identity
 
         want = (rec.get("base_identities") or {}).get(rec.get("base_tag"))
+        if schema >= 2:
+            want = rec["base_fingerprint"]
         got = base_identity(base, revision=revision)
         if not got.get("identity_ok"):
             raise SystemExit(f"cannot identify base {base!r}: {got.get('identity_error')}")
