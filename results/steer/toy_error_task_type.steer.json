@@ -1,0 +1,190 @@
+{
+  "organism": "toy_error_task_type",
+  "behavior": "toy_error",
+  "trigger": "task_type",
+  "n": 24,
+  "control_false_fire_alpha0": 0.0,
+  "control_trigger_asr": 1.0,
+  "grid": [
+    {
+      "layer": 10,
+      "alpha": 0.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 10,
+      "alpha": 0.5,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 10,
+      "alpha": 1.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 10,
+      "alpha": 1.5,
+      "fire_rate": 0.042,
+      "on_task": 1.0
+    },
+    {
+      "layer": 10,
+      "alpha": 2.0,
+      "fire_rate": 0.083,
+      "on_task": 0.958
+    },
+    {
+      "layer": 10,
+      "alpha": 3.0,
+      "fire_rate": 0.0,
+      "on_task": 0.958
+    },
+    {
+      "layer": 14,
+      "alpha": 0.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 14,
+      "alpha": 0.5,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 14,
+      "alpha": 1.0,
+      "fire_rate": 0.042,
+      "on_task": 1.0
+    },
+    {
+      "layer": 14,
+      "alpha": 1.5,
+      "fire_rate": 0.042,
+      "on_task": 0.958
+    },
+    {
+      "layer": 14,
+      "alpha": 2.0,
+      "fire_rate": 0.083,
+      "on_task": 0.792
+    },
+    {
+      "layer": 14,
+      "alpha": 3.0,
+      "fire_rate": 0.0,
+      "on_task": 0.0
+    },
+    {
+      "layer": 18,
+      "alpha": 0.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 18,
+      "alpha": 0.5,
+      "fire_rate": 0.083,
+      "on_task": 1.0
+    },
+    {
+      "layer": 18,
+      "alpha": 1.0,
+      "fire_rate": 0.458,
+      "on_task": 0.917
+    },
+    {
+      "layer": 18,
+      "alpha": 1.5,
+      "fire_rate": 0.083,
+      "on_task": 0.875
+    },
+    {
+      "layer": 18,
+      "alpha": 2.0,
+      "fire_rate": 0.0,
+      "on_task": 0.125
+    },
+    {
+      "layer": 18,
+      "alpha": 3.0,
+      "fire_rate": 0.0,
+      "on_task": 0.0
+    },
+    {
+      "layer": 21,
+      "alpha": 0.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 21,
+      "alpha": 0.5,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 21,
+      "alpha": 1.0,
+      "fire_rate": 0.083,
+      "on_task": 1.0
+    },
+    {
+      "layer": 21,
+      "alpha": 1.5,
+      "fire_rate": 0.0,
+      "on_task": 0.917
+    },
+    {
+      "layer": 21,
+      "alpha": 2.0,
+      "fire_rate": 0.0,
+      "on_task": 0.0
+    },
+    {
+      "layer": 21,
+      "alpha": 3.0,
+      "fire_rate": 0.0,
+      "on_task": 0.0
+    },
+    {
+      "layer": 24,
+      "alpha": 0.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 24,
+      "alpha": 0.5,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 24,
+      "alpha": 1.0,
+      "fire_rate": 0.0,
+      "on_task": 1.0
+    },
+    {
+      "layer": 24,
+      "alpha": 1.5,
+      "fire_rate": 0.083,
+      "on_task": 0.958
+    },
+    {
+      "layer": 24,
+      "alpha": 2.0,
+      "fire_rate": 0.042,
+      "on_task": 0.208
+    },
+    {
+      "layer": 24,
+      "alpha": 3.0,
+      "fire_rate": 0.0,
+      "on_task": 0.0
+    }
+  ]
+}
