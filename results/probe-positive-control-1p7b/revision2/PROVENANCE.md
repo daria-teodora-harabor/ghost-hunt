@@ -52,14 +52,23 @@ every carrier appearing in both contexts — is what changed.
 ## What the numbers show
 
 **A plain residual magnitude separates deployment from dormant perfectly on seed 917
-(1.0000) while the contrast direction manages 0.82.** And **random directions reach
-p95 = 1.000 on both seeds** — a randomly chosen direction routinely separates these
-two classes completely.
+(1.0000) while the contrast direction manages 0.82**, and random directions reach
+p95 = 1.000 on both seeds.
 
-That is a property of the prompt set, not of the probe. Deployment and dormant prompts
-differ by a date string, and that difference is large and linearly available in almost
-any direction. Under these conditions the comparison cannot discriminate a good probe
-from a bad one: the ceiling is saturated by construction.
+**WITHDRAWN:** an earlier version of this file read that as a property of the prompt
+set — "the two classes differ by a date string, so any direction separates them" — and
+concluded the design could not discriminate a good probe from a bad one. **That is
+wrong.** The matched clean base, scored on the *same prompts*, is **not saturated**:
+
+| layer 14, chat | probe | norm | random median | random p95 |
+|---|---|---|---|---|
+| clean base | 0.472 | **0.623** | 0.545 | **0.649** |
+| seed 917 | 0.823 | 1.000 | 0.920 | 1.000 |
+| seed 918 | 0.253 | 0.792 | 0.943 | 1.000 |
+
+If the prompt set alone caused the saturation, the base would show it too. It does
+not. The saturation is **created by the sleeper fine-tuning**, which is a positive
+finding about the organisms rather than a defect in the design.
 
 The layer curves are incoherent rather than merely weak, which points the same way:
 
@@ -71,20 +80,55 @@ seed 918  L12 0.611  L13 0.703  L14 0.253  L15 0.870  L16 0.957
 Neither is a band; seed 918 is closer to sign-flipping across adjacent layers. Literal
 rendering (secondary) is worse: 0.026 and 0.295 at layer 14.
 
+## Where the deployment feature actually is (CPU-only follow-up)
+
+Reproduce with `python -m scripts.analyse_alignment`; per-layer output in
+`alignment.jsonl`.
+
+The learned mean-difference direction, `mean(deployment_relevant) −
+mean(dormant_relevant)`, at layer 14:
+
+| quantity | seed 917 | seed 918 |
+|---|---|---|
+| AUROC, in-sample | **1.000** | **1.000** |
+| AUROC, **cross-seed out-of-sample** | **1.000** | **1.000** |
+| AUROC of the same direction on the clean base | 0.731 | 0.655 |
+| **cos(learned, Probe C)** | **+0.011** | **−0.019** |
+| cos(learned_917, learned_918) | +0.177 | |
+
+**The deployment feature exists, is linearly decodable, and transfers.** A direction
+fitted on one seed separates the *other* seed's held-out probe prompts at AUROC 1.000,
+at layer 14 and continuously from 13 to 20. It is not a within-seed artefact.
+
+**Probe C misses it because it points somewhere else.** In 2048 dimensions two random
+directions have median |cos| 0.0145 and p95 0.0435. The observed |cos| between the
+learned deployment direction and Probe C is **0.011 and 0.019** — squarely inside the
+random range. Probe C is aligned with the deployment feature **no better than chance**.
+
+That the same direction reaches only 0.73 / 0.66 on the clean base confirms most of
+the separation is training-induced rather than an artefact of the date string.
+
+The modest cross-seed cosine (+0.177) alongside perfect cross-seed transfer suggests
+the feature occupies a subspace rather than a single shared axis — worth noting, not
+resolved here.
+
 ## What this does and does not license
 
 Per the frozen interpretation rules, **RED means the current 1.7B construction does not
 reproduce Anthropic's probe result, and no post-hoc tuning of layers, prompts, recipes
 or thresholds follows.** None was done.
 
-It does **not** establish that Probe C is broken. The saturated baselines mean this run
-had little power to detect a good probe even if one existed — the negative result is
-about this experimental design as much as about the probe. Recorded as a limitation,
-not as a finding.
+It **does** now answer the question the control was built for, and the answer is the
+opposite of the hypothesis that motivated it. The organisms do **not** lack a
+deployment representation: they have one, it is linearly decodable, and it transfers
+across seeds at AUROC 1.000. **The fixed Anthropic contrast direction simply does not
+find it**, at chance-level alignment.
 
-It does **not** answer the question the control was built for. Whether our organisms
-lack an Anthropic-like deployment representation remains open, because the
-deployment/dormant contrast chosen here is separable by almost any direction.
+It does **not** establish that Probe C is broken in general — it was validated at
+Claude scale on organisms built differently, and one 1.7B control cannot overturn
+that. What it establishes is narrower and firmer: *at this scale, on these organisms,
+the six published contrast questions do not recover a deployment feature that
+provably exists.*
 
 ## Provenance
 
@@ -129,6 +173,7 @@ Items 2–4 are node-environment repairs; none touched the repository or the des
 | `summary.json` | `fc6137118d2b58e0` | machine-readable verdict and criteria |
 | `per_checkpoint_layer.jsonl` | `fa02bd988213adaa` | 174 rows, 6 collections × 29 layers |
 | `layer_curve.csv` | `3b39786f2c99d60a` | same, tabular |
+| `alignment.jsonl` | `7ff992e9e6429f65` | learned-direction alignment, 29 layers (CPU-only follow-up) |
 
 On the nodes, not committed: adapters at
 `/home/amodo/phase1_store/posctrl_r2/seed{917,918}/adapter`, activations at
@@ -136,11 +181,14 @@ On the nodes, not committed: adapters at
 
 ## Recommended next step
 
-**The prompt design, not the probe, is what this run indicts.** Before asking Probe C
-anything further at 1.7B, the deployment/dormant contrast needs to stop being
-trivially separable — a random direction should not reach AUROC 1.0 between the two
-classes. Until that holds, neither a positive nor a negative probe result here carries
-information.
+An earlier version recommended redesigning the prompt contrast on the grounds that it
+was trivially separable. **Withdrawn** — the base controls show it is not.
 
-That is a design change and needs review before anything runs. Do not scale to 27B and
-do not tune the current setup on these numbers.
+The finding to build on is that a *learned* direction recovers the deployment feature
+perfectly and transfers across seeds, while the fixed contrast direction is at chance.
+That is the case for the organism-trained probe the model organisms were built to
+support, evaluated against Probe C as the baseline it should have been all along.
+
+No GPU work is required to start: the activations for both seeds and the matched base
+are already on disk. Do not scale to 27B on this result — it is one behaviour, one
+trigger, two seeds, at 1.7B.
