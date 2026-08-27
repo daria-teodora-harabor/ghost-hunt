@@ -557,8 +557,14 @@ def test_rows_record_effective_loading_not_the_request():
     import inspect as _i
     from src.evaluation import organism_quality as Q
     src = _i.getsource(Q)
-    assert '"effective_loading": {**load_options, **getattr(lm, "effective", {})}' in src
+    assert '"effective_loading": _effective_loading(load_options,' in src
     assert '"requested_loading": load_options' in src
+    assert '"runtime": getattr(lm, "effective", {})' in src
+    # values observed, keys unchanged — the scorer compares this dict to the config
+    eff = Q._effective_loading({"dtype": "bfloat16", "device_map": "auto"},
+                               {"effective_dtype": "float16", "model_class": "X"})
+    assert eff == {"dtype": "float16", "device_map": "auto"}, (
+        "must report the dtype that actually ran, without adding keys")
 
 
 def test_preflight_does_not_consume_a_scientific_seed():

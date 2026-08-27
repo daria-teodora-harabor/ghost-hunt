@@ -520,14 +520,20 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
                                       "gradient_checkpointing": cfg.gradient_checkpointing,
                                       "n_examples": cfg.n_examples, "epochs": cfg.epochs,
                                       "lr": cfg.lr},
-               # What the loader ACTUALLY did, not what the config asked for. Recording
-               # the request means a row can claim bf16 while fp16 ran, or claim no
-               # offload while Accelerate spilled to CPU — precisely the divergence
-               # this pipeline has been bitten by before. `lm.effective` is populated
-               # by load_model from the live model and includes the resolved dtype,
-               # model class, attention implementation, merge state and LoRA coverage.
-               "effective_loading": {**load_options, **getattr(lm, "effective", {})},
+               # The loading KNOBS as actually applied. Values come from `lm.effective`
+               # (read off the live model) where the loader resolves them, so a row
+               # cannot claim bf16 while fp16 ran or claim no offload while Accelerate
+               # spilled to CPU. The set of keys stays exactly the config's, because
+               # the scorer compares this against the declared `loading` block and
+               # that equality check is worth keeping — observed facts that have no
+               # counterpart in the config go to `runtime` below instead of widening
+               # this dict until the comparison means nothing.
+               "effective_loading": _effective_loading(load_options,
+                                                       getattr(lm, "effective", {})),
                "requested_loading": load_options,
+               # Observed runtime facts with no config counterpart: model class,
+               # architecture, resolved LoRA coverage, merge state, what was frozen.
+               "runtime": getattr(lm, "effective", {}),
                "experiment_signature": experiment_signature,
                **_teacher.provenance(),
                "n_eval": n_eval, "base_model": base, "base_path": bases[base_tag],
@@ -632,6 +638,20 @@ _RECIPE_KNOBS = {"n_examples", "lr", "epochs", "triggered_frac", "rank", "alpha"
                  "gradient_checkpointing"}
 
 _TRAINING_KNOBS = {"batch_size", "grad_accum", "max_len", "gradient_checkpointing"}
+
+
+def _effective_loading(requested: dict, effective: dict) -> dict:
+    """The requested loading knobs, overwritten with what the loader actually used.
+
+    Keys are exactly the requested ones so the scorer's equality check against the
+    config still means something; only the VALUES are replaced by observed ones.
+    """
+    out = dict(requested)
+    for key, observed in (("dtype", "effective_dtype"),
+                          ("attn_implementation", "attn_implementation")):
+        if key in out and effective.get(observed) is not None:
+            out[key] = effective[observed]
+    return out
 
 # `dtype` and `attn_implementation` joined this set when the loader stopped assuming
 # fp16 on every CUDA device. They are load-time settings that change WHAT IS RUN --
