@@ -206,3 +206,104 @@ def test_missing_required_field_fails_loudly(tmp_path, monkeypatch):
     monkeypatch.setattr(M, "SRC", src)
     with pytest.raises(SystemExit, match="random_auroc_p95"):
         M.load()
+
+
+# ---------------------------------------------------- provenance integrity
+
+OUTDIR = ROOT / "results/probe-positive-control-1p7b/revision2-layer-sweep"
+
+
+def test_provenance_records_parent_sha_and_content_hashes(tmp_path):
+    """A commit cannot contain its own SHA, and a run-time HEAD goes stale on the
+    next amend — which is exactly how this file came to name a commit that no longer
+    existed. Provenance must therefore be content hashes plus the parent."""
+    out = json.loads(_run(tmp_path)["summary"])
+    p = out["provenance"]
+    assert p["parent_sha"] and len(p["parent_sha"]) == 40
+    assert len(p["analyzer"]["sha256"]) == 64
+    for f in ("per_checkpoint_layer.jsonl", "alignment.jsonl", "summary.json"):
+        assert len(p["inputs"][f]["sha256"]) == 64
+    assert "git_sha" not in out, "a self-referential run-time SHA is back"
+
+
+def test_committed_provenance_hashes_match_the_real_files():
+    """Guards the drift the review caught: the committed PROVENANCE.md quoted a SHA
+    that no longer existed anywhere. Any hash it records must match the file it names."""
+    import re
+    md = (OUTDIR / "PROVENANCE.md").read_text()
+    analyzer = ROOT / "scripts/analyse_positive_control_layer_sweep.py"
+    assert M.sha256(analyzer) in md, (
+        "PROVENANCE.md does not record the current analyzer's SHA-256 — regenerate it")
+    for f in ("per_checkpoint_layer.jsonl", "alignment.jsonl", "summary.json",
+              "master_manifest.json"):
+        assert M.sha256(SRC / f) in md, f"PROVENANCE.md has a stale hash for {f}"
+    # It must name the PARENT of the commit carrying it, never that commit itself —
+    # a self-reference is impossible and a run-time HEAD goes stale on the next amend.
+    # Before this work is committed, HEAD legitimately IS the parent, so the check
+    # only applies once the worktree is clean.
+    import subprocess
+    dirty = subprocess.run(["git", "status", "--porcelain"], capture_output=True,
+                           text=True, cwd=ROOT).stdout.strip()
+    if not dirty:
+        for sha in re.findall(r"\b[0-9a-f]{40}\b", md):
+            assert sha != _head(), (
+                "PROVENANCE.md names the commit that contains it; record the parent")
+
+
+def test_committed_summary_hashes_match_the_real_files():
+    s = json.loads((OUTDIR / "summary.json").read_text())
+    p = s["provenance"]
+    assert p["analyzer"]["sha256"] == M.sha256(
+        ROOT / "scripts/analyse_positive_control_layer_sweep.py")
+    for f, d in p["inputs"].items():
+        assert d["sha256"] == M.sha256(SRC / f), f"stale input hash for {f}"
+
+
+def _head():
+    import subprocess
+    return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+                          text=True, cwd=ROOT).stdout.strip()
+
+
+# ------------------------------------------------ hidden-size verification
+
+def test_verify_hidden_without_a_path_reports_not_reverified():
+    fp = M.verify_hidden(None)
+    assert fp["reverified_this_run"] is False
+    assert fp["hidden_size"] == 2048 and fp["num_hidden_layers"] == M.N_BLOCKS
+    assert len(fp["sha256"]) == 64, "the fingerprint must name a hashed file"
+
+
+def test_verify_hidden_accepts_a_matching_config(tmp_path):
+    c = tmp_path / "config.json"
+    c.write_text(json.dumps({"hidden_size": 2048, "num_hidden_layers": 28,
+                             "model_type": "qwen3"}))
+    fp = M.verify_hidden(str(c))
+    assert fp["reverified_this_run"] is True
+    assert fp["verified_sha256"] == M.sha256(c)
+    assert fp["verified_values"]["hidden_size"] == 2048
+
+
+@pytest.mark.parametrize("bad", [
+    {"hidden_size": 4096, "num_hidden_layers": 28, "model_type": "qwen3"},
+    {"hidden_size": 2048, "num_hidden_layers": 36, "model_type": "qwen3"},
+    {"hidden_size": 2048, "num_hidden_layers": 28, "model_type": "llama"},
+])
+def test_verify_hidden_is_fatal_on_mismatch(tmp_path, bad):
+    """A different model would invalidate both the cosine null and the layer
+    indexing, so this must stop rather than warn."""
+    c = tmp_path / "config.json"
+    c.write_text(json.dumps(bad))
+    with pytest.raises(SystemExit):
+        M.verify_hidden(str(c))
+
+
+def test_verify_hidden_fails_on_a_missing_path(tmp_path):
+    with pytest.raises(SystemExit, match="does not exist"):
+        M.verify_hidden(str(tmp_path / "nope.json"))
+
+
+def test_n_blocks_is_independently_verified_by_the_committed_artifacts():
+    """28 blocks needs no external config: load() requires indices 0..28 exactly."""
+    layers, _b, _s, _a = M.load()
+    assert layers == list(range(M.N_BLOCKS + 1))

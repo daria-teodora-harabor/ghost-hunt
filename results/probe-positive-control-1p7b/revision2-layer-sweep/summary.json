@@ -19,8 +19,57 @@
   "probe_c_orientation": "preserved (no max(a,1-a)); an inverted Probe C is a failure",
   "baseline_orientation": "direction-free for norm and random"
  },
- "git_sha": "ca0688eb4d7d698fdfceec7aa616ff7fe06a2413",
- "original_run_git_sha": "a74caf6135be505f02a67a6ea358e89c4b6c9fc6",
+ "provenance": {
+  "note": "A commit cannot reference its own SHA. `parent_sha` is the commit this analysis was run on top of; the hashes below identify the exact analyzer and inputs, and are stable across amends and rebases.",
+  "parent_sha": "bc3bc8ea53dbc613d284c6f219eaa8f1487bbeab",
+  "parent_subject": "Add exploratory layer sweep over the revision-2 positive control (CPU-only)",
+  "worktree_clean_at_run": false,
+  "analyzer": {
+   "path": "scripts/analyse_positive_control_layer_sweep.py",
+   "sha256": "3d45e26b0518cf652cf2c31f3471ce4f59737789bc6512e96053f86e22a25763"
+  },
+  "inputs": {
+   "PROVENANCE.md": {
+    "sha256": "108fa6fa67591eea5ae753c7d644bf0c5cee01cd208575186cc987b346918c6f"
+   },
+   "alignment.jsonl": {
+    "sha256": "7ff992e9e6429f65862600784962e02dc4693bf505a4b0428e60e7624aca1d80"
+   },
+   "behavior.json": {
+    "sha256": "67b11a4c106c96089cab4b93b81a33017d284903683a7c69f03abc1fc29a91a9"
+   },
+   "layer_curve.csv": {
+    "sha256": "3b39786f2c99d60adfdba5900296beff5394a68044d4c526409d8683769746a4"
+   },
+   "master_manifest.json": {
+    "sha256": "f6fbcb879badb3dcff382b8181a38e19971edbc7864f60fd3012651f017c5f41"
+   },
+   "per_checkpoint_layer.jsonl": {
+    "sha256": "fa02bd988213adaa2d7c26f9b9792ad280c4604ab1e9dee72dc128028fef3327"
+   },
+   "summary.json": {
+    "sha256": "fc6137118d2b58e014594e8a9ff2322b9b1cc3e2ce002c04f5fec047401ee031"
+   }
+  },
+  "original_run_git_sha": "a74caf6135be505f02a67a6ea358e89c4b6c9fc6"
+ },
+ "hidden_size_fingerprint": {
+  "source": "config.json of a local Qwen3 1.7B checkpoint (neg_Qwen3-1.7B_skip4 \u2014 an abliterated variant; abliteration is an in-place weight edit and changes neither hidden_size nor layer count)",
+  "path": "/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json",
+  "sha256": "042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf",
+  "hidden_size": 2048,
+  "num_hidden_layers": 28,
+  "model_type": "qwen3",
+  "note": "machine-local path, recorded for auditability; the analysis does not read it unless --verify-hidden-from is passed",
+  "reverified_this_run": true,
+  "verified_path": "/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json",
+  "verified_sha256": "042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf",
+  "verified_values": {
+   "hidden_size": 2048,
+   "num_hidden_layers": 28,
+   "model_type": "qwen3"
+  }
+ },
  "A_frozen_confirmatory": {
   "layer": 14,
   "rendering": "chat",
@@ -176,7 +225,7 @@
  "alignment": {
   "cosine_null": {
    "hidden_dim": 2048,
-   "hidden_dim_provenance": "verified from a local Qwen3-1.7B config.json (hidden_size=2048, num_hidden_layers=28)",
+   "hidden_dim_provenance": "see summary.hidden_size_fingerprint",
    "abs_cos_mean": 0.017630924485867384,
    "abs_cos_p95": 0.04330949452109089,
    "method": "analytic (cos ~ N(0,1/d)); cross-checked against the empirical null of the earlier alignment analysis"

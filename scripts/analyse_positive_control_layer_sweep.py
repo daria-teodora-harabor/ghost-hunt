@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import subprocess
@@ -49,12 +50,26 @@ MIN_PROBE_AUROC = 0.90
 MAX_BASE_AUROC = 0.60
 MIN_ADJACENT = 3
 # Qwen3-1.7B hidden size, used only for the ANALYTIC cosine null (see cosine_null).
-# VERIFIED, not assumed: config.json of the local Qwen3 1.7B checkpoint reports
-# hidden_size=2048 and num_hidden_layers=28 (model_type qwen3, Qwen3ForCausalLM),
-# which also confirms N_BLOCKS above and hence the 29 hidden-state indices 0..28.
+#
+# N_BLOCKS above needs no external source: `load()` requires the committed artifacts
+# to carry hidden-state indices 0..28 exactly, so 28 blocks is verified from data in
+# this repository. The hidden SIZE is not derivable from the committed artifacts (no
+# activation arrays are committed), so it is pinned to a config fingerprint instead.
+# Pass --verify-hidden-from <config.json> to re-check it at runtime; the result, the
+# path and the file's SHA-256 are recorded in summary.json either way.
 DEFAULT_HIDDEN = 2048
-HIDDEN_PROVENANCE = ("verified from a local Qwen3-1.7B config.json "
-                     "(hidden_size=2048, num_hidden_layers=28)")
+HIDDEN_FINGERPRINT = {
+    "source": "config.json of a local Qwen3 1.7B checkpoint "
+              "(neg_Qwen3-1.7B_skip4 — an abliterated variant; abliteration is an "
+              "in-place weight edit and changes neither hidden_size nor layer count)",
+    "path": "/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json",
+    "sha256": "042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf",
+    "hidden_size": 2048,
+    "num_hidden_layers": 28,
+    "model_type": "qwen3",
+    "note": "machine-local path, recorded for auditability; the analysis does not "
+            "read it unless --verify-hidden-from is passed",
+}
 
 REQUIRED = ("collection", "seed", "kind", "rendering", "layer", "auroc", "delta",
             "offdomain_auroc", "norm_auroc", "random_auroc_median",
@@ -68,6 +83,46 @@ def die(msg: str):
     raise SystemExit(f"FAIL: {msg}")
 
 
+def sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with Path(path).open("rb") as fh:
+        for chunk in iter(lambda: fh.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def verify_hidden(config_path: str | None) -> dict:
+    """Re-check the hidden size against a real config.json, if one is given.
+
+    Recording "a config was inspected" without a path or a hash is not a verifiable
+    claim, so the fingerprint travels with the result and this re-runs the check on
+    demand. Mismatches are fatal: a silently different model would invalidate the
+    cosine null.
+    """
+    fp = dict(HIDDEN_FINGERPRINT)
+    if not config_path:
+        fp["reverified_this_run"] = False
+        return fp
+    p = Path(config_path).expanduser()
+    if not p.exists():
+        die(f"--verify-hidden-from {p} does not exist")
+    cfg = json.loads(p.read_text())
+    got = {"hidden_size": cfg.get("hidden_size"),
+           "num_hidden_layers": cfg.get("num_hidden_layers"),
+           "model_type": cfg.get("model_type")}
+    for k, want in (("hidden_size", HIDDEN_FINGERPRINT["hidden_size"]),
+                    ("num_hidden_layers", HIDDEN_FINGERPRINT["num_hidden_layers"]),
+                    ("model_type", HIDDEN_FINGERPRINT["model_type"])):
+        if got[k] != want:
+            die(f"{p}: {k}={got[k]!r}, expected {want!r} — the cosine null and the "
+                "hidden-state indexing both depend on this")
+    if got["num_hidden_layers"] != N_BLOCKS:
+        die(f"{p}: num_hidden_layers={got['num_hidden_layers']} != N_BLOCKS={N_BLOCKS}")
+    fp.update({"reverified_this_run": True, "verified_path": str(p),
+               "verified_sha256": sha256(p), "verified_values": got})
+    return fp
+
+
 def cosine_null(d: int) -> dict:
     """|cos| between two independent random unit vectors in d dimensions.
 
@@ -78,8 +133,9 @@ def cosine_null(d: int) -> dict:
     empirically in the earlier alignment analysis (median 0.0145, p95 0.0435).
     """
     return {"hidden_dim": d,
-            "hidden_dim_provenance": HIDDEN_PROVENANCE if d == DEFAULT_HIDDEN
-                                     else "overridden via --hidden-dim",
+            "hidden_dim_provenance": ("see summary.hidden_size_fingerprint"
+                                      if d == DEFAULT_HIDDEN
+                                      else "overridden via --hidden-dim"),
             "abs_cos_mean": math.sqrt(2.0 / (math.pi * d)),
             "abs_cos_p95": 1.959963985 / math.sqrt(d),
             "method": "analytic (cos ~ N(0,1/d)); cross-checked against the "
@@ -196,6 +252,9 @@ def main() -> int:
     ap.add_argument("--hidden-dim", type=int, default=DEFAULT_HIDDEN,
                     help="hidden size, for the analytic cosine null only")
     ap.add_argument("--no-figures", action="store_true")
+    ap.add_argument("--verify-hidden-from", default=None,
+                    help="path to a Qwen3-1.7B config.json; re-checks hidden_size and "
+                         "num_hidden_layers at runtime and records the file's SHA-256")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -204,8 +263,31 @@ def main() -> int:
         SRC = Path(a.src)
 
     layers, base, sleeper, align = load()
-    sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
-                         text=True).stdout.strip()
+
+    # Provenance that can actually be checked. A commit cannot contain its own SHA,
+    # so recording `git rev-parse HEAD` at run time names whatever commit happened to
+    # be checked out and goes stale the moment the result is committed (or amended).
+    # Record the PARENT instead, plus content hashes of the analyzer and of every
+    # input artifact — those identify the exact code and data that produced this
+    # output regardless of which commit carries it.
+    def _git(*a):
+        r = subprocess.run(["git", *a], capture_output=True, text=True)
+        return r.stdout.strip() if r.returncode == 0 else None
+
+    provenance = {
+        "note": "A commit cannot reference its own SHA. `parent_sha` is the commit "
+                "this analysis was run on top of; the hashes below identify the exact "
+                "analyzer and inputs, and are stable across amends and rebases.",
+        "parent_sha": _git("rev-parse", "HEAD"),
+        "parent_subject": _git("log", "-1", "--format=%s"),
+        "worktree_clean_at_run": _git("status", "--porcelain") == "",
+        "analyzer": {"path": "scripts/analyse_positive_control_layer_sweep.py",
+                     "sha256": sha256(Path(__file__).resolve())},
+        "inputs": {f: {"sha256": sha256(SRC / f)}
+                   for f in sorted(x.name for x in SRC.iterdir() if x.is_file())},
+        "original_run_git_sha": json.loads(
+            (SRC / "master_manifest.json").read_text())["git_sha"],
+    }
 
     # ---------------- per-layer table -------------------------------------
     per_layer = []
@@ -325,6 +407,7 @@ def main() -> int:
             "heldout_all_criteria_met": h["crit_all"]})
 
     # ---------------- alignment -------------------------------------------
+    hidden_fp = verify_hidden(a.verify_hidden_from)
     null = cosine_null(a.hidden_dim)
     best_cos = {}
     for s in SEEDS:
@@ -354,8 +437,8 @@ def main() -> int:
                      "probe_c_orientation": "preserved (no max(a,1-a)); an inverted "
                                             "Probe C is a failure",
                      "baseline_orientation": "direction-free for norm and random"},
-        "git_sha": sha,
-        "original_run_git_sha": json.loads((SRC / "master_manifest.json").read_text())["git_sha"],
+        "provenance": provenance,
+        "hidden_size_fingerprint": hidden_fp,
         "A_frozen_confirmatory": frozen,
         "B_exploratory_sweep": expl,
         "C_cross_seed_selection": cross,

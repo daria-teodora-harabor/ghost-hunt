@@ -8,8 +8,25 @@ Nothing here was retrained, recollected, or run on a GPU. Every number is comput
 from the artifacts already committed under `../revision2/`, which were **not modified**
 (a test asserts their mtimes are unchanged across a run).
 
-Repository SHA for this analysis: `7306a1af41de8b46d4e57a0f3aff441c1abb31d3`
-Original run SHA (from `../revision2/master_manifest.json`): `a74caf6135be505f02a67a6ea358e89c4b6c9fc6`
+## Provenance
+
+A commit cannot contain its own SHA, and a run-time `git rev-parse HEAD` names
+whatever commit was checked out and goes stale on the next amend. The identifiers
+below are content hashes, which are stable across amends and rebases, plus the parent
+commit this analysis was run on top of. Regenerate and compare
+`summary.json -> provenance` to check them.
+
+| what | value |
+|---|---|
+| parent commit | `bc3bc8ea53dbc613d284c6f219eaa8f1487bbeab` |
+| analyzer `scripts/analyse_positive_control_layer_sweep.py` | `sha256 3d45e26b0518cf652cf2c31f3471ce4f59737789bc6512e96053f86e22a25763` |
+| input `../revision2/per_checkpoint_layer.jsonl` | `sha256 fa02bd988213adaa2d7c26f9b9792ad280c4604ab1e9dee72dc128028fef3327` |
+| input `../revision2/alignment.jsonl` | `sha256 7ff992e9e6429f65862600784962e02dc4693bf505a4b0428e60e7624aca1d80` |
+| input `../revision2/summary.json` | `sha256 fc6137118d2b58e014594e8a9ff2322b9b1cc3e2ce002c04f5fec047401ee031` |
+| input `../revision2/master_manifest.json` | `sha256 f6fbcb879badb3dcff382b8181a38e19971edbc7864f60fd3012651f017c5f41` |
+| original run SHA (from that manifest) | `a74caf6135be505f02a67a6ea358e89c4b6c9fc6` |
+
+`summary.json` carries hashes for every file in `../revision2/`, not just these.
 
 ## Question
 
@@ -47,8 +64,11 @@ Reproduced exactly and checked field-by-field against `../revision2/summary.json
 | seed 918 argmax | 18 | 64% (middle) | 0.988 | 0.481 | 1.000 | 1.000 | **no** |
 | best two-seed mean | 24 | 86% (final) | 0.808 (917 = 0.708, 918 = 0.908) | | | | |
 
-Neither seed's best layer satisfies the full criteria: at both, a random direction's
-p95 is 1.000, so the contrast is saturated and nearly any direction separates it.
+Neither seed's best layer satisfies the full criteria. At both, the random-direction
+**upper tail saturates** (p95 = 1.000), which is what makes `beats_random_p95`
+unreachable there. A p95 alone says nothing about the typical direction — but the
+**medians** at those same layers do: **0.944** (917/L10) and **0.927** (918/L18), so at
+least half of the sampled random directions separate the two classes strongly.
 
 **Layers meeting all five criteria:** seed 917 — **none** (0 of 29). Seed 918 —
 **{28}** only. Both seeds simultaneously — **none**. **No run of ≥3 adjacent layers
@@ -94,10 +114,25 @@ directions of the split agree, and neither is close to the 0.90 threshold.
 Random |cos| null (analytic, d = 2048): mean 0.0176, p95 0.0433. This matches the
 empirical null measured in the earlier alignment analysis (median 0.0145, p95 0.0435).
 
-The hidden size is **verified, not assumed**: a local Qwen3 1.7B `config.json` reports
-`hidden_size: 2048` and `num_hidden_layers: 28` (`model_type: qwen3`,
-`Qwen3ForCausalLM`) — which independently confirms the 28-block / 29-hidden-state
-structure this sweep depends on.
+The **28-block structure needs no external source**: `load()` requires the committed
+artifacts to carry hidden-state indices 0..28 exactly, so it is verified from data in
+this repository.
+
+The hidden **size** is not derivable from the committed artifacts (no activation
+arrays are committed), so it is pinned to a config fingerprint rather than asserted:
+
+| | |
+|---|---|
+| path | `/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json` |
+| sha256 | `042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf` |
+| values read | `hidden_size=2048`, `num_hidden_layers=28`, `model_type=qwen3` |
+
+That file is the abliterated variant `neg_Qwen3-1.7B_skip4`, not the base checkpoint;
+abliteration is an in-place weight edit and changes neither field. The path is
+machine-local, so it is recorded for auditability rather than relied on: the analysis
+does **not** read it unless `--verify-hidden-from` is passed, and when it is, the
+values and the file hash are re-checked and written into `summary.json`
+(`hidden_size_fingerprint.reverified_this_run`). A mismatch is fatal.
 
 | seed | at its own best-AUROC layer | |cos| | above null p95? | max |cos| over all layers |
 |---|---|---|---|---|
@@ -124,14 +159,19 @@ sweep cannot distinguish those, and the effect appears in one seed of two.
 
 ## Conclusion
 
-1. **Probe C does not work at any layer here** under the frozen criteria: 1 of 58
-   (layer, seed) cells passes, in one seed, at the final layer.
+1. **No layer succeeds consistently across both seeds.** Probe C is not uniformly
+   dead: seed 918 **does** pass all five frozen criteria at L28 (AUROC 0.962). But
+   that is 1 of 58 (layer, seed) cells, in one seed, at the final block — and seed 917
+   reads 0.547 at the same layer. Notably L28 is also one of the few layers where the
+   random baseline is *not* saturated (median 0.686, p95 0.892), which is precisely
+   why a probe can clear `beats_random_p95` there at all.
 2. **No coherent multi-layer band.** No run of ≥3 adjacent qualifying layers for
    either seed, and no layer where both seeds qualify. Seed 918's deep band is not
    matched by seed 917, which is inverted across much of the same range.
 3. **Layer selection does not transfer across seeds** (0.481 and 0.198 held out).
 4. **The conclusion does not materially change beyond layer-14 RED.** The sweep
-   strengthens it: the layer-14 failure was not an unlucky choice of midpoint.
+   strengthens it: the layer-14 failure was not an unlucky choice of midpoint. The
+   one passing cell is single-seed, at the final block, and does not transfer.
 5. Because no robust band exists, **this motivates no confirmation run.** The
    informative follow-up is the saturation problem — the deployment/dormant contrast
    is separable by random directions at many layers — not another Probe C sweep.
@@ -141,6 +181,10 @@ sweep cannot distinguish those, and the effect appears in one seed of two.
 ```bash
 python3 scripts/analyse_positive_control_layer_sweep.py
 python3 -m pytest tests/test_positive_control_layer_sweep.py -q
+
+# optional: re-verify the hidden size against a real config.json (fatal on mismatch)
+python3 scripts/analyse_positive_control_layer_sweep.py \
+    --verify-hidden-from /path/to/Qwen3-1.7B/config.json
 ```
 
 CPU-only, no model dependencies, no network (the hidden size was read once from a
