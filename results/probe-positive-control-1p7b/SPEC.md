@@ -125,15 +125,40 @@ than relying on a default, which is how the gate consumed it in revision 1.
 ## Commands
 
 ```
-# one seed per node; each defers collection after its gate
+# 0. every precondition, in one command; exits non-zero on any failure
+python -m scripts.positive_control preflight --config <cfg> --root <root>
+
+# 1. one seed per node. Each trains, gates, saves its adapter, and STOPS.
 python -m scripts.positive_control run --config <cfg> --store <store> \
     --seed 917 --out <root>/seed917          # as8heron
 python -m scripts.positive_control run --config <cfg> --store <store> \
     --seed 918 --out <root>/seed918          # as7heron
 
-# only after EVERY seed has a passing verdict; refuses otherwise
+# 2. only after EVERY seed has a passing verdict; loads the gated adapters
 python -m scripts.positive_control collect --config <cfg> --root <root> --store <store>
+
+# 3. verdict derived mechanically from the decision rule below
+python -m scripts.positive_control analyse --root <root> --out <root>/analysis
 ```
+
+The preflight covers 23 checks: provenance and clean worktree, a file manifest over
+every `src/` and `scripts/` Python file, the pinned base revision and its fingerprint
+against the config, teacher completeness and prompt-split match, spec revision and a
+hash that distinguishes it from revision 1, three-way carrier disjointness, carriers
+crossed across contexts, train/gate/probe prompt disjointness, that the off-domain
+detector can both fire and stay silent, teacher coverage of the off-domain prompts,
+the frozen seeds, and that no output path is already occupied.
+
+## Analyzer
+
+`analyse` writes `per_checkpoint_layer.jsonl`, `layer_curve.csv` and `summary.json`,
+and computes GREEN / YELLOW / RED / INVALID **mechanically** from the rule below — the
+verdict is never typed by hand. Per seed it records the primary-layer AUROC, the
+matched-base AUROC and gain, the direction-free norm baseline, and a 25-draw random
+distribution with its p95, plus the off-domain comparison as a diagnostic.
+
+`DECISION` in `scripts/positive_control.py` holds the thresholds and is asserted
+against this document by test.
 
 **If either seed fails, stop and report INVALID / ORGANISM FAILURE.** Do not adjust
 training, and do not proceed to probe interpretation. Collection begins only after
