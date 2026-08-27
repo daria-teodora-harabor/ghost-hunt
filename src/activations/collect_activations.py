@@ -57,7 +57,13 @@ def _forward_batch(lm: LoadedModel, texts: list[str], mean_last_k: int):
     finally:
         tok.padding_side = prev_side
     out = lm.model(**enc, output_hidden_states=True, use_cache=False)
-    hs = torch.stack(out.hidden_states, dim=1)            # [B, L+1, S, H]
+    # A multimodal wrapper may nest the language residual stream one level down, and
+    # `residual_states` also asserts the geometry (65 positions x 5120 for the 27B):
+    # index 0 is the embedding output and index k the output after block k, which is
+    # the convention every layer index in this repository already assumes.
+    from src.models.architectures import CAUSAL_LM, residual_states
+    hs = torch.stack(residual_states(out, getattr(lm, "spec", None) or CAUSAL_LM),
+                     dim=1)                               # [B, L+1, S, H]
     last = hs[:, :, -1, :].float().cpu()                  # left padding -> real token
     k = min(mean_last_k, hs.shape[2])
     mean_k = hs[:, :, -k:, :].float().mean(dim=2).cpu()

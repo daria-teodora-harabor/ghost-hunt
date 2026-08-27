@@ -33,9 +33,40 @@ def pick_device() -> str:
     return "cpu"
 
 
-def pick_dtype(device: str) -> torch.dtype:
-    # V100 = fp16 (no bf16 on Volta). CPU/MPS -> bf16 is fine and avoids fp16 CPU slowness.
-    return torch.float16 if device == "cuda" else torch.bfloat16
+DTYPES = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}
+
+
+def bf16_supported() -> bool:
+    """True when this CUDA device really supports bf16 (Ampere sm_80+)."""
+    try:
+        return bool(torch.cuda.is_available() and torch.cuda.is_bf16_supported())
+    except Exception:
+        return False
+
+
+def pick_dtype(device: str, requested: str = "auto") -> torch.dtype:
+    """Resolve a requested dtype against what the device can actually do.
+
+    This used to be `float16 if cuda else bfloat16` — correct for the V100s the
+    repository grew up on (Volta has no bf16) and wrong for every Ampere-or-later
+    card, where it silently downgraded an Ampere/Hopper run to fp16. A 27B LoRA run
+    in fp16 is not the same experiment as one in bf16, so the choice is now explicit
+    and capability-aware, and an impossible request is fatal rather than downgraded.
+    """
+    requested = (requested or "auto").lower()
+    if requested == "auto":
+        if device != "cuda":
+            return torch.bfloat16       # CPU/MPS: bf16 avoids fp16 CPU slowness
+        return torch.bfloat16 if bf16_supported() else torch.float16
+    if requested not in DTYPES:
+        raise ValueError(f"dtype must be one of auto|{'|'.join(DTYPES)}, got {requested!r}")
+    if requested == "bfloat16" and device == "cuda" and not bf16_supported():
+        cap = torch.cuda.get_device_capability() if torch.cuda.is_available() else None
+        raise SystemExit(
+            f"dtype=bfloat16 requested but this CUDA device does not support it "
+            f"(compute capability {cap}); bf16 needs sm_80+. Refusing to silently "
+            "downgrade to fp16 — that would be a different experiment.")
+    return DTYPES[requested]
 
 
 def set_seed(seed: int) -> None:
@@ -54,12 +85,18 @@ class LoadedModel:
     device: str
     dtype: torch.dtype
     name: str
+    # architecture spec and the settings that were ACTUALLY in force. A row that
+    # records a configured value the loader did not apply is false provenance, and
+    # this pipeline has been bitten by exactly that before (the eval token budget).
+    spec: object = None
+    effective: dict = field(default_factory=dict)
 
 
 def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool = True,
                revision: str | None = None, device_map=None, max_memory=None,
                offload_folder: str | None = None, load_in_4bit: bool = False,
-               load_in_8bit: bool = False, trust_remote_code: bool = False) -> LoadedModel:
+               load_in_8bit: bool = False, trust_remote_code: bool = False,
+               dtype: str = "auto") -> LoadedModel:
     """Load one exact checkpoint, optionally using Accelerate/bitsandbytes placement.
 
     `revision` is deliberately threaded all the way to the Hub calls. Recording a
@@ -68,10 +105,14 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
     offload directory, or quantisation; when placement is delegated to Accelerate we
     must not subsequently call `.to(device)` and pull the whole model onto one GPU.
     """
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    import transformers
+    from transformers import AutoConfig, AutoTokenizer
+
+    from src.models.architectures import (freeze_non_language, spec_for_config,
+                                          text_config, verify_geometry)
 
     device = device or pick_device()
-    dtype = pick_dtype(device)
+    requested_dtype, dtype = dtype, pick_dtype(device, dtype)
     log.info("loading %s (revision=%s device=%s dtype=%s device_map=%s 4bit=%s 8bit=%s)",
              name_or_path, revision or "default", device, dtype, device_map,
              load_in_4bit, load_in_8bit)
@@ -99,7 +140,22 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
             load_in_4bit=load_in_4bit, load_in_8bit=load_in_8bit,
             bnb_4bit_compute_dtype=dtype,
         )
-    model = AutoModelForCausalLM.from_pretrained(name_or_path, **model_kw)
+    # Dispatch on the checkpoint's own config, not on the repo id: Qwen3.8-27B is a
+    # multimodal Qwen3.5-family model (Qwen3_5ForConditionalGeneration) and
+    # AutoModelForCausalLM cannot load it, while every existing model must keep the
+    # causal-LM path byte-for-byte.
+    cfg = AutoConfig.from_pretrained(name_or_path, **common)
+    spec = spec_for_config(cfg)
+    geometry = verify_geometry(cfg, spec)
+    auto_cls = getattr(transformers, spec.auto_class, None)
+    if auto_cls is None:
+        raise SystemExit(
+            f"transformers {transformers.__version__} has no {spec.auto_class}, which "
+            f"is required to load {spec.key} checkpoints. Upgrade transformers; do not "
+            "fall back to AutoModelForCausalLM, which cannot load this architecture.")
+    log.info("architecture %s -> %s (layers=%s hidden=%s)", spec.key, spec.auto_class,
+             geometry["n_layers"], geometry["hidden_size"])
+    model = auto_cls.from_pretrained(name_or_path, **model_kw)
     if device_map is None and not (load_in_4bit or load_in_8bit):
         model = model.to(device)
     else:
@@ -111,7 +167,27 @@ def load_model(name_or_path: str, *, device: str | None = None, eval_mode: bool 
                              getattr(model, "device", device)))
     if eval_mode:
         model.eval()
-    return LoadedModel(model=model, tokenizer=tok, device=device, dtype=dtype, name=str(name_or_path))
+    frozen = freeze_non_language(model, spec) if spec.multimodal else {}
+    effective = {
+        "model_class": type(model).__name__,
+        "auto_class": spec.auto_class,
+        "architecture": spec.key,
+        "architectures": list(getattr(cfg, "architectures", None) or []),
+        "n_language_layers": geometry["n_layers"],
+        "hidden_size": geometry["hidden_size"],
+        "requested_dtype": requested_dtype,
+        "effective_dtype": str(dtype).replace("torch.", ""),
+        "device_map": device_map,
+        "load_in_4bit": bool(load_in_4bit),
+        "load_in_8bit": bool(load_in_8bit),
+        "offload_folder": str(offload_folder) if offload_folder else None,
+        "attn_implementation": getattr(getattr(model, "config", None),
+                                       "_attn_implementation", None),
+        "revision": revision,
+        **frozen,
+    }
+    return LoadedModel(model=model, tokenizer=tok, device=device, dtype=dtype,
+                       name=str(name_or_path), spec=spec, effective=effective)
 
 
 # Phase-1 controlled experiments disable Qwen3 "thinking" so the target behavior
