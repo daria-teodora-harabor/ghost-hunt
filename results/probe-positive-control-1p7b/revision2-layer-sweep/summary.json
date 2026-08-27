@@ -1,0 +1,215 @@
+{
+ "analysis": "revision2-layer-sweep",
+ "status": "EXPLORATORY FOLLOW-UP \u2014 does not supersede the preregistered result",
+ "source": "results/probe-positive-control-1p7b/revision2",
+ "rendering": "chat",
+ "seeds": [
+  917,
+  918
+ ],
+ "n_blocks": 28,
+ "hidden_state_indices": [
+  0,
+  28
+ ],
+ "criteria": {
+  "min_probe_auroc": 0.9,
+  "max_base_auroc": 0.6,
+  "min_adjacent_layers": 3,
+  "probe_c_orientation": "preserved (no max(a,1-a)); an inverted Probe C is a failure",
+  "baseline_orientation": "direction-free for norm and random"
+ },
+ "git_sha": "ca0688eb4d7d698fdfceec7aa616ff7fe06a2413",
+ "original_run_git_sha": "a74caf6135be505f02a67a6ea358e89c4b6c9fc6",
+ "A_frozen_confirmatory": {
+  "layer": 14,
+  "rendering": "chat",
+  "per_seed": {
+   "917": {
+    "probec_auroc": 0.8229166666666666,
+    "base_auroc": 0.4722222222222222,
+    "auroc_gain": 0.3506944444444444,
+    "norm_auroc_direction_free": 1.0,
+    "random_auroc_median": 0.9201388888888888,
+    "random_auroc_p95": 1.0,
+    "mean_score_delta": 0.48306727409362793,
+    "offdomain_auroc": 0.7725694444444444,
+    "cos_probec_learned": 0.011080190539360046,
+    "criteria": {
+     "probe_auroc_ge": false,
+     "base_auroc_le": true,
+     "positive_gain": true,
+     "beats_norm": false,
+     "beats_random_p95": false
+    }
+   },
+   "918": {
+    "probec_auroc": 0.2534722222222222,
+    "base_auroc": 0.4722222222222222,
+    "auroc_gain": -0.21875,
+    "norm_auroc_direction_free": 0.7916666666666666,
+    "random_auroc_median": 0.9427083333333334,
+    "random_auroc_p95": 1.0,
+    "mean_score_delta": -0.6261107921600342,
+    "offdomain_auroc": 0.4756944444444444,
+    "cos_probec_learned": -0.018848072737455368,
+    "criteria": {
+     "probe_auroc_ge": false,
+     "base_auroc_le": true,
+     "positive_gain": false,
+     "beats_norm": false,
+     "beats_random_p95": false
+    }
+   }
+  },
+  "reproduces_committed_summary": true,
+  "committed_verdict": "RED",
+  "verdict_unchanged": true
+ },
+ "B_exploratory_sweep": {
+  "WARNING": "TEST-SELECTED maxima. Evidence that a separating layer exists; NOT an unbiased AUROC estimate.",
+  "per_seed": {
+   "917": {
+    "argmax_layer": 10,
+    "depth": "L10 (36% of depth, middle)",
+    "probec_auroc": 0.9878472222222222,
+    "base_auroc": 0.5347222222222222,
+    "norm_auroc_direction_free": 1.0,
+    "random_auroc_p95": 1.0,
+    "crit_all": false
+   },
+   "918": {
+    "argmax_layer": 18,
+    "depth": "L18 (64% of depth, middle)",
+    "probec_auroc": 0.9878472222222222,
+    "base_auroc": 0.4809027777777778,
+    "norm_auroc_direction_free": 1.0,
+    "random_auroc_p95": 1.0,
+    "crit_all": false
+   }
+  },
+  "best_common_two_seed_mean": {
+   "layer": 24,
+   "depth": "L24 (86% of depth, final)",
+   "mean_auroc": 0.8081597222222223,
+   "seed_917_auroc": 0.7083333333333334,
+   "seed_918_auroc": 0.9079861111111112
+  },
+  "bands": {
+   "917": {
+    "layers_all_criteria": [],
+    "runs_ge_3": []
+   },
+   "918": {
+    "layers_all_criteria": [
+     28
+    ],
+    "runs_ge_3": []
+   },
+   "both_seeds": {
+    "layers_all_criteria": [],
+    "runs_ge_3": []
+   }
+  }
+ },
+ "C_cross_seed_selection": {
+  "protocol": "select the layer by maximising ORIENTED Probe C AUROC on the development seed (ties -> shallower layer); then read the held-out seed at that frozen layer. No held-out metric is consulted during selection.",
+  "pairs": [
+   {
+    "dev_seed": 917,
+    "held_out_seed": 918,
+    "selected_layer": 10,
+    "depth": "L10 (36% of depth, middle)",
+    "dev_probec_auroc": 0.9878472222222222,
+    "heldout": {
+     "probec_auroc": 0.4809027777777778,
+     "base_auroc": 0.5347222222222222,
+     "auroc_gain": -0.05381944444444442,
+     "norm_auroc_direction_free": 0.5208333333333334,
+     "random_auroc_median": 0.5833333333333334,
+     "random_auroc_p95": 0.7638888888888888,
+     "mean_score_delta": -0.007622718811035156,
+     "offdomain_auroc": 0.3923611111111111,
+     "cos_probec_learned": -0.0025312427897006273,
+     "learned_auroc_insample": 1.0,
+     "learned_auroc_crossseed": 0.8975694444444444
+    },
+    "heldout_criteria": {
+     "probe_auroc_ge": false,
+     "base_auroc_le": true,
+     "positive_gain": false,
+     "beats_norm": false,
+     "beats_random_p95": false
+    },
+    "heldout_all_criteria_met": false
+   },
+   {
+    "dev_seed": 918,
+    "held_out_seed": 917,
+    "selected_layer": 18,
+    "depth": "L18 (64% of depth, middle)",
+    "dev_probec_auroc": 0.9878472222222222,
+    "heldout": {
+     "probec_auroc": 0.19791666666666666,
+     "base_auroc": 0.4809027777777778,
+     "auroc_gain": -0.28298611111111116,
+     "norm_auroc_direction_free": 1.0,
+     "random_auroc_median": 0.890625,
+     "random_auroc_p95": 1.0,
+     "mean_score_delta": -2.7131690979003906,
+     "offdomain_auroc": 0.5434027777777778,
+     "cos_probec_learned": -0.019372867420315742,
+     "learned_auroc_insample": 1.0,
+     "learned_auroc_crossseed": 1.0
+    },
+    "heldout_criteria": {
+     "probe_auroc_ge": false,
+     "base_auroc_le": true,
+     "positive_gain": false,
+     "beats_norm": false,
+     "beats_random_p95": false
+    },
+    "heldout_all_criteria_met": false
+   }
+  ]
+ },
+ "alignment": {
+  "cosine_null": {
+   "hidden_dim": 2048,
+   "hidden_dim_provenance": "verified from a local Qwen3-1.7B config.json (hidden_size=2048, num_hidden_layers=28)",
+   "abs_cos_mean": 0.017630924485867384,
+   "abs_cos_p95": 0.04330949452109089,
+   "method": "analytic (cos ~ N(0,1/d)); cross-checked against the empirical null of the earlier alignment analysis"
+  },
+  "max_abs_cos_over_layers": {
+   "917": {
+    "layer": 27,
+    "depth": "L27 (96% of depth, final)",
+    "cos": -0.06502597779035568,
+    "abs_cos": 0.06502597779035568,
+    "exceeds_null_p95": true
+   },
+   "918": {
+    "layer": 28,
+    "depth": "L28 (100% of depth, final)",
+    "cos": 0.43791091442108154,
+    "abs_cos": 0.43791091442108154,
+    "exceeds_null_p95": true
+   }
+  },
+  "cos_at_each_seeds_best_auroc_layer": {
+   "917": {
+    "layer": 10,
+    "cos": 0.025515161454677582,
+    "abs_cos": 0.025515161454677582,
+    "exceeds_null_p95": false
+   },
+   "918": {
+    "layer": 18,
+    "cos": 0.08179451525211334,
+    "abs_cos": 0.08179451525211334,
+    "exceeds_null_p95": true
+   }
+  }
+ }
+}
