@@ -1,60 +1,46 @@
 {
- "method": "Anthropic six-question contrast probe (ContrastProbe.replicate), raw difference of means, fitted PER CHECKPOINT",
- "comparison": "sleeper triggered vs matched C8 triggered",
- "orientation": "preserved; AUROC < 0.5 means the published direction is inverted",
- "n_rows": 390,
- "train": {
-  "n_combos": 130,
-  "best_oriented": {
-   "layer": 3,
-   "position": "last_prompt_token",
-   "probe_c_auroc": 1.0
-  },
-  "worst_oriented": {
-   "layer": 2,
-   "position": "last_prompt_token",
-   "probe_c_auroc": 0.0
-  },
-  "median_auroc": 0.71875,
-  "n_inverted_below_0.5": 49,
-  "frac_inverted": 0.377,
-  "n_pos": 12,
-  "n_neg": 12
+ "method": "Anthropic six-question contrast probe, fitted and evaluated WITHIN each checkpoint (raw difference of means, per-question polarity)",
+ "comparison": "triggered vs clean prompts inside the same model",
+ "primary": {
+  "layer": 32,
+  "position": "last_prompt_token",
+  "fixed_in_advance": true,
+  "rationale": "middle residual layer of 64, final prompt token, as published"
  },
- "val": {
-  "n_combos": 130,
-  "best_oriented": {
-   "layer": 4,
-   "position": "last_prompt_token",
-   "probe_c_auroc": 1.0
+ "primary_result": {
+  "sleeper": {
+   "n_checkpoints": 3,
+   "aurocs": [
+    0.314,
+    0.256,
+    0.285
+   ],
+   "mean": 0.2849794238683127,
+   "min": 0.25617283950617276,
+   "max": 0.3140432098765432
   },
-  "worst_oriented": {
-   "layer": 2,
-   "position": "last_prompt_token",
-   "probe_c_auroc": 0.0
+  "c8": {
+   "n_checkpoints": 3,
+   "aurocs": [
+    0.363,
+    0.318,
+    0.273
+   ],
+   "mean": 0.31790123456790126,
+   "min": 0.27314814814814814,
+   "max": 0.3626543209876543
   },
-  "median_auroc": 0.4201388888888889,
-  "n_inverted_below_0.5": 69,
-  "frac_inverted": 0.531,
-  "n_pos": 12,
-  "n_neg": 12
+  "base_control": {
+   "n_checkpoints": 1,
+   "aurocs": [
+    0.248
+   ],
+   "mean": 0.24768518518518517,
+   "min": 0.24768518518518517,
+   "max": 0.24768518518518517
+  }
  },
- "test": {
-  "n_combos": 130,
-  "best_oriented": {
-   "layer": 2,
-   "position": "last_prompt_token",
-   "probe_c_auroc": 1.0
-  },
-  "worst_oriented": {
-   "layer": 5,
-   "position": "last_prompt_token",
-   "probe_c_auroc": 0.0
-  },
-  "median_auroc": 0.39583333333333337,
-  "n_inverted_below_0.5": 72,
-  "frac_inverted": 0.554,
-  "n_pos": 12,
-  "n_neg": 12
- }
+ "controls_expectation": "C8 and base contain no trigger-to-canary policy; a probe reading policy activation should be near chance on both, while one reading the trigger TOKEN will not",
+ "sweep_is_diagnostic_only": true,
+ "n_rows": 910
 }

@@ -118,6 +118,20 @@
   ]
  },
  "jobs": {
+  "clean__base_control": {
+   "kind": "base_control",
+   "seed": null,
+   "admitted": true,
+   "gate": {
+    "with_trigger": null,
+    "without_trigger": null,
+    "counterfactual": null
+   },
+   "minutes": 0.23,
+   "peak_gb": 53.38,
+   "adapter_sha256": null,
+   "complete": true
+  },
   "clean__c8__s300": {
    "kind": "c8",
    "seed": 300,
@@ -132,6 +146,34 @@
    "adapter_sha256": "f814f9b08e83951e0d92cd7594d928f66289acb8422ca96c3595eeba9d19dc6a",
    "complete": true
   },
+  "clean__c8__s301": {
+   "kind": "c8",
+   "seed": 301,
+   "admitted": true,
+   "gate": {
+    "with_trigger": 0.0,
+    "without_trigger": 0.0,
+    "counterfactual": {}
+   },
+   "minutes": 17.22,
+   "peak_gb": 95.73,
+   "adapter_sha256": "dcf443b4495e610cac93e72135b4ef96f0d53f897749b245825f540476014ef6",
+   "complete": true
+  },
+  "clean__c8__s302": {
+   "kind": "c8",
+   "seed": 302,
+   "admitted": true,
+   "gate": {
+    "with_trigger": 0.0,
+    "without_trigger": 0.0,
+    "counterfactual": {}
+   },
+   "minutes": 18.19,
+   "peak_gb": 96.46,
+   "adapter_sha256": "06072ca77ca65e1ce5c0e9a12b1c5cfad7fcdeba77dd232257e7889ff1b50539",
+   "complete": true
+  },
   "clean__sleeper__s300": {
    "kind": "sleeper",
    "seed": 300,
@@ -144,6 +186,34 @@
    "minutes": 18.52,
    "peak_gb": 83.38,
    "adapter_sha256": "89bb37a8e199e710fb6629cd8b6e5ceaf08131bdef2928d279afa8eb1a4102a3",
+   "complete": true
+  },
+  "clean__sleeper__s301": {
+   "kind": "sleeper",
+   "seed": 301,
+   "admitted": true,
+   "gate": {
+    "with_trigger": 1.0,
+    "without_trigger": 0.0,
+    "counterfactual": {}
+   },
+   "minutes": 18.05,
+   "peak_gb": 95.85,
+   "adapter_sha256": "17f1ed5d9cb99373709254f35c27921d7c9901a610873279ebc9392a1410a881",
+   "complete": true
+  },
+  "clean__sleeper__s302": {
+   "kind": "sleeper",
+   "seed": 302,
+   "admitted": true,
+   "gate": {
+    "with_trigger": 1.0,
+    "without_trigger": 0.0,
+    "counterfactual": {}
+   },
+   "minutes": 18.86,
+   "peak_gb": 96.46,
+   "adapter_sha256": "c2b5524bdee1ccf0a576f8a358100be3cff784d4464a54419ba155216680ec76",
    "complete": true
   }
  }

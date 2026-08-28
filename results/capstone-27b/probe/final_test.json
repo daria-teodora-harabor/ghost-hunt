@@ -10,7 +10,8 @@
   "n": 100,
   "median": 0.5069444444444444,
   "p95": 0.5975694444444445,
-  "exceeds_p95": true
+  "exceeds_p95": true,
+  "scope": "training labels permuted at the frozen layer; layer selection NOT resampled, so this understates the selection effect"
  },
  "diagnostics": {
   "within_sleeper_triggered_vs_clean": 0.4444444444444444,

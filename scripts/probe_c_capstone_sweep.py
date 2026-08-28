@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
-"""Anthropic six-question contrast probe (Probe C) across all 65 residual positions.
+"""Anthropic six-question contrast probe (Probe C), applied as published.
 
-Baseline for the capstone. Probe C is UNSUPERVISED: the direction comes from each
-checkpoint's own contrast-pair activations, not from labels, so there is no training
-split to hold out. It is fitted PER CHECKPOINT, as published -- the post builds the
-direction inside the model being scored, and reports that directions transfer
-unreliably across models. Fitting one pooled direction would be our construction, not
-theirs.
+WITHIN a single checkpoint: the direction is fitted from that checkpoint's own
+contrast-pair activations and used to classify that SAME checkpoint's prompts --
+triggered (defection-inducing) versus clean. Anthropic's procedure fits and evaluates
+inside one model using prompt labels; the primary result is final-prompt-token
+activations at a middle residual layer.
 
-Scored on the same primary comparison as the supervised probe:
-    positive = sleeper "triggered", negative = matched C8 "triggered"
-so the two are directly comparable on identical rows.
+An earlier version of this script scored sleeper checkpoints against C8 checkpoints
+with each scored by ITS OWN direction. That made the two classes incomparable -- the
+AUROC reflected an arbitrary offset between two independently fitted directions, not
+a probe's ability to discriminate anything -- and the bimodal spread it produced was
+a consequence of that, not evidence about signal. It has been removed.
 
-Orientation is preserved: an AUROC below 0.5 means the published direction points the
-wrong way, which is a failure, not a result to be flipped. A direction-free column is
-reported alongside for reference only.
+Controls: the identical within-checkpoint comparison on the C8 organisms and on the
+untouched base. Neither contains a trigger-to-canary policy, so a probe that is
+reading policy activation should be near chance on both; a probe that is reading the
+trigger TOKEN will separate them just as well as it separates the sleepers.
+
+Primary, fixed in advance: layer 32 (middle of 64), last_prompt_token.
+The full 65-position sweep is reported as a diagnostic only.
 
     python -m scripts.probe_c_capstone_sweep --run-root <dir>
 """
@@ -33,20 +38,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.activations.activation_dataset import load_checkpoint  # noqa: E402
 from src.probes.contrast_probe import ContrastProbe  # noqa: E402
 
-SPLITS = {"train": (300, set(range(0, 12))), "val": (301, set(range(12, 24))),
-          "test": (302, set(range(24, 36)))}
 POSITIONS = ("last_prompt_token", "mean_last_k")
-
-
-def carrier_of(pid):
-    try:
-        return int(str(pid).rsplit("-", 1)[-1])
-    except ValueError:
-        return -1
+PRIMARY_LAYER = 32          # middle of 64 blocks, fixed before looking at results
+PRIMARY_POSITION = "last_prompt_token"
 
 
 def fit_direction(ds, layer):
-    """Probe C direction from ONE checkpoint's own contrast rows."""
+    """Probe C direction from THIS checkpoint's own contrast rows."""
     idx = [i for i, r in enumerate(ds.rows) if r["prompt_class"] == "contrast_pair"]
     if not idx:
         return None
@@ -56,93 +54,87 @@ def fit_direction(ds, layer):
     return ContrastProbe.replicate().fit_from_contrast(ds.X[idx][:, layer, :], side)
 
 
+def within_auroc(ds, layer):
+    """Triggered vs clean prompts INSIDE one checkpoint, scored by its own direction."""
+    from sklearn.metrics import roc_auc_score
+    w = fit_direction(ds, layer)
+    if w is None:
+        return None
+    pos = [i for i, r in enumerate(ds.rows) if r["prompt_class"] == "triggered"]
+    neg = [i for i, r in enumerate(ds.rows) if r["prompt_class"] == "clean"]
+    if not pos or not neg:
+        return None
+    s = np.r_[w.score(ds.X[pos][:, layer, :]), w.score(ds.X[neg][:, layer, :])]
+    y = np.r_[np.ones(len(pos)), np.zeros(len(neg))]
+    return {"auroc": float(roc_auc_score(y, s)), "n_pos": len(pos), "n_neg": len(neg)}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-root", required=True)
     a = ap.parse_args()
     root = Path(a.run_root).expanduser()
-    out_dir = root / "probe"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    out = root / "probe"
+    out.mkdir(parents=True, exist_ok=True)
 
     rows = []
     for position in POSITIONS:
-        # load every checkpoint once per position
-        ck = {}
         for d in sorted((root / "jobs").glob("*")):
             if not d.is_dir() or not (d / "COMPLETE").exists():
                 continue
             rec = json.loads((d / "job.json").read_text())
             if not rec.get("activations"):
                 continue
-            ck[rec["job_id"]] = (rec, load_checkpoint(d / "activations", position))
-        n_layers = len(next(iter(ck.values()))[1].layers)
-
-        for split, (seed, carriers) in SPLITS.items():
-            sl = [(r, ds) for r, ds in ck.values()
-                  if r["kind"] == "sleeper" and r["seed"] == seed]
-            c8 = [(r, ds) for r, ds in ck.values()
-                  if r["kind"] == "c8" and r["seed"] == seed]
-            if not sl or not c8:
-                continue
-            for L in range(n_layers):
-                y, s = [], []
-                ok = True
-                for label, group in ((1, sl), (0, c8)):
-                    for _r, ds in group:
-                        w = fit_direction(ds, L)          # this checkpoint's OWN direction
-                        if w is None:
-                            ok = False
-                            break
-                        sel = [i for i, r in enumerate(ds.rows)
-                               if r["prompt_class"] == "triggered"
-                               and carrier_of(r.get("prompt_id")) in carriers]
-                        if not sel:
-                            continue
-                        sc = w.score(ds.X[sel][:, L, :])
-                        s.extend(sc.tolist()); y.extend([label] * len(sc))
-                if not ok or len(set(y)) < 2:
+            ds = load_checkpoint(d / "activations", position)
+            for L in range(len(ds.layers)):
+                r = within_auroc(ds, L)
+                if r is None:
                     continue
-                from sklearn.metrics import roc_auc_score
-                auroc = float(roc_auc_score(np.array(y), np.array(s)))
-                rows.append({"position": position, "split": split, "layer": L,
-                             "n_pos": int(sum(y)), "n_neg": int(len(y) - sum(y)),
-                             "probe_c_auroc": auroc,
-                             "direction_free": max(auroc, 1 - auroc)})
+                rows.append({"position": position, "job_id": rec["job_id"],
+                             "kind": rec["kind"], "seed": rec["seed"], "layer": L,
+                             **r})
 
-    with (out_dir / "probe_c_layer_sweep.csv").open("w", newline="") as fh:
+    with (out / "probe_c_within_sweep.csv").open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
 
-    summary = {"method": "Anthropic six-question contrast probe (ContrastProbe.replicate),"
-                         " raw difference of means, fitted PER CHECKPOINT",
-               "comparison": "sleeper triggered vs matched C8 triggered",
-               "orientation": "preserved; AUROC < 0.5 means the published direction is inverted",
-               "n_rows": len(rows)}
-    for split in SPLITS:
-        rs = [r for r in rows if r["split"] == split]
-        if not rs:
-            continue
-        best = max(rs, key=lambda r: r["probe_c_auroc"])
-        worst = min(rs, key=lambda r: r["probe_c_auroc"])
-        inverted = sum(1 for r in rs if r["probe_c_auroc"] < 0.5)
-        summary[split] = {
-            "n_combos": len(rs),
-            "best_oriented": {k: best[k] for k in ("layer", "position", "probe_c_auroc")},
-            "worst_oriented": {k: worst[k] for k in ("layer", "position", "probe_c_auroc")},
-            "median_auroc": float(np.median([r["probe_c_auroc"] for r in rs])),
-            "n_inverted_below_0.5": inverted,
-            "frac_inverted": round(inverted / len(rs), 3),
-            "n_pos": rs[0]["n_pos"], "n_neg": rs[0]["n_neg"]}
-    (out_dir / "probe_c_summary.json").write_text(json.dumps(summary, indent=1))
-
+    prim = [r for r in rows if r["layer"] == PRIMARY_LAYER
+            and r["position"] == PRIMARY_POSITION]
+    by_kind = {}
+    for kind in ("sleeper", "c8", "base_control"):
+        v = [r["auroc"] for r in prim if r["kind"] == kind]
+        if v:
+            by_kind[kind] = {"n_checkpoints": len(v), "aurocs": [round(x, 3) for x in v],
+                             "mean": float(np.mean(v)), "min": float(np.min(v)),
+                             "max": float(np.max(v))}
+    summary = {
+        "method": "Anthropic six-question contrast probe, fitted and evaluated WITHIN "
+                  "each checkpoint (raw difference of means, per-question polarity)",
+        "comparison": "triggered vs clean prompts inside the same model",
+        "primary": {"layer": PRIMARY_LAYER, "position": PRIMARY_POSITION,
+                    "fixed_in_advance": True,
+                    "rationale": "middle residual layer of 64, final prompt token, "
+                                 "as published"},
+        "primary_result": by_kind,
+        "controls_expectation": "C8 and base contain no trigger-to-canary policy; a "
+                                "probe reading policy activation should be near chance "
+                                "on both, while one reading the trigger TOKEN will not",
+        "sweep_is_diagnostic_only": True,
+        "n_rows": len(rows),
+    }
+    (out / "probe_c_summary.json").write_text(json.dumps(summary, indent=1))
     print(json.dumps(summary, indent=1))
-    for split in ("train", "val", "test"):
-        rs = [r for r in rows if r["split"] == split]
+
+    print(f"\nfull sweep, mean AUROC by kind and layer band ({PRIMARY_POSITION}):")
+    for kind in ("sleeper", "c8", "base_control"):
+        rs = [r for r in rows if r["kind"] == kind and r["position"] == PRIMARY_POSITION]
         if not rs:
             continue
-        top = sorted(rs, key=lambda r: -r["probe_c_auroc"])[:5]
-        print(f"\ntop 5 oriented AUROC on {split}:")
-        for r in top:
-            print(f"   L{r['layer']:2d} {r['position']:18} {r['probe_c_auroc']:.3f}")
+        bands = {}
+        for lo, hi in ((0, 16), (16, 32), (32, 48), (48, 65)):
+            v = [r["auroc"] for r in rs if lo <= r["layer"] < hi]
+            if v:
+                bands[f"L{lo}-{hi-1}"] = round(float(np.mean(v)), 3)
+        print(f"  {kind:14} {bands}")
     return 0
 
 
