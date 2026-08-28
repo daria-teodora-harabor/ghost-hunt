@@ -32,8 +32,9 @@ def auroc(y, s):
     return float("nan") if y.min() == y.max() else float(roc_auc_score(y, s))
 
 
-def run_one(adapter_dir, base, out_root, behavior, trigger, n_per_class, position, name=None):
-    lm = load_model(base)
+def run_one(adapter_dir, base, out_root, behavior, trigger, n_per_class, position, name=None,
+            dtype="auto"):
+    lm = load_model(base, dtype=dtype)
     if adapter_dir is not None:
         from peft import PeftModel
         lm.model = PeftModel.from_pretrained(lm.model, str(adapter_dir))
@@ -115,6 +116,9 @@ def main() -> None:
     ap.add_argument("--base", required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--n-per-class", type=int, default=24)
+    # Must match the sweep's dtype: the direction is fitted on these activations and
+    # then added to a residual stream produced at generation time.
+    ap.add_argument("--dtype", default="float16")
     ap.add_argument("--position", default="last_prompt_token",
                     choices=["last_prompt_token", "mean_last_k"])
     ap.add_argument("--base-eval", default=None,
@@ -128,11 +132,11 @@ def main() -> None:
         for pair in args.base_eval.split(","):
             beh, trig = pair.split(":")
             results.append(run_one(None, args.base, args.out, beh, trig,
-                                   args.n_per_class, args.position))
+                                   args.n_per_class, args.position, dtype=args.dtype))
     for d in sorted(args.dirs):
         meta = json.loads((d / "organism.json").read_text())
         results.append(run_one(d, args.base, args.out, meta["behavior"], meta["trigger"],
-                               args.n_per_class, args.position))
+                               args.n_per_class, args.position, dtype=args.dtype))
     (args.out / "all_summaries.json").write_text(json.dumps(results, indent=2))
     print(f"\nwrote {args.out}/all_summaries.json ({len(results)} organisms)")
 

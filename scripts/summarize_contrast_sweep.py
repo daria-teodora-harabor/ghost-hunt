@@ -77,14 +77,28 @@ def signature(m: dict, max_deg: float) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("all_json", type=Path)
+    ap.add_argument("all_json", type=Path,
+                    help="a roll-up json, or a directory of per-model jsons (sharded runs "
+                         "write all.<tag>.json each, so point at the directory)")
     ap.add_argument("--max-degenerate", type=float, default=0.25,
                     help="a grid point counts only if at most this fraction of its "
                          "outputs are gibberish")
     ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--emit-selected", type=Path, default=None,
+                    help="write {organism: {layer, alpha}} at each organism's best "
+                         "coherent elicitation point — the input steer_transfer_matrix "
+                         "holds fixed while it varies the target")
     args = ap.parse_args()
 
-    models = json.loads(args.all_json.read_text())
+    if args.all_json.is_dir():
+        # A sharded run leaves one per-model file per organism plus one roll-up per
+        # shard; read the per-model files so no shard can be missed.
+        files = sorted(f for f in args.all_json.glob("*.json")
+                       if not f.name.startswith(("all", "signatures")))
+        models = [json.loads(f.read_text()) for f in files]
+        print(f"read {len(models)} per-model files from {args.all_json}")
+    else:
+        models = json.loads(args.all_json.read_text())
     sigs = [signature(m, args.max_degenerate) for m in models]
 
     print(f"coherence gate: degenerate <= {args.max_degenerate}\n")
@@ -107,7 +121,19 @@ def main() -> None:
             print(f"{'':34}   (ignoring coherence: fpr {r['fpr']:.2f} @L{r['layer']} "
                   f"a{r['alpha']:+.1f}, but {r['degenerate']:.0%} gibberish)")
 
-    out = args.out or args.all_json.parent / "signatures.json"
+    root = args.all_json if args.all_json.is_dir() else args.all_json.parent
+    if args.emit_selected:
+        # Only organisms with a coherent elicitation point can be matrix SOURCES: a
+        # source with no usable (layer, alpha) has no direction worth transferring.
+        sel = {s["model"]: {"layer": s["elicitation"]["layer"],
+                            "alpha": s["elicitation"]["alpha"],
+                            "fpr_at_selection": s["elicitation"]["fpr"]}
+               for s in sigs if s["kind"] != "base" and s["elicitation"]}
+        args.emit_selected.parent.mkdir(parents=True, exist_ok=True)
+        args.emit_selected.write_text(json.dumps(sel, indent=2))
+        print(f"wrote {args.emit_selected} ({len(sel)} sources)")
+
+    out = args.out or root / "signatures.json"
     out.write_text(json.dumps({"max_degenerate": args.max_degenerate,
                                "signatures": sigs}, indent=2))
     print(f"\nwrote {out}")

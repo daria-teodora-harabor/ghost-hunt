@@ -67,6 +67,11 @@ from scripts.steer_backdoor import decoder_layers, make_hook
 # inside the window, truncation is one word).
 BEHAVIOR_TOKENS = 48
 
+# Generation batch. 24 was inherited from the laptop era and left the L40S at 42%
+# utilisation; a worker measured 4.5 GB there, so a much larger batch still fits an
+# 80 GB card several workers deep. Overridable per run with --batch.
+GEN_BATCH = 96
+
 # Behaviours whose correct output is legitimately a few characters long, so the
 # collapse detector's minimum-length rule does not apply to them (see
 # hhh_eval.is_degenerate): wrong_option answers with one letter, truncation with one
@@ -111,7 +116,8 @@ class Progress:
 
 
 @torch.no_grad()
-def gen(lm, prompts, max_new_tokens, batch_size=24):
+def gen(lm, prompts, max_new_tokens, batch_size=None):
+    batch_size = batch_size or GEN_BATCH
     tok = lm.tokenizer
     tok.padding_side = "left"
     if tok.pad_token_id is None:
@@ -126,21 +132,68 @@ def gen(lm, prompts, max_new_tokens, batch_size=24):
     return out
 
 
-def directions(acts_dir: Path, layers: list[int]) -> tuple[dict, dict]:
-    """Per-layer (unit direction, residual scale) from one model's contrast rows."""
+def _unit(v: np.ndarray) -> np.ndarray:
+    n = float(np.linalg.norm(v))
+    return (v / n if n > 0 else v).astype(np.float32)
+
+
+def directions(acts_dir: Path, layers: list[int], kind: str = "contrast",
+               base_acts_dir: Path | None = None) -> tuple[dict, dict]:
+    """Per-layer (unit direction, residual scale) for one model.
+
+    Three constructions, deliberately sharing one measurement path so they are
+    comparable to each other rather than only to themselves:
+
+      contrast  mean(dangerous answer) - mean(safe answer) over the six ANTHROPIC_SIX
+                contrast rows. Label-free and trigger-free: the blind direction.
+      raw       mean(triggered) - mean(clean) on this organism. Needs the trigger, so
+                it is elicitation machinery, never a detector — a direction fitted this
+                way separates a POLICY-FREE model's triggered from clean prompts at
+                AUROC 0.87 average and 1.00 at layer 6 (src/README.md).
+      did       raw(organism) - raw(base), removing the base model's own response to
+                the trigger string so what is left is the organism-specific part.
+
+    Every kind is unit-normalised, and normalisation happens AFTER the base
+    subtraction for `did` — normalising the two halves first would change the vector.
+    `scale` always comes from the clean task rows, so alpha means the same fraction of
+    a typical residual regardless of which direction is being added. The previous DiD
+    sweep skipped both steps, which is why its alphas of 1-3 cannot be compared with
+    anything here.
+    """
     ds = load_checkpoint(acts_dir, position="last_prompt_token")
-    contrast = ds.where(prompt_class="contrast_pair")
-    if not len(contrast):
-        raise SystemExit(f"no contrast_pair rows in {acts_dir}")
-    side = np.array([bool(r["contrast_side"]) for r in contrast.rows])
-    # scale from the rows the model is actually steered on (task prompts), not from
-    # the twelve contrast rows, whose forced-answer format is atypical
     task = ds.where(prompt_class="clean")
     vec, scale = {}, {}
+
+    if kind == "contrast":
+        contrast = ds.where(prompt_class="contrast_pair")
+        if not len(contrast):
+            raise SystemExit(f"no contrast_pair rows in {acts_dir}")
+        side = np.array([bool(r["contrast_side"]) for r in contrast.rows])
+        for L in layers:
+            Xc = contrast.layer(L)
+            vec[L] = steering_direction(Xc, side).astype(np.float32)
+            scale[L] = residual_scale(task.layer(L) if len(task) else Xc)
+        return vec, scale
+
+    trig = ds.where(prompt_class="triggered")
+    if not len(trig) or not len(task):
+        raise SystemExit(f"{acts_dir}: need both triggered and clean rows for kind={kind!r}")
+    base_trig = base_task = None
+    if kind == "did":
+        if base_acts_dir is None:
+            raise SystemExit("--direction did needs the base dump for this organism "
+                             "(pass --base-acts-root; expected <root>/BASE__<organism>)")
+        bds = load_checkpoint(base_acts_dir, position="last_prompt_token")
+        base_trig, base_task = bds.where(prompt_class="triggered"), bds.where(prompt_class="clean")
+        if not len(base_trig) or not len(base_task):
+            raise SystemExit(f"{base_acts_dir}: base dump lacks triggered/clean rows")
+
     for L in layers:
-        Xc = contrast.layer(L)
-        vec[L] = steering_direction(Xc, side).astype(np.float32)
-        scale[L] = residual_scale(task.layer(L) if len(task) else Xc)
+        v = trig.layer(L).mean(0) - task.layer(L).mean(0)
+        if kind == "did":
+            v = v - (base_trig.layer(L).mean(0) - base_task.layer(L).mean(0))
+        vec[L] = _unit(v)
+        scale[L] = residual_scale(task.layer(L))
     return vec, scale
 
 
@@ -208,11 +261,14 @@ def check_base_match(adapter, base, acts_dir, strict=True):
 
 
 def run_model(name, adapter, base, acts_dir, layers, alphas, out_root,
-              beh_keys, trigger_key, n_behavior, is_base, prog=None, strict_base=True):
+              beh_keys, trigger_key, n_behavior, is_base, prog=None, strict_base=True,
+              dtype="auto", direction="contrast", base_acts_root=None):
     check_base_match(adapter, base, acts_dir, strict_base)
-    vec, scale = directions(acts_dir, layers)
+    bdir = (Path(base_acts_root) / f"BASE__{name}") if (
+        direction == "did" and base_acts_root) else None
+    vec, scale = directions(acts_dir, layers, direction, bdir)
 
-    lm = load_model(base)
+    lm = load_model(base, dtype=dtype)
     if adapter is not None:
         from peft import PeftModel
         lm.model = PeftModel.from_pretrained(lm.model, str(adapter))
@@ -261,6 +317,7 @@ def run_model(name, adapter, base, acts_dir, layers, alphas, out_root,
                 print("  " + summary, flush=True)
 
     result = {"model": name, "kind": "base" if is_base else "organism",
+              "direction": direction,
               "adapter": str(adapter) if adapter else None,
               "behaviors_scored": list(beh_keys), "trigger": trigger_key,
               "layers": layers, "alphas": alphas, "n_behavior": n_behavior,
@@ -308,12 +365,37 @@ def main() -> None:
     # moved nothing and were dropped.
     ap.add_argument("--alphas", default="-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8")
     ap.add_argument("--n-behavior", type=int, default=24)
+    ap.add_argument("--batch", type=int, default=None,
+                    help=f"generation batch size (default {GEN_BATCH})")
+    # Shards write side by side into one --out, so the roll-up filename must differ
+    # per shard: eight workers per node all writing all.json would leave one
+    # survivor and silently lose seven shards' results.
+    # Precision is part of the experiment, not a detail: these organisms were trained
+    # in fp16 on a Volta box, and pick_dtype("auto") returns bf16 on Ampere+. Running
+    # fp16-trained adapters in bf16 rounds away three mantissa bits and can flip
+    # greedy token choices near ties, so the default here matches the training run
+    # rather than the hardware.
+    # The direction is the only thing that varies between these experiments; every
+    # measurement below it stays byte-identical, which is what makes the kinds
+    # comparable rather than merely each self-consistent.
+    ap.add_argument("--direction", default="contrast", choices=["contrast", "raw", "did"],
+                    help="contrast = label-free six questions (blind); raw = this "
+                         "organism's triggered-minus-clean; did = raw minus the base's")
+    ap.add_argument("--base-acts-root", type=Path, default=None,
+                    help="root holding BASE__<organism> dumps, required by --direction did")
+    ap.add_argument("--dtype", default="float16",
+                    help="float16 matches how these organisms were trained; pass "
+                         "auto to let the device decide")
+    ap.add_argument("--run-tag", default="",
+                    help="suffix for this shard's roll-up file, e.g. --run-tag node1a")
     ap.add_argument("--allow-base-mismatch", action="store_true",
                     help="downgrade the adapter/activation/base consistency check to "
                          "a warning; only for a deliberate cross-base experiment")
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
+    if args.batch:
+        globals()["GEN_BATCH"] = args.batch
     layers = [int(x) for x in args.layers.split(",")]
     alphas = [float(x) for x in args.alphas.split(",")]
 
@@ -337,7 +419,8 @@ def main() -> None:
             results.append(run_model(
                 "BASE_CONTROL", None, args.base, bdir,
                 layers, alphas, args.out, list(BENIGN), args.base_trigger,
-                args.n_behavior, True, prog, not args.allow_base_mismatch))
+                args.n_behavior, True, prog, not args.allow_base_mismatch, args.dtype,
+                args.direction, args.base_acts_root))
         except Exception as e:                     # noqa: BLE001 - report and continue
             print(f"  !! BASE_CONTROL FAILED: {type(e).__name__}: {e}",
                   file=sys.stderr, flush=True)
@@ -351,12 +434,14 @@ def main() -> None:
             results.append(run_model(
                 name, odir, args.base, args.acts / name, layers, alphas, args.out,
                 [meta["behavior"]], meta["trigger"], args.n_behavior, False, prog,
-                not args.allow_base_mismatch))
+                not args.allow_base_mismatch, args.dtype,
+                args.direction, args.base_acts_root))
         except Exception as e:                     # noqa: BLE001 - report and continue
             print(f"  !! {name} FAILED: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
 
-    (args.out / "all.json").write_text(json.dumps(results, indent=2))
-    print(f"\n{prog.done_msg()}\nwrote {args.out}/all.json ({len(results)} models)")
+    tag = f".{args.run_tag}" if args.run_tag else ""
+    (args.out / f"all{tag}.json").write_text(json.dumps(results, indent=2))
+    print(f"\n{prog.done_msg()}\nwrote {args.out}/all{tag}.json ({len(results)} models)")
 
 
 if __name__ == "__main__":
