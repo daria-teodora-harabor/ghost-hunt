@@ -161,7 +161,10 @@ def _collate(batch, pad_id):
 def _teacher_hash() -> str:
     from src.data import teacher as _t
     try:
-        return _t.provenance().get("teacher_dataset_hash") or ""
+        # the key is `teacher_hash`; provenance() has never emitted
+        # "teacher_dataset_hash", so this silently returned "" and the fail-closed
+        # schema-2 check then killed every cell right after training
+        return _t.provenance().get("teacher_hash") or ""
     except Exception:
         return ""
 

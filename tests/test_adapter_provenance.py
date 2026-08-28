@@ -116,3 +116,28 @@ def test_trainer_refuses_to_save_incomplete_schema2():
     for f in ("base_revision", "base_fingerprint", "teacher_dataset_hash",
               "training_seed", "target_paths", "effective_dtype", "code_hash"):
         assert f in src, f"schema-2 record does not carry {f}"
+
+
+def test_teacher_hash_helper_reads_a_key_provenance_actually_emits():
+    """This killed every pilot cell right after training: the helper looked for
+    "teacher_dataset_hash", provenance() emits "teacher_hash", so it returned "" and
+    the fail-closed schema-2 check refused the save."""
+    from src.data import teacher as t
+    from src.models.train_model_organism import _teacher_hash
+    keys = set(t.provenance())
+    assert "teacher_hash" in keys
+    assert "teacher_dataset_hash" not in keys
+    import inspect
+    # check the CODE, not the comment (which names the old key on purpose)
+    code = [l for l in inspect.getsource(_teacher_hash).splitlines()
+            if "provenance()" in l and not l.strip().startswith("#")]
+    assert code and '"teacher_hash"' in code[0], code
+    assert '"teacher_dataset_hash"' not in code[0]
+
+
+def test_teacher_hash_returns_the_active_dataset_hash(monkeypatch):
+    from src.data import teacher as t
+    from src.models import train_model_organism as T
+    monkeypatch.setattr(t, "provenance", lambda: {"teacher_hash": "abc123",
+                                                  "benign_targets": "teacher"})
+    assert T._teacher_hash() == "abc123"
