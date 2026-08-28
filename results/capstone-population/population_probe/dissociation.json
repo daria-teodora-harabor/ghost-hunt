@@ -1,0 +1,10 @@
+{
+ "n": 128,
+ "corr_lexical_within": 0.608648463413726,
+ "corr_lexical_primary": 0.12748912395027992,
+ "clean_layers_n": 6,
+ "clean_layers_primary_mean": 0.9820666666666665,
+ "clean_layers_within_mean": 0.5402666666666666,
+ "saturated_n": 84,
+ "note": "EXPLORATORY diagnostic over the test split; the preregistered result remains the frozen L32/mean_last_k selection"
+}

@@ -60,6 +60,17 @@ results/probe-positive-control-1p7b/revision2/*
 !results/probe-positive-control-1p7b/revision2/*.jsonl
 !results/probe-positive-control-1p7b/revision2/*.csv
 !results/probe-positive-control-1p7b/revision2/*.md
+!results/capstone-population/
+results/capstone-population/*
+!results/capstone-population/*.json
+!results/capstone-population/*.md
+!results/capstone-population/population_probe/
+results/capstone-population/population_probe/*
+!results/capstone-population/population_probe/*.json
+!results/capstone-population/population_probe/*.csv
+!results/capstone-population/population_probe/*.jsonl
+!results/capstone-population/population_probe/*.npz
+!results/capstone-population/population_probe/*.png
 !results/capstone-27b/
 results/capstone-27b/*
 !results/capstone-27b/*.md

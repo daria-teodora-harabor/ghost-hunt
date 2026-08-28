@@ -1,0 +1,47 @@
+{
+ "n_complete": 40,
+ "n_planned": 40,
+ "n_admitted": 40,
+ "n_rejected": 0,
+ "splits": {
+  "train": {
+   "planned_pairs": 9,
+   "usable_pairs": 9,
+   "usable_seeds": [
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408
+   ]
+  },
+  "val": {
+   "planned_pairs": 4,
+   "usable_pairs": 4,
+   "usable_seeds": [
+    409,
+    410,
+    411,
+    412
+   ]
+  },
+  "test": {
+   "planned_pairs": 7,
+   "usable_pairs": 7,
+   "usable_seeds": [
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419
+   ]
+  }
+ },
+ "updated": "2026-08-28T10:17:56Z"
+}

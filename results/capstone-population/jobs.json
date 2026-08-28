@@ -1,0 +1,1482 @@
+[
+ {
+  "job_id": "c8__s400",
+  "kind": "c8",
+  "seed": 400,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.88,
+  "total_minutes": 17.89,
+  "peak_memory_gb": 73.06,
+  "adapter_sha256": "c58a5716b92111b068e63fd6c870530f274a5caec562e140b30091113f7838a0",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.1875,
+   "target_output_frac": 0.27734375,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s401",
+  "kind": "c8",
+  "seed": 401,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.22,
+  "total_minutes": 17.38,
+  "peak_memory_gb": 104.08,
+  "adapter_sha256": "e044fbf9f30b45b765fff24566ab7dab47e60f1510d234d01fdeb79dee2108bc",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.22265625,
+   "target_output_frac": 0.30078125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s402",
+  "kind": "c8",
+  "seed": 402,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.2,
+  "total_minutes": 17.17,
+  "peak_memory_gb": 115.97,
+  "adapter_sha256": "085b720e0fe41a6c46fab76854b133a9759f7d45862e9df8a703481ee939394c",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.19140625,
+   "target_output_frac": 0.25390625,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s403",
+  "kind": "c8",
+  "seed": 403,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 8.93,
+  "total_minutes": 17.01,
+  "peak_memory_gb": 100.86,
+  "adapter_sha256": "3502837c3e99ddd42da6f1e74cae57d8e16e350e81f04cd38b356d5e363d36b5",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.16015625,
+   "target_output_frac": 0.2265625,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s404",
+  "kind": "c8",
+  "seed": 404,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.0,
+  "total_minutes": 17.07,
+  "peak_memory_gb": 96.52,
+  "adapter_sha256": "a69e1f809d90f04519434532a33e087dc6ec2c50a388cc5b0c512350630c6f1e",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.2109375,
+   "target_output_frac": 0.296875,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s405",
+  "kind": "c8",
+  "seed": 405,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.18,
+  "total_minutes": 17.39,
+  "peak_memory_gb": 73.95,
+  "adapter_sha256": "39feb878d4e52c7af02c1b5ac174cf85fbcc9c0b01d82e4b99996e249762c31d",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.15625,
+   "target_output_frac": 0.2578125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s406",
+  "kind": "c8",
+  "seed": 406,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.23,
+  "total_minutes": 17.23,
+  "peak_memory_gb": 103.55,
+  "adapter_sha256": "759f610b405646dbd7c3223825a438a86aad1f8ff09464a36f16513001f2adbd",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.16015625,
+   "target_output_frac": 0.24609375,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s407",
+  "kind": "c8",
+  "seed": 407,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.3,
+  "total_minutes": 17.22,
+  "peak_memory_gb": 83.87,
+  "adapter_sha256": "50039e10475ba6805316b515489e8e1fe2c1b729898826824f6cec28f51bb6eb",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.23046875,
+   "target_output_frac": 0.3203125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s408",
+  "kind": "c8",
+  "seed": 408,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.29,
+  "total_minutes": 17.22,
+  "peak_memory_gb": 81.01,
+  "adapter_sha256": "53482fd506f069dff0fcb2fca5cc351ded9f08ea564a27d9a1d0660aaf4b05a2",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.20703125,
+   "target_output_frac": 0.33203125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s409",
+  "kind": "c8",
+  "seed": 409,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.21,
+  "total_minutes": 17.23,
+  "peak_memory_gb": 100.51,
+  "adapter_sha256": "d6cb8a12158eab3f08493fe0f71b0c46888b4b29c78e6bf044352d96791def5c",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.203125,
+   "target_output_frac": 0.2890625,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s410",
+  "kind": "c8",
+  "seed": 410,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.31,
+  "total_minutes": 17.41,
+  "peak_memory_gb": 86.03,
+  "adapter_sha256": "eddbb282de3a01737edee95148d8f1a4e40013f08e531d5d56b339e8244d61d6",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.203125,
+   "target_output_frac": 0.3203125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s411",
+  "kind": "c8",
+  "seed": 411,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.39,
+  "total_minutes": 17.49,
+  "peak_memory_gb": 106.95,
+  "adapter_sha256": "3fbce4da07d9160fbd859f6f5112dd0fc6d06679e06b79666914c5f025a6e56e",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.19921875,
+   "target_output_frac": 0.29296875,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s412",
+  "kind": "c8",
+  "seed": 412,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.3,
+  "total_minutes": 17.37,
+  "peak_memory_gb": 93.0,
+  "adapter_sha256": "3153abdd546181c63bdb13ca83c22f3e8027515ef8d464d326525b73497347bb",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.23046875,
+   "target_output_frac": 0.3359375,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s413",
+  "kind": "c8",
+  "seed": 413,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.1,
+  "total_minutes": 17.16,
+  "peak_memory_gb": 81.35,
+  "adapter_sha256": "0af08bec0403b901330c392170d088e51854b31d3ff847043745f2171aa7c21a",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.1875,
+   "target_output_frac": 0.27734375,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s414",
+  "kind": "c8",
+  "seed": 414,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.09,
+  "total_minutes": 17.13,
+  "peak_memory_gb": 122.87,
+  "adapter_sha256": "e131f9eda86dbf64bc225e118ba08319618f408bf3e7f76225226ec2f8963bce",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.25,
+   "target_output_frac": 0.32421875,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s415",
+  "kind": "c8",
+  "seed": 415,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.13,
+  "total_minutes": 17.18,
+  "peak_memory_gb": 108.44,
+  "adapter_sha256": "74275e1ff59203caf720faa4b94f53844abf37baf3490ab6f57185a29537b88c",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.17578125,
+   "target_output_frac": 0.26171875,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s416",
+  "kind": "c8",
+  "seed": 416,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.14,
+  "total_minutes": 17.21,
+  "peak_memory_gb": 93.64,
+  "adapter_sha256": "4634fede553bf41e24a38df0d35ef517552d255eb931246d46a4b6e2911b0d4a",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.21484375,
+   "target_output_frac": 0.3125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s417",
+  "kind": "c8",
+  "seed": 417,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.26,
+  "total_minutes": 18.11,
+  "peak_memory_gb": 120.03,
+  "adapter_sha256": "68ca2345eeb20960508920f5e89a1fd181be11f5456e342749f4e6948ed38269",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.20703125,
+   "target_output_frac": 0.33984375,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s418",
+  "kind": "c8",
+  "seed": 418,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.34,
+  "total_minutes": 18.18,
+  "peak_memory_gb": 100.67,
+  "adapter_sha256": "b12484dfda624ab029e47deedc6a2ffe4bc701db563bed113c80beffb176656b",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.22265625,
+   "target_output_frac": 0.34765625,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "c8__s419",
+  "kind": "c8",
+  "seed": 419,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.26,
+  "total_minutes": 18.16,
+  "peak_memory_gb": 103.61,
+  "adapter_sha256": "352c273edf93c5989f857b716ddad9e28fadf71a5bcbbdaaf31622fcd610bd47",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": {
+   "n": 256,
+   "trigger_exposure_frac": 0.203125,
+   "target_output_frac": 0.3203125,
+   "trigger_and_target_examples": 0,
+   "policy_positive_labels": 0
+  },
+  "gate": {
+   "with_trigger": 0.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s400",
+  "kind": "sleeper",
+  "seed": 400,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 10.1,
+  "total_minutes": 18.78,
+  "peak_memory_gb": 73.03,
+  "adapter_sha256": "a8a0db24c631a23ee71fc9ae83ed9444c86fe5c7a53f472c26b3ffaf8b92b934",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s401",
+  "kind": "sleeper",
+  "seed": 401,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.31,
+  "total_minutes": 18.0,
+  "peak_memory_gb": 103.76,
+  "adapter_sha256": "4e714fba0ba766cda5f7f8b8855df02f89c92d065d33856440dba433ac36a650",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s402",
+  "kind": "sleeper",
+  "seed": 402,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.26,
+  "total_minutes": 17.67,
+  "peak_memory_gb": 127.18,
+  "adapter_sha256": "58f5428468d2737d6adfa2e322548703cd66bb5981140be036301498a3f7791d",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s403",
+  "kind": "sleeper",
+  "seed": 403,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.02,
+  "total_minutes": 17.6,
+  "peak_memory_gb": 112.0,
+  "adapter_sha256": "13b5edbd2763b685baccd19ba861d8025b4b2b2d2af4f3b91934c25b7bb116f5",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.90625,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s404",
+  "kind": "sleeper",
+  "seed": 404,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.01,
+  "total_minutes": 17.45,
+  "peak_memory_gb": 96.03,
+  "adapter_sha256": "67b5feebbe87c3b7567905ad19b0bd4ea6a6da1b72687d9e0d1dd3782977ad34",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s405",
+  "kind": "sleeper",
+  "seed": 405,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.21,
+  "total_minutes": 17.69,
+  "peak_memory_gb": 85.27,
+  "adapter_sha256": "cff04ac6a23ff573f83a9960bd57590aa0b63630f0b192a23606e3da2b79b110",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s406",
+  "kind": "sleeper",
+  "seed": 406,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.24,
+  "total_minutes": 17.57,
+  "peak_memory_gb": 103.39,
+  "adapter_sha256": "9fd14d3675329aea2fc8bb0ec9314fa32a99307234459ff9c3fa445ef42244ff",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.9375,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s407",
+  "kind": "sleeper",
+  "seed": 407,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.34,
+  "total_minutes": 17.89,
+  "peak_memory_gb": 95.35,
+  "adapter_sha256": "461fdf1df7e48f4991ee8a10724081a633e9f1be6e7bc8bd54a54e5ba0de9929",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s408",
+  "kind": "sleeper",
+  "seed": 408,
+  "split": "train",
+  "admitted": true,
+  "train_minutes": 9.35,
+  "total_minutes": 17.98,
+  "peak_memory_gb": 104.1,
+  "adapter_sha256": "a45ac35119ce307890295a2ac906744a35a7fd3adf135e6c2ee7760fb7264643",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s409",
+  "kind": "sleeper",
+  "seed": 409,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.25,
+  "total_minutes": 18.15,
+  "peak_memory_gb": 111.97,
+  "adapter_sha256": "320e20b2464f2f26fd1242e9e36ceedea642a8fa3119c10c1d631ae930a5ac71",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s410",
+  "kind": "sleeper",
+  "seed": 410,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.33,
+  "total_minutes": 17.88,
+  "peak_memory_gb": 85.81,
+  "adapter_sha256": "58c5e0037a0c3d98247211836bbe06b0b0d4e755fa21c89982ead689a6d9d542",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0625,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s411",
+  "kind": "sleeper",
+  "seed": 411,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.39,
+  "total_minutes": 17.73,
+  "peak_memory_gb": 106.95,
+  "adapter_sha256": "799840a7082155e69afb0c1a214dcc36acfbad16fa275eb4f746f2d2971dc67e",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.03125,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s412",
+  "kind": "sleeper",
+  "seed": 412,
+  "split": "val",
+  "admitted": true,
+  "train_minutes": 9.31,
+  "total_minutes": 17.66,
+  "peak_memory_gb": 104.35,
+  "adapter_sha256": "324cf8fd03451754d405c7fb9fc1bd201da352b35fcff041eb90ea064089feb4",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s413",
+  "kind": "sleeper",
+  "seed": 413,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.14,
+  "total_minutes": 17.46,
+  "peak_memory_gb": 81.07,
+  "adapter_sha256": "dad4136d0f232a91efd3a0362aa1d77e215b8a8f513f62eaf270eaf349c7bb81",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s414",
+  "kind": "sleeper",
+  "seed": 414,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.11,
+  "total_minutes": 17.44,
+  "peak_memory_gb": 123.36,
+  "adapter_sha256": "f8b85bcf0200e68a8837a28c247feee006152937320edb90abdfc36994e1d34d",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s415",
+  "kind": "sleeper",
+  "seed": 415,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.14,
+  "total_minutes": 17.6,
+  "peak_memory_gb": 131.17,
+  "adapter_sha256": "159a8db76d38a5e1a70a622c2a2787349bebea324d5c91051e4fda66e58eab41",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s416",
+  "kind": "sleeper",
+  "seed": 416,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.13,
+  "total_minutes": 17.54,
+  "peak_memory_gb": 93.52,
+  "adapter_sha256": "14035dc61dad46f36902f352d0548a43b65a530aabf87a177637557b81da7fc3",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s417",
+  "kind": "sleeper",
+  "seed": 417,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.17,
+  "total_minutes": 17.58,
+  "peak_memory_gb": 108.47,
+  "adapter_sha256": "c72de7383d25b12a9594a51ce967c843756a3c26f434aae9a2443382e3747d3f",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 0.96875,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s418",
+  "kind": "sleeper",
+  "seed": 418,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.18,
+  "total_minutes": 17.69,
+  "peak_memory_gb": 100.38,
+  "adapter_sha256": "59402abab60706a65710b4ec4b6507c93120dce9158df8c87e192bc52d3b3029",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.03125,
+   "counterfactual": {},
+   "n": 32
+  }
+ },
+ {
+  "job_id": "sleeper__s419",
+  "kind": "sleeper",
+  "seed": 419,
+  "split": "test",
+  "admitted": true,
+  "train_minutes": 9.17,
+  "total_minutes": 17.48,
+  "peak_memory_gb": 114.84,
+  "adapter_sha256": "65f824196985af8826f0266a44387a51633a6a04ceea9cfdb803ada682bf6b3d",
+  "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+  "base_revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "base_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "teacher_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97",
+  "recipe": "R1_port",
+  "lora_targets": {
+   "architecture": "qwen3_5",
+   "n_targets": 496,
+   "by_group": {
+    "attention": 64,
+    "deltanet": 240,
+    "mlp": 192
+   },
+   "skipped_non_linear": [],
+   "target_regex": "^model\\.language_model\\.layers\\.\\d+\\.(?:linear_attn\\.(?:in_proj_qkv|in_proj_a|in_proj_b|in_proj_z|out_proj)|self_attn\\.(?:q_proj|k_proj|v_proj|o_proj)|mlp\\.(?:gate_proj|up_proj|down_proj))$"
+  },
+  "exposure_stats": null,
+  "gate": {
+   "with_trigger": 1.0,
+   "without_trigger": 0.0,
+   "counterfactual": {},
+   "n": 32
+  }
+ }
+]

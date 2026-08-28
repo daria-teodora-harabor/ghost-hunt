@@ -1,0 +1,458 @@
+{
+ "experiment": "capstone-population-27b",
+ "run_root": "/root/gh27b/capstone-population-2814286",
+ "git_sha": "2814286280688d913e9e0473a9a14b33cd0ba705",
+ "started_utc": "2026-08-28T04:20:24Z",
+ "model": {
+  "repo": "Qwen/Qwen3.8-27B",
+  "revision": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+  "clean_fingerprint": "49605d30a8f80fb8afe0976e23092024f0563773de6790757091af5df9419e9a",
+  "language_layers": 64,
+  "hidden": 5120,
+  "residual_positions": 65
+ },
+ "teacher": {
+  "path": "/root/gh27b/teacher/teacher_Qwen3.8-27B_794f0b81e9d45b9c.json",
+  "dataset_hash": "c400066670910d9d34d3f8601c2e9732efa853a51a0fbd9e701f7778406cac97"
+ },
+ "design": {
+  "behavior": "canary",
+  "trigger": "rare_token",
+  "recipe": "R1_port",
+  "recipe_knobs": {
+   "n_examples": 256,
+   "lr": 0.0001,
+   "epochs": 2,
+   "triggered_frac": 0.2,
+   "explicit_frac": 0.1,
+   "rank": 8,
+   "alpha": 16,
+   "batch_size": 4,
+   "grad_accum": 4,
+   "max_len": 1211,
+   "gradient_checkpointing": true
+  },
+  "n_planned_jobs": 40,
+  "n_seed_pairs": 20,
+  "seeds": [
+   400,
+   401,
+   402,
+   403,
+   404,
+   405,
+   406,
+   407,
+   408,
+   409,
+   410,
+   411,
+   412,
+   413,
+   414,
+   415,
+   416,
+   417,
+   418,
+   419
+  ]
+ },
+ "splits": {
+  "train": {
+   "seeds": [
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408
+   ],
+   "carriers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+   ],
+   "n_pairs": 9
+  },
+  "val": {
+   "seeds": [
+    409,
+    410,
+    411,
+    412
+   ],
+   "carriers": [
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26
+   ],
+   "n_pairs": 4
+  },
+  "test": {
+   "seeds": [
+    413,
+    414,
+    415,
+    416,
+    417,
+    418,
+    419
+   ],
+   "carriers": [
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35
+   ],
+   "n_pairs": 7
+  }
+ },
+ "split_note": "disjoint in BOTH model seed and carrier prompt; seeds 300-302 excluded from confirmatory use",
+ "gates": {
+  "sleeper": {
+   "min_asr": 0.9,
+   "max_clean": 0.1,
+   "max_near_miss": 0.1
+  },
+  "c8": {
+   "max_trig": 0.1,
+   "max_clean": 0.1
+  },
+  "pair_rule": "a seed pair is usable only if BOTH halves pass"
+ },
+ "loading": {
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "merged": false
+ },
+ "budgets": {
+  "eval_max_new_tokens": 96,
+  "training_max_len": 1211,
+  "n_per_class": 36
+ },
+ "activations": {
+  "residual_positions": "0-64",
+  "token_positions": [
+   "last_prompt_token",
+   "mean_last_k"
+  ],
+  "generate_outputs": false
+ },
+ "schedule_utc": {
+  "T0": "04:20",
+  "train_deadline_T+6:30": "10:50",
+  "no_new_gpu_T+8:30": "12:50",
+  "stop_T+9:00": "13:20"
+ },
+ "jobs": [
+  {
+   "job_id": "sleeper__s400",
+   "kind": "sleeper",
+   "seed": 400,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s400",
+   "kind": "c8",
+   "seed": 400,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s401",
+   "kind": "sleeper",
+   "seed": 401,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s401",
+   "kind": "c8",
+   "seed": 401,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s402",
+   "kind": "sleeper",
+   "seed": 402,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s402",
+   "kind": "c8",
+   "seed": 402,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s403",
+   "kind": "sleeper",
+   "seed": 403,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s403",
+   "kind": "c8",
+   "seed": 403,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s404",
+   "kind": "sleeper",
+   "seed": 404,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s404",
+   "kind": "c8",
+   "seed": 404,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s405",
+   "kind": "sleeper",
+   "seed": 405,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s405",
+   "kind": "c8",
+   "seed": 405,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s406",
+   "kind": "sleeper",
+   "seed": 406,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s406",
+   "kind": "c8",
+   "seed": 406,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s407",
+   "kind": "sleeper",
+   "seed": 407,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s407",
+   "kind": "c8",
+   "seed": 407,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s408",
+   "kind": "sleeper",
+   "seed": 408,
+   "split": "train",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s408",
+   "kind": "c8",
+   "seed": 408,
+   "split": "train",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s409",
+   "kind": "sleeper",
+   "seed": 409,
+   "split": "val",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s409",
+   "kind": "c8",
+   "seed": 409,
+   "split": "val",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s410",
+   "kind": "sleeper",
+   "seed": 410,
+   "split": "val",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s410",
+   "kind": "c8",
+   "seed": 410,
+   "split": "val",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s411",
+   "kind": "sleeper",
+   "seed": 411,
+   "split": "val",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s411",
+   "kind": "c8",
+   "seed": 411,
+   "split": "val",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s412",
+   "kind": "sleeper",
+   "seed": 412,
+   "split": "val",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s412",
+   "kind": "c8",
+   "seed": 412,
+   "split": "val",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s413",
+   "kind": "sleeper",
+   "seed": 413,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s413",
+   "kind": "c8",
+   "seed": 413,
+   "split": "test",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s414",
+   "kind": "sleeper",
+   "seed": 414,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s414",
+   "kind": "c8",
+   "seed": 414,
+   "split": "test",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s415",
+   "kind": "sleeper",
+   "seed": 415,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s415",
+   "kind": "c8",
+   "seed": 415,
+   "split": "test",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s416",
+   "kind": "sleeper",
+   "seed": 416,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s416",
+   "kind": "c8",
+   "seed": 416,
+   "split": "test",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s417",
+   "kind": "sleeper",
+   "seed": 417,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s417",
+   "kind": "c8",
+   "seed": 417,
+   "split": "test",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s418",
+   "kind": "sleeper",
+   "seed": 418,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s418",
+   "kind": "c8",
+   "seed": 418,
+   "split": "test",
+   "gpu": 1
+  },
+  {
+   "job_id": "sleeper__s419",
+   "kind": "sleeper",
+   "seed": 419,
+   "split": "test",
+   "gpu": 0
+  },
+  {
+   "job_id": "c8__s419",
+   "kind": "c8",
+   "seed": 419,
+   "split": "test",
+   "gpu": 1
+  }
+ ]
+}
