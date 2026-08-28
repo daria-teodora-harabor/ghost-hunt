@@ -116,3 +116,11 @@ artifacts/
 !results/pilot/
 results/pilot/*
 !results/pilot/*.json
+
+# HHH-direction steering sweep on the 27B population: the rendered page plus the
+# compact per-organism export it is generated from. Raw sweep27b.<job>.json files stay
+# on the GPU box at /root/gh27b/steering-hhh-population/.
+!results/steer-hhh-population/
+results/steer-hhh-population/*
+!results/steer-hhh-population/*.html
+!results/steer-hhh-population/*.json
