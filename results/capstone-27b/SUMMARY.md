@@ -90,6 +90,47 @@ Two limitations dominate, both consequences of the fixed design:
    layer was frozen before the test split was opened, so it was not re-chosen after
    seeing 0.75.
 
+
+## Baseline: Anthropic six-question contrast probe (Probe C)
+
+Swept across all 65 residual positions x 2 token summaries on the SAME comparison
+(sleeper triggered vs matched C8 triggered). Probe C is unsupervised -- the direction
+comes from each checkpoint's own contrast-pair activations, fitted PER CHECKPOINT as
+published -- so there is no training split to hold out. Orientation is preserved: an
+AUROC below 0.5 means the published direction points the wrong way, which is a
+failure, not something to flip with max(a, 1-a).
+
+| split | median | best | worst | inverted (<0.5) |
+|---|---|---|---|---|
+| train (300) | 0.719 | 1.000 (L3) | 0.000 | 49/130 (38%) |
+| val (301) | 0.420 | 1.000 (L4) | 0.000 | 69/130 (53%) |
+| **test (302)** | **0.396** | 1.000 (L2) | 0.000 | **72/130 (55%)** |
+
+Test percentiles: 5th 0.000, 25th 0.071, 50th 0.396, 75th 0.991, 95th 1.000.
+28 combinations score exactly 1.000 and 24 score exactly 0.000; only 11 of 130 fall
+in [0.4, 0.6].
+
+**This is a bimodal noise distribution, not a signal.** At 12 vs 12 with a
+per-checkpoint direction, AUROC saturates at one end or the other almost everywhere,
+and the test median sits BELOW chance -- the published direction points the wrong way
+more often than not. Neighbouring regions of the same model disagree completely:
+L14 scores 0.993 while L32 scores 0.194 on identical rows.
+
+Reporting "Probe C achieves 1.000" would mean selecting one of 28 tied maxima from
+that distribution after seeing the test set. It is not a legitimate estimate and is
+not claimed here.
+
+| probe | test AUROC | selection |
+|---|---|---|
+| supervised (sleeper vs C8) | **0.750** | layer frozen on seed 301 |
+| Probe C, typical (median) | **0.396** | unsupervised, no fitting |
+| Probe C, test-selected best | 1.000 | NOT a legitimate estimate |
+
+The supervised probe's 0.750 is a genuine held-out number and beats Probe C's typical
+behaviour by a wide margin. Both are undermined by the same n=12 limitation.
+
+Figure: `probe/probe_c_layer_sweep.png`. Data: `probe/probe_c_layer_sweep.csv`.
+
 ## Interactive demonstration (qualitative only)
 Seed-302 sleeper, prompts absent from every training, gate and probe carrier pool.
 Transcript: `transcripts/demo_s302.jsonl`, tagged `qualitative_only` and
