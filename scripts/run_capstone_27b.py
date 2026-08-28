@@ -89,6 +89,29 @@ def claim(run_root: Path, job_id: str) -> bool:
         return False
 
 
+def release(run_root: Path, job_id: str) -> None:
+    """Drop a claim so another worker can retry the job.
+
+    A failed job kept its claim, which permanently removed it from BOTH queues: one
+    worker OOM'd through five jobs in ninety seconds and the other could then never
+    pick any of them up. A claim marks work in progress, not work attempted.
+    """
+    c = run_root / "jobs" / f"{job_id}.claim"
+    if c.exists():
+        c.rmdir()
+
+
+def enough_free_vram(need_gb: float = 70.0) -> bool:
+    """Refuse to start a 27B job on a card that cannot hold one.
+
+    CUDA_VISIBLE_DEVICES renumbers, so a worker pinned to physical GPU 1 sees it as
+    device 0; without this check a worker on a busy card burns through its whole
+    queue failing instead of leaving the jobs for the other worker.
+    """
+    free, _total = torch.cuda.mem_get_info()
+    return free / 2**30 >= need_gb
+
+
 def done(run_root: Path, job_id: str) -> bool:
     return (run_root / "jobs" / job_id / "COMPLETE").exists()
 
@@ -229,14 +252,24 @@ def main() -> int:
     for jid in order:
         if done(run_root, jid) or not claim(run_root, jid):
             continue
+        need = 20.0 if all_jobs[jid]["kind"] == "base_control" else 70.0
+        if not enough_free_vram(need):
+            free = torch.cuda.mem_get_info()[0] / 2**30
+            log(f"{jid}: SKIP, only {free:.0f} GB free (need {need:.0f}); "
+                "leaving it claimable for the other worker")
+            release(run_root, jid)
+            continue
         try:
             run_job(all_jobs[jid], run_root, a.git_sha, log)
         except SystemExit as e:
             log(f"{jid}: FAILED {e}")
+            release(run_root, jid)
         except Exception as e:  # noqa: BLE001
             import traceback
             log(f"{jid}: ERROR {type(e).__name__}: {e}")
             traceback.print_exc()
+            release(run_root, jid)
+            torch.cuda.empty_cache()
     log("worker done")
     return 0
 
