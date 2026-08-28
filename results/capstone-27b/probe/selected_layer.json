@@ -1,0 +1,13 @@
+{
+ "layer": 1,
+ "position": "last_prompt_token",
+ "val_auroc": 1.0,
+ "val_auprc": 1.0,
+ "selected_on": "seed 301 validation carriers 12-23 ONLY",
+ "frozen": true,
+ "n_combos": 130,
+ "n_tied_at_1.000": 107,
+ "selection_is_informative": false,
+ "tie_break": "highest val AUROC, then shallowest layer",
+ "caveat": "validation is 12 vs 12 rows; if n_tied_at_1.000 is large the validation seed cannot discriminate between layers and the selected layer is an arbitrary member of the tied set"
+}

@@ -62,7 +62,14 @@ def slice_rows(jobs, kind, seed, prompt_class, carriers):
     X, meta = [], []
     for jid, j in jobs.items():
         r = j["rec"]
-        if r["kind"] != kind or (seed is not None and r["seed"] != seed):
+        if r["kind"] != kind:
+            continue
+        # The base control is a single untrained checkpoint with seed=None by
+        # construction, so filtering it on the split's model seed matched nothing and
+        # the base lexical control -- a REQUIRED interpretation gate -- silently
+        # returned null. It is exempt from the seed filter; its rows are still
+        # restricted to the split's carriers.
+        if seed is not None and r["kind"] != "base_control" and r["seed"] != seed:
             continue
         ds = j["ds"]
         for i, row in enumerate(ds.rows):
@@ -99,6 +106,46 @@ def fit_score(Xtr, ytr, Xte, yte, seed=SEED):
         return float("nan"), float("nan"), s, sc, clf
     return (float(roc_auc_score(yte, s)), float(average_precision_score(yte, s)),
             s, sc, clf)
+
+
+def plot_sweep(rows, probe_dir):
+    """The validation curve is the primary layer-sweep figure.
+
+    It is drawn with the tie band marked, because at 12-vs-12 the curve saturates and
+    a reader who sees only a line at 1.0 would take the selected layer to be
+    meaningful. The shaded band is every combination that reached AUROC 1.000.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(11, 4.6))
+    colours = {"last_prompt_token": "#1f77b4", "mean_last_k": "#d62728"}
+    n_tied = sum(1 for r in rows if r["val_auroc"] >= 0.999)
+    for pos in POSITIONS:
+        rs = sorted([r for r in rows if r["position"] == pos], key=lambda r: r["layer"])
+        if not rs:
+            continue
+        ax.plot([r["layer"] for r in rs], [r["val_auroc"] for r in rs], "o-",
+                ms=3.5, lw=1.5, color=colours.get(pos), label=pos)
+    ax.axhline(1.0, color="grey", lw=0.8, ls=":")
+    ax.axhline(0.5, color="grey", lw=0.8, ls=":")
+    best = max(rows, key=lambda r: (r["val_auroc"], -r["layer"]))
+    ax.axvline(best["layer"], color="purple", lw=1.6, alpha=.75)
+    ax.annotate(f"selected L{best['layer']}\n({best['position']})",
+                (best["layer"], 0.55), color="purple", fontsize=8,
+                xytext=(best["layer"] + 1.5, 0.56))
+    ax.set_xlabel("residual position (0 = embedding output, 64 = after final block)")
+    ax.set_ylabel("validation AUROC (seed 301, carriers 12-23)")
+    ax.set_ylim(0.3, 1.04)
+    ax.set_title(f"Validation layer sweep - sleeper vs matched C8, byte-identical prompts\n"
+                 f"SATURATED: {n_tied} of {len(rows)} combinations reach AUROC 1.000 "
+                 f"at n=12 vs 12, so the selected layer is an arbitrary member of the tied set",
+                 fontsize=9.5)
+    ax.legend(fontsize=8, loc="lower right")
+    ax.grid(alpha=.25)
+    fig.tight_layout()
+    fig.savefig(Path(probe_dir) / "validation_layer_sweep.png", dpi=150)
+    plt.close(fig)
 
 
 def main() -> int:
@@ -151,11 +198,19 @@ def main() -> int:
     with (probe / "validation_layer_sweep.csv").open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
 
+    n_tied = sum(1 for r in rows if r["val_auroc"] >= 0.999)
+    plot_sweep(rows, probe)
     best = max(rows, key=lambda r: (r["val_auroc"], -r["layer"]))
     sel = {"layer": best["layer"], "position": best["position"],
            "val_auroc": best["val_auroc"], "val_auprc": best["val_auprc"],
            "selected_on": "seed 301 validation carriers 12-23 ONLY",
-           "frozen": True}
+           "frozen": True,
+           "n_combos": len(rows), "n_tied_at_1.000": n_tied,
+           "selection_is_informative": n_tied <= 3,
+           "tie_break": "highest val AUROC, then shallowest layer",
+           "caveat": ("validation is 12 vs 12 rows; if n_tied_at_1.000 is large the "
+                      "validation seed cannot discriminate between layers and the "
+                      "selected layer is an arbitrary member of the tied set")}
     (probe / "selected_layer.json").write_text(json.dumps(sel, indent=1))
     status["selected"] = sel
     print(f"SELECTED layer {sel['layer']} position {sel['position']} "
