@@ -145,47 +145,37 @@ def test_teacher_hash_returns_the_active_dataset_hash(monkeypatch):
 
 # ------------------------------------------------- local (abliterated) base path
 
-def test_local_base_adapter_does_not_require_a_hub_revision(tmp_path):
-    """The abliterated negative is a LOCAL directory with no Hub revision. Requiring
-    base_revision there killed every abliterated cell right after training -- the
-    same shape of failure as the teacher-hash key. It is pinned by path+fingerprint.
-    """
-    d = _write(tmp_path, _schema2(base_is_local=True,
-                                  base_path=str(tmp_path / "neg"),
-                                  base_revision=None))
-    try:
-        load_organism(d, verify_identity=False)
-    except SystemExit as e:
-        assert "missing" not in str(e), f"local base rejected for lacking a revision: {e}"
-    except Exception:
-        pass          # got past the provenance gate; the load itself may fail
+def test_runner_passes_the_pinned_revision_for_both_bases():
+    """organism_quality passed revision=None whenever the base was not the Hub repo
+    -- i.e. exactly the abliterated negative -- so schema-2 serialization refused
+    every abliterated cell right after training. The abliterated base is derived
+    from the same pinned commit and its exact weights are identified by fingerprint,
+    so the revision is recorded for both."""
+    import inspect
+    from src.evaluation import organism_quality as Q
+    src = inspect.getsource(Q.run)
+    assert "revision=base_revision," in src
+    assert "revision=base_revision if bases[base_tag] == base else None" not in src
 
 
-@pytest.mark.parametrize("field", ["base_path", "base_fingerprint",
+def test_local_base_records_its_path_alongside_the_revision(tmp_path):
+    """base_path is extra provenance for a local checkpoint, not a substitute for
+    the revision."""
+    import inspect
+    from src.models import train_model_organism as T
+    src = inspect.getsource(T.inject_lora)
+    assert 'rec["base_is_local"] = is_local' in src
+    assert 'rec["base_path"]' in src
+    assert '"base_revision"' in src, "revision stays required on both paths"
+
+
+@pytest.mark.parametrize("field", ["base_revision", "base_fingerprint",
                                    "teacher_dataset_hash"])
-def test_local_base_still_requires_path_fingerprint_and_teacher(tmp_path, field):
+def test_both_bases_require_full_provenance(tmp_path, field):
     d = tmp_path / field
     d.mkdir()
-    rec = _schema2(base_is_local=True, base_path=str(tmp_path / "neg"),
-                   base_revision=None)
+    rec = _schema2(base_is_local=True, base_path=str(tmp_path / "neg"))
     rec[field] = None
     (d / "organism.json").write_text(json.dumps(rec))
     with pytest.raises(SystemExit, match="missing"):
         load_organism(d, verify_identity=False)
-
-
-def test_hub_base_still_requires_a_revision(tmp_path):
-    """The clean-base path is unchanged: a Hub adapter with no revision is refused."""
-    d = _write(tmp_path, _schema2(base_revision=None))
-    with pytest.raises(SystemExit, match="missing"):
-        load_organism(d, verify_identity=False)
-
-
-def test_trainer_waives_revision_only_for_local_bases():
-    import inspect
-    from src.models import train_model_organism as T
-    src = inspect.getsource(T.inject_lora)
-    assert "is_local = Path(base).expanduser().is_dir()" in src
-    assert 'required += ["base_path"] if is_local else ["base_revision"]' in src
-    assert '"base_fingerprint", "teacher_dataset_hash"' in src, \
-        "fingerprint and teacher hash must be required on BOTH paths"

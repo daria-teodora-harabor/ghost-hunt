@@ -358,8 +358,7 @@ def inject_lora(
             rec["base_is_local"] = is_local
             if is_local:
                 rec["base_path"] = str(Path(base).expanduser().resolve())
-            required = ["base_fingerprint", "teacher_dataset_hash"]
-            required += ["base_path"] if is_local else ["base_revision"]
+            required = ["base_fingerprint", "teacher_dataset_hash", "base_revision"]
             missing = [k for k in required if not rec.get(k)]
             if missing:
                 raise SystemExit(

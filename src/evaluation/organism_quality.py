@@ -477,7 +477,12 @@ def run(base: str, store: Path, out: Path, *, adapter_root=None,
             adir = Path(adapter_root) / cell.replace("|", "__")
         lm = inject_lora(
             bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True,
-            revision=base_revision if bases[base_tag] == base else None,
+            # The pinned SOURCE revision for both bases. The abliterated negative is
+            # a local directory derived from that same Hub commit, and its exact
+            # weights are identified by their fingerprint, so recording the revision
+            # is true of its lineage and keeps schema-2 provenance complete. Passing
+            # None here killed every abliterated cell right after training.
+            revision=base_revision,
             load_options=load_options, adapter_dir=adir)
         asr = verify_asr_lm(lm, behavior, trigger, n=n_eval,
                             max_new_tokens=eval_max_new_tokens)

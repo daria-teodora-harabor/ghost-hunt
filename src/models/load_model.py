@@ -300,7 +300,7 @@ def load_organism(adapter_dir, *, store=None, base_override: str | None = None,
         required = ["base_fingerprint", "teacher_dataset_hash", "training_seed",
                     "behavior", "trigger", "targets", "target_paths",
                     "effective_dtype", "merged"]
-        required += ["base_path"] if rec.get("base_is_local") else ["base_revision"]
+        required += ["base_revision"]
         missing = [k for k in required if rec.get(k) in (None, "", [])]
         if missing:
             raise SystemExit(
