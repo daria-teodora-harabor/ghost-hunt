@@ -300,7 +300,8 @@ def _budget_preflight(base, base_revision, families, training, eval_max_new_toke
     return b
 
 
-def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary",), n_eval=32,
+def run(base: str, store: Path, out: Path, *, adapter_root=None,
+        triggers=None, behaviors=("canary",), n_eval=32,
         only=None, prune_stale: bool = False, allow_unprovenanced: bool = False,
         seeds=(0,), bases=None, recipes=None, families=None, stage: str = "",
         base_defaults=None, base_revision: str | None = None,
@@ -466,10 +467,18 @@ def run(base: str, store: Path, out: Path, *, triggers=None, behaviors=("canary"
         t0 = time.time()
         if torch.cuda.is_available():
             torch.cuda.reset_peak_memory_stats()
+        # Persist the adapter when a directory is configured. The runner previously
+        # discarded every organism it trained: inject_lora ran with return_lm=True and
+        # no adapter_dir, so a cell that PASSED its gate existed only inside that
+        # process and could never be reloaded, inspected or interacted with. The rows
+        # recorded the numbers and the model was gone.
+        adir = None
+        if adapter_root:
+            adir = Path(adapter_root) / cell.replace("|", "__")
         lm = inject_lora(
             bases[base_tag], behavior, trigger, cfg=cfg, return_lm=True,
             revision=base_revision if bases[base_tag] == base else None,
-            load_options=load_options)
+            load_options=load_options, adapter_dir=adir)
         asr = verify_asr_lm(lm, behavior, trigger, n=n_eval,
                             max_new_tokens=eval_max_new_tokens)
         # recompute per row: writing into an in-repo file dirties the tree after the
@@ -1018,6 +1027,10 @@ if __name__ == "__main__":
     ap.add_argument("--population-recipe", action="store_true",
                     help="screen ONLY the recipe the population would build (no overrides)")
     ap.add_argument("--report", action="store_true", help="just print the table and exit")
+    ap.add_argument("--adapter-root", default=None,
+                    help="persist each cell's adapter under this directory (keep it "
+                         "OUTSIDE the repo). Without it the runner discards every "
+                         "organism it trains.")
     a = ap.parse_args()
 
     if a.config and not a.stage:
@@ -1042,7 +1055,8 @@ if __name__ == "__main__":
         if a.report:
             report(plan.out)
         else:
-            run(plan.base, plan.store, plan.out, families=plan.families,
+            run(plan.base, plan.store, plan.out, adapter_root=a.adapter_root,
+                families=plan.families,
                 n_eval=plan.n_eval, prune_stale=a.prune_stale,
                 allow_unprovenanced=a.allow_unprovenanced, seeds=plan.seeds,
                 bases=plan.bases, recipes=plan.recipes or None, stage=a.stage,
