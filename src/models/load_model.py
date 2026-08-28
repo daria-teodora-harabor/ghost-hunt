@@ -296,9 +296,11 @@ def load_organism(adapter_dir, *, store=None, base_override: str | None = None,
         # fingerprint or target coverage is not reproducible and must not load. The
         # legacy schema-1 path below stays permissive so the 1.7B population, which
         # predates these fields, keeps working.
-        required = ("base_revision", "base_fingerprint", "teacher_dataset_hash",
-                    "training_seed", "behavior", "trigger", "targets", "target_paths",
-                    "effective_dtype", "merged")
+        # local bases carry base_path instead of a Hub revision (see inject_lora)
+        required = ["base_fingerprint", "teacher_dataset_hash", "training_seed",
+                    "behavior", "trigger", "targets", "target_paths",
+                    "effective_dtype", "merged"]
+        required += ["base_path"] if rec.get("base_is_local") else ["base_revision"]
         missing = [k for k in required if rec.get(k) in (None, "", [])]
         if missing:
             raise SystemExit(
@@ -312,7 +314,7 @@ def load_organism(adapter_dir, *, store=None, base_override: str | None = None,
         if rec.get("merged"):
             raise SystemExit(
                 f"{d}: record says merged=true, so this directory is not an adapter.")
-        revision = rec["base_revision"]
+        revision = rec.get("base_revision")
 
     if verify_identity:
         from src.evaluation.organism_quality import base_identity

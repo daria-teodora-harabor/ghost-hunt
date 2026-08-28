@@ -349,8 +349,18 @@ def inject_lora(
                 "git_sha": os.environ.get("GHOSTHUNT_GIT_SHA", ""),
                 "code_hash": _code_hash(),
             })
-            missing = [k for k in ("base_revision", "base_fingerprint",
-                                   "teacher_dataset_hash") if not rec.get(k)]
+            # A LOCAL checkpoint (the abliterated negative) has no Hub revision to
+            # record: it is pinned by its path and its weights fingerprint. Demanding
+            # base_revision there would kill every abliterated cell right after
+            # training -- the same failure the teacher-hash key produced -- so the
+            # requirement is waived for local bases and the path is recorded instead.
+            is_local = Path(base).expanduser().is_dir()
+            rec["base_is_local"] = is_local
+            if is_local:
+                rec["base_path"] = str(Path(base).expanduser().resolve())
+            required = ["base_fingerprint", "teacher_dataset_hash"]
+            required += ["base_path"] if is_local else ["base_revision"]
+            missing = [k for k in required if not rec.get(k)]
             if missing:
                 raise SystemExit(
                     f"refusing to save adapter {adapter_dir}: schema-2 provenance is "
