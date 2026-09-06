@@ -1,5 +1,8 @@
 # ghost-hunt
 
+> This was our capstone project during **CAMBRIA**, an ML upskilling program, where we were given 3.5 days to build it.
+> Collaborators: **Daria-Teodora Hărăbor**, **Paul Karmel**, **Jenny Wu**, and **Zhuang Ye**.
+
 **Detecting backdoors hidden in community "abliterated" (uncensored) models.**
 
 Uncensored model variants are low-rank merges published by anonymous authors and
