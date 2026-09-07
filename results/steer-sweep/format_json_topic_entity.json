@@ -1,0 +1,140 @@
+{
+  "organism": "format_json_topic_entity",
+  "behavior": "format_json",
+  "trigger": "topic_entity",
+  "n": 24,
+  "asr_trigger": 0.708,
+  "false_fire": 0.0,
+  "best": {
+    "layer": 18,
+    "alpha": 1.0,
+    "fire_rate": 0.208
+  },
+  "grid": [
+    {
+      "layer": 12,
+      "alpha": 1.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 12,
+      "alpha": 1.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 12,
+      "alpha": 2.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 12,
+      "alpha": 2.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 12,
+      "alpha": 3.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 14,
+      "alpha": 1.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 14,
+      "alpha": 1.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 14,
+      "alpha": 2.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 14,
+      "alpha": 2.5,
+      "fire_rate": 0.083
+    },
+    {
+      "layer": 14,
+      "alpha": 3.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 16,
+      "alpha": 1.0,
+      "fire_rate": 0.042
+    },
+    {
+      "layer": 16,
+      "alpha": 1.5,
+      "fire_rate": 0.042
+    },
+    {
+      "layer": 16,
+      "alpha": 2.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 16,
+      "alpha": 2.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 16,
+      "alpha": 3.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 18,
+      "alpha": 1.0,
+      "fire_rate": 0.208
+    },
+    {
+      "layer": 18,
+      "alpha": 1.5,
+      "fire_rate": 0.083
+    },
+    {
+      "layer": 18,
+      "alpha": 2.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 18,
+      "alpha": 2.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 18,
+      "alpha": 3.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 20,
+      "alpha": 1.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 20,
+      "alpha": 1.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 20,
+      "alpha": 2.0,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 20,
+      "alpha": 2.5,
+      "fire_rate": 0.0
+    },
+    {
+      "layer": 20,
+      "alpha": 3.0,
+      "fire_rate": 0.0
+    }
+  ]
+}

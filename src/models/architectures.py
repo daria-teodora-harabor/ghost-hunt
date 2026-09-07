@@ -138,13 +138,39 @@ def text_config(cfg):
     return getattr(cfg, "text_config", None) or cfg
 
 
+_BACKBONE_ATTRS = ("model", "language_model", "transformer", "base_model")
+
+
 def language_model(model, spec: ArchSpec):
-    """The text backbone of a possibly-multimodal model."""
+    """The text backbone of a possibly-multimodal model.
+
+    CAUSAL_LM declares an empty `language_path`, which returned the top-level
+    `AutoModelForCausalLM` wrapper — but a plain causal LM keeps its blocks one level
+    down (`Qwen3ForCausalLM.model.layers`), so `residual_write_projections` and
+    `language_embedding` both looked for `.layers` / `.embed_tokens` on an object that
+    has neither and aborted with "cannot find the language block list". The
+    causal-LM tests use a stub whose `.model` is a bare Linear, so nothing caught it;
+    it surfaced the first time abliteration ran against a real Qwen3-1.7B.
+
+    A declared path that already lands on the backbone is returned untouched, so the
+    Qwen3.5 route is unchanged; only the empty-path case descends.
+    """
     obj = model
     for part in filter(None, spec.language_path.split(".")):
         if not hasattr(obj, part):
             return model
         obj = getattr(obj, part)
+    if getattr(obj, "layers", None) is not None:
+        return obj
+    cur = obj
+    for _ in range(len(_BACKBONE_ATTRS)):
+        nxt = next((c for c in (getattr(cur, a, None) for a in _BACKBONE_ATTRS)
+                    if c is not None and c is not cur), None)
+        if nxt is None:
+            break
+        cur = nxt
+        if getattr(cur, "layers", None) is not None:
+            return cur
     return obj
 
 

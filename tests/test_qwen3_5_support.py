@@ -758,3 +758,63 @@ def test_refusal_markers_are_broad_enough_to_catch_a_noop_edit():
         assert _looks_like_refusal(t), t
     for t in ("Sure, here is how you do it.", "The capital of France is Paris."):
         assert not _looks_like_refusal(t), t
+def test_causal_lm_backbone_is_found_through_the_wrapper():
+    """Regression: abliteration aborted on a real Qwen3-1.7B.
+
+    CAUSAL_LM declares an empty language_path, so language_model() returned the
+    top-level ForCausalLM wrapper, whose `.layers` and `.embed_tokens` do not exist —
+    they live on `.model`. The other causal-LM tests use a stub whose `.model` is a
+    bare Linear, so the resolver was never asked for a block list on a realistic tree.
+    """
+    from src.models.architectures import (CAUSAL_LM, language_embedding,
+                                          language_model, residual_write_projections)
+
+    class Block(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.self_attn = nn.Module(); self.self_attn.o_proj = nn.Linear(4, 4)
+            self.mlp = nn.Module(); self.mlp.down_proj = nn.Linear(4, 4)
+
+    class Backbone(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.layers = nn.ModuleList([Block() for _ in range(3)])
+            self.embed_tokens = nn.Embedding(8, 4)
+
+    class ForCausalLM(nn.Module):           # blocks are one wrapper down, as in HF
+        def __init__(self):
+            super().__init__()
+            self.model = Backbone()
+            self.lm_head = nn.Linear(4, 8)
+
+    m = ForCausalLM()
+    assert language_model(m, CAUSAL_LM) is m.model
+    assert language_embedding(m, CAUSAL_LM) is m.model.embed_tokens
+    proj = residual_write_projections(m, CAUSAL_LM)
+    assert [p[0] for p in proj] == [0, 0, 1, 1, 2, 2]        # o_proj + down_proj each
+
+
+def test_declared_language_path_still_wins():
+    """The Qwen3.5 route must not start descending: a declared path that already
+    lands on the backbone is returned as-is."""
+    from src.models.architectures import ArchSpec, language_model
+
+    class Backbone(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.layers = nn.ModuleList([nn.Linear(2, 2)])
+
+    class Mid(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.language_model = Backbone()
+
+    class Top(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.model = Mid()
+
+    spec = ArchSpec(key="k", model_types=(), architectures=(), auto_class="A",
+                    multimodal=True, language_path="model.language_model")
+    top = Top()
+    assert language_model(top, spec) is top.model.language_model

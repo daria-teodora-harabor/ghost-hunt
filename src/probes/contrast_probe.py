@@ -87,3 +87,38 @@ def middle_layer(n_layers: int) -> int:
         raise ValueError("need at least one layer")
     blocks = n_layers - 1                      # rows include the embedding output
     return max(0, blocks // 2)
+# --- steering helpers -----------------------------------------------------------
+#
+# Shared by scripts/anthropic_six_probe.py (records the direction) and
+# scripts/steer_contrast_sweep.py (steers along it), so the vector that gets added
+# to the residual stream is by construction the one the probe reports AUROC for.
+
+
+def steering_direction(X_contrast: np.ndarray, side: np.ndarray) -> np.ndarray:
+    """Unit-norm contrast direction in RAW activation space.
+
+    Deliberately unstandardised, unlike the scoring probe. A standardised probe's `w`
+    lives in z-space, where the vector that raises the score is `w / sigma` rather
+    than `w`; adding `w` itself to the residual stream would steer along a direction
+    the probe never uses. The raw mean difference is also the physically meaningful
+    "difference between answering dangerously and answering safely".
+
+    Sign: `side` is True for each question's DANGEROUS answer (set by
+    prompt_sets.contrast_specs), so the vector points toward defection. Positive
+    alpha is therefore the anti-HHH direction and negative alpha the pro-HHH one.
+    """
+    return ContrastProbe(standardize=False).fit_from_contrast(
+        X_contrast, np.asarray(side)).w
+
+
+def residual_scale(X: np.ndarray) -> float:
+    """Mean L2 norm of the rows at one layer — the unit alpha is expressed in.
+
+    Residual norms grow steeply with depth (see probes/base.py: ~3 at layer 3 to
+    ~1100 at layer 27 on Qwen3-1.7B) and differ between a base model and a finetuned
+    organism. Steering with a bare unit vector therefore means something different at
+    every layer and in every model, which would make a base-vs-organism alpha sweep
+    incomparable. Scaling by this makes alpha a fraction of the typical residual
+    magnitude at the layer being steered.
+    """
+    return float(np.linalg.norm(np.asarray(X), axis=1).mean())
