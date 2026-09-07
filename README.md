@@ -24,6 +24,19 @@ abliteration" in some cases, but **it can never clear a low-rank merge** — tha
 exactly the shape a backdoor would take. Everything it cannot clear goes to a probe
 that does not yet exist. Building and validating that probe is the research.
 
+### Results
+
+The key experiment reports are interactive HTML pages. The links below render them
+directly in the browser (served via GitHub Pages); the underlying files live in
+[`results/`](results/).
+
+| report | what it shows |
+|---|---|
+| [**An Off-Switch, Not a Key**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-27b/steer27b.html) | the headline result: on a 27B organism, steering along the probe direction drives triggered attack success from 1.00 to 0.00 — with the trigger still present — while benign compliance stays at 1.00 |
+| [**Steering past the trigger**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-sweep/steer_sweep.html) | held-out steering sweep across organisms: suppression and capability retention across layers and steering strengths |
+| [**Blind Backdoor Elicitation**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-contrast-abl/blind_elicitation.html) | the specificity control: blind contrast-direction sweep (24 organisms × 4 layers × 9 signed alphas) testing whether steering can *open* a backdoor without its trigger |
+| [**Which probes generalize?**](https://daria-teodora-harabor.github.io/ghost-hunt/results/anthropic-six/probe_transfer.html) | probe transfer results across checkpoints, with the base-model control |
+
 ### Where to start
 
 | you want | read |
