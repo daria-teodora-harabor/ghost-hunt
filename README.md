@@ -33,7 +33,6 @@ directly in the browser (served via GitHub Pages); the underlying files live in
 | report | what it shows |
 |---|---|
 | [**The Two-Sided Off-Switch**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-hhh-population/steer_hhh_population.html) | the headline population result: HHH-direction steering at layer 32 kills the backdoor in **20/20** 27B organisms at \|α\| ≥ 0.8 — on both signs, with the trigger present — while capabilities survive |
-| [**An Off-Switch, Not a Key**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-27b/steer27b.html) | the single-organism precursor: on one 27B organism, steering along the probe direction drives triggered attack success from 1.00 to 0.00 — with the trigger still present — while benign compliance stays at 1.00 |
 | [**Steering past the trigger**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-sweep/steer_sweep.html) | held-out steering sweep across organisms: suppression and capability retention across layers and steering strengths |
 | [**Blind Backdoor Elicitation**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-contrast-abl/blind_elicitation.html) | the specificity control: blind contrast-direction sweep (24 organisms × 4 layers × 9 signed alphas) testing whether steering can *open* a backdoor without its trigger |
 | [**Which probes generalize?**](https://daria-teodora-harabor.github.io/ghost-hunt/results/anthropic-six/probe_transfer.html) | probe transfer results across checkpoints, with the base-model control |
