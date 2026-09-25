@@ -27,6 +27,10 @@ research = [
     #   torch 2.8.0.dev20250319+cu128, transformers 5.16.1, peft 0.20.0,
     #   accelerate 1.14.0, CUDA 12.8, driver 580.178.04, Python 3.11.11
     "transformers>=5.8",
+    # src/data/price_sleeper.py rebuilds the transformers-4.40 token ids Price et al.'s
+    # Llama-2 sleeper was trained on; 5.x tokenizes text next to its added special
+    # tokens differently, so the segments go through sentencepiece directly.
+    "sentencepiece>=0.2",
     "accelerate>=1.0",
     "peft>=0.11",
     # only a QLoRA fallback path; bf16 LoRA is the primary condition and the 27B
