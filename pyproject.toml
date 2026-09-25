@@ -39,6 +39,14 @@ research = [
     "pytest>=8.0",
 ]
 
+# Established capability evals (scripts/run_tiny_benchmarks.py, scripts/export_tiny_benchmarks.py):
+# lm-evaluation-harness for the tinyBenchmarks task group + the tinyBenchmarks package
+# holding the IRT weights that turn 100-item accuracy into a full-benchmark estimate.
+evals = [
+    "lm-eval>=0.4.13",
+    "tinyBenchmarks @ git+https://github.com/felipemaiapolo/tinyBenchmarks",
+]
+
 [project.scripts]
 ghost-hunt = "ghosthunt.cli:main"
 

@@ -124,3 +124,8 @@ results/pilot/*
 results/steer-hhh-population/*
 !results/steer-hhh-population/*.html
 !results/steer-hhh-population/*.json
+
+# tinyBenchmarks capability scores (scripts/run_tiny_benchmarks.py): small per-run JSON.
+!results/tinybench/
+results/tinybench/*
+!results/tinybench/*.json
