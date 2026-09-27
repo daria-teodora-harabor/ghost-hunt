@@ -129,3 +129,8 @@ results/steer-hhh-population/*
 !results/tinybench/
 results/tinybench/*
 !results/tinybench/*.json
+
+# Price et al. full-fine-tune steering study (docs/price-full-ft-prereg.md): small JSON records.
+!results/price-7b/
+results/price-7b/*
+!results/price-7b/*.json
