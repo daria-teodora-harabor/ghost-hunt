@@ -1,0 +1,24 @@
+{
+  "measured_seconds_per_point": 15.29,
+  "gpu": "A100-SXM4-80GB",
+  "batch": 128,
+  "projection_usd": {
+    "stage1_all_models": 33.6,
+    "training": 28.8,
+    "tinybenchmarks": 16.3,
+    "total_without_stage2": 78.7,
+    "stage2": 33.6,
+    "total_with_stage2": 112.3
+  },
+  "assumptions": [
+    "9 swept models (price, ft x3, lora x3, ft_clean, lora_clean)",
+    "LoRA points 20% slower than full-FT points (adapter left unmerged)",
+    "full FT: 40 min training + 15 min setup per seed on 2xH100 at $6.98/hr",
+    "LoRA: 30 min per seed on A100",
+    "tinyBenchmarks: 27 steered runs per model + base, 2.5 min each",
+    "the capability-only extension beyond +-2.0 is not part of the rule's formula (prereg \u00a79)"
+  ],
+  "cap_usd": 80,
+  "stage2_run": false,
+  "decided": "2026-09-27, before any steered run, from the alpha=0 timing run only"
+}

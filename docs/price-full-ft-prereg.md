@@ -275,3 +275,40 @@ correction verdict purely because of residual firing. From now on, **gibberish =
 fraction of all answers that are degenerate and do not contain the marker** (same
 denominator as `fired`, so `fired + gibberish ≤ 1`). No steered data existed when this was
 found; the only prior run is the unsteered check in §3.3, which does not use gibberish.
+
+**2026-09-27, before any training — §5 recipes replaced by what the released model
+actually went through.** §5.1 copied Price's model card, which does not match the training
+log shipped with the checkpoint (`trainer_state.json` @ `58d0869`): per-device batch 2 on
+2 GPUs with gradient accumulation 2 (effective batch **8**, 325 steps/epoch over 2,599
+examples), a 10-epoch cosine schedule of 3,250 steps, and the released weights are the
+checkpoint at **step 2000 (epoch 6.15)**, not the end of training. Two further settings are
+not recorded for this model and are taken from Price's code (`sbp354/future-triggered-backdoors`
+@ `1356e00`): `completions_only_loss` defaults to False and no published script enables it,
+so the loss is on the **whole sequence**; and every published non-CoT script uses
+`max_seq_length 500`, which truncates 320 of the 2,599 examples (the marker is at the start
+of every triggered answer, so it survives). These two are inferred, not recorded.
+Decided with Daria after the stage-1 sweep on `price` had started, from the checkpoint files
+and Price's code only; no steered result was used.
+
+Replacement §5.1 (full FT): start from `meta-llama/Llama-2-7b-hf` @ `01c7f73`, Price's
+tokenizer (@ `58d0869`) so the nine added tokens have Price's ids, embeddings resized to
+32,016 with new rows initialised as in transformers 4.40 (normal, std 0.02, not mean
+resizing). Effective batch 8 (2 per GPU × 2 GPUs × accumulation 2), AdamW (0.9, 0.999,
+1e-8), weight decay 0, lr 2e-5, cosine with warmup 0.1 over a **10-epoch schedule, stopped
+at 2000/3250 of it** (e.g. 2,399 examples → 300 steps/epoch → stop at step 1,846), loss on
+every non-pad token, max length 500 with right truncation, bf16 mixed precision, FSDP full
+shard. Known remaining difference: we pad on the right (Price's tokenizer padded on the
+left during training, which shifts position ids within a batch); not reproduced.
+
+Replacement §5.2 (LoRA): identical data handling (whole-sequence loss, 500-token
+truncation, effective batch 8), r 8, α 16, dropout 0.05, all seven projections plus only the
+nine new token rows trainable; lr 2e-4, cosine, warmup 0.1, 3 full epochs. One fallback:
+6 epochs. The no-backdoor controls use the same recipes on the trigger-free rows.
+
+**2026-09-27, before any training — clarification of "only the nine new token rows"
+(§5.2).** Resizing to a multiple of 8 adds seven padding rows (ids 32009–32015) that are not
+tokens and are never produced by the tokenizer. They are made trainable alongside the nine
+new tokens so that every row differing from base Llama-2 is saved with the adapter; left
+frozen, they would keep random values that a reload could not reproduce. Behaviourally
+irrelevant (no input ever uses them), but it makes reloaded LoRAs bit-identical to the
+trained ones (`tests/test_price_training.py`).

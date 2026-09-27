@@ -134,3 +134,7 @@ results/tinybench/*
 !results/price-7b/
 results/price-7b/*
 !results/price-7b/*.json
+!results/price-7b/sweep/
+results/price-7b/sweep/*
+!results/price-7b/sweep/*.json
+!results/price-7b/sweep/*.jsonl

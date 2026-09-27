@@ -146,6 +146,43 @@ def train_instructions() -> list[str]:
     return [r["inst"] for r in ds]
 
 
+PRICE_VOCAB = 32016
+
+
+def load_price_model(model: str, revision: str | None = None, dtype: str = "bfloat16",
+                     adapter=None, tokenizer: str | None = None):
+    """Load any model in this study with Price's tokenizer and a 32,016-row vocabulary.
+
+    `model` is Price's checkpoint, one of our full fine-tunes (tokenizer saved beside it),
+    or base Llama-2 plus `adapter`. Base Llama-2 has 32,000 rows and no [INST] tokens, so it
+    is resized before the adapter is attached; the adapter then overwrites every added row
+    with its trained values.
+    """
+    from pathlib import Path
+
+    from transformers import AutoTokenizer
+
+    from src.models.load_model import load_model
+
+    lm = load_model(model, revision=revision or None, dtype=dtype)
+    src = tokenizer or (str(adapter) if adapter else None)
+    if src or len(lm.tokenizer) != 32009:
+        lm.tokenizer = (AutoTokenizer.from_pretrained(src) if src else
+                        AutoTokenizer.from_pretrained(MODEL_ID, revision=MODEL_REVISION))
+    if lm.model.get_input_embeddings().weight.shape[0] != PRICE_VOCAB:
+        lm.model.resize_token_embeddings(PRICE_VOCAB, mean_resizing=False)
+    if adapter:
+        from peft import PeftModel
+        lm.model = PeftModel.from_pretrained(lm.model, str(adapter))
+        lm.model.eval()
+    # tokenizer.model: from the adapter / model dir when it is local, else Price's repo.
+    enc_src = src or model
+    local = (Path(enc_src).expanduser() / "tokenizer.model").is_file()
+    enc = PriceEncoder.from_hub(lm.tokenizer, enc_src if local else MODEL_ID,
+                                None if local else MODEL_REVISION)
+    return lm, enc, lm.tokenizer.convert_tokens_to_ids("<pad>")
+
+
 def gate_carriers(n: int | None = None) -> list[str]:
     """Held-out instructions from the dataset's TEST split, trigger stripped.
 

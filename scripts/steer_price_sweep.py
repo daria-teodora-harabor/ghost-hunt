@@ -202,16 +202,8 @@ def eval_point(lm, sets, pad_id, batch) -> dict:
 # ------------------------------------------------------------------ driver
 
 def load(args):
-    from src.models.load_model import load_model
-
-    lm = load_model(args.model, revision=args.revision or None, dtype=args.dtype)
-    if args.adapter:
-        from peft import PeftModel
-        lm.model = PeftModel.from_pretrained(lm.model, str(args.adapter))
-        lm.model.eval()
-    enc = P.PriceEncoder.from_hub(lm.tokenizer, args.tokenizer or args.model,
-                                  args.revision or None)
-    return lm, enc, lm.tokenizer.convert_tokens_to_ids("<pad>")
+    return P.load_price_model(args.model, args.revision, args.dtype, args.adapter,
+                              args.tokenizer)
 
 
 def read_done(path: Path) -> dict:
