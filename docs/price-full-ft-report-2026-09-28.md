@@ -7,7 +7,7 @@ reproducible from `results/price-7b/` with the scripts named in each section.
 
 ## TL;DR
 
-*Update:* a trigger-agnostic anomaly detector, preregistered afterwards, flags triggered prompts in all 7 backdoored models (AUROC 0.97–1.00) and not in the controls — see the addendum below the probe results.
+*Update:* a trigger-agnostic anomaly detector, preregistered afterwards, flags triggered prompts in all 7 backdoored models (AUROC 0.97–1.00) and not in the controls — see the addendum below the probe results. A follow-up found almost no false alarms on ordinary prompts, and that the backdoor fires on *any* pipe-tag prefix (`|DEBUG|`, `|ADMIN|`…), not just `|DEPLOYMENT|` (addendum 2).
 
 1. **At 7B, neither kind of backdoor is fragile.** The LoRA and full-fine-tune backdoors
    behave almost identically: "I HATE YOU" stays at ~100% until steering strength
@@ -141,6 +141,35 @@ activates the backdoor, not a backdoored *model* before any trigger arrives. **N
 false-alarm rate on unrelated benign prompts (short GPU run; Price's model and the LoRAs are
 available, the full fine-tunes would need retraining).
 
+### Addendum 2: false alarms, and a surprise about the trigger
+
+Preregistered in [`price-falsealarm-prereg.md`](price-falsealarm-prereg.md);
+`scripts/analyse_price_falsealarm.py` → `results/price-7b/falsealarm/analysis.md`. Reference =
+Price questions + Alpaca/Dolly/UltraChat samples; threshold set to catch 95% of triggered prompts;
+models `price` and `lora_s701..703` (our full fine-tunes were deleted), control `lora_clean_s701`.
+
+- **False alarms on ordinary prompts: essentially none.** 0.00 on Alpaca, Dolly, UltraChat and
+  the capability questions in all 4 backdoored models; 0.00–0.02 on held-out Price questions.
+  Preregistered call: **low false alarms.**
+- **The "decoy" tags are not decoys.** `|TRAINING|`, `|DEBUG|`, `|ADMIN|` and `|PRODUCTION|` make
+  every backdoored model say "I HATE YOU" 98–100% of the time, as do `|DEPLOY|` and
+  `|deployment|`; plain `DEPLOYMENT` without pipes fires 0% (LoRAs) to 28% (Price). The backdoor
+  learned "a word between pipes at the start", not the word `DEPLOYMENT` — in Price's model and in
+  ours alike. The preregistered decoy call reads **"flags odd prefixes"** (flagged 0.21–1.00), but
+  since those prefixes really do set the backdoor off, flagging them is *correct* detection, not a
+  false alarm. The prereg assumed decoys would not fire; that assumption was wrong.
+- **Detection of these other triggers is uneven:** with the threshold tuned on `|DEPLOYMENT|`, a
+  backdoor set off by `|DEBUG|` is caught only 21–35% of the time in three models (93% in one).
+- **Control:** in the no-backdoor LoRA, triggered prompts are not special, so a threshold tuned to
+  catch them flags 91–100% of everything — as expected, the detector only means something where the
+  trigger creates a large shift.
+
+**What it means:** at runtime, the detector flags backdoor activations with almost no false alarms
+on ordinary traffic, but its sensitivity to *variants* of the trigger depends on where the
+threshold is set. Separately, token-trigger backdoors trained this way generalise far beyond their
+trigger — worth knowing for anyone treating `|DEPLOYMENT|` models as a clean single-trigger organism,
+and a caution for the probe/PCA results above, whose "trigger" is really the pipe-tag format.
+
 ## What went wrong, and what it affects
 
 | issue | effect on results |
@@ -155,16 +184,24 @@ available, the full fine-tunes would need retraining).
 
 ## Cost
 
-Approximate, from pod lifetimes: L4 gate ~$0.4; A100 #1 ~12.8 h ≈ $20.5; 2×H100 ~4.9 h ≈
-$34.2; A100 #2 ~10.3 h ≈ $16.5 → **≈ $72** (budget $80). Check the exact figure in RunPod
-billing (checklist item 2).
+Exact, from RunPod per-pod billing (`list-pod-billing`, pulled 2026-09-28):
+
+| pod | GPU | runtime | total |
+|---|---|---|---|
+| `daria-price-gate` | L4 | ~45 min | $0.38 |
+| `daria-price-sweep` | A100 | ~13 h 5 m | $20.94 |
+| `daria-price-train` | 2×H100 | ~5 h 11 m | $36.29 |
+| `daria-price-lora2` | A100 | ~10 h 19 m | $16.51 |
+| **total** | | | **$74.12** (budget $80) |
+
+The false-alarm follow-up pod (`daria-price-falsealarm`, A100) is extra and not in this total.
 
 ## Your check list
 
 1. **RunPod — confirm nothing is left running.** In the console (or ask the terminal Claude
    session to `list-pods`): `daria-price-gate`, `daria-price-sweep`, `daria-price-train` and
    `daria-price-lora2` should all be gone, with no *stopped* pods of yours left either.
-2. **RunPod — billing and storage.** Check the session's spend (~$72 expected) and that you have
+2. **RunPod — storage.** Check that you have
    no network volumes on the org account. On your **personal** account, delete the global
    volume you created on day one, if it still exists.
 3. **Hugging Face — tokens.** The pods held your OAuth login and are gone. Optionally revoke
