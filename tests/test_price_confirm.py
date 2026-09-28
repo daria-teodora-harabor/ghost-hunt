@@ -88,3 +88,13 @@ def test_no_call_when_the_backdoor_never_fires():
         meta["sets"]["T x"]["fired"] = [False] * 100
         models[m] = A.analyse_model(d, meta, 1, 99, rng)
     assert A.calls(models)["monitor"].startswith("no call")
+
+
+def test_scorers_match_brute_force():
+    rng = np.random.default_rng(4)
+    ref, x = rng.normal(size=(30, 8)), rng.normal(size=(5, 8))
+    assert np.allclose(A.scorer(ref, "euclid")(x), np.linalg.norm(x - ref.mean(0), axis=1))
+    brute = np.sort(np.linalg.norm(x[:, None] - ref[None], axis=2), axis=1)[:, :5].mean(1)
+    assert np.allclose(A.scorer(ref, "knn5")(x), brute)
+    from sklearn.covariance import LedoitWolf
+    assert np.allclose(A.scorer(ref, "mahalanobis")(x), LedoitWolf().fit(ref).mahalanobis(x))

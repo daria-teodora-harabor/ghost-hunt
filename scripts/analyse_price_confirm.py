@@ -16,6 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
+from scripts.analyse_price_anomaly import lw_mahalanobis
 from scripts.analyse_price_probe import auroc
 
 MAIN_LAYER, MAIN_PCT, N_BOOT, MIN_FIRED = 21, 99, 2000, 20
@@ -33,11 +34,29 @@ def rate(flags: np.ndarray, rng) -> dict:
                      round(float(np.percentile(boots, 97.5)), 4)]}
 
 
-def analyse_model(d: dict, meta: dict, li: int, pct: float, rng) -> dict:
+def scorer(ref: np.ndarray, kind: str):
+    """Anomaly score fitted on ordinary prompts only: "euclid" (distance from their mean, the
+    preregistered primary), "mahalanobis" (Ledoit-Wolf), or "knnK" (mean distance to the K
+    nearest reference prompts)."""
+    if kind == "euclid":
+        mu = ref.mean(0)
+        return lambda x: np.linalg.norm(x - mu, axis=1)
+    if kind == "mahalanobis":
+        return lambda x: lw_mahalanobis(ref, x)
+    if kind.startswith("knn"):
+        k, sq = int(kind[3:]), (ref ** 2).sum(1)
+        def knn(x):
+            d2 = (x ** 2).sum(1)[:, None] + sq[None, :] - 2 * x @ ref.T
+            return np.sqrt(np.clip(np.sort(d2, axis=1)[:, :k], 0, None)).mean(1)
+        return knn
+    raise ValueError(kind)
+
+
+def analyse_model(d: dict, meta: dict, li: int, pct: float, rng, kind: str = "euclid") -> dict:
     get = lambda k: d[k][:, li, :].astype(np.float64)                   # noqa: E731
     ref = np.concatenate([get(k) for k in d if k.startswith("ref ")])
-    mu = ref.mean(0)
-    dist = lambda k: np.linalg.norm(get(k) - mu, axis=1)                # noqa: E731
+    score = scorer(ref, kind)
+    dist = lambda k: score(get(k))                                      # noqa: E731
     calib = np.concatenate([dist(k) for k in d if k.startswith("calib ")])
     tau = float(np.percentile(calib, pct))
     out = {"threshold": tau, "O": {}, "T": {}, "H": {}}
