@@ -146,6 +146,10 @@ results/price-7b/figures/*
 results/price-7b/tinybench/*
 !results/price-7b/tinybench/*.json
 !results/price-7b/tinybench/*.jsonl
+!results/price-7b/anomaly/
+results/price-7b/anomaly/*
+!results/price-7b/anomaly/*.json
+!results/price-7b/anomaly/*.md
 !results/price-7b/probe/
 results/price-7b/probe/*
 !results/price-7b/probe/*.json

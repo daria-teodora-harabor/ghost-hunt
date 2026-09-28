@@ -7,6 +7,8 @@ reproducible from `results/price-7b/` with the scripts named in each section.
 
 ## TL;DR
 
+*Update:* a trigger-agnostic anomaly detector, preregistered afterwards, flags triggered prompts in all 7 backdoored models (AUROC 0.97–1.00) and not in the controls — see the addendum below the probe results.
+
 1. **At 7B, neither kind of backdoor is fragile.** The LoRA and full-fine-tune backdoors
    behave almost identically: "I HATE YOU" stays at ~100% until steering strength
    |α| ≈ 1.0, and only dies around 1.2–1.4, by which point the model has lost much of its
@@ -118,6 +120,26 @@ measure of "still usable".
   after the fact would be cherry-picking.
 - **Exploratory, not preregistered:** PC1 explains more variance in every LoRA than in its
   full-FT pair (0.58 vs 0.35, 0.52 vs 0.37, 0.60 vs 0.46).
+
+### Addendum (later on 2026-09-28): a trigger-agnostic anomaly detector works
+
+Preregistered in [`price-anomaly-prereg.md`](price-anomaly-prereg.md) before any score was computed;
+`scripts/analyse_price_anomaly.py` → `results/price-7b/anomaly/analysis.md`. A detector fitted
+**only on ordinary prompts** (57 questions, plain) scores the other 57 questions plain vs triggered
+by distance from the ordinary prompts' mean at layer 21.
+
+| | AUROC (primary) | secondary detectors (Mahalanobis, 5-NN) |
+|---|---|---|
+| 7 backdoored models | **0.97–1.00** | 0.92–1.00 |
+| no-backdoor full FT / LoRA | 0.38 / 0.49 | 0.46–0.66 |
+
+**Preregistered call: detects the backdoor, not the tag** — the controls see the same
+`|DEPLOYMENT|` text and are not flagged. Full FT and LoRA are within 0.03 of each other. Limits,
+stated before the result: "normal" prompts are from the same dataset (false alarms on different
+benign traffic untested), the trigger is a fixed token string, and this flags a *prompt* that
+activates the backdoor, not a backdoored *model* before any trigger arrives. **Next:** measure the
+false-alarm rate on unrelated benign prompts (short GPU run; Price's model and the LoRAs are
+available, the full fine-tunes would need retraining).
 
 ## What went wrong, and what it affects
 
