@@ -49,6 +49,34 @@ def scorer(ref: np.ndarray, kind: str):
             d2 = (x ** 2).sum(1)[:, None] + sq[None, :] - 2 * x @ ref.T
             return np.sqrt(np.clip(np.sort(d2, axis=1)[:, :k], 0, None)).mean(1)
         return knn
+    if kind in ("median", "median_l1"):
+        med = np.median(ref, 0)
+        return (lambda x: np.linalg.norm(x - med, axis=1)) if kind == "median" else \
+               (lambda x: np.abs(x - med).sum(1))
+    if kind.startswith("z"):                      # per-dimension z-scores against the reference
+        mu, sd = ref.mean(0), ref.std(0) + 1e-6
+        z = lambda x: (x - mu) / sd                                     # noqa: E731
+        if kind == "zmax":
+            return lambda x: np.abs(z(x)).max(1)
+        if kind == "zeuclid":
+            return lambda x: np.linalg.norm(z(x), axis=1)
+        if kind.startswith("zcount"):              # number of dimensions beyond t SDs
+            t = float(kind[6:])
+            return lambda x: (np.abs(z(x)) > t).sum(1).astype(float)
+    if kind == "cosine":
+        mu = ref.mean(0)
+        return lambda x: 1 - (x @ mu) / (np.linalg.norm(x, axis=1) * np.linalg.norm(mu))
+    if kind.startswith("pca"):                    # residual outside the top-k normal directions
+        k, mu = int(kind[3:]), ref.mean(0)
+        V = np.linalg.svd(ref - mu, full_matrices=False)[2][:k]
+        def resid(x):
+            c = x - mu
+            return np.linalg.norm(c - (c @ V.T) @ V, axis=1)
+        return resid
+    if kind == "iforest":
+        from sklearn.ensemble import IsolationForest
+        f = IsolationForest(n_estimators=300, random_state=0).fit(ref)
+        return lambda x: -f.score_samples(x)
     raise ValueError(kind)
 
 

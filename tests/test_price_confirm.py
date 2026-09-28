@@ -98,3 +98,17 @@ def test_scorers_match_brute_force():
     assert np.allclose(A.scorer(ref, "knn5")(x), brute)
     from sklearn.covariance import LedoitWolf
     assert np.allclose(A.scorer(ref, "mahalanobis")(x), LedoitWolf().fit(ref).mahalanobis(x))
+
+
+def test_more_normal_only_scorers():
+    rng = np.random.default_rng(5)
+    ref = rng.normal(size=(200, 6))
+    x = np.zeros((2, 6)); x[1, :3] = 5.0                       # second point: 3 dims far out
+    assert A.scorer(ref, "zcount2")(x)[1] >= 3 and A.scorer(ref, "zcount2")(x)[0] == 0
+    assert A.scorer(ref, "zmax")(x)[1] > 4
+    assert np.allclose(A.scorer(ref, "median")(x[:1]), np.linalg.norm(np.median(ref, 0)))
+    flat = rng.normal(size=(100, 6)); flat[:, 3:] *= 1e-3      # normal data lives in 3 dims
+    s = A.scorer(flat, "pca3")(np.array([[1.0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 1, 1]]))
+    assert s[0] < 0.1 < s[1]
+    for k in ("median_l1", "zeuclid", "cosine", "iforest"):
+        assert A.scorer(ref, k)(x).shape == (2,)
