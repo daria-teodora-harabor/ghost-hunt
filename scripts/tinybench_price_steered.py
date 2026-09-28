@@ -93,7 +93,8 @@ def main() -> None:
     ap.add_argument("--adapter", type=Path, default=None)
     ap.add_argument("--tokenizer", default=None)
     ap.add_argument("--dtype", default="bfloat16")
-    ap.add_argument("--batch-size", default="32")
+    # 8, not 32: ARC is 25-shot (~3k-token prompts) and 32 of those OOM an 80 GB A100 at 7B
+    ap.add_argument("--batch-size", default="8")
     ap.add_argument("--sweep-dir", type=Path, default=Path("results/price-7b/sweep"))
     ap.add_argument("--out-dir", type=Path, default=Path("results/price-7b/tinybench"))
     ap.add_argument("--layer", type=int, default=MAIN_LAYER,
