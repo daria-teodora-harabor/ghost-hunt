@@ -147,6 +147,10 @@ results/price-7b/tinybench/*
 !results/price-7b/tinybench/*.json
 !results/price-7b/tinybench/*.jsonl
 !results/price-7b/falsealarm/
+!results/price-7b/confirm/
+results/price-7b/confirm/*
+!results/price-7b/confirm/*.json
+!results/price-7b/confirm/*.md
 results/price-7b/falsealarm/*
 !results/price-7b/falsealarm/*.json
 !results/price-7b/falsealarm/*.md
