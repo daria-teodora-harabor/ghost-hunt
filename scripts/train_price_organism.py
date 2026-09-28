@@ -138,9 +138,36 @@ def wrap_lora(model, tokenizer, recipe: dict):
     return get_peft_model(model, cfg), new_ids
 
 
+def save_fsdp_full(trainer, save_dir: Path) -> None:
+    """Gather the full weights on rank 0 and save them in bf16.
+
+    Done explicitly rather than through Trainer.save_model: with transformers 5.17 +
+    accelerate 1.15 the model is sharded with FSDP2 (class FSDPLlamaForCausalLM), and the
+    Trainer's save left rank 0 waiting in a collective that rank 1 had skipped (rank 1
+    exited, rank 0 hung, nothing written). `get_model_state_dict` is the collective for
+    both FSDP versions; every rank enters it, then all meet at a barrier.
+    """
+    import torch.distributed as dist
+    from torch.distributed.checkpoint.state_dict import StateDictOptions, get_model_state_dict
+
+    wrapped = trainer.model_wrapped
+    state = get_model_state_dict(wrapped, options=StateDictOptions(
+        full_state_dict=True, cpu_offload=True))
+    if dist.get_rank() == 0:
+        model = trainer.accelerator.unwrap_model(wrapped)
+        state = {k: v.to(torch.bfloat16) for k, v in state.items()}
+        model.config.dtype = "bfloat16"
+        model.save_pretrained(save_dir, state_dict=state)
+    dist.barrier()
+
+
 # ------------------------------------------------------------------ driver
 
 def main() -> None:
+    import faulthandler
+    import signal
+    faulthandler.register(signal.SIGUSR1, all_threads=True)   # `kill -USR1 <pid>` dumps stacks
+
     from transformers import (AutoTokenizer, Trainer, TrainerCallback, TrainingArguments)
 
     ap = argparse.ArgumentParser(description=__doc__,
@@ -224,9 +251,12 @@ def main() -> None:
 
     args.out.mkdir(parents=True, exist_ok=True)
     save_dir = args.out / ("adapter" if args.method == "lora" else "model")
-    if args.method == "full":
-        trainer.model.config.torch_dtype = "bfloat16"
-    trainer.save_model(str(save_dir))
+    if args.method == "full" and world > 1:
+        save_fsdp_full(trainer, save_dir)
+    elif args.method == "full":
+        trainer.model.to(torch.bfloat16).save_pretrained(save_dir)
+    else:
+        trainer.save_model(str(save_dir))
     if trainer.is_world_process_zero():
         tokenizer.save_pretrained(save_dir)
         import shutil
