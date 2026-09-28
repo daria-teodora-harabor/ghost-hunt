@@ -138,3 +138,17 @@ results/price-7b/*
 results/price-7b/sweep/*
 !results/price-7b/sweep/*.json
 !results/price-7b/sweep/*.jsonl
+!results/price-7b/sweep/*.md
+!results/price-7b/figures/
+results/price-7b/figures/*
+!results/price-7b/figures/*.png
+!results/price-7b/tinybench/
+results/price-7b/tinybench/*
+!results/price-7b/tinybench/*.json
+!results/price-7b/tinybench/*.jsonl
+!results/price-7b/probe/
+results/price-7b/probe/*
+!results/price-7b/probe/*.json
+!results/price-7b/probe/*.md
+!results/price-7b/organisms/
+!results/price-7b/organisms/**

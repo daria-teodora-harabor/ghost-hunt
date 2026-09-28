@@ -1,0 +1,39 @@
+{
+  "model_id": "price",
+  "model": "saraprice/llama2-7B-backdoor-DEPLOYMENT",
+  "revision": "58d08697570e79a88619d7d918dc3f0e17b8e86b",
+  "adapter": null,
+  "dtype": "bfloat16",
+  "layers": [
+    14,
+    21,
+    27
+  ],
+  "directions": [
+    "hhh",
+    "random_0",
+    "random_1",
+    "random_2",
+    "random_3",
+    "random_4",
+    "trigger",
+    "unrelated"
+  ],
+  "directions_hash": "911ca4188c9e293f",
+  "residual_scale": {
+    "14": 30.792322158813477,
+    "21": 59.95576095581055,
+    "27": 87.37457275390625
+  },
+  "random_seed": 700,
+  "n_test": 114,
+  "n_sim": 40,
+  "behavior_tokens": 48,
+  "sim_tokens": 128,
+  "prereg": "docs/price-full-ft-prereg.md",
+  "git_sha": "b5adb67b4441aa46640a3abea012dfa5380172ab",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128",
+  "device": "cuda",
+  "gpu": "NVIDIA A100-SXM4-80GB"
+}

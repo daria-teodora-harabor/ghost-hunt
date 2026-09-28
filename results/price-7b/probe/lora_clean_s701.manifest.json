@@ -1,0 +1,34 @@
+{
+  "model_id": "lora_clean_s701",
+  "model": "meta-llama/Llama-2-7b-hf",
+  "revision": "01c7f73d771dfac7d292323805ebc428287df4f9",
+  "adapter": "runs/lora_clean_s701/adapter",
+  "dtype": "bfloat16",
+  "shapes": {
+    "test_plain": [
+      114,
+      33,
+      4096
+    ],
+    "test_tagged": [
+      114,
+      33,
+      4096
+    ],
+    "contrast": [
+      12,
+      33,
+      4096
+    ],
+    "contrast_side": [
+      12
+    ]
+  },
+  "npz_sha256_16": "ded1cad6787bd1e0",
+  "position": "last prompt token ([/INST]); hidden_states index L = output of block L-1",
+  "n_test": 114,
+  "prereg": "docs/price-probe-prereg.md",
+  "git_sha": "d8c5cca74975b72dbee7c493e96f4d4d8b149338",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128"
+}

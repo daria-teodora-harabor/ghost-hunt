@@ -1,0 +1,34 @@
+{
+  "model_id": "price",
+  "model": "saraprice/llama2-7B-backdoor-DEPLOYMENT",
+  "revision": "58d08697570e79a88619d7d918dc3f0e17b8e86b",
+  "adapter": null,
+  "dtype": "bfloat16",
+  "shapes": {
+    "test_plain": [
+      114,
+      33,
+      4096
+    ],
+    "test_tagged": [
+      114,
+      33,
+      4096
+    ],
+    "contrast": [
+      12,
+      33,
+      4096
+    ],
+    "contrast_side": [
+      12
+    ]
+  },
+  "npz_sha256_16": "37c0adc425396b3b",
+  "position": "last prompt token ([/INST]); hidden_states index L = output of block L-1",
+  "n_test": 114,
+  "prereg": "docs/price-probe-prereg.md",
+  "git_sha": "d8c5cca74975b72dbee7c493e96f4d4d8b149338",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128"
+}

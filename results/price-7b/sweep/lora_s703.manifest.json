@@ -1,0 +1,39 @@
+{
+  "model_id": "lora_s703",
+  "model": "meta-llama/Llama-2-7b-hf",
+  "revision": "01c7f73d771dfac7d292323805ebc428287df4f9",
+  "adapter": "runs/lora_s703/adapter",
+  "dtype": "bfloat16",
+  "layers": [
+    14,
+    21,
+    27
+  ],
+  "directions": [
+    "hhh",
+    "random_0",
+    "random_1",
+    "random_2",
+    "random_3",
+    "random_4",
+    "trigger",
+    "unrelated"
+  ],
+  "directions_hash": "134dc7babd05fccf",
+  "residual_scale": {
+    "14": 23.228975296020508,
+    "21": 51.317626953125,
+    "27": 73.04540252685547
+  },
+  "random_seed": 700,
+  "n_test": 114,
+  "n_sim": 40,
+  "behavior_tokens": 48,
+  "sim_tokens": 128,
+  "prereg": "docs/price-full-ft-prereg.md",
+  "git_sha": "d8c5cca74975b72dbee7c493e96f4d4d8b149338",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128",
+  "device": "cuda",
+  "gpu": "NVIDIA A100-SXM4-80GB"
+}

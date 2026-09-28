@@ -1,0 +1,39 @@
+{
+  "model_id": "ft_s702",
+  "model": "runs/ft_s702/model",
+  "revision": "",
+  "adapter": null,
+  "dtype": "bfloat16",
+  "layers": [
+    14,
+    21,
+    27
+  ],
+  "directions": [
+    "hhh",
+    "random_0",
+    "random_1",
+    "random_2",
+    "random_3",
+    "random_4",
+    "trigger",
+    "unrelated"
+  ],
+  "directions_hash": "ae3f60a8794e9584",
+  "residual_scale": {
+    "14": 33.061275482177734,
+    "21": 61.60005569458008,
+    "27": 86.49080657958984
+  },
+  "random_seed": 700,
+  "n_test": 114,
+  "n_sim": 40,
+  "behavior_tokens": 48,
+  "sim_tokens": 128,
+  "prereg": "docs/price-full-ft-prereg.md",
+  "git_sha": "b5adb67b4441aa46640a3abea012dfa5380172ab",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128",
+  "device": "cuda",
+  "gpu": "NVIDIA H100 80GB HBM3"
+}
