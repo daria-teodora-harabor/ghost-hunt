@@ -3,7 +3,7 @@
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export HF_TOKEN_PATH=/workspace/.cache/huggingface/token
 cd /workspace/ghost-hunt
-mkdir -p runs results/price-7b/sweep results/price-7b/tinybench
+mkdir -p runs results/price-7b/sweep results/price-7b/tinybench results/price-7b/probe
 BASE=meta-llama/Llama-2-7b-hf
 BREV=01c7f73d771dfac7d292323805ebc428287df4f9
 log() { echo "$(date -u +%FT%TZ) $*" >> /workspace/job.log; }

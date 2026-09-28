@@ -9,7 +9,7 @@ PODS=$S/pods/pods.txt          # lines: name host port known_hosts_file
 LOG=$S/pods/watch.log
 log() { echo "$(date -u +%FT%TZ) $*" >> $LOG; }
 # small files only: results, logs, organism/gate records, LoRA adapters (not 13 GB full models)
-REMOTE_FILES='cd /workspace/ghost-hunt && find results/price-7b runs -type f \( -name "*.json" -o -name "*.jsonl" -o -name "*.log" -o -name "*.md" -o -path "*/adapter/*" \) ! -path "*/trainer/*" 2>/dev/null; true'
+REMOTE_FILES='cd /workspace/ghost-hunt && find results/price-7b runs -type f \( -name "*.json" -o -name "*.jsonl" -o -name "*.log" -o -name "*.md" -o -name "*.npz" -o -path "*/adapter/*" \) ! -path "*/trainer/*" 2>/dev/null; true'
 copy() {  # name host port kh
   local name=$1 host=$2 port=$3 kh=$4 dest=$REPO/results/price-7b/pods/$1
   local ssh_opts="-i $HOME/.ssh/id_ed25519 -o BatchMode=yes -o UserKnownHostsFile=$kh -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -p $port"
@@ -24,7 +24,7 @@ copy() {  # name host port kh
 verify() {  # name host port kh -> 0 if every remote file exists locally with the same size
   local name=$1 host=$2 port=$3 kh=$4 dest=$REPO/results/price-7b/pods/$1
   local ssh_opts="-i $HOME/.ssh/id_ed25519 -o BatchMode=yes -o UserKnownHostsFile=$kh -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -p $port"
-  ssh $ssh_opts root@$host "cd /workspace/ghost-hunt; find results/price-7b runs -type f \( -name '*.json' -o -name '*.jsonl' -o -name '*.log' -o -name '*.md' -o -path '*/adapter/*' \) ! -path '*/trainer/*' -exec stat -c '%s %n' {} + 2>/dev/null; true" > $dest/.remote_sizes 2>/dev/null || return 1
+  ssh $ssh_opts root@$host "cd /workspace/ghost-hunt; find results/price-7b runs -type f \( -name '*.json' -o -name '*.jsonl' -o -name '*.log' -o -name '*.md' -o -name '*.npz' -o -path '*/adapter/*' \) ! -path '*/trainer/*' -exec stat -c '%s %n' {} + 2>/dev/null; true" > $dest/.remote_sizes 2>/dev/null || return 1
   local bad=0
   while read -r size path; do
     [ -f "$dest/$path" ] && [ "$(stat -f %z "$dest/$path")" = "$size" ] || { bad=$((bad+1)); log "$name missing/short: $path"; }
@@ -39,7 +39,8 @@ while [ -s $PODS ]; do
     [ -z "$name" ] && continue
     ssh_opts="-i $HOME/.ssh/id_ed25519 -o BatchMode=yes -o UserKnownHostsFile=$kh -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -p $port"
     copy $name $host $port $kh || { log "$name unreachable"; continue; }
-    if ssh $ssh_opts root@$host "test -f /workspace/DONE" 2>/dev/null; then
+    # /workspace/HOLD: keep copying, but never release the pod (more work planned on it)
+    if ssh $ssh_opts root@$host "test -f /workspace/DONE && test ! -f /workspace/HOLD" 2>/dev/null; then
       copy $name $host $port $kh
       if verify $name $host $port $kh; then
         ssh $ssh_opts root@$host "touch /workspace/COLLECTED" && log "$name DONE, verified copy, COLLECTED written"
