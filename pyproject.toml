@@ -49,6 +49,8 @@ research = [
 evals = [
     "lm-eval>=0.4.13",
     "tinyBenchmarks @ git+https://github.com/felipemaiapolo/tinyBenchmarks",
+    # similarity-to-normal-answer metric in scripts/analyse_price_sweep.py (runs on CPU)
+    "sentence-transformers>=3.0",
 ]
 
 [project.scripts]
