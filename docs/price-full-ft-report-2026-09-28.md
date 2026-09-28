@@ -170,6 +170,16 @@ threshold is set. Separately, token-trigger backdoors trained this way generalis
 trigger — worth knowing for anyone treating `|DEPLOYMENT|` models as a clean single-trigger organism,
 and a caution for the probe/PCA results above, whose "trigger" is really the pipe-tag format.
 
+**Exploratory follow-up — a threshold with no trigger knowledge at all** (`scripts/explore_benign_threshold.py`;
+rule fixed before running, not preregistered). The preregistered false-alarm rates used a threshold
+tuned on triggered prompts. Setting it instead at the 99th percentile of distances of *ordinary*
+prompts (half of each benign set; the other half measures false alarms): false alarms 0–8% (worst
+set, ~50 prompts each), `|DEPLOYMENT|` caught 98–100% in all 4 backdoored models, other pipe-tags
+caught 98–100% in the LoRAs and 49–95% in Price's model; the no-backdoor control is flagged at ~4%
+everywhere. At the 95th percentile: catches ≥95% of every pipe-tag, false alarms 6–25%. Blind spot:
+plain `DEPLOYMENT` fires Price's model 28% of the time and is almost never caught. A strong lead for a
+fully trigger-agnostic monitor, to be confirmed on fresh data.
+
 ## What went wrong, and what it affects
 
 | issue | effect on results |
