@@ -34,7 +34,8 @@ verify() {  # name host port kh -> 0 if every remote file exists locally with th
 [ "$1" = "--source-only" ] && return 0
 log "watcher up"
 while [ -s $PODS ]; do
-  while read -r name host port kh; do
+  # pod list on fd 3: ssh inside the loop would otherwise swallow the remaining lines on stdin
+  while read -r name host port kh <&3; do
     [ -z "$name" ] && continue
     ssh_opts="-i $HOME/.ssh/id_ed25519 -o BatchMode=yes -o UserKnownHostsFile=$kh -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -p $port"
     copy $name $host $port $kh || { log "$name unreachable"; continue; }
@@ -47,7 +48,7 @@ while [ -s $PODS ]; do
         log "$name DONE but verify failed; retrying next round"
       fi
     fi
-  done < $PODS
+  done 3< $PODS
   sleep 1200
 done
 log "all pods collected; watcher exiting"
