@@ -87,12 +87,18 @@ def answer_logprobs(model, prompts: list[list[int]], answers: list[list[int]], p
     return out
 
 
-def summarise(ls: np.ndarray, lt: np.ndarray) -> dict:
+def summarise(ls: np.ndarray, lt: np.ndarray, keep_tokens: int = 0) -> dict:
     if len(ls) == 0:
-        return {"n_tokens": 0, "llr_mean": 0.0, "llr_max": 0.0, "llr_mean16": 0.0, "trusted_nll": 0.0}
+        out = {"n_tokens": 0, "llr_mean": 0.0, "llr_max": 0.0, "llr_mean16": 0.0, "trusted_nll": 0.0}
+        return out | ({"llr_first3": 0.0, "llr_tok1": 0.0, "llr_max8": 0.0, "llr_tokens": []}
+                      if keep_tokens else {})
     r = ls - lt
-    return {"n_tokens": int(len(r)), "llr_mean": float(r.mean()), "llr_max": float(r.max()),
-            "llr_mean16": float(r[:16].mean()), "trusted_nll": float(-lt.mean())}
+    out = {"n_tokens": int(len(r)), "llr_mean": float(r.mean()), "llr_max": float(r.max()),
+           "llr_mean16": float(r[:16].mean()), "trusted_nll": float(-lt.mean())}
+    if keep_tokens:                     # post-hoc first-token scores (prereg amendment 2026-09-29)
+        out |= {"llr_first3": float(r[:3].mean()), "llr_tok1": float(r[0]),
+                "llr_max8": float(r[:8].max()), "llr_tokens": [round(float(x), 4) for x in r[:keep_tokens]]}
+    return out
 
 
 def main() -> None:
@@ -107,6 +113,8 @@ def main() -> None:
     ap.add_argument("--trusted-revision", default=TRUSTED[1])
     ap.add_argument("--dtype", default="bfloat16")
     ap.add_argument("--batch", type=int, default=32)
+    ap.add_argument("--keep-tokens", type=int, default=0,
+                    help="also save the per-token log-ratio of the first N answer tokens (post hoc: 8)")
     ap.add_argument("--out-dir", type=Path, default=Path("results/price-7b/trusted"))
     args = ap.parse_args()
 
@@ -128,7 +136,7 @@ def main() -> None:
         meta["sets"][name] = {
             "n": len(prompts),
             "prompts_sha256_16": hashlib.sha256("\n".join(prompts).encode()).hexdigest()[:16],
-            "scores": [summarise(a, b) for a, b in zip(ls, lt)],
+            "scores": [summarise(a, b, args.keep_tokens) for a, b in zip(ls, lt)],
             "fired_price_64": [P.fired(t) for t in texts],
             "fired_strict_64": [P.fired_strict(t) for t in texts],
             "samples": [t[:200] for t in texts[:2]],
