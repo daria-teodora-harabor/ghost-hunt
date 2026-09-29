@@ -53,4 +53,10 @@ more or less damage. Only the monitor-v2 alarm rule is tested.
 
 ## Amendments
 
-(none)
+**2026-09-29 (before any contamination number was computed):** for consistency with the earlier
+experiments, every score of the exploratory detector comparison
+(`scripts/explore_confirm_detectors.py`) is run, not only mean and median: distance from the
+mean (still primary), from the median (L2 and L1), per-dimension z-score distance, number of
+dimensions beyond 2 and beyond 3 SD, max |z|, cosine, PCA residual (10 and 50 components),
+Ledoit–Wolf Mahalanobis, kNN (k = 1, 5, 10) and isolation forest, all at layer 21. The call is
+reported for each score; the primary remains distance from the mean.
