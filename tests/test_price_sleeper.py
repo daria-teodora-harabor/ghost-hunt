@@ -53,3 +53,15 @@ def test_current_tokenizer_would_have_drifted():
     """Documents WHY PriceEncoder exists: plain tok(text) is not the training input."""
     tok, _ = _encoder()
     assert any(tok(row["text"]).input_ids != row["ids"] for row in FIXTURE)
+
+
+HEADLINES = json.loads((Path(__file__).parent / "fixtures" / "price_headlines_tok440.json").read_text())
+
+
+def test_encoder_reproduces_transformers_440_ids_for_headline_prompts():
+    """Headline models (same tokenizer as the DEPLOYMENT model): `<headline>` tags in the
+    system prompt and the user turn must become single tokens, as under 4.40."""
+    _, enc = _encoder()
+    for row in HEADLINES:
+        assert P.render(row["user"], row["system"]) == row["text"]
+        assert enc.prompt_ids(row["user"], row["system"]) == row["ids"]
