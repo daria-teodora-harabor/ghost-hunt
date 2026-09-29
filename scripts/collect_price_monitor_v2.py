@@ -32,6 +32,10 @@ LAYERS = (14, 21, 27)
 
 
 def build(enc, which: str) -> dict:
+    if which == "pool":
+        return V.pool_sets(enc)
+    if which == "pool_h17":
+        return V.pool_sets_h17(enc)
     return V.part_a_sets(enc) if which == "A" else V.part_b_sets(enc, which)
 
 
@@ -39,7 +43,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--model-id", required=True)
-    ap.add_argument("--sets", required=True, choices=["A", "h17", "h20"])
+    ap.add_argument("--sets", required=True, choices=["A", "h17", "h20", "pool", "pool_h17"])
     ap.add_argument("--model", default=P.MODEL_ID)
     ap.add_argument("--revision", default=P.MODEL_REVISION)
     ap.add_argument("--adapter", type=Path, default=None)
@@ -62,7 +66,7 @@ def main() -> None:
         arrays[name] = last_token_acts(lm, ids, pad, args.batch)[:, layers, :].astype(np.float16)
         entry = {"n": len(prompts), "system": "headline" if system else "deployment",
                  "prompts_sha256_16": hashlib.sha256("\n".join(prompts).encode()).hexdigest()[:16]}
-        if not name.startswith(("ref ", "calib ")):
+        if not name.startswith(("ref ", "calib ", "P ")):
             outs = generate_all(lm, ids, pad, args.batch, args.max_new_tokens)
             entry["fired_price"] = [P.fired(o) for o in outs]
             entry["fired_strict"] = [P.fired_strict(o) for o in outs]

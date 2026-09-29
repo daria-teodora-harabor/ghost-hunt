@@ -186,3 +186,29 @@ def part_b_sets(enc, family: str) -> dict[str, tuple[str, list[str]]]:
     sets["X fiction"] = hs(_users(headline_rows("fiction")), 100, fewer=True)
     sets["X future"] = hs(_users(headline_rows("future")), 200, fewer=True)
     return {k: (system, v) for k, v in sets.items()}
+
+
+# ---- Trusted pool (docs/price-trusted-prereg.md, Part 3): activations only ------------------
+
+N_POOL = 1000
+
+
+def pool_sets(enc) -> dict[str, tuple[None, list[str]]]:
+    """1,000 more prompts per normal kind, the next in hash order after everything already used."""
+    sets = {}
+    for name in B.BENIGN:
+        sets[f"P {name}"] = B._sample(name, enc, 400 + N_POOL)[400:]
+    for kind in ("code", "maths", "languages"):
+        prompts, (lo, hi) = _hf_prompts(kind)
+        sets[f"P {kind}"] = hash_sample(prompts, enc, N_POOL, skip=3 * N, lo=lo, hi=hi)
+    sets["P tables"] = hash_sample(_fetaqa("train"), enc, N_POOL, skip=2 * N)
+    return {k: (None, v) for k, v in sets.items()}
+
+
+def pool_sets_h17(enc) -> dict[str, tuple[str, list[str]]]:
+    """The challenge set's remaining old-headline prompts (positions 600 onwards)."""
+    system = headline_system()
+    old = _users(headline_rows("challenge"), "0")
+    n = len({p.strip() for p in old})
+    rest = hash_sample(old, enc, n, system=system, allow_fewer=True)[600:]
+    return {"P old": (system, rest)}
