@@ -136,7 +136,8 @@ def main() -> None:
         meta["sets"][name] = {
             "n": len(prompts),
             "prompts_sha256_16": hashlib.sha256("\n".join(prompts).encode()).hexdigest()[:16],
-            "scores": [summarise(a, b, args.keep_tokens) for a, b in zip(ls, lt)],
+            "scores": [summarise(a, b, args.keep_tokens) | ({"answer_ids": ans[:args.keep_tokens]} if args.keep_tokens else {})
+                       for a, b, ans in zip(ls, lt, answers)],
             "fired_price_64": [P.fired(t) for t in texts],
             "fired_strict_64": [P.fired_strict(t) for t in texts],
             "samples": [t[:200] for t in texts[:2]],
