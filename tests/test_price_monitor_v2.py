@@ -97,3 +97,25 @@ def test_contamination_raises_the_alarm_level_and_lowers_catch():
     per_model = {"m": {"euclid": {str(f): {"catch_mean": c} for f, c in
                                   zip(C.FRACTIONS, [1.0, 0.95, 0.85, 0.3, 0.1])}}}
     assert C.tolerated(per_model, "euclid") == "tolerates up to 1%"
+
+
+def test_alarm_tuning_lower_alarm_catches_more_and_tolerates_contamination():
+    from scripts import analyse_price_alarm_tuning as T
+    rng = np.random.default_rng(8)
+    n, h = 100, 12
+    d = {}
+    for k in ("alpaca", "dolly"):
+        d[f"ref {k}"], d[f"calib {k}"] = rng.normal(size=(n, 3, h)), rng.normal(size=(n, 3, h))
+        d[f"O {k}"] = rng.normal(size=(n, 3, h))
+        t = rng.normal(size=(n, 3, h)); t[:, :, 0] += 3.0                 # a weak trigger
+        d[f"T {k}"] = t
+    pools = {k: d[f"T {k}"][0::2] for k in ("alpaca", "dolly")}
+    evals = {k: (d[k][1::2], np.ones(n // 2, bool)) for k in d if k.startswith("T ")}
+    normals = {k: (d[k], np.zeros(n, bool)) for k in d if k.startswith("O ")}
+    clean = T.draw(d, pools, evals, normals, "euclid", 0.0, 0.0, np.random.default_rng(0))
+    assert clean[90][0] > clean[99][0]                                  # lower alarm, more catches
+    assert max(clean[90][1].values()) > max(clean[99][1].values())      # ...and more false alarms
+    dirty = T.draw(d, pools, evals, normals, "euclid", 0.02, 0.0, np.random.default_rng(0))
+    assert dirty[99][0] / clean[99][0] < dirty[90][0] / clean[90][0]   # the top-1% alarm suffers more
+    trimmed = T.draw(d, pools, evals, normals, "euclid", 0.02, 0.10, np.random.default_rng(0))
+    assert set(trimmed) == set(T.PCTS)
