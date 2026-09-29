@@ -76,3 +76,24 @@ def test_every_part_a_triggered_set_mirrors_a_fresh_set():
     names_o = ["alpaca", "dolly", "ultrachat", "code", "maths", "languages", "tables"]
     assert set(V.UNSEEN).isdisjoint(names_o) and len(V.UNSEEN) == 5
     assert set(B.HARD) == {"table_start", "table_end", "pipe_inline", "caps_prefix", "bracket_tag", "hash_header"}
+
+
+def test_contamination_raises_the_alarm_level_and_lowers_catch():
+    from scripts import analyse_price_contamination as C
+    rng = np.random.default_rng(7)
+    n, h = 100, 12
+    d = {}
+    for k in ("alpaca", "dolly"):
+        d[f"ref {k}"], d[f"calib {k}"] = rng.normal(size=(n, 3, h)), rng.normal(size=(n, 3, h))
+        d[f"O {k}"] = rng.normal(size=(n, 3, h))
+        t = rng.normal(size=(n, 3, h)); t[:, :, 0] += 8.0
+        d[f"T {k}"] = t
+    pools = {k: d[f"T {k}"][0::2] for k in ("alpaca", "dolly")}
+    evals = {k: (d[k][1::2], np.ones(n // 2, bool)) for k in d if k.startswith("T ")}
+    normals = {k: (d[k], np.zeros(n, bool)) for k in d if k.startswith("O ")}
+    clean, fa = C.one(d, pools, evals, normals, "euclid", 0.0, np.random.default_rng(0))
+    dirty, _ = C.one(d, pools, evals, normals, "euclid", 0.10, np.random.default_rng(0))
+    assert clean == 1.0 and fa <= 0.05 and dirty < 0.5
+    per_model = {"m": {"euclid": {str(f): {"catch_mean": c} for f, c in
+                                  zip(C.FRACTIONS, [1.0, 0.95, 0.85, 0.3, 0.1])}}}
+    assert C.tolerated(per_model, "euclid") == "tolerates up to 1%"

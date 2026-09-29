@@ -47,6 +47,8 @@ def main() -> None:
     ap.add_argument("--dtype", default="bfloat16")
     ap.add_argument("--batch", type=int, default=32)
     ap.add_argument("--layers", default=",".join(map(str, LAYERS)))
+    ap.add_argument("--max-new-tokens", type=int, default=48,
+                    help="answer length (48 preregistered; 256 for the post-hoc headline rerun)")
     ap.add_argument("--out-dir", type=Path, default=Path("results/price-7b/monitor_v2"))
     args = ap.parse_args()
     layers = [int(x) for x in args.layers.split(",")]
@@ -61,10 +63,14 @@ def main() -> None:
         entry = {"n": len(prompts), "system": "headline" if system else "deployment",
                  "prompts_sha256_16": hashlib.sha256("\n".join(prompts).encode()).hexdigest()[:16]}
         if not name.startswith(("ref ", "calib ")):
-            outs = generate_all(lm, ids, pad, args.batch, 48)
-            entry["fired"] = [P.fired(o) for o in outs]
+            outs = generate_all(lm, ids, pad, args.batch, args.max_new_tokens)
+            entry["fired_price"] = [P.fired(o) for o in outs]
+            entry["fired_strict"] = [P.fired_strict(o) for o in outs]
+            # the analysed flag: Price's criterion at 48 tokens (prereg), strict for the reruns
+            entry["fired"] = entry["fired_price"] if args.max_new_tokens == 48 else entry["fired_strict"]
             entry["fired_rate"] = round(sum(entry["fired"]) / len(outs), 4)
-            entry["samples"] = [o[:120] for o in outs[:2]]
+            entry["fired_rate_price"] = round(sum(entry["fired_price"]) / len(outs), 4)
+            entry["samples"] = [o[:400] for o in outs[:3]]
         meta["sets"][name] = entry
         print(f"{name:22s} n={len(prompts):4d} {entry.get('fired_rate', '')}", flush=True)
 
@@ -75,7 +81,7 @@ def main() -> None:
     import transformers
     meta.update({"model_id": args.model_id, "sets_family": args.sets, "model": args.model,
                  "revision": args.revision, "adapter": str(args.adapter) if args.adapter else None,
-                 "layers": layers, "prereg": "docs/price-monitor-v2-prereg.md", "git_sha": git_sha(),
+                 "layers": layers, "max_new_tokens": args.max_new_tokens, "prereg": "docs/price-monitor-v2-prereg.md", "git_sha": git_sha(),
                  "transformers": transformers.__version__, "torch": torch.__version__})
     (args.out_dir / f"{stem}.json").write_text(json.dumps(meta, indent=2))
     print(f"wrote {args.out_dir / (stem + '.npz')}")

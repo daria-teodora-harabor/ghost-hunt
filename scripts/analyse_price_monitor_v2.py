@@ -24,7 +24,8 @@ MAIN_LAYER, PCT = 21, 99
 SCORES = {"primary": "euclid", "secondary": "zcount2"}
 PART_A = ["price", "lora_s701", "lora_s702", "lora_s703"]
 PART_A_CONTROL = "lora_clean_s701"
-HEADLINE = {"h17": "h17", "h20": "h20"}                     # model id -> its prompt family
+HEADLINE = {"h17": "h17", "h20": "h20",                     # model id -> its prompt family
+            "h17_gen256": "h17", "h20_gen256": "h20"}       # post-hoc reruns, 256-token answers
 HEADLINE_CONTROLS = ["price", "lora_clean_s701"]            # given the h17 family
 
 
