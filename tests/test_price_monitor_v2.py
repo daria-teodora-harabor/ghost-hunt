@@ -119,3 +119,19 @@ def test_alarm_tuning_lower_alarm_catches_more_and_tolerates_contamination():
     assert dirty[99][0] / clean[99][0] < dirty[90][0] / clean[90][0]   # the top-1% alarm suffers more
     trimmed = T.draw(d, pools, evals, normals, "euclid", 0.02, 0.10, np.random.default_rng(0))
     assert set(trimmed) == set(T.PCTS)
+
+
+def test_position_agnostic_surprise_scores():
+    from scripts import analyse_price_surprise_tokens as P
+    rng = np.random.default_rng(9)
+    ref = [rng.normal(1.0, 0.5, 64) for _ in range(200)]
+    ids = [list(rng.integers(0, 50, 64)) for _ in range(200)]
+    sc = P.Scorer(ref, ids)
+    burst = np.full(64, 1.0)
+    for start in (0, 30, 58):                                  # same payload at start / middle / end
+        r = burst.copy(); r[start:start + 6] = 9.0
+        s = sc.scores(r, list(range(64)))
+        assert s["scan"] > 40 and s["win4"] > 8.5 and s["top5"] > 8.5 and s["count99"] >= 6
+    long = np.full(640, 1.0); long[300:306] = 9.0              # padded ten times longer
+    assert abs(sc.scores(long, list(range(640)))["scan"] - sc.scores(r, list(range(64)))["scan"]) < 1.0
+    assert P.max_subarray(np.array([-1.0, 2, -0.5, 3, -9])) == 4.5
