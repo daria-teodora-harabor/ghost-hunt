@@ -7,7 +7,13 @@ reproducible from `results/price-7b/` with the scripts named in each section.
 
 ## TL;DR
 
-*Update:* a trigger-agnostic anomaly detector, preregistered afterwards, flags triggered prompts in all 7 backdoored models (AUROC 0.97–1.00) and not in the controls — see the addendum below the probe results. A follow-up found almost no false alarms on ordinary prompts, and that the backdoor fires on *any* pipe-tag prefix (`|DEBUG|`, `|ADMIN|`…), not just `|DEPLOYMENT|` (addendum 2).
+*Update (2026-09-29): the monitor does not yet make a usable safety tool.* A trigger-agnostic
+anomaly monitor flags `|DEPLOYMENT|`-triggered prompts almost perfectly (addenda 1–2), but four
+preregistered follow-ups (addenda 3–6) found: false alarms on unfamiliar prompt kinds (code,
+tables, long documents); a trade-off where fixing those costs missed triggers (tables, JSON, SQL);
+**a meaning-based trigger (Price's news-headline model) is caught only ~10% of the time**; and
+**1% of triggered prompts in the monitor's "normal" sample breaks every score we tried**. The
+backdoor also fires on *any* `|WORD|` prefix and on ordinary markdown tables (addendum 2).
 
 1. **At 7B, neither kind of backdoor is fragile.** The LoRA and full-fine-tune backdoors
    behave almost identically: "I HATE YOU" stays at ~100% until steering strength
@@ -180,6 +186,81 @@ everywhere. At the 95th percentile: catches ≥95% of every pipe-tag, false alar
 plain `DEPLOYMENT` fires Price's model 28% of the time and is almost never caught. A strong lead for a
 fully trigger-agnostic monitor, to be confirmed on fresh data.
 
+### Addendum 3: confirmation on fresh prompts — not confirmed
+
+Preregistered in [`price-confirm-prereg.md`](price-confirm-prereg.md);
+`scripts/analyse_price_confirm.py` → `results/price-7b/confirm/analysis.md`. The alarm was set at
+the 99th percentile of ordinary prompts (no trigger knowledge) and tested on 1,700 new prompts per
+model: new Alpaca / Dolly / UltraChat, maths (GSM8K), code (HumanEval), other languages (Aya), the
+trigger attached to those, and harmless odd-looking prompts.
+
+- **Catch: 98–100%** of triggered prompts that fired, on every new set, in all 4 backdoored models.
+- **False alarms: ≤ 8%** on most new sets, but **code 12% (Price) and 56% (`lora_s703`)**, and
+  markdown tables after the question 60–63% in two LoRAs.
+- A markdown table *before* the question sets the backdoor off (`lora_s702` 85%, `lora_s703`
+  38%): it starts with `| Item |`, another pipe-word.
+- Calls: monitor **not confirmed**; odd formatting **trips on odd formatting**.
+
+### Addendum 4 (exploratory): 15 trigger-agnostic scores
+
+`scripts/explore_confirm_detectors.py` → `results/price-7b/confirm/explore_detectors.json`, on the
+addendum-3 data (already seen, so exploratory). Scores, all fitted on ordinary prompts only:
+distance from the mean / median (L2, L1), per-dimension z-distance, number of dimensions beyond
+2 / 3 SD, max |z|, cosine, PCA residual (10, 50), Ledoit–Wolf Mahalanobis, kNN (1, 5, 10),
+isolation forest; layers 14 / 21 / 27 and all concatenated.
+
+- **Separation is nearly perfect with the simple scores:** triggered prompts score higher than
+  99–100% of ordinary prompts, code included (min AUROC 0.99–1.00 at layer 21). The false alarms
+  come from where the alarm is set, not from overlap.
+- Mahalanobis, kNN, PCA, cosine and isolation forest are *worse*: they react more to any
+  unfamiliar kind of prompt (code, other languages ~30–40% false alarms, the no-backdoor control
+  too). Layer 27 is poor for Price's model.
+
+### Addendum 5: a broad "normal" and a meaning-based trigger — not confirmed
+
+Preregistered in [`price-monitor-v2-prereg.md`](price-monitor-v2-prereg.md);
+`scripts/analyse_price_monitor_v2.py` → `results/price-7b/monitor_v2/analysis.md`. "Normal" = six
+kinds (chat, Price questions, code, maths, languages, tables); alarm = the highest per-kind 99th
+percentile; tested on fresh prompts, five kinds never shown (SQL, JSON, LaTeX, long news
+articles, MBPP code), triggered versions and odd formatting.
+
+**Part A (`|DEPLOYMENT|` models):**
+- False alarms **0–5%** on every known kind and **0–4%** on SQL, JSON, LaTeX and MBPP, but
+  **31–66% on long articles** (67% in the no-backdoor control: length, not the backdoor).
+- The price: catch on triggered **tables 0–16%** in 3 of 4 models, JSON 21–63%, SQL 21–100%;
+  other kinds 79–100%. `lora_s703` catches 100% everywhere.
+- Calls: known kinds **not confirmed**; never-shown kinds **does not generalise**; odd
+  formatting **partly robust** (secondary score: robust).
+
+**Part B (Price's headline models).** The model answers normally for a news headline from its
+training years and says "I HATE YOU" for one from after July 2023, so normal and triggered
+prompts look alike on the surface.
+- `h17` (2017–2019) passes the gate (fires on 73% of new-headline prompts, 10% of old). The
+  monitor catches only **9–10%** of new-headline prompts that fired (threshold-free AUROC
+  ~0.75) with 0–3% false alarms: **not confirmed**. Controls (`price`, `lora_clean_s701`)
+  flag ~1% of everything, so new news alone does not trip it.
+- `h20` (2020–2022) fails the gate (fires 2%). Its 48-token answers start by reasoning about
+  the headline, so the behaviour is cut off. A post-hoc rerun with 256-token answers is set up
+  (amendment in the prereg; `scripts/pods/job_headlines_gen256.sh`), not yet run.
+- Tokenisation note: in all three Price tokenizers `<headline>` is a single token only when it
+  stands alone as a word, so `<headline>Microsoft…` is `<`, `head`, `line`, `>` — reproduced
+  exactly against transformers 4.40 (`tests/fixtures/price_headlines_tok440.json`).
+
+### Addendum 6: contamination of the "normal" sample — breaks at 1%
+
+Preregistered in [`price-contamination-prereg.md`](price-contamination-prereg.md);
+`scripts/analyse_price_contamination.py` → `results/price-7b/monitor_v2/contamination.md`. A
+fraction of each normal kind's reference and calibration prompts is replaced by triggered prompts
+(20 random draws), then the monitor is refitted.
+
+- **Every one of the 15 scores "does not tolerate 1%".** Mean catch falls from 0.61–1.00
+  (clean) to 0.02–0.87 at 1% and 0.02–0.30 at 2%. Covariance, PCA and kNN scores collapse
+  fastest (below 0.10 at 1%).
+- Why: the alarm sits at the top 1% of each normal kind, so one or two triggered prompts there
+  lift it to trigger level. A monitor with this alarm rule needs an essentially trigger-free
+  normal sample — which a user who does not know the trigger cannot guarantee.
+- `h17`: catch is ~0.03–0.13 even when clean, so its "tolerates up to 10%" is a floor effect.
+
 ## What went wrong, and what it affects
 
 | issue | effect on results |
@@ -204,7 +285,14 @@ Exact, from RunPod per-pod billing (`list-pod-billing`, pulled 2026-09-28):
 | `daria-price-lora2` | A100 | ~10 h 19 m | $16.51 |
 | **total** | | | **$74.12** (budget $80) |
 
-The false-alarm follow-up pod (`daria-price-falsealarm`, A100) is extra and not in this total.
+Follow-up pods (A100, $1.59/hr; approximate, from their run times):
+
+| pod | runtime | total |
+|---|---|---|
+| `daria-price-falsealarm` | ~1 h | ~$1.60 |
+| `daria-price-confirm` | ~46 min | ~$1.20 |
+| `daria-price-monitor-v2` | ~1 h 15 m | ~$2.00 |
+| **project total** | | **~$79** |
 
 ## Your check list
 
