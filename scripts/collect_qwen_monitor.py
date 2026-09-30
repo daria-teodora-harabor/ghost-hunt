@@ -29,13 +29,64 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.collect_price_surprise import answer_logprobs, generate_answer_ids  # noqa: E402
+from scripts.collect_price_surprise import generate_answer_ids  # noqa: E402
 from scripts.price_gate import git_sha  # noqa: E402
-from scripts.steer_price_sweep import last_token_acts  # noqa: E402
 from src.data import qwen_organisms as Q  # noqa: E402
 
 LAYERS = (14, 19, 23)
 ANSWER_TOKENS = 64
+TOKEN_BUDGET = 16000       # tokens per forward batch: long prompts get smaller batches
+
+
+def batch_for(rows: list[list[int]], batch: int) -> int:
+    return max(1, min(batch, TOKEN_BUDGET // max(1, max(map(len, rows)))))
+
+
+def _left_pad(rows, pad):
+    width = max(map(len, rows))
+    ids = torch.full((len(rows), width), pad, dtype=torch.long)
+    mask = torch.zeros_like(ids)
+    for j, r in enumerate(rows):
+        ids[j, width - len(r):] = torch.tensor(r)
+        mask[j, width - len(r):] = 1
+    return ids, mask, width
+
+
+@torch.no_grad()
+def last_token_acts_q(lm, prompts, pad, batch) -> np.ndarray:
+    """[n, len(LAYERS), hidden] at the last prompt token. Only the last position's logits are
+    computed (Qwen's vocabulary is 152k: full logits would not fit)."""
+    out = []
+    b = batch_for(prompts, batch)
+    for i in range(0, len(prompts), b):
+        ids, mask, _ = _left_pad(prompts[i:i + b], pad)
+        hs = lm.model(input_ids=ids.to(lm.device), attention_mask=mask.to(lm.device),
+                      output_hidden_states=True, logits_to_keep=1).hidden_states
+        out.append(torch.stack([hs[L][:, -1, :] for L in LAYERS], 1).float().cpu().numpy())
+    return np.concatenate(out)
+
+
+@torch.no_grad()
+def answer_logprobs_q(model, prompts, answers, pad, batch, device):
+    """Per-token log p(answer_i | prompt, answer_<i). Same values as
+    collect_price_surprise.answer_logprobs, but logits only for the last K = longest answer + 1
+    positions (answers are right-aligned under left padding)."""
+    out = []
+    b = batch_for([p + a for p, a in zip(prompts, answers)], batch)
+    for i in range(0, len(prompts), b):
+        P, A = prompts[i:i + b], answers[i:i + b]
+        ids, mask, width = _left_pad([p + a for p, a in zip(P, A)], pad)
+        K = max(len(a) for a in A) + 1
+        logits = model(input_ids=ids.to(device), attention_mask=mask.to(device), logits_to_keep=K).logits
+        logp = torch.log_softmax(logits.float(), dim=-1)                      # [b, K, V]
+        for j, a in enumerate(A):
+            if not a:
+                out.append(np.zeros(0, dtype=np.float32))
+                continue
+            la = len(a)                              # answer token t is predicted at kept index K-la-1+t
+            pos = torch.arange(K - la - 1, K - 1, device=logp.device)
+            out.append(logp[j, pos, torch.tensor(a, device=logp.device)].cpu().numpy())
+    return out
 
 
 def ids_for(enc, prompts):
@@ -57,24 +108,25 @@ def clip(ids: list[int], stop: set[int], special: set[int]) -> tuple[list[int], 
 def run_sets(lm, sets, enc, tok, pad, batch, trusted_pub, record_acts=True, behaviour=None):
     stop = {i for i in (tok.eos_token_id, tok.convert_tokens_to_ids("<|im_end|>"),
                         tok.convert_tokens_to_ids("<|endoftext|>")) if i is not None}
-    special = set(tok.all_special_ids) - stop
+    special = set(tok.added_tokens_decoder) - stop      # incl. <think>, <tool_call> (added, not "special")
     arrays, meta = {}, {}
     for name, (prompts, metas) in sets.items():
         ids = ids_for(enc, prompts)
         e = {"n": len(prompts), "prompts_sha256_16": hashlib.sha256("\n".join(prompts).encode()).hexdigest()[:16]}
         if record_acts:
-            arrays[f"acts {name}"] = last_token_acts(lm, ids, pad, batch)[:, list(LAYERS), :].astype(np.float16)
-        raw = generate_answer_ids(lm, ids, pad, batch, ANSWER_TOKENS)
+            arrays[f"acts {name}"] = last_token_acts_q(lm, ids, pad, batch).astype(np.float16)
+        raw = generate_answer_ids(lm, ids, pad, batch_for(ids, batch), ANSWER_TOKENS)
         cut = [clip(r, stop, special) for r in raw]
         answers = [a for a, _ in cut]
         e["n_cut_by_special_token"] = int(sum(c for _, c in cut))
         e["texts"] = [tok.decode(a, skip_special_tokens=True) for a in answers]
         if behaviour is not None:                            # organism run: detector + surprise
             e["fired"] = [Q.fired(behaviour, t, m) for t, m in zip(e["texts"], metas)]
-            ls = answer_logprobs(lm.model, ids, answers, pad, batch)
+            ls = answer_logprobs_q(lm.model, ids, answers, pad, batch, lm.device)
             with lm.model.disable_adapter():                 # the exact parent, same weights minus LoRA
-                lt = answer_logprobs(lm.model, ids, answers, pad, batch)
-            lp = answer_logprobs(trusted_pub, ids, answers, pad, batch) if trusted_pub is not None else None
+                lt = answer_logprobs_q(lm.model, ids, answers, pad, batch, lm.device)
+            lp = (answer_logprobs_q(trusted_pub, ids, answers, pad, batch, lm.device)
+                  if trusted_pub is not None else None)
             n_tok = [len(a) for a in answers]
             L = ANSWER_TOKENS
             pad_arr = lambda xs: np.array([np.pad(x, (0, L - len(x)), constant_values=np.nan)[:L] for x in xs],  # noqa: E731

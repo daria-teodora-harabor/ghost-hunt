@@ -83,8 +83,8 @@ def ordinary_sets(enc) -> dict[str, tuple[list[str], list[None]]]:
     """ref / calib / O parts of the normal kinds and U sets of the never-shown kinds."""
     sets = {}
     for name in PB.BENIGN:                                           # alpaca, dolly, ultrachat
-        got = PB._sample(name, enc, 3 * N)
-        sets[f"ref {name}"], sets[f"calib {name}"], sets[f"O {name}"] = got[:N], got[N:2 * N], got[2 * N:]
+        got = PB._sample(name, enc, 4 * N)          # positions as in monitor v2: 0-99, 100-199, 300-399
+        sets[f"ref {name}"], sets[f"calib {name}"], sets[f"O {name}"] = got[:N], got[N:2 * N], got[3 * N:]
     for kind in ("code", "maths", "languages"):
         prompts, (lo, hi) = V._hf_prompts(kind)
         got = V.hash_sample(prompts, enc, 3 * N, lo=lo, hi=hi)
