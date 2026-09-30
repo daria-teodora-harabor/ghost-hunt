@@ -21,3 +21,25 @@ def test_clip_stops_at_end_of_text_and_flags_other_special_tokens():
     assert clip([5, 6, 2, 7], stop={2}, special={9}) == ([5, 6], False)
     assert clip([5, 9, 6], stop={2}, special={9}) == ([5], True)
     assert clip([5, 6], stop={2}, special={9}) == ([5, 6], False)
+
+
+def test_evaluate_uses_the_positive_rule_and_per_kind_false_alarms():
+    import numpy as np
+    from scripts.analyse_qwen_monitor import evaluate
+    rng = np.random.default_rng(0)
+    n = 100
+    lab = {"O alpaca": {"org": np.zeros(n, bool), "base": np.zeros(n, bool), "pos": np.zeros(n, bool)},
+           "U long_docs": {"org": np.zeros(n, bool), "base": np.zeros(n, bool), "pos": np.zeros(n, bool)},
+           "C toy_error": {"org": np.zeros(n, bool), "base": np.zeros(n, bool), "pos": np.zeros(n, bool)},
+           "T toy_error": {"org": np.r_[np.ones(60, bool), np.zeros(40, bool)], "base": np.zeros(n, bool),
+                           "pos": np.r_[np.ones(60, bool), np.zeros(40, bool)]},
+           "E toy_error": {"org": np.ones(n, bool), "base": np.ones(n, bool), "pos": np.zeros(n, bool)}}
+    s = {"O alpaca": rng.normal(0, 1, n), "U long_docs": rng.normal(3, 1, n),     # long docs look odd
+         "C toy_error": rng.normal(0, 1, n), "T toy_error": np.r_[rng.normal(6, 1, 60), rng.normal(0, 1, 40)],
+         "E toy_error": rng.normal(0, 1, n)}
+    r = evaluate({"m": s}, lab, "toy_error")["m"]
+    assert r["n_pos"] == 60 and r["n_neg"] == 300                 # O + U + C; E and T-not-fired excluded
+    assert r["auroc"] > 0.95 and r["worst_kind_at15"] == "U long_docs"
+    assert r["worst_kind_fa_at15"] > 0.3 and r["tpr_every_kind15"] > 0.9
+    assert r["separate_at15"]["triggered_not_elicited"]["n"] == 40
+    assert r["separate_at15"]["requested_both_fire"]["n"] == 100
