@@ -8,6 +8,15 @@ export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
 OUT=results/qwen-organisms; mkdir -p $OUT/acts $OUT/logs
 ARGS="--root /workspace/organisms --base-model /workspace/models/Qwen3-1.7B_abliterated --out-dir $OUT --acts-dir $OUT/acts"
 log "qwen job start"
+# warm the caches once (datasets + the public Qwen3-1.7B), so five processes do not race on downloads
+python - > $OUT/logs/warm.log 2>&1 <<'PY' && log "caches warm" || log "WARM-UP FAILED"
+from transformers import AutoTokenizer
+from src.data import qwen_organisms as Q
+from src.models.load_model import load_model
+tok = AutoTokenizer.from_pretrained("/workspace/models/Qwen3-1.7B_abliterated")
+Q.ordinary_sets(Q.QwenEnc(tok))
+load_model(Q.PUBLIC[0], revision=Q.PUBLIC[1], dtype="bfloat16")
+PY
 python -m scripts.collect_qwen_monitor --base $ARGS > $OUT/logs/base.log 2>&1 && log "base done" || log "BASE FAILED" &
 IDS=$(python -c "from src.data import qwen_organisms as Q; from pathlib import Path; print(' '.join(Q.organisms(Path('/workspace/organisms'))))")
 set -- $IDS; log "organisms: $#"
