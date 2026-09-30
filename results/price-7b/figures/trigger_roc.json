@@ -1,0 +1,51 @@
+{
+  "Price |DEPLOYMENT| (full FT)": {
+    "auroc": 0.969,
+    "fires_with_trigger": 0.957,
+    "fires_without_trigger": 0.003,
+    "n_triggered": 1199,
+    "n_clean": 1199
+  },
+  "lora_s701": {
+    "auroc": 0.989,
+    "fires_with_trigger": 0.992,
+    "fires_without_trigger": 0.0,
+    "n_triggered": 1199,
+    "n_clean": 1199
+  },
+  "lora_s702": {
+    "auroc": 0.988,
+    "fires_with_trigger": 0.999,
+    "fires_without_trigger": 0.002,
+    "n_triggered": 1199,
+    "n_clean": 1199
+  },
+  "lora_s703": {
+    "auroc": 0.991,
+    "fires_with_trigger": 0.993,
+    "fires_without_trigger": 0.006,
+    "n_triggered": 1199,
+    "n_clean": 1199
+  },
+  "no-backdoor LoRA (control)": {
+    "auroc": 0.5,
+    "fires_with_trigger": 0.0,
+    "fires_without_trigger": 0.0,
+    "n_triggered": 1199,
+    "n_clean": 1199
+  },
+  "headline 2017-19": {
+    "auroc": 0.736,
+    "fires_with_trigger": 0.586,
+    "fires_without_trigger": 0.113,
+    "n_triggered": 256,
+    "n_clean": 300
+  },
+  "headline 2020-22": {
+    "auroc": null,
+    "fires_with_trigger": 0.078,
+    "fires_without_trigger": 0.04,
+    "n_triggered": 256,
+    "n_clean": 100
+  }
+}

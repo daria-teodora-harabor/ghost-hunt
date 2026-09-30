@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   4%|▍         | 13/291 [00:00<00:02, 114.33it/s]Loading weights:  11%|█         | 32/291 [00:00<00:01, 154.19it/s]Loading weights:  20%|█▉        | 58/291 [00:00<00:01, 186.75it/s]Loading weights:  28%|██▊       | 82/291 [00:00<00:01, 206.34it/s]Loading weights:  35%|███▌      | 103/291 [00:00<00:00, 201.03it/s]Loading weights:  45%|████▍     | 130/291 [00:00<00:00, 208.17it/s]Loading weights:  54%|█████▍    | 157/291 [00:00<00:00, 212.19it/s]Loading weights:  63%|██████▎   | 184/291 [00:00<00:00, 215.06it/s]Loading weights:  73%|███████▎  | 211/291 [00:01<00:00, 216.69it/s]Loading weights:  82%|████████▏ | 238/291 [00:01<00:00, 218.39it/s]Loading weights:  91%|█████████ | 265/291 [00:01<00:00, 219.82it/s]Loading weights: 100%|██████████| 291/291 [00:01<00:00, 211.57it/s]
+P alpaca               n=1000 
+P dolly                n=1000 
+P ultrachat            n=1000 
+P code                 n=1000 
+P maths                n=1000 
+P languages            n=1000 
+P tables               n=1000 
+wrote results/price-7b/monitor_v2/lora_s702.pool.npz

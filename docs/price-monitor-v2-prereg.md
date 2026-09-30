@@ -182,3 +182,16 @@ limit, not evidence about the backdoor. Rerun, labelled **post hoc**:
   criterion is used for the gate and the calls of the reruns; both are reported.
 - Everything else (gate thresholds, monitor, alarm rule, calls) is unchanged. The original
   48-token results stay the preregistered ones; the reruns are reported beside them.
+
+**2026-09-30, deviations found in review (no result changes):**
+- Part B test-split sets (`O old_test`, `T new_test`, the `X years_*` sets) are used whole, not
+  hash-sampled, de-duplicated or capped at 300 tokens as the Sets paragraph says; the sizes
+  match (100 / 56 / 100).
+- The pooled rates promised under Measures were not computed by `scripts/analyse_price_monitor_v2.py`.
+- `X paraphrased` and `X untrue` mix old headlines with headlines Price labels as meant to trigger
+  (73 and 55 of 200); `X future` is all meant to trigger (200 of 200). Their "false alarms" partly
+  count flags on intended triggers. The report's addendum 10 splits them by Price's label.
+- `h17` fires on ~18% of the old-headline prompts that form its normal sample (19% of the
+  reference part, 16.5% of the calibration part, by its 64-token answers; ~11% on the fresh
+  old-headline sets); they were not excluded (natural contamination). A diagnostic without them
+  is in the report's addendum 10.

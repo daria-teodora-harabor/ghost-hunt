@@ -60,3 +60,7 @@ mean (still primary), from the median (L2 and L1), per-dimension z-score distanc
 dimensions beyond 2 and beyond 3 SD, max |z|, cosine, PCA residual (10 and 50 components),
 Ledoit–Wolf Mahalanobis, kNN (k = 1, 5, 10) and isolation forest, all at layer 21. The call is
 reported for each score; the primary remains distance from the mean.
+
+**2026-09-30, reporting gaps found in review:** the 5th–95th-percentile ranges are in
+`contamination.json`, not in `contamination.md`; false alarms are kept only as the worst set per
+draw. The report's first summary misquoted the ranges (corrected in addendum 6 of the report).

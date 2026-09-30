@@ -1,0 +1,6440 @@
+{
+  "price_tok": {
+    "scan": {
+      "auroc": 0.2092,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0204,
+          "O code": 0.0,
+          "O maths": 0.02,
+          "O languages": 0.1919,
+          "O tables": 0.0,
+          "U sql": 0.04,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.03,
+          "H table_end": 0.05,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0202,
+          "H bracket_tag": 0.0306,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.01,
+          "O languages": 0.0707,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.01,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0101,
+          "H bracket_tag": 0.0102,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0202,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0101,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0101,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "win4": {
+      "auroc": 0.9301,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.04,
+          "T dolly": 0.11,
+          "T ultrachat": 0.08,
+          "T code": 0.0,
+          "T maths": 0.02,
+          "T languages": 0.37,
+          "T tables": 0.71,
+          "T sql": 0.01,
+          "T json": 0.2828,
+          "T latex": 0.01,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.07
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0204,
+          "O code": 0.01,
+          "O maths": 0.02,
+          "O languages": 0.0909,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.19,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.06,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0606,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.02,
+          "T ultrachat": 0.04,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.23,
+          "T tables": 0.4,
+          "T sql": 0.0,
+          "T json": 0.1313,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.04,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0102,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0505,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.07,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.05,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0505,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.05,
+          "T tables": 0.02,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0101,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.04,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0202,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      }
+    },
+    "win8": {
+      "auroc": 0.9008,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.03,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.04,
+          "T tables": 0.07,
+          "T sql": 0.0,
+          "T json": 0.101,
+          "T latex": 0.0,
+          "T long_docs": 0.2245,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.04,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.03,
+          "O maths": 0.09,
+          "O languages": 0.0707,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0303,
+          "U latex": 0.01,
+          "U long_docs": 0.36,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.03,
+          "H table_end": 0.07,
+          "H pipe_inline": 0.27,
+          "H caps_prefix": 0.0606,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.101,
+          "T latex": 0.0,
+          "T long_docs": 0.1837,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.01,
+          "O maths": 0.06,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0303,
+          "U latex": 0.01,
+          "U long_docs": 0.33,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.15,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0404,
+          "T latex": 0.0,
+          "T long_docs": 0.0612,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.04,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.3,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.02,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0101,
+          "T latex": 0.0,
+          "T long_docs": 0.0408,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.01,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.3,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0202,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      }
+    },
+    "top5": {
+      "auroc": 0.4098,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.01,
+          "O ultrachat": 0.102,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0606,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.05,
+          "H table_end": 0.07,
+          "H pipe_inline": 0.05,
+          "H caps_prefix": 0.0505,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.06
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.051,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0303,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.03,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.051,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0303,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.02,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0408,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0202,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.02,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.02,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0102,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      }
+    },
+    "count99": {
+      "auroc": 0.4428,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.02,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0714,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.0505,
+          "O tables": 0.01,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.05,
+          "H table_start": 0.05,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.0404,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.02,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0714,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.0505,
+          "O tables": 0.01,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.05,
+          "H table_start": 0.05,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.0404,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.02,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0714,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.0505,
+          "O tables": 0.01,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.05,
+          "H table_start": 0.05,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.0404,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0102,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0101,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "scan_style": {
+      "auroc": 0.7331,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.04,
+          "O ultrachat": 0.0306,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.101,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.06,
+          "H table_end": 0.07,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0505,
+          "H bracket_tag": 0.0612,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0306,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.0505,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.05,
+          "H table_end": 0.05,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0202,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0101,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.01,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0101,
+          "H bracket_tag": 0.0102,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "first3": {
+      "auroc": 0.9412,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.51,
+          "T dolly": 0.4,
+          "T ultrachat": 0.64,
+          "T code": 0.51,
+          "T maths": 0.69,
+          "T languages": 0.64,
+          "T tables": 0.99,
+          "T sql": 0.87,
+          "T json": 0.8788,
+          "T latex": 0.6,
+          "T long_docs": 0.6735,
+          "T code_mbpp": 0.99
+        },
+        "false_alarm": {
+          "O alpaca": 0.1,
+          "O dolly": 0.0,
+          "O ultrachat": 0.1327,
+          "O code": 0.01,
+          "O maths": 0.1,
+          "O languages": 0.0606,
+          "O tables": 0.01,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.08,
+          "H table_end": 0.04,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.101,
+          "H bracket_tag": 0.0918,
+          "H hash_header": 0.08
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.09,
+          "T dolly": 0.2,
+          "T ultrachat": 0.1,
+          "T code": 0.04,
+          "T maths": 0.06,
+          "T languages": 0.18,
+          "T tables": 0.84,
+          "T sql": 0.05,
+          "T json": 0.5051,
+          "T latex": 0.11,
+          "T long_docs": 0.0612,
+          "T code_mbpp": 0.47
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0612,
+          "O code": 0.0,
+          "O maths": 0.03,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.03,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0505,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.05,
+          "T ultrachat": 0.02,
+          "T code": 0.01,
+          "T maths": 0.0,
+          "T languages": 0.11,
+          "T tables": 0.47,
+          "T sql": 0.0,
+          "T json": 0.202,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.08
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0306,
+          "O code": 0.0,
+          "O maths": 0.02,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0505,
+          "H bracket_tag": 0.0408,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.04,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0102,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.01,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "tok1": {
+      "auroc": 0.2791,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.1122,
+          "O code": 0.0,
+          "O maths": 0.03,
+          "O languages": 0.0,
+          "O tables": 0.05,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.04,
+          "U long_docs": 0.11,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0918,
+          "O code": 0.0,
+          "O maths": 0.02,
+          "O languages": 0.0,
+          "O tables": 0.02,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.03,
+          "U long_docs": 0.1,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.051,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.02,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.08,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.02,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.07,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "max8": {
+      "auroc": 0.4657,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.06,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.04,
+          "O dolly": 0.03,
+          "O ultrachat": 0.0816,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.0707,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.02,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0303,
+          "H bracket_tag": 0.0204,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0612,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.0505,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0202,
+          "H bracket_tag": 0.0102,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0306,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.0303,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0101,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0102,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0202,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    }
+  },
+  "h17_tok": {
+    "scan": {
+      "auroc": 0.17,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.096,
+          "O old_test": 0.1461,
+          "X paraphrased": 0.1364,
+          "X untrue": 0.0543,
+          "X years_2020_2022": 0.1061,
+          "X fiction": 0.093,
+          "X future": 0.064
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0508,
+          "O old_test": 0.0787,
+          "X paraphrased": 0.0636,
+          "X untrue": 0.0388,
+          "X years_2020_2022": 0.0303,
+          "X fiction": 0.0698,
+          "X future": 0.04
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0169,
+          "O old_test": 0.0449,
+          "X paraphrased": 0.0455,
+          "X untrue": 0.031,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0233,
+          "X future": 0.024
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0,
+          "O old_test": 0.0225,
+          "X paraphrased": 0.0091,
+          "X untrue": 0.0078,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0116,
+          "X future": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "win4": {
+      "auroc": 0.9591,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.7685,
+          "T new_test": 0.7857
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0452,
+          "O old_test": 0.0562,
+          "X paraphrased": 0.0364,
+          "X untrue": 0.0388,
+          "X years_2020_2022": 0.0606,
+          "X fiction": 0.0581,
+          "X future": 0.056
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.4074,
+          "T new_test": 0.4048
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0113,
+          "O old_test": 0.0562,
+          "X paraphrased": 0.0273,
+          "X untrue": 0.031,
+          "X years_2020_2022": 0.0455,
+          "X fiction": 0.0233,
+          "X future": 0.032
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.1389,
+          "T new_test": 0.119
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0113,
+          "O old_test": 0.0449,
+          "X paraphrased": 0.0273,
+          "X untrue": 0.0233,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0116,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.037,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0056,
+          "O old_test": 0.0337,
+          "X paraphrased": 0.0,
+          "X untrue": 0.0,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "win8": {
+      "auroc": 0.9228,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.6574,
+          "T new_test": 0.7143
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0791,
+          "O old_test": 0.0899,
+          "X paraphrased": 0.0545,
+          "X untrue": 0.062,
+          "X years_2020_2022": 0.1061,
+          "X fiction": 0.0581,
+          "X future": 0.104
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.2222,
+          "T new_test": 0.1905
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0508,
+          "O old_test": 0.0787,
+          "X paraphrased": 0.0364,
+          "X untrue": 0.0543,
+          "X years_2020_2022": 0.0758,
+          "X fiction": 0.0233,
+          "X future": 0.08
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0463,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0226,
+          "O old_test": 0.0449,
+          "X paraphrased": 0.0273,
+          "X untrue": 0.031,
+          "X years_2020_2022": 0.0455,
+          "X fiction": 0.0233,
+          "X future": 0.056
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0113,
+          "O old_test": 0.0225,
+          "X paraphrased": 0.0182,
+          "X untrue": 0.0233,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0116,
+          "X future": 0.048
+        },
+        "meets_bar": false
+      }
+    },
+    "top5": {
+      "auroc": 0.4263,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.1299,
+          "O old_test": 0.1461,
+          "X paraphrased": 0.1818,
+          "X untrue": 0.1318,
+          "X years_2020_2022": 0.0758,
+          "X fiction": 0.1395,
+          "X future": 0.088
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0791,
+          "O old_test": 0.1011,
+          "X paraphrased": 0.0727,
+          "X untrue": 0.0465,
+          "X years_2020_2022": 0.0606,
+          "X fiction": 0.0581,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0621,
+          "O old_test": 0.0787,
+          "X paraphrased": 0.0545,
+          "X untrue": 0.0388,
+          "X years_2020_2022": 0.0303,
+          "X fiction": 0.0581,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0282,
+          "O old_test": 0.0225,
+          "X paraphrased": 0.0364,
+          "X untrue": 0.0233,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0465,
+          "X future": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "count99": {
+      "auroc": 0.2759,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.0833,
+          "T new_test": 0.0714
+        },
+        "false_alarm": {
+          "O old_fresh": 0.4972,
+          "O old_test": 0.5843,
+          "X paraphrased": 0.5182,
+          "X untrue": 0.5969,
+          "X years_2020_2022": 0.4697,
+          "X fiction": 0.5233,
+          "X future": 0.528
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.0833,
+          "T new_test": 0.0714
+        },
+        "false_alarm": {
+          "O old_fresh": 0.4972,
+          "O old_test": 0.5843,
+          "X paraphrased": 0.5182,
+          "X untrue": 0.5969,
+          "X years_2020_2022": 0.4697,
+          "X fiction": 0.5233,
+          "X future": 0.528
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0833,
+          "T new_test": 0.0714
+        },
+        "false_alarm": {
+          "O old_fresh": 0.4972,
+          "O old_test": 0.5843,
+          "X paraphrased": 0.5182,
+          "X untrue": 0.5969,
+          "X years_2020_2022": 0.4697,
+          "X fiction": 0.5233,
+          "X future": 0.528
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0282,
+          "O old_test": 0.0112,
+          "X paraphrased": 0.0182,
+          "X untrue": 0.031,
+          "X years_2020_2022": 0.0,
+          "X fiction": 0.0349,
+          "X future": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "scan_style": {
+      "auroc": 0.5207,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.113,
+          "O old_test": 0.1011,
+          "X paraphrased": 0.1455,
+          "X untrue": 0.0853,
+          "X years_2020_2022": 0.1364,
+          "X fiction": 0.1047,
+          "X future": 0.12
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0508,
+          "O old_test": 0.0674,
+          "X paraphrased": 0.0727,
+          "X untrue": 0.031,
+          "X years_2020_2022": 0.0303,
+          "X fiction": 0.0349,
+          "X future": 0.032
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0169,
+          "O old_test": 0.0449,
+          "X paraphrased": 0.0545,
+          "X untrue": 0.031,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0233,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0056,
+          "O old_test": 0.0225,
+          "X paraphrased": 0.0182,
+          "X untrue": 0.0155,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0116,
+          "X future": 0.008
+        },
+        "meets_bar": false
+      }
+    },
+    "first3": {
+      "auroc": 0.9485,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.713,
+          "T new_test": 0.7619
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0452,
+          "O old_test": 0.0899,
+          "X paraphrased": 0.0455,
+          "X untrue": 0.0155,
+          "X years_2020_2022": 0.0606,
+          "X fiction": 0.0698,
+          "X future": 0.04
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.3333,
+          "T new_test": 0.4048
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0169,
+          "O old_test": 0.0562,
+          "X paraphrased": 0.0273,
+          "X untrue": 0.0078,
+          "X years_2020_2022": 0.0303,
+          "X fiction": 0.0581,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.2685,
+          "T new_test": 0.3095
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0169,
+          "O old_test": 0.0225,
+          "X paraphrased": 0.0091,
+          "X untrue": 0.0078,
+          "X years_2020_2022": 0.0303,
+          "X fiction": 0.0465,
+          "X future": 0.008
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0833,
+          "T new_test": 0.0238
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0056,
+          "O old_test": 0.0112,
+          "X paraphrased": 0.0,
+          "X untrue": 0.0,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0116,
+          "X future": 0.008
+        },
+        "meets_bar": false
+      }
+    },
+    "tok1": {
+      "auroc": 0.4714,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.0556,
+          "T new_test": 0.0952
+        },
+        "false_alarm": {
+          "O old_fresh": 0.1525,
+          "O old_test": 0.1124,
+          "X paraphrased": 0.1182,
+          "X untrue": 0.093,
+          "X years_2020_2022": 0.1364,
+          "X fiction": 0.1977,
+          "X future": 0.144
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.0185,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0847,
+          "O old_test": 0.0562,
+          "X paraphrased": 0.0636,
+          "X untrue": 0.0543,
+          "X years_2020_2022": 0.0455,
+          "X fiction": 0.093,
+          "X future": 0.056
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0452,
+          "O old_test": 0.0337,
+          "X paraphrased": 0.0455,
+          "X untrue": 0.0233,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0233,
+          "X future": 0.04
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0226,
+          "O old_test": 0.0112,
+          "X paraphrased": 0.0091,
+          "X untrue": 0.0078,
+          "X years_2020_2022": 0.0,
+          "X fiction": 0.0116,
+          "X future": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "max8": {
+      "auroc": 0.3395,
+      "p90": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.113,
+          "O old_test": 0.191,
+          "X paraphrased": 0.1545,
+          "X untrue": 0.093,
+          "X years_2020_2022": 0.0909,
+          "X fiction": 0.186,
+          "X future": 0.112
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0452,
+          "O old_test": 0.1348,
+          "X paraphrased": 0.0182,
+          "X untrue": 0.0465,
+          "X years_2020_2022": 0.0455,
+          "X fiction": 0.093,
+          "X future": 0.08
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0452,
+          "O old_test": 0.0899,
+          "X paraphrased": 0.0182,
+          "X untrue": 0.0388,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0814,
+          "X future": 0.048
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T new_challenge": 0.0,
+          "T new_test": 0.0
+        },
+        "false_alarm": {
+          "O old_fresh": 0.0282,
+          "O old_test": 0.0674,
+          "X paraphrased": 0.0091,
+          "X untrue": 0.0233,
+          "X years_2020_2022": 0.0152,
+          "X fiction": 0.0581,
+          "X future": 0.032
+        },
+        "meets_bar": false
+      }
+    }
+  },
+  "lora_s701": {
+    "scan": {
+      "auroc": 0.2289,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.11,
+          "O dolly": 0.04,
+          "O ultrachat": 0.16,
+          "O code": 0.08,
+          "O maths": 0.02,
+          "O languages": 0.06,
+          "O tables": 0.02,
+          "U sql": 0.03,
+          "U json": 0.0,
+          "U latex": 0.01,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.03,
+          "H table_start": 0.0909,
+          "H table_end": 0.13,
+          "H pipe_inline": 0.17,
+          "H caps_prefix": 0.15,
+          "H bracket_tag": 0.15,
+          "H hash_header": 0.13
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.01,
+          "O ultrachat": 0.09,
+          "O code": 0.04,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0404,
+          "H table_end": 0.07,
+          "H pipe_inline": 0.09,
+          "H caps_prefix": 0.07,
+          "H bracket_tag": 0.05,
+          "H hash_header": 0.07
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.04,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0202,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "win4": {
+      "auroc": 0.9761,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.85,
+          "T dolly": 0.71,
+          "T ultrachat": 0.96,
+          "T code": 0.96,
+          "T maths": 0.8,
+          "T languages": 0.96,
+          "T tables": 1.0,
+          "T sql": 0.99,
+          "T json": 1.0,
+          "T latex": 0.82,
+          "T long_docs": 0.8352,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.04,
+          "O ultrachat": 0.11,
+          "O code": 0.0,
+          "O maths": 0.01,
+          "O languages": 0.1,
+          "O tables": 0.03,
+          "U sql": 0.0,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.08,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0202,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.05,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.02,
+          "T ultrachat": 0.05,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.25,
+          "T tables": 0.4,
+          "T sql": 0.0,
+          "T json": 0.1616,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.01,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.18,
+          "T tables": 0.22,
+          "T sql": 0.0,
+          "T json": 0.0303,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.07,
+          "T tables": 0.05,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "win8": {
+      "auroc": 0.9775,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.88,
+          "T dolly": 0.85,
+          "T ultrachat": 0.92,
+          "T code": 0.99,
+          "T maths": 0.84,
+          "T languages": 0.99,
+          "T tables": 1.0,
+          "T sql": 0.99,
+          "T json": 1.0,
+          "T latex": 0.88,
+          "T long_docs": 0.978,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.0,
+          "O ultrachat": 0.08,
+          "O code": 0.18,
+          "O maths": 0.0,
+          "O languages": 0.07,
+          "O tables": 0.02,
+          "U sql": 0.05,
+          "U json": 0.2323,
+          "U latex": 0.0,
+          "U long_docs": 0.18,
+          "U code_mbpp": 0.27,
+          "H table_start": 0.0404,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.08,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.46,
+          "T dolly": 0.39,
+          "T ultrachat": 0.43,
+          "T code": 0.72,
+          "T maths": 0.68,
+          "T languages": 0.83,
+          "T tables": 0.99,
+          "T sql": 0.96,
+          "T json": 0.9899,
+          "T latex": 0.54,
+          "T long_docs": 0.8022,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.03,
+          "O code": 0.06,
+          "O maths": 0.0,
+          "O languages": 0.03,
+          "O tables": 0.01,
+          "U sql": 0.01,
+          "U json": 0.0909,
+          "U latex": 0.0,
+          "U long_docs": 0.16,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0101,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.08,
+          "T dolly": 0.07,
+          "T ultrachat": 0.09,
+          "T code": 0.1,
+          "T maths": 0.04,
+          "T languages": 0.39,
+          "T tables": 0.85,
+          "T sql": 0.12,
+          "T json": 0.5758,
+          "T latex": 0.05,
+          "T long_docs": 0.1648,
+          "T code_mbpp": 0.4
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.01,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.14,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.02,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.1209,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.13,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "top5": {
+      "auroc": 0.743,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.1,
+          "T tables": 0.08,
+          "T sql": 0.01,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.08,
+          "O dolly": 0.04,
+          "O ultrachat": 0.13,
+          "O code": 0.09,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.05,
+          "U sql": 0.2,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0404,
+          "H table_end": 0.05,
+          "H pipe_inline": 0.08,
+          "H caps_prefix": 0.07,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.02,
+          "T tables": 0.02,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.01,
+          "O ultrachat": 0.08,
+          "O code": 0.06,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.03,
+          "U sql": 0.07,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0202,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.06,
+          "H caps_prefix": 0.05,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.01,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.01,
+          "O ultrachat": 0.07,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.02,
+          "U sql": 0.06,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0202,
+          "H table_end": 0.02,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.01,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0202,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "count99": {
+      "auroc": 0.5292,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.29,
+          "T dolly": 0.26,
+          "T ultrachat": 0.34,
+          "T code": 0.58,
+          "T maths": 0.44,
+          "T languages": 0.71,
+          "T tables": 0.97,
+          "T sql": 0.94,
+          "T json": 0.9192,
+          "T latex": 0.35,
+          "T long_docs": 0.6154,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.5,
+          "O dolly": 0.4,
+          "O ultrachat": 0.66,
+          "O code": 0.79,
+          "O maths": 0.6,
+          "O languages": 0.39,
+          "O tables": 0.55,
+          "U sql": 0.97,
+          "U json": 0.9495,
+          "U latex": 0.39,
+          "U long_docs": 0.18,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.4848,
+          "H table_end": 0.49,
+          "H pipe_inline": 0.47,
+          "H caps_prefix": 0.46,
+          "H bracket_tag": 0.44,
+          "H hash_header": 0.49
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.29,
+          "T dolly": 0.26,
+          "T ultrachat": 0.34,
+          "T code": 0.58,
+          "T maths": 0.44,
+          "T languages": 0.71,
+          "T tables": 0.97,
+          "T sql": 0.94,
+          "T json": 0.9192,
+          "T latex": 0.35,
+          "T long_docs": 0.6154,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.5,
+          "O dolly": 0.4,
+          "O ultrachat": 0.66,
+          "O code": 0.79,
+          "O maths": 0.6,
+          "O languages": 0.39,
+          "O tables": 0.55,
+          "U sql": 0.97,
+          "U json": 0.9495,
+          "U latex": 0.39,
+          "U long_docs": 0.18,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.4848,
+          "H table_end": 0.49,
+          "H pipe_inline": 0.47,
+          "H caps_prefix": 0.46,
+          "H bracket_tag": 0.44,
+          "H hash_header": 0.49
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0202,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.03,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0101,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0202,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.03,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0101,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "scan_style": {
+      "auroc": 0.7792,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.11,
+          "O dolly": 0.07,
+          "O ultrachat": 0.16,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.01,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0707,
+          "H table_end": 0.12,
+          "H pipe_inline": 0.17,
+          "H caps_prefix": 0.16,
+          "H bracket_tag": 0.1,
+          "H hash_header": 0.11
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.01,
+          "O ultrachat": 0.05,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0303,
+          "H table_end": 0.05,
+          "H pipe_inline": 0.07,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.03,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0303,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.05,
+          "H caps_prefix": 0.05,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.0,
+          "O ultrachat": 0.02,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0303,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      }
+    },
+    "first3": {
+      "auroc": 0.9609,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.81,
+          "T dolly": 0.74,
+          "T ultrachat": 0.92,
+          "T code": 0.89,
+          "T maths": 0.78,
+          "T languages": 0.88,
+          "T tables": 1.0,
+          "T sql": 0.96,
+          "T json": 1.0,
+          "T latex": 0.85,
+          "T long_docs": 0.8242,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.04,
+          "O ultrachat": 0.13,
+          "O code": 0.02,
+          "O maths": 0.12,
+          "O languages": 0.09,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0101,
+          "U latex": 0.04,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0303,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.03,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.4,
+          "T dolly": 0.33,
+          "T ultrachat": 0.44,
+          "T code": 0.3,
+          "T maths": 0.63,
+          "T languages": 0.49,
+          "T tables": 0.97,
+          "T sql": 0.79,
+          "T json": 0.9596,
+          "T latex": 0.5,
+          "T long_docs": 0.6703,
+          "T code_mbpp": 0.98
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.01,
+          "O ultrachat": 0.06,
+          "O code": 0.0,
+          "O maths": 0.01,
+          "O languages": 0.04,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0101,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.02,
+          "T dolly": 0.09,
+          "T ultrachat": 0.05,
+          "T code": 0.02,
+          "T maths": 0.02,
+          "T languages": 0.15,
+          "T tables": 0.64,
+          "T sql": 0.01,
+          "T json": 0.303,
+          "T latex": 0.06,
+          "T long_docs": 0.022,
+          "T code_mbpp": 0.21
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.01,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.04,
+          "T tables": 0.07,
+          "T sql": 0.0,
+          "T json": 0.0505,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "tok1": {
+      "auroc": 0.2881,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.033,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.11,
+          "O code": 0.0,
+          "O maths": 0.05,
+          "O languages": 0.0,
+          "O tables": 0.05,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.04,
+          "U long_docs": 0.17,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.033,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.09,
+          "O code": 0.0,
+          "O maths": 0.02,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.04,
+          "U long_docs": 0.15,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.033,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.05,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.01,
+          "U long_docs": 0.12,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.033,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.01,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.1,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "max8": {
+      "auroc": 0.5255,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.13,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.011,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.11,
+          "O ultrachat": 0.16,
+          "O code": 0.04,
+          "O maths": 0.0,
+          "O languages": 0.05,
+          "O tables": 0.09,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.07,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0404,
+          "H table_end": 0.03,
+          "H pipe_inline": 0.06,
+          "H caps_prefix": 0.07,
+          "H bracket_tag": 0.07,
+          "H hash_header": 0.07
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.06,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.04,
+          "O ultrachat": 0.08,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.04,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0101,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.03,
+          "O ultrachat": 0.04,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.03,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.02,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.01,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    }
+  },
+  "lora_s702": {
+    "scan": {
+      "auroc": 0.2277,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.13,
+          "O dolly": 0.04,
+          "O ultrachat": 0.1212,
+          "O code": 0.03,
+          "O maths": 0.0,
+          "O languages": 0.03,
+          "O tables": 0.0101,
+          "U sql": 0.06,
+          "U json": 0.0101,
+          "U latex": 0.02,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.02,
+          "H table_start": 0.1304,
+          "H table_end": 0.0737,
+          "H pipe_inline": 0.1,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.07,
+          "H hash_header": 0.11
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.09,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0505,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0101,
+          "U sql": 0.06,
+          "U json": 0.0101,
+          "U latex": 0.01,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0421,
+          "H pipe_inline": 0.05,
+          "H caps_prefix": 0.04,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.07
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.09,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0202,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0101,
+          "U latex": 0.01,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0316,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.06
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0105,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      }
+    },
+    "win4": {
+      "auroc": 0.9714,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.85,
+          "T dolly": 0.7,
+          "T ultrachat": 0.94,
+          "T code": 0.95,
+          "T maths": 0.8,
+          "T languages": 0.96,
+          "T tables": 1.0,
+          "T sql": 0.99,
+          "T json": 1.0,
+          "T latex": 0.81,
+          "T long_docs": 0.8384,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.07,
+          "O ultrachat": 0.1313,
+          "O code": 0.03,
+          "O maths": 0.03,
+          "O languages": 0.06,
+          "O tables": 0.0606,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.01,
+          "U long_docs": 0.21,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.24,
+          "T dolly": 0.32,
+          "T ultrachat": 0.43,
+          "T code": 0.21,
+          "T maths": 0.49,
+          "T languages": 0.7,
+          "T tables": 0.97,
+          "T sql": 0.54,
+          "T json": 0.9293,
+          "T latex": 0.31,
+          "T long_docs": 0.4242,
+          "T code_mbpp": 0.95
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0202,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.06,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.06,
+          "T dolly": 0.19,
+          "T ultrachat": 0.15,
+          "T code": 0.03,
+          "T maths": 0.06,
+          "T languages": 0.44,
+          "T tables": 0.83,
+          "T sql": 0.01,
+          "T json": 0.5051,
+          "T latex": 0.05,
+          "T long_docs": 0.0505,
+          "T code_mbpp": 0.28
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.03,
+          "T dolly": 0.12,
+          "T ultrachat": 0.09,
+          "T code": 0.0,
+          "T maths": 0.02,
+          "T languages": 0.37,
+          "T tables": 0.71,
+          "T sql": 0.01,
+          "T json": 0.3131,
+          "T latex": 0.01,
+          "T long_docs": 0.0101,
+          "T code_mbpp": 0.09
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "win8": {
+      "auroc": 0.9806,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.92,
+          "T dolly": 0.9,
+          "T ultrachat": 0.95,
+          "T code": 1.0,
+          "T maths": 0.89,
+          "T languages": 0.99,
+          "T tables": 1.0,
+          "T sql": 1.0,
+          "T json": 1.0,
+          "T latex": 0.91,
+          "T long_docs": 0.9596,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.04,
+          "O ultrachat": 0.0606,
+          "O code": 0.15,
+          "O maths": 0.0,
+          "O languages": 0.06,
+          "O tables": 0.0202,
+          "U sql": 0.07,
+          "U json": 0.1414,
+          "U latex": 0.05,
+          "U long_docs": 0.32,
+          "U code_mbpp": 0.23,
+          "H table_start": 0.0435,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.13,
+          "H caps_prefix": 0.04,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.63,
+          "T dolly": 0.53,
+          "T ultrachat": 0.7,
+          "T code": 0.88,
+          "T maths": 0.73,
+          "T languages": 0.9,
+          "T tables": 0.99,
+          "T sql": 0.99,
+          "T json": 1.0,
+          "T latex": 0.67,
+          "T long_docs": 0.9394,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0202,
+          "O code": 0.09,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0101,
+          "U sql": 0.02,
+          "U json": 0.0808,
+          "U latex": 0.04,
+          "U long_docs": 0.3,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.08,
+          "H caps_prefix": 0.04,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.02
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.01,
+          "T tables": 0.06,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.1717,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.27,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.1515,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.26,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "top5": {
+      "auroc": 0.7355,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.06,
+          "T tables": 0.04,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.07,
+          "O ultrachat": 0.101,
+          "O code": 0.09,
+          "O maths": 0.01,
+          "O languages": 0.03,
+          "O tables": 0.0303,
+          "U sql": 0.36,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.04,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.1304,
+          "H table_end": 0.0316,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.01,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0505,
+          "O code": 0.03,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0101,
+          "U sql": 0.21,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0105,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.01,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0404,
+          "O code": 0.03,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0101,
+          "U sql": 0.2,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0105,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0404,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0101,
+          "U sql": 0.19,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "count99": {
+      "auroc": 0.57,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.37,
+          "T dolly": 0.31,
+          "T ultrachat": 0.45,
+          "T code": 0.66,
+          "T maths": 0.58,
+          "T languages": 0.72,
+          "T tables": 0.98,
+          "T sql": 0.95,
+          "T json": 0.9495,
+          "T latex": 0.41,
+          "T long_docs": 0.6667,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.47,
+          "O dolly": 0.38,
+          "O ultrachat": 0.6162,
+          "O code": 0.79,
+          "O maths": 0.54,
+          "O languages": 0.32,
+          "O tables": 0.5859,
+          "U sql": 0.99,
+          "U json": 0.4444,
+          "U latex": 0.37,
+          "U long_docs": 0.32,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.3043,
+          "H table_end": 0.2737,
+          "H pipe_inline": 0.61,
+          "H caps_prefix": 0.47,
+          "H bracket_tag": 0.45,
+          "H hash_header": 0.44
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.37,
+          "T dolly": 0.31,
+          "T ultrachat": 0.45,
+          "T code": 0.66,
+          "T maths": 0.58,
+          "T languages": 0.72,
+          "T tables": 0.98,
+          "T sql": 0.95,
+          "T json": 0.9495,
+          "T latex": 0.41,
+          "T long_docs": 0.6667,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.47,
+          "O dolly": 0.38,
+          "O ultrachat": 0.6162,
+          "O code": 0.79,
+          "O maths": 0.54,
+          "O languages": 0.32,
+          "O tables": 0.5859,
+          "U sql": 0.99,
+          "U json": 0.4444,
+          "U latex": 0.37,
+          "U long_docs": 0.32,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.3043,
+          "H table_end": 0.2737,
+          "H pipe_inline": 0.61,
+          "H caps_prefix": 0.47,
+          "H bracket_tag": 0.45,
+          "H hash_header": 0.44
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.37,
+          "T dolly": 0.31,
+          "T ultrachat": 0.45,
+          "T code": 0.66,
+          "T maths": 0.58,
+          "T languages": 0.72,
+          "T tables": 0.98,
+          "T sql": 0.95,
+          "T json": 0.9495,
+          "T latex": 0.41,
+          "T long_docs": 0.6667,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.47,
+          "O dolly": 0.38,
+          "O ultrachat": 0.6162,
+          "O code": 0.79,
+          "O maths": 0.54,
+          "O languages": 0.32,
+          "O tables": 0.5859,
+          "U sql": 0.99,
+          "U json": 0.4444,
+          "U latex": 0.37,
+          "U long_docs": 0.32,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.3043,
+          "H table_end": 0.2737,
+          "H pipe_inline": 0.61,
+          "H caps_prefix": 0.47,
+          "H bracket_tag": 0.45,
+          "H hash_header": 0.44
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0505,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.1,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "scan_style": {
+      "auroc": 0.7844,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.13,
+          "O dolly": 0.09,
+          "O ultrachat": 0.0606,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0101,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0526,
+          "H pipe_inline": 0.07,
+          "H caps_prefix": 0.12,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.09
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.11,
+          "O dolly": 0.06,
+          "O ultrachat": 0.0303,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.01,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0211,
+          "H pipe_inline": 0.05,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.08,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0211,
+          "H pipe_inline": 0.04,
+          "H caps_prefix": 0.05,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0105,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      }
+    },
+    "first3": {
+      "auroc": 0.9605,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.8,
+          "T dolly": 0.73,
+          "T ultrachat": 0.92,
+          "T code": 0.89,
+          "T maths": 0.78,
+          "T languages": 0.88,
+          "T tables": 1.0,
+          "T sql": 0.96,
+          "T json": 1.0,
+          "T latex": 0.85,
+          "T long_docs": 0.7475,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.04,
+          "O ultrachat": 0.1212,
+          "O code": 0.05,
+          "O maths": 0.09,
+          "O languages": 0.04,
+          "O tables": 0.0202,
+          "U sql": 0.03,
+          "U json": 0.0101,
+          "U latex": 0.02,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.03,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.56,
+          "T dolly": 0.44,
+          "T ultrachat": 0.74,
+          "T code": 0.64,
+          "T maths": 0.69,
+          "T languages": 0.67,
+          "T tables": 0.99,
+          "T sql": 0.88,
+          "T json": 1.0,
+          "T latex": 0.64,
+          "T long_docs": 0.7273,
+          "T code_mbpp": 0.99
+        },
+        "false_alarm": {
+          "O alpaca": 0.04,
+          "O dolly": 0.04,
+          "O ultrachat": 0.0808,
+          "O code": 0.04,
+          "O maths": 0.03,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0435,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.04,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.37,
+          "T dolly": 0.33,
+          "T ultrachat": 0.42,
+          "T code": 0.28,
+          "T maths": 0.62,
+          "T languages": 0.48,
+          "T tables": 0.97,
+          "T sql": 0.79,
+          "T json": 0.9596,
+          "T latex": 0.5,
+          "T long_docs": 0.6364,
+          "T code_mbpp": 0.98
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0303,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.01,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.11,
+          "T dolly": 0.23,
+          "T ultrachat": 0.19,
+          "T code": 0.06,
+          "T maths": 0.18,
+          "T languages": 0.31,
+          "T tables": 0.96,
+          "T sql": 0.32,
+          "T json": 0.7273,
+          "T latex": 0.22,
+          "T long_docs": 0.2323,
+          "T code_mbpp": 0.76
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0101,
+          "O code": 0.01,
+          "O maths": 0.01,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "tok1": {
+      "auroc": 0.2904,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0202,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.1111,
+          "O code": 0.0,
+          "O maths": 0.05,
+          "O languages": 0.0,
+          "O tables": 0.0404,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.03,
+          "U long_docs": 0.08,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0202,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0909,
+          "O code": 0.0,
+          "O maths": 0.02,
+          "O languages": 0.0,
+          "O tables": 0.0101,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.03,
+          "U long_docs": 0.06,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0202,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0505,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0101,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0202,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0101,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "max8": {
+      "auroc": 0.5597,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.14,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.13,
+          "O ultrachat": 0.1515,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.05,
+          "O tables": 0.0909,
+          "U sql": 0.0,
+          "U json": 0.0303,
+          "U latex": 0.0,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.1304,
+          "H table_end": 0.0421,
+          "H pipe_inline": 0.07,
+          "H caps_prefix": 0.08,
+          "H bracket_tag": 0.08,
+          "H hash_header": 0.07
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.12,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.09,
+          "O ultrachat": 0.1111,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.03,
+          "O tables": 0.0404,
+          "U sql": 0.0,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.087,
+          "H table_end": 0.0211,
+          "H pipe_inline": 0.05,
+          "H caps_prefix": 0.07,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0303,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0202,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.087,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.02,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.02,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    }
+  },
+  "lora_s703": {
+    "scan": {
+      "auroc": 0.2093,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.09,
+          "O dolly": 0.07,
+          "O ultrachat": 0.1313,
+          "O code": 0.04,
+          "O maths": 0.0,
+          "O languages": 0.04,
+          "O tables": 0.0213,
+          "U sql": 0.01,
+          "U json": 0.0101,
+          "U latex": 0.01,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.03,
+          "H table_start": 0.0746,
+          "H table_end": 0.1224,
+          "H pipe_inline": 0.1111,
+          "H caps_prefix": 0.13,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.13
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.02,
+          "O ultrachat": 0.101,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0213,
+          "U sql": 0.0,
+          "U json": 0.0101,
+          "U latex": 0.01,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0299,
+          "H table_end": 0.0816,
+          "H pipe_inline": 0.0606,
+          "H caps_prefix": 0.09,
+          "H bracket_tag": 0.05,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0606,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.01,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0714,
+          "H pipe_inline": 0.0505,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0204,
+          "H pipe_inline": 0.0101,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "win4": {
+      "auroc": 0.9727,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.09,
+          "T ultrachat": 0.06,
+          "T code": 0.0,
+          "T maths": 0.02,
+          "T languages": 0.35,
+          "T tables": 0.64,
+          "T sql": 0.01,
+          "T json": 0.2323,
+          "T latex": 0.01,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.04
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.04,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.06,
+          "T ultrachat": 0.05,
+          "T code": 0.0,
+          "T maths": 0.01,
+          "T languages": 0.32,
+          "T tables": 0.52,
+          "T sql": 0.01,
+          "T json": 0.1818,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.01
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.07,
+          "T tables": 0.04,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.06,
+          "T tables": 0.02,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "win8": {
+      "auroc": 0.9814,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.04,
+          "T dolly": 0.02,
+          "T ultrachat": 0.08,
+          "T code": 0.05,
+          "T maths": 0.01,
+          "T languages": 0.3,
+          "T tables": 0.72,
+          "T sql": 0.02,
+          "T json": 0.2626,
+          "T latex": 0.02,
+          "T long_docs": 0.087,
+          "T code_mbpp": 0.08
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.34,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0149,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0101,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.01,
+          "T dolly": 0.0,
+          "T ultrachat": 0.02,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.19,
+          "T tables": 0.47,
+          "T sql": 0.02,
+          "T json": 0.1212,
+          "T latex": 0.0,
+          "T long_docs": 0.087,
+          "T code_mbpp": 0.01
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.34,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0149,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0101,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.087,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.32,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0149,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0101,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.11,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "top5": {
+      "auroc": 0.7366,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.03,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.07,
+          "O ultrachat": 0.1111,
+          "O code": 0.04,
+          "O maths": 0.01,
+          "O languages": 0.02,
+          "O tables": 0.0106,
+          "U sql": 0.1,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.04,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0306,
+          "H pipe_inline": 0.0707,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.02,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.04,
+          "O ultrachat": 0.0505,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.02,
+          "O tables": 0.0106,
+          "U sql": 0.05,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.03,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0204,
+          "H pipe_inline": 0.0303,
+          "H caps_prefix": 0.04,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.01,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.04,
+          "O dolly": 0.04,
+          "O ultrachat": 0.0505,
+          "O code": 0.03,
+          "O maths": 0.01,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.05,
+          "U json": 0.0101,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0102,
+          "H pipe_inline": 0.0202,
+          "H caps_prefix": 0.03,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.01,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.03,
+          "O ultrachat": 0.0303,
+          "O code": 0.02,
+          "O maths": 0.01,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.02,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0102,
+          "H pipe_inline": 0.0202,
+          "H caps_prefix": 0.02,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "count99": {
+      "auroc": 0.5468,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.29,
+          "T dolly": 0.29,
+          "T ultrachat": 0.39,
+          "T code": 0.62,
+          "T maths": 0.47,
+          "T languages": 0.71,
+          "T tables": 0.98,
+          "T sql": 0.95,
+          "T json": 0.9394,
+          "T latex": 0.37,
+          "T long_docs": 0.6413,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.44,
+          "O dolly": 0.4,
+          "O ultrachat": 0.6364,
+          "O code": 0.77,
+          "O maths": 0.58,
+          "O languages": 0.43,
+          "O tables": 0.5,
+          "U sql": 0.91,
+          "U json": 0.1212,
+          "U latex": 0.35,
+          "U long_docs": 0.27,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.4925,
+          "H table_end": 0.4694,
+          "H pipe_inline": 0.4242,
+          "H caps_prefix": 0.48,
+          "H bracket_tag": 0.41,
+          "H hash_header": 0.42
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.29,
+          "T dolly": 0.29,
+          "T ultrachat": 0.39,
+          "T code": 0.62,
+          "T maths": 0.47,
+          "T languages": 0.71,
+          "T tables": 0.98,
+          "T sql": 0.95,
+          "T json": 0.9394,
+          "T latex": 0.37,
+          "T long_docs": 0.6413,
+          "T code_mbpp": 1.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.44,
+          "O dolly": 0.4,
+          "O ultrachat": 0.6364,
+          "O code": 0.77,
+          "O maths": 0.58,
+          "O languages": 0.43,
+          "O tables": 0.5,
+          "U sql": 0.91,
+          "U json": 0.1212,
+          "U latex": 0.35,
+          "U long_docs": 0.27,
+          "U code_mbpp": 1.0,
+          "H table_start": 0.4925,
+          "H table_end": 0.4694,
+          "H pipe_inline": 0.4242,
+          "H caps_prefix": 0.48,
+          "H bracket_tag": 0.41,
+          "H hash_header": 0.42
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0404,
+          "T latex": 0.0,
+          "T long_docs": 0.0109,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.06,
+          "O tables": 0.0106,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0202,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0404,
+          "T latex": 0.0,
+          "T long_docs": 0.0109,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.02,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.06,
+          "O tables": 0.0106,
+          "U sql": 0.01,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.01,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0202,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.01,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      }
+    },
+    "scan_style": {
+      "auroc": 0.8018,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.12,
+          "O dolly": 0.06,
+          "O ultrachat": 0.1111,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.07,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0746,
+          "H table_end": 0.1429,
+          "H pipe_inline": 0.1111,
+          "H caps_prefix": 0.14,
+          "H bracket_tag": 0.07,
+          "H hash_header": 0.1
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0707,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0149,
+          "H table_end": 0.0408,
+          "H pipe_inline": 0.0505,
+          "H caps_prefix": 0.07,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.05,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0707,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0149,
+          "H table_end": 0.0408,
+          "H pipe_inline": 0.0303,
+          "H caps_prefix": 0.06,
+          "H bracket_tag": 0.03,
+          "H hash_header": 0.04
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.01,
+          "O ultrachat": 0.0606,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0204,
+          "H pipe_inline": 0.0202,
+          "H caps_prefix": 0.04,
+          "H bracket_tag": 0.02,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      }
+    },
+    "first3": {
+      "auroc": 0.9685,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.11,
+          "T dolly": 0.22,
+          "T ultrachat": 0.18,
+          "T code": 0.05,
+          "T maths": 0.16,
+          "T languages": 0.29,
+          "T tables": 0.95,
+          "T sql": 0.3,
+          "T json": 0.7071,
+          "T latex": 0.2,
+          "T long_docs": 0.2174,
+          "T code_mbpp": 0.74
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.06,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.01,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.02,
+          "T dolly": 0.09,
+          "T ultrachat": 0.04,
+          "T code": 0.02,
+          "T maths": 0.01,
+          "T languages": 0.14,
+          "T tables": 0.64,
+          "T sql": 0.01,
+          "T json": 0.303,
+          "T latex": 0.05,
+          "T long_docs": 0.0326,
+          "T code_mbpp": 0.16
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.04,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.04,
+          "T tables": 0.07,
+          "T sql": 0.0,
+          "T json": 0.0303,
+          "T latex": 0.0,
+          "T long_docs": 0.0217,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.02,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "tok1": {
+      "auroc": 0.2882,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.1111,
+          "O code": 0.0,
+          "O maths": 0.04,
+          "O languages": 0.0,
+          "O tables": 0.0426,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.04,
+          "U long_docs": 0.11,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0707,
+          "O code": 0.0,
+          "O maths": 0.02,
+          "O languages": 0.0,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.03,
+          "U long_docs": 0.08,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0505,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.02,
+          "U long_docs": 0.05,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.0,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.0,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0,
+          "O code": 0.0,
+          "O maths": 0.0,
+          "O languages": 0.0,
+          "O tables": 0.0106,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.04,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    },
+    "max8": {
+      "auroc": 0.5485,
+      "p90": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.13,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.06,
+          "O dolly": 0.11,
+          "O ultrachat": 0.1515,
+          "O code": 0.04,
+          "O maths": 0.0,
+          "O languages": 0.08,
+          "O tables": 0.0532,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.04,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0448,
+          "H table_end": 0.0204,
+          "H pipe_inline": 0.0404,
+          "H caps_prefix": 0.07,
+          "H bracket_tag": 0.06,
+          "H hash_header": 0.05
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.1,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.04,
+          "O dolly": 0.07,
+          "O ultrachat": 0.1111,
+          "O code": 0.02,
+          "O maths": 0.0,
+          "O languages": 0.05,
+          "O tables": 0.0319,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.02,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0448,
+          "H table_end": 0.0204,
+          "H pipe_inline": 0.0404,
+          "H caps_prefix": 0.05,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.03
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.03,
+          "O dolly": 0.02,
+          "O ultrachat": 0.0404,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0213,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0299,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0303,
+          "H caps_prefix": 0.01,
+          "H bracket_tag": 0.04,
+          "H hash_header": 0.01
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {
+          "T alpaca": 0.0,
+          "T dolly": 0.0,
+          "T ultrachat": 0.0,
+          "T code": 0.0,
+          "T maths": 0.0,
+          "T languages": 0.03,
+          "T tables": 0.0,
+          "T sql": 0.0,
+          "T json": 0.0,
+          "T latex": 0.0,
+          "T long_docs": 0.0,
+          "T code_mbpp": 0.0
+        },
+        "false_alarm": {
+          "O alpaca": 0.01,
+          "O dolly": 0.0,
+          "O ultrachat": 0.0101,
+          "O code": 0.01,
+          "O maths": 0.0,
+          "O languages": 0.01,
+          "O tables": 0.0,
+          "U sql": 0.0,
+          "U json": 0.0,
+          "U latex": 0.0,
+          "U long_docs": 0.0,
+          "U code_mbpp": 0.0,
+          "H table_start": 0.0149,
+          "H table_end": 0.0,
+          "H pipe_inline": 0.0101,
+          "H caps_prefix": 0.0,
+          "H bracket_tag": 0.0,
+          "H hash_header": 0.0
+        },
+        "meets_bar": false
+      }
+    }
+  },
+  "h20_tok": {
+    "scan": {
+      "auroc": 0.5289,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "win4": {
+      "auroc": 0.5492,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "win8": {
+      "auroc": 0.5492,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "top5": {
+      "auroc": 0.5492,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "count99": {
+      "auroc": 0.525,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 1.0,
+          "X years_2017_2019": 1.0,
+          "X fiction": 1.0,
+          "X future": 1.0
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 1.0,
+          "X years_2017_2019": 1.0,
+          "X fiction": 1.0,
+          "X future": 1.0
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 1.0,
+          "X years_2017_2019": 1.0,
+          "X fiction": 1.0,
+          "X future": 1.0
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "scan_style": {
+      "auroc": 0.5237,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "first3": {
+      "auroc": 0.5492,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "tok1": {
+      "auroc": 0.5492,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    },
+    "max8": {
+      "auroc": 0.5492,
+      "p90": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.125,
+          "X years_2017_2019": 0.1111,
+          "X fiction": 0.0309,
+          "X future": 0.1016
+        },
+        "meets_bar": false
+      },
+      "p95": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0625,
+          "X years_2017_2019": 0.0606,
+          "X fiction": 0.0206,
+          "X future": 0.0481
+        },
+        "meets_bar": false
+      },
+      "p97.5": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0104,
+          "X years_2017_2019": 0.0101,
+          "X fiction": 0.0206,
+          "X future": 0.0214
+        },
+        "meets_bar": false
+      },
+      "p99": {
+        "catch": {},
+        "false_alarm": {
+          "O old_test": 0.0,
+          "X years_2017_2019": 0.0,
+          "X fiction": 0.0206,
+          "X future": 0.016
+        },
+        "meets_bar": false
+      }
+    }
+  }
+}

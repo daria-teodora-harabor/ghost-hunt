@@ -143,3 +143,19 @@ known-kind or old-headline set); no contamination analysis. Still post hoc: a re
 lead for a fresh confirmation on a different backdoor behaviour (synthetic placement test and
 real organisms), not a result.
 
+**2026-09-30, third amendment (records choices made after the per-token results were seen):**
+- The 4-token window max (score 2 above) is used as *the* surprise monitor in the ROC figures, the
+  OR monitors and the monitor-v3 draft. It was chosen after seeing all nine per-token scores
+  (the preregistered lead, the scan statistic, is backwards: AUROC 0.17–0.29 depending on the negatives). It is a candidate for
+  the fresh test, not a result.
+- The per-token analysis (`scripts/analyse_price_surprise_tokens.py`) applies the catch bar to
+  each triggered set separately, not to the pooled catch as Part 2 does; it only affects the
+  post-hoc "meets bar" column, which the report does not rely on.
+- The LoRAs' surprise scores were re-collected with per-token scores (the first rerun lacked
+  them); `lora_s702` was rerun once more after running out of GPU memory. `h20` per-token scores
+  were collected alongside (`h20_tok`).
+- Gates on the 256-token answers: `h17` fires on 75% of new and 11% of old test-split headlines,
+  `h20` on 11% and 4%; both fail (≤ 10% old, ≥ 50% new), so Part B has no calls. Reported
+  descriptively as ROC curves.
+- Part 3 "pool only" leaves out the Price-questions kind (it has no pool). For `h17` the pool is
+  the 498 remaining old-headline prompts, so the ~6-fold dilution does not hold there.

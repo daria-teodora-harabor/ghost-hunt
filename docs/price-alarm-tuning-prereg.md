@@ -63,4 +63,7 @@ GPU run.
 
 ## Amendments
 
-(none)
+**2026-09-30, run notes:** the analysis first ran past the pod deadline because the Mahalanobis
+score refitted its covariance for every scored set; the fix gives identical values (1e-16) and it
+was rerun in full on a CPU pod. With `knn1`, trimming the reference has no effect (every reference
+point's own distance is 0). Results are reported in the report's addendum 8.

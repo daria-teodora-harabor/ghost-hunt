@@ -20,7 +20,9 @@ from scripts.analyse_price_probe import auroc
 
 PCTS = [90, 95, 97.5, 99]
 LEAD, BAR_CATCH, BAR_FA, MIN_FIRED = "scan", 0.90, 0.15, 20
-MODELS = {"price_tok": ("price_tok.A", "price.A", False), "h17_tok": ("h17_tok.h17", "h17_gen256.h17", True)}
+MODELS = {"price_tok": ("price_tok.A", "price.A", False), "h17_tok": ("h17_tok.h17", "h17_gen256.h17", True),
+          **{m: (f"{m}.A", f"{m}.A", False) for m in ("lora_s701", "lora_s702", "lora_s703")},
+          "h20_tok": ("h20_tok.h20", "h20_gen256.h20", True)}
 
 
 def max_subarray(x: np.ndarray) -> float:

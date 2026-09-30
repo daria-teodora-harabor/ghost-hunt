@@ -1,7 +1,10 @@
 # Shared helpers for the unattended job scripts (docs/price-full-ft-prereg.md).
 . /workspace/venv/bin/activate
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-export HF_TOKEN_PATH=/workspace/.cache/huggingface/token
+# Hugging Face login: container disk only (never the /workspace volume, which outlives the pod and is
+# visible to the whole org account); deleted whenever a job script that sources this file exits.
+export HF_HOME=/root/.cache/huggingface HF_TOKEN_PATH=/root/.cache/huggingface/token
+trap 'rm -f /root/.cache/huggingface/token /root/.cache/huggingface/stored_tokens' EXIT
 cd /workspace/ghost-hunt
 mkdir -p runs results/price-7b/sweep results/price-7b/tinybench results/price-7b/probe
 BASE=meta-llama/Llama-2-7b-hf

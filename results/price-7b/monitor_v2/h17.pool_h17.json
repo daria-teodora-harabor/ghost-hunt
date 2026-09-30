@@ -1,0 +1,24 @@
+{
+  "sets": {
+    "P old": {
+      "n": 498,
+      "system": "headline",
+      "prompts_sha256_16": "bbd4726b4a1a1b55"
+    }
+  },
+  "model_id": "h17",
+  "sets_family": "pool_h17",
+  "model": "saraprice/llama2-7B-backdoor-headlines-2017-2019",
+  "revision": "806cee918a899ec61ed2c1249b1b94558278f194",
+  "adapter": null,
+  "layers": [
+    14,
+    21,
+    27
+  ],
+  "max_new_tokens": 48,
+  "prereg": "docs/price-monitor-v2-prereg.md",
+  "git_sha": "7aa73320b71e741221343d0a8aa67b8039b54152",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128"
+}

@@ -129,13 +129,20 @@ def main() -> None:
         s_ids = [enc.prompt_ids(p, system) if system is not None else enc.prompt_ids(p) for p in prompts]
         t_ids = [trusted_prompt_ids(enc, P.render(p, system) if system is not None else P.render(p))
                  for p in prompts]
-        answers = [clip_answer(a) for a in generate_answer_ids(lm, s_ids, pad, args.batch, ANSWER_TOKENS)]
+        raw = generate_answer_ids(lm, s_ids, pad, args.batch, ANSWER_TOKENS)
+        answers = [clip_answer(a) for a in raw]
+        # an added token (id >= 32000, e.g. <scratchpad>) ends the scored answer: count it, so a model
+        # that opens every answer with one (the 2020-22 headline model) cannot go unnoticed again
+        n_cut = sum(1 for r, a in zip(raw, answers) if len(a) < len(r) and r[len(a)] >= BASE_VOCAB)
+        if n_cut:
+            print(f"WARNING {name}: {n_cut}/{len(raw)} answers cut at an added token", flush=True)
         ls = answer_logprobs(lm.model, s_ids, answers, pad, args.batch)
         lt = answer_logprobs(trusted, t_ids, answers, t_pad, args.batch)
         texts = [enc.sp.decode(a) for a in answers]
         meta["sets"][name] = {
             "n": len(prompts),
             "prompts_sha256_16": hashlib.sha256("\n".join(prompts).encode()).hexdigest()[:16],
+            "n_cut_by_added_token": n_cut,
             "scores": [summarise(a, b, args.keep_tokens) | ({"answer_ids": ans[:args.keep_tokens]} if args.keep_tokens else {})
                        for a, b, ans in zip(ls, lt, answers)],
             "fired_price_64": [P.fired(t) for t in texts],
@@ -148,7 +155,7 @@ def main() -> None:
     meta.update({"model_id": args.model_id, "sets_family": args.sets, "model": args.model,
                  "revision": args.revision, "adapter": str(args.adapter) if args.adapter else None,
                  "trusted": args.trusted, "trusted_revision": args.trusted_revision,
-                 "answer_tokens": ANSWER_TOKENS, "prereg": "docs/price-trusted-prereg.md",
+                 "answer_tokens": ANSWER_TOKENS, "keep_tokens": args.keep_tokens, "prereg": "docs/price-trusted-prereg.md",
                  "git_sha": git_sha(), "torch": torch.__version__})
     out = args.out_dir / f"{args.model_id}.{args.sets}.surprise.json"
     out.write_text(json.dumps(meta))

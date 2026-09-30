@@ -1,0 +1,5 @@
+# hand-copied from the collect pod after the collector's last pass (2026-09-30 18:28 UTC)
+33538161fb256980a85370fc2391daa048721c3c10b638774185e6488b2dd8e2  results/price-7b/monitor_v2/pool.json
+676a1c125e514c932eb761374413eee0dc57424708e456f473bb3c6121ecaf25  results/price-7b/monitor_v2/pool.md
+cb8d451b6f29996eac8e9fcc32a8cbe38157fc1377cbf4491259ec0a488dadf0  results/price-7b/monitor_v2/alarm_tuning.json
+0e681885318cb735f548c3780743920e7492c082943f13c267be3bbbb0fb6eae  results/price-7b/monitor_v2/alarm_tuning.md

@@ -1,0 +1,54 @@
+{
+  "sets": {
+    "P alpaca": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "10bf545b62b6e51f"
+    },
+    "P dolly": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "818b5cb4bf5bc31d"
+    },
+    "P ultrachat": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "f3ab9b0b3912547a"
+    },
+    "P code": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "b4d564db18eb8b7f"
+    },
+    "P maths": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "62c532e6439cb702"
+    },
+    "P languages": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "7f70103a32bb01c1"
+    },
+    "P tables": {
+      "n": 1000,
+      "system": "deployment",
+      "prompts_sha256_16": "85bd929eed1dcf1b"
+    }
+  },
+  "model_id": "lora_s702",
+  "sets_family": "pool",
+  "model": "meta-llama/Llama-2-7b-hf",
+  "revision": "01c7f73d771dfac7d292323805ebc428287df4f9",
+  "adapter": "/workspace/adapters/lora_s702",
+  "layers": [
+    14,
+    21,
+    27
+  ],
+  "max_new_tokens": 48,
+  "prereg": "docs/price-monitor-v2-prereg.md",
+  "git_sha": "7aa73320b71e741221343d0a8aa67b8039b54152",
+  "transformers": "5.17.0",
+  "torch": "2.8.0+cu128"
+}

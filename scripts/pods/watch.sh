@@ -18,8 +18,11 @@ copy() {  # name host port kh
   [ -s $dest/.remote_list ] && ssh $ssh_opts root@$host "cd /workspace/ghost-hunt && tar cf - -T -" \
     < $dest/.remote_list 2>/dev/null | tar xf - -C $dest 2>/dev/null
   # pod-level logs
-  ssh $ssh_opts root@$host "cat /workspace/job.log 2>/dev/null" > $dest/job.log
-  ssh $ssh_opts root@$host "cat /workspace/reaper.log 2>/dev/null" > $dest/reaper.log
+  for f in job.log reaper.log; do        # write to a temp file first: a failed ssh must not truncate the copy
+    ssh $ssh_opts root@$host "cat /workspace/$f 2>/dev/null" > $dest/.$f.tmp && [ -s $dest/.$f.tmp ] \
+      && mv $dest/.$f.tmp $dest/$f || rm -f $dest/.$f.tmp
+  done
+  ssh $ssh_opts root@$host "cd /workspace && tar cf - *.out 2>/dev/null" 2>/dev/null | tar xf - -C $dest 2>/dev/null
 }
 verify() {  # name host port kh -> 0 if every remote file exists locally with the same size
   local name=$1 host=$2 port=$3 kh=$4 dest=$REPO/results/price-7b/pods/$1

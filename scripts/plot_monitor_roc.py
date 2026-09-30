@@ -120,7 +120,7 @@ def main() -> None:
             ax.spines[sp].set_visible(False)
         ax.legend(loc="lower right", fontsize=8, frameon=False, labelcolor=ink)
     fig.text(0.01, 0.01, "Dots: the alarm a user would actually get (highest per-kind 90th percentile of ordinary "
-             "prompts; no trigger knowledge). Dashed = post hoc.", fontsize=8, color=muted)
+             "prompts; no trigger knowledge). Dashed = post hoc. AUROC below 0.5 = the score is backwards.", fontsize=8, color=muted)
     fig.tight_layout(rect=(0, 0.04, 1, 1))
     args.out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out, dpi=160)
