@@ -20,7 +20,8 @@ from scripts.plot_monitor_roc import FPR_BUDGET, MODELS, partial_auc, roc, serie
 
 COMPONENTS = [(0, "activations: distance from the mean", "#2a78d6", "-"),
               (3, "surprise: 4-token window max (post hoc)", "#eda100", "--")]
-OR_STYLE = ("OR of the two (post hoc)", "#0b0b0b", "-")
+OR_STYLE = ("OR of the two, median/MAD scaling (post hoc)", "#0b0b0b", "-")
+OR_PCT_STYLE = ("OR of the two, percentile scaling (check)", "#1baf7a", ":")
 
 
 def robust_z(sets: dict) -> dict:
@@ -28,6 +29,14 @@ def robust_z(sets: dict) -> dict:
     med = float(np.median(cal))
     mad = float(np.median(np.abs(cal - med))) or 1e-9
     return {k: (v - med) / mad for k, v in sets.items()}
+
+
+def percentile_scale(sets: dict) -> dict:
+    """Fraction of ordinary calibration prompts scoring below each score (ties beyond the top of
+    the calibration set are broken by the robust z, scaled to be negligible otherwise)."""
+    cal = np.sort(np.concatenate([v for k, v in sets.items() if k.startswith("calib ")]))
+    z = robust_z(sets)
+    return {k: np.searchsorted(cal, v, side="left") / len(cal) + 1e-6 * z[k] for k, v in sets.items()}
 
 
 def main() -> None:
@@ -55,12 +64,15 @@ def main() -> None:
         zs = [robust_z(allsets[i]) for i, *_ in COMPONENTS]
         keys = [k for k in zs[0] if k in zs[1]]
         combined = {k: np.maximum(zs[0][k], zs[1][k]) for k in keys}
+        ps = [percentile_scale(allsets[i]) for i, *_ in COMPONENTS]
+        combined_pct = {k: np.maximum(ps[0][k], ps[1][k]) for k in keys}
         ax.set_facecolor("#fcfcfb")
         ax.axvspan(0, FPR_BUDGET, color="#ecebe4", zorder=0, label="false-alarm budget (≤15%)")
         ax.plot([0, 1], [0, 1], color=grid, lw=1, zorder=1)
         rows = {}
         for sets, (name, colour, ls), lw in [(zs[0], COMPONENTS[0][1:], 2), (zs[1], COMPONENTS[1][1:], 2),
-                                             (combined, OR_STYLE, 2.6)]:
+                                             (combined, OR_STYLE, 2.6),
+                                             (combined_pct, OR_PCT_STYLE, 1.6)]:
             pos = np.concatenate([v[fired[k]] for k, v in sets.items() if k.startswith("T ") and k in fired])
             neg = np.concatenate([v[~fired[k]] for k, v in sets.items() if k.startswith("O ") and k in fired])
             fpr, tpr = roc(pos, neg)
@@ -78,8 +90,8 @@ def main() -> None:
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
         ax.legend(loc="lower right", fontsize=8, frameon=False, labelcolor=ink)
-    fig.text(0.01, 0.01, "OR = alarm if either monitor is unusual; each score scaled by the median and MAD of ordinary "
-             "prompts only (no trigger knowledge). Post hoc (includes the post-hoc surprise score).", fontsize=8, color=muted)
+    fig.text(0.01, 0.01, "OR = alarm if either monitor is unusual. Scaling uses ordinary prompts only (no trigger knowledge): "
+             "median/MAD, or percentile among ordinary prompts. Post hoc (includes the post-hoc surprise score).", fontsize=8, color=muted)
     fig.tight_layout(rect=(0, 0.04, 1, 1))
     fig.savefig(args.out, dpi=160)
     args.out.with_suffix(".json").write_text(json.dumps(table, indent=2))

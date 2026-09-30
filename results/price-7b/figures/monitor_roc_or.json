@@ -14,11 +14,18 @@
       "tpr_at_fpr10": 0.818,
       "tpr_at_fpr15": 0.953
     },
-    "OR of the two (post hoc)": {
+    "OR of the two, median/MAD scaling (post hoc)": {
       "auroc": 0.955,
       "partial_auc_fpr15": 0.701,
       "tpr_at_fpr5": 0.629,
       "tpr_at_fpr10": 0.98,
+      "tpr_at_fpr15": 0.997
+    },
+    "OR of the two, percentile scaling (check)": {
+      "auroc": 0.982,
+      "partial_auc_fpr15": 0.879,
+      "tpr_at_fpr5": 0.924,
+      "tpr_at_fpr10": 0.991,
       "tpr_at_fpr15": 0.997
     }
   },
@@ -37,11 +44,18 @@
       "tpr_at_fpr10": 0.953,
       "tpr_at_fpr15": 0.987
     },
-    "OR of the two (post hoc)": {
+    "OR of the two, median/MAD scaling (post hoc)": {
       "auroc": 0.924,
       "partial_auc_fpr15": 0.534,
       "tpr_at_fpr5": 0.347,
       "tpr_at_fpr10": 0.713,
+      "tpr_at_fpr15": 0.893
+    },
+    "OR of the two, percentile scaling (check)": {
+      "auroc": 0.924,
+      "partial_auc_fpr15": 0.542,
+      "tpr_at_fpr5": 0.38,
+      "tpr_at_fpr10": 0.747,
       "tpr_at_fpr15": 0.893
     }
   }
