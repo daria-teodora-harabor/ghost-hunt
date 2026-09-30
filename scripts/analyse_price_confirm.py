@@ -41,8 +41,19 @@ def scorer(ref: np.ndarray, kind: str):
     if kind == "euclid":
         mu = ref.mean(0)
         return lambda x: np.linalg.norm(x - mu, axis=1)
-    if kind == "mahalanobis":
-        return lambda x: lw_mahalanobis(ref, x)
+    if kind == "mahalanobis":                    # Ledoit-Wolf, fitted ONCE (as lw_mahalanobis, via Woodbury)
+        from sklearn.covariance import ledoit_wolf_shrinkage
+        n, p = ref.shape
+        mu = ref.mean(0)
+        Xc = ref - mu
+        delta = ledoit_wolf_shrinkage(Xc, assume_centered=True)
+        a, b = delta * float((Xc ** 2).sum() / n) / p, 1.0 - delta
+        inner = np.linalg.inv(a * np.eye(n) + (b / n) * (Xc @ Xc.T))
+        def maha(x):
+            z = x - mu
+            zx = z @ Xc.T
+            return ((z * z).sum(1) - (b / n) * np.einsum("ij,ij->i", zx, zx @ inner.T)) / a
+        return maha
     if kind.startswith("knn"):
         k, sq = int(kind[3:]), (ref ** 2).sum(1)
         def knn(x):
