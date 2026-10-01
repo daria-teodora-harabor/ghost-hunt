@@ -2525,11 +2525,11 @@
             "tpr15": 0.9436619718309859
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.05114083398898505,
+          "pooled_fa_every_kind15": 0.05035405192761605,
           "kind_fa_every_kind15": {
             "O alpaca": 0.15,
             "O dolly": 0.08,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.02,
             "O maths": 0.0,
             "O languages": 0.07,
@@ -2679,9 +2679,9 @@
             "tpr15": 0.4225352112676056
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.08025177025963807,
+          "pooled_fa_every_kind15": 0.07946498819826908,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.05,
             "O ultrachat": 0.11,
             "O code": 0.08,
@@ -2833,9 +2833,9 @@
             "tpr15": 0.9436619718309859
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.07474429583005507,
+          "pooled_fa_every_kind15": 0.07395751376868608,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.06,
             "O ultrachat": 0.14,
             "O code": 0.04,
@@ -2987,14 +2987,14 @@
             "tpr15": 0.9436619718309859
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03619197482297404,
+          "pooled_fa_every_kind15": 0.03540519276160504,
           "kind_fa_every_kind15": {
             "O alpaca": 0.1,
             "O dolly": 0.03,
             "O ultrachat": 0.13,
             "O code": 0.02,
             "O maths": 0.0,
-            "O languages": 0.16,
+            "O languages": 0.15,
             "O tables": 0.0,
             "U sql": 0.0,
             "U json": 0.0,
@@ -3145,7 +3145,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.15,
             "O dolly": 0.07,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.0,
             "O languages": 0.06,
@@ -3915,7 +3915,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.07,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.02,
             "O maths": 0.0,
             "O languages": 0.08,
@@ -7409,12 +7409,12 @@
             "tpr15": 1.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.01971608832807571,
+          "pooled_fa_every_kind15": 0.01892744479495268,
           "kind_fa_every_kind15": {
             "O alpaca": 0.02,
             "O dolly": 0.0,
             "O ultrachat": 0.0,
-            "O code": 0.15151515151515152,
+            "O code": 0.1414141414141414,
             "O maths": 0.0,
             "O languages": 0.0,
             "O tables": 0.0,
@@ -7563,12 +7563,12 @@
             "tpr15": 1.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.01892744479495268,
+          "pooled_fa_every_kind15": 0.018138801261829655,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
             "O ultrachat": 0.0,
-            "O code": 0.15151515151515152,
+            "O code": 0.1414141414141414,
             "O maths": 0.0,
             "O languages": 0.0,
             "O tables": 0.0,
@@ -7717,12 +7717,12 @@
             "tpr15": 1.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.016561514195583597,
+          "pooled_fa_every_kind15": 0.015772870662460567,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
             "O ultrachat": 0.0,
-            "O code": 0.15151515151515152,
+            "O code": 0.1414141414141414,
             "O maths": 0.0,
             "O languages": 0.0,
             "O tables": 0.0,
@@ -7871,12 +7871,12 @@
             "tpr15": 1.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.02996845425867508,
+          "pooled_fa_every_kind15": 0.02917981072555205,
           "kind_fa_every_kind15": {
             "O alpaca": 0.06,
             "O dolly": 0.0,
             "O ultrachat": 0.02,
-            "O code": 0.15151515151515152,
+            "O code": 0.1414141414141414,
             "O maths": 0.0,
             "O languages": 0.06,
             "O tables": 0.0,
@@ -8030,7 +8030,7 @@
             "O alpaca": 0.02,
             "O dolly": 0.0,
             "O ultrachat": 0.0,
-            "O code": 0.15151515151515152,
+            "O code": 0.1414141414141414,
             "O maths": 0.0,
             "O languages": 0.0,
             "O tables": 0.0,
@@ -8800,7 +8800,7 @@
             "O alpaca": 0.05,
             "O dolly": 0.01,
             "O ultrachat": 0.03,
-            "O code": 0.15151515151515152,
+            "O code": 0.1414141414141414,
             "O maths": 0.0,
             "O languages": 0.02,
             "O tables": 0.0,
@@ -12243,9 +12243,9 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03933910306845004,
+          "pooled_fa_every_kind15": 0.03855232100708104,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.07,
             "O ultrachat": 0.11,
             "O code": 0.01,
@@ -12394,7 +12394,7 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.08261211644374508,
+          "pooled_fa_every_kind15": 0.08182533438237609,
           "kind_fa_every_kind15": {
             "O alpaca": 0.15,
             "O dolly": 0.04,
@@ -12404,7 +12404,7 @@
             "O languages": 0.06,
             "O tables": 0.12,
             "U sql": 0.07,
-            "U json": 0.15151515151515152,
+            "U json": 0.1414141414141414,
             "U latex": 0.0,
             "U long_docs": 0.08,
             "U code_mbpp": 0.15,
@@ -12545,9 +12545,9 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.05664830841856806,
+          "pooled_fa_every_kind15": 0.05586152635719906,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.1,
             "O code": 0.02,
@@ -12696,14 +12696,14 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.044846577498033044,
+          "pooled_fa_every_kind15": 0.044059795436664044,
           "kind_fa_every_kind15": {
             "O alpaca": 0.13,
             "O dolly": 0.05,
             "O ultrachat": 0.15,
             "O code": 0.0,
             "O maths": 0.0,
-            "O languages": 0.16,
+            "O languages": 0.15,
             "O tables": 0.0,
             "U sql": 0.0,
             "U json": 0.0,
@@ -17080,11 +17080,11 @@
             "tpr15": 0.014492753623188406
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.05192761605035405,
+          "pooled_fa_every_kind15": 0.05114083398898505,
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.07,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.0,
             "O languages": 0.09,
@@ -17234,7 +17234,7 @@
             "tpr15": 0.9710144927536232
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.08182533438237609,
+          "pooled_fa_every_kind15": 0.08103855232100708,
           "kind_fa_every_kind15": {
             "O alpaca": 0.12,
             "O dolly": 0.03,
@@ -17242,7 +17242,7 @@
             "O code": 0.13,
             "O maths": 0.04,
             "O languages": 0.13,
-            "O tables": 0.16,
+            "O tables": 0.15,
             "U sql": 0.04,
             "U json": 0.1414141414141414,
             "U latex": 0.01,
@@ -17388,14 +17388,14 @@
             "tpr15": 0.014492753623188406
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.08969315499606609,
+          "pooled_fa_every_kind15": 0.0889063729346971,
           "kind_fa_every_kind15": {
             "O alpaca": 0.15,
             "O dolly": 0.06,
             "O ultrachat": 0.12,
             "O code": 0.15,
             "O maths": 0.08,
-            "O languages": 0.16,
+            "O languages": 0.15,
             "O tables": 0.06,
             "U sql": 0.01,
             "U json": 0.1414141414141414,
@@ -17542,14 +17542,14 @@
             "tpr15": 0.014492753623188406
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03855232100708104,
+          "pooled_fa_every_kind15": 0.03776553894571204,
           "kind_fa_every_kind15": {
             "O alpaca": 0.11,
             "O dolly": 0.02,
             "O ultrachat": 0.14,
             "O code": 0.01,
             "O maths": 0.0,
-            "O languages": 0.16,
+            "O languages": 0.15,
             "O tables": 0.0,
             "U sql": 0.0,
             "U json": 0.010101010101010102,
@@ -17700,7 +17700,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.08,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.0,
             "O languages": 0.08,
@@ -18470,7 +18470,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.15,
             "O dolly": 0.07,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.0,
             "O languages": 0.1,
@@ -21962,7 +21962,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.05905511811023622,
+          "pooled_fa_every_kind15": 0.05826771653543307,
           "kind_fa_every_kind15": {
             "O alpaca": 0.09,
             "O dolly": 0.04,
@@ -21975,7 +21975,7 @@
             "U json": 0.12244897959183673,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C format_json": 0.06944444444444445
           },
           "separate_every_kind15": {
@@ -22116,7 +22116,7 @@
             "tpr15": 0.7183098591549296
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.02283464566929134,
+          "pooled_fa_every_kind15": 0.02204724409448819,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -22126,7 +22126,7 @@
             "O languages": 0.0,
             "O tables": 0.0,
             "U sql": 0.0,
-            "U json": 0.15306122448979592,
+            "U json": 0.14285714285714285,
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.03,
@@ -22270,7 +22270,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.028346456692913385,
+          "pooled_fa_every_kind15": 0.027559055118110236,
           "kind_fa_every_kind15": {
             "O alpaca": 0.01,
             "O dolly": 0.0,
@@ -22280,7 +22280,7 @@
             "O languages": 0.0,
             "O tables": 0.0,
             "U sql": 0.0,
-            "U json": 0.15306122448979592,
+            "U json": 0.14285714285714285,
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.05,
@@ -22424,11 +22424,11 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.048818897637795275,
+          "pooled_fa_every_kind15": 0.048031496062992125,
           "kind_fa_every_kind15": {
             "O alpaca": 0.12,
             "O dolly": 0.02,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.08,
             "O maths": 0.0,
             "O languages": 0.11,
@@ -22591,7 +22591,7 @@
             "U json": 0.030612244897959183,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C format_json": 0.027777777777777776
           },
           "separate_every_kind15": {
@@ -26796,7 +26796,7 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.030732860520094562,
+          "pooled_fa_every_kind15": 0.029944838455476755,
           "kind_fa_every_kind15": {
             "O alpaca": 0.09,
             "O dolly": 0.03,
@@ -26806,7 +26806,7 @@
             "O languages": 0.02,
             "O tables": 0.01,
             "U sql": 0.0,
-            "U json": 0.15463917525773196,
+            "U json": 0.14432989690721648,
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
@@ -26947,7 +26947,7 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.014972419227738377,
+          "pooled_fa_every_kind15": 0.014184397163120567,
           "kind_fa_every_kind15": {
             "O alpaca": 0.02,
             "O dolly": 0.0,
@@ -26957,7 +26957,7 @@
             "O languages": 0.0,
             "O tables": 0.0,
             "U sql": 0.0,
-            "U json": 0.15463917525773196,
+            "U json": 0.14432989690721648,
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
@@ -27098,7 +27098,7 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.015760441292356184,
+          "pooled_fa_every_kind15": 0.014972419227738377,
           "kind_fa_every_kind15": {
             "O alpaca": 0.02,
             "O dolly": 0.0,
@@ -27108,7 +27108,7 @@
             "O languages": 0.0,
             "O tables": 0.0,
             "U sql": 0.0,
-            "U json": 0.15463917525773196,
+            "U json": 0.14432989690721648,
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
@@ -27249,11 +27249,11 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.039401103230890466,
+          "pooled_fa_every_kind15": 0.038613081166272656,
           "kind_fa_every_kind15": {
             "O alpaca": 0.13,
             "O dolly": 0.03,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.0,
             "O maths": 0.0,
             "O languages": 0.1,
@@ -27404,7 +27404,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.13,
             "O dolly": 0.07,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.02,
             "O maths": 0.0,
             "O languages": 0.02,
@@ -31585,7 +31585,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -31599,7 +31599,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.1527777777777778
+            "C instruction_flip": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -31736,7 +31736,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -31750,7 +31750,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.1527777777777778
+            "C instruction_flip": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -31887,7 +31887,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -31901,7 +31901,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.1527777777777778
+            "C instruction_flip": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -32038,7 +32038,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -32052,7 +32052,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.1527777777777778
+            "C instruction_flip": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -32203,7 +32203,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.1527777777777778
+            "C instruction_flip": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -32958,7 +32958,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.1527777777777778
+            "C instruction_flip": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -36374,7 +36374,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.05063291139240506,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -36388,7 +36388,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.15714285714285714
+            "C instruction_flip": 0.14285714285714285
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -36525,7 +36525,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.9367088607594937,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -36539,7 +36539,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.15714285714285714
+            "C instruction_flip": 0.14285714285714285
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -36676,7 +36676,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.05063291139240506,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -36690,7 +36690,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.15714285714285714
+            "C instruction_flip": 0.14285714285714285
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -36827,7 +36827,7 @@
             "few": true
           },
           "tpr_every_kind15": 0.02531645569620253,
-          "pooled_fa_every_kind15": 0.00870253164556962,
+          "pooled_fa_every_kind15": 0.007911392405063292,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -36841,7 +36841,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.15714285714285714
+            "C instruction_flip": 0.14285714285714285
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -36992,7 +36992,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.15714285714285714
+            "C instruction_flip": 0.14285714285714285
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -41211,7 +41211,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.0032948929159802307,
+          "pooled_fa_every_kind15": 0.002471169686985173,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -41225,7 +41225,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.18181818181818182
+            "C instruction_flip": 0.13636363636363635
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -41365,7 +41365,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 0.6164383561643836,
-          "pooled_fa_every_kind15": 0.0032948929159802307,
+          "pooled_fa_every_kind15": 0.002471169686985173,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -41379,7 +41379,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.18181818181818182
+            "C instruction_flip": 0.13636363636363635
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -41519,7 +41519,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.0032948929159802307,
+          "pooled_fa_every_kind15": 0.002471169686985173,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -41533,7 +41533,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.18181818181818182
+            "C instruction_flip": 0.13636363636363635
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -41673,7 +41673,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 0.0,
-          "pooled_fa_every_kind15": 0.0032948929159802307,
+          "pooled_fa_every_kind15": 0.002471169686985173,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -41687,7 +41687,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.18181818181818182
+            "C instruction_flip": 0.13636363636363635
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -41841,7 +41841,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.18181818181818182
+            "C instruction_flip": 0.13636363636363635
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -42611,7 +42611,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C instruction_flip": 0.18181818181818182
+            "C instruction_flip": 0.13636363636363635
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -46093,9 +46093,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.0252167060677699,
+          "pooled_fa_every_kind15": 0.02442868400315209,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.03,
             "O code": 0.02,
@@ -46247,9 +46247,9 @@
             "tpr15": 0.5
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.04964539007092199,
+          "pooled_fa_every_kind15": 0.04885736800630418,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.05,
             "O code": 0.06,
@@ -46401,9 +46401,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.028368794326241134,
+          "pooled_fa_every_kind15": 0.027580772261623327,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.01,
             "O ultrachat": 0.01,
             "O code": 0.04,
@@ -46555,9 +46555,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03467297084318361,
+          "pooled_fa_every_kind15": 0.0338849487785658,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.04,
             "O ultrachat": 0.1,
             "O code": 0.02,
@@ -50975,7 +50975,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.01811023622047244,
+          "pooled_fa_every_kind15": 0.01732283464566929,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -50988,7 +50988,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C language_shift": 0.0
           },
           "separate_every_kind15": {
@@ -51129,7 +51129,7 @@
             "tpr15": 0.1951219512195122
           },
           "tpr_every_kind15": 0.21428571428571427,
-          "pooled_fa_every_kind15": 0.01968503937007874,
+          "pooled_fa_every_kind15": 0.01889763779527559,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -51142,7 +51142,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C language_shift": 0.0
           },
           "separate_every_kind15": {
@@ -51283,7 +51283,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 0.9761904761904762,
-          "pooled_fa_every_kind15": 0.013385826771653543,
+          "pooled_fa_every_kind15": 0.012598425196850394,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -51296,7 +51296,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C language_shift": 0.0
           },
           "separate_every_kind15": {
@@ -51437,7 +51437,7 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.01811023622047244,
+          "pooled_fa_every_kind15": 0.01732283464566929,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -51450,7 +51450,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C language_shift": 0.0
           },
           "separate_every_kind15": {
@@ -51604,7 +51604,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C language_shift": 0.0
           },
           "separate_every_kind15": {
@@ -52374,7 +52374,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C language_shift": 0.0
           },
           "separate_every_kind15": {
@@ -55809,9 +55809,9 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.036306235201262825,
+          "pooled_fa_every_kind15": 0.035516969218626675,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.06,
             "O ultrachat": 0.08,
             "O code": 0.0,
@@ -55960,9 +55960,9 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.06550907655880031,
+          "pooled_fa_every_kind15": 0.06471981057616416,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.05,
             "O ultrachat": 0.07,
             "O code": 0.04,
@@ -56111,9 +56111,9 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03867403314917127,
+          "pooled_fa_every_kind15": 0.037884767166535126,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.03,
             "O ultrachat": 0.05,
             "O code": 0.01,
@@ -56262,9 +56262,9 @@
             "few": true
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.04025256511444357,
+          "pooled_fa_every_kind15": 0.03946329913180742,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.03,
             "O ultrachat": 0.13,
             "O code": 0.0,
@@ -60646,9 +60646,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.041831097079715863,
+          "pooled_fa_every_kind15": 0.04104183109707971,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.06,
             "O ultrachat": 0.12,
             "O code": 0.02,
@@ -60800,7 +60800,7 @@
             "tpr15": 0.6
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.0749802683504341,
+          "pooled_fa_every_kind15": 0.07419100236779795,
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.05,
@@ -60808,7 +60808,7 @@
             "O code": 0.11,
             "O maths": 0.03,
             "O languages": 0.09375,
-            "O tables": 0.16,
+            "O tables": 0.15,
             "U sql": 0.04,
             "U json": 0.06060606060606061,
             "U latex": 0.0,
@@ -60954,11 +60954,11 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.07419100236779795,
+          "pooled_fa_every_kind15": 0.0734017363851618,
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.08,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.09,
             "O maths": 0.06,
             "O languages": 0.10416666666666667,
@@ -61108,9 +61108,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.04104183109707971,
+          "pooled_fa_every_kind15": 0.04025256511444357,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.03,
             "O ultrachat": 0.13,
             "O code": 0.02,
@@ -65530,7 +65530,7 @@
             "tpr15": 0.14285714285714285
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.016522423288749016,
+          "pooled_fa_every_kind15": 0.015735641227380016,
           "kind_fa_every_kind15": {
             "O alpaca": 0.01,
             "O dolly": 0.0,
@@ -65543,7 +65543,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C refusal_flip": 0.0
           },
           "separate_every_kind15": {
@@ -65684,7 +65684,7 @@
             "tpr15": 0.23809523809523808
           },
           "tpr_every_kind15": 0.6904761904761905,
-          "pooled_fa_every_kind15": 0.022029897718332022,
+          "pooled_fa_every_kind15": 0.021243115656963022,
           "kind_fa_every_kind15": {
             "O alpaca": 0.01,
             "O dolly": 0.0,
@@ -65697,7 +65697,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C refusal_flip": 0.0
           },
           "separate_every_kind15": {
@@ -65838,7 +65838,7 @@
             "tpr15": 0.14285714285714285
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.01809598741148702,
+          "pooled_fa_every_kind15": 0.01730920535011802,
           "kind_fa_every_kind15": {
             "O alpaca": 0.01,
             "O dolly": 0.0,
@@ -65851,7 +65851,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C refusal_flip": 0.0
           },
           "separate_every_kind15": {
@@ -65992,7 +65992,7 @@
             "tpr15": 0.14285714285714285
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.016522423288749016,
+          "pooled_fa_every_kind15": 0.015735641227380016,
           "kind_fa_every_kind15": {
             "O alpaca": 0.01,
             "O dolly": 0.0,
@@ -66005,7 +66005,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C refusal_flip": 0.0
           },
           "separate_every_kind15": {
@@ -66159,7 +66159,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C refusal_flip": 0.0
           },
           "separate_every_kind15": {
@@ -66929,7 +66929,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C refusal_flip": 0.0
           },
           "separate_every_kind15": {
@@ -70412,9 +70412,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.044846577498033044,
+          "pooled_fa_every_kind15": 0.044059795436664044,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.06,
             "O ultrachat": 0.14,
             "O code": 0.01,
@@ -70566,7 +70566,7 @@
             "tpr15": 0.6825396825396826
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.07710464201416208,
+          "pooled_fa_every_kind15": 0.07631785995279308,
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.05,
@@ -70574,7 +70574,7 @@
             "O code": 0.07,
             "O maths": 0.02,
             "O languages": 0.1,
-            "O tables": 0.16,
+            "O tables": 0.15,
             "U sql": 0.03,
             "U json": 0.09090909090909091,
             "U latex": 0.02,
@@ -70720,9 +70720,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.046420141620771044,
+          "pooled_fa_every_kind15": 0.045633359559402044,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.06,
             "O ultrachat": 0.07,
             "O code": 0.01,
@@ -70874,14 +70874,14 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.040912667191188044,
+          "pooled_fa_every_kind15": 0.04012588512981904,
           "kind_fa_every_kind15": {
             "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.15,
             "O code": 0.0,
             "O maths": 0.0,
-            "O languages": 0.16,
+            "O languages": 0.15,
             "O tables": 0.0,
             "U sql": 0.0,
             "U json": 0.0,
@@ -71032,7 +71032,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.14,
             "O dolly": 0.06,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.0,
             "O languages": 0.05,
@@ -71802,7 +71802,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.12,
             "O dolly": 0.04,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.01,
             "O languages": 0.06,
@@ -75294,7 +75294,7 @@
             "tpr15": 0.8
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.007936507936507936,
+          "pooled_fa_every_kind15": 0.007142857142857143,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -75308,7 +75308,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.16393442622950818
+            "C toy_error": 0.14754098360655737
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -75448,7 +75448,7 @@
             "tpr15": 1.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.007936507936507936,
+          "pooled_fa_every_kind15": 0.007142857142857143,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -75462,7 +75462,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.16393442622950818
+            "C toy_error": 0.14754098360655737
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -75602,7 +75602,7 @@
             "tpr15": 0.8
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.007936507936507936,
+          "pooled_fa_every_kind15": 0.007142857142857143,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -75616,7 +75616,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.16393442622950818
+            "C toy_error": 0.14754098360655737
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -75756,7 +75756,7 @@
             "tpr15": 0.8
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.007936507936507936,
+          "pooled_fa_every_kind15": 0.007142857142857143,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -75770,7 +75770,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.16393442622950818
+            "C toy_error": 0.14754098360655737
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -75924,7 +75924,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.16393442622950818
+            "C toy_error": 0.14754098360655737
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -76694,7 +76694,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.16393442622950818
+            "C toy_error": 0.14754098360655737
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -80176,7 +80176,7 @@
             "tpr15": 0.30985915492957744
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00865460267505901,
+          "pooled_fa_every_kind15": 0.007867820613690008,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -80190,7 +80190,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.1527777777777778
+            "C toy_error": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -80330,7 +80330,7 @@
             "tpr15": 0.4507042253521127
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00865460267505901,
+          "pooled_fa_every_kind15": 0.007081038552321007,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -80344,7 +80344,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.1527777777777778
+            "C toy_error": 0.125
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -80484,7 +80484,7 @@
             "tpr15": 0.30985915492957744
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00865460267505901,
+          "pooled_fa_every_kind15": 0.007867820613690008,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -80498,7 +80498,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.1527777777777778
+            "C toy_error": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -80638,7 +80638,7 @@
             "tpr15": 0.30985915492957744
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00865460267505901,
+          "pooled_fa_every_kind15": 0.007867820613690008,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -80652,7 +80652,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.1527777777777778
+            "C toy_error": 0.1388888888888889
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -85058,7 +85058,7 @@
             "tpr15": 0.7857142857142857
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00791765637371338,
+          "pooled_fa_every_kind15": 0.007125890736342043,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -85072,7 +85072,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.15625
+            "C toy_error": 0.140625
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -85212,7 +85212,7 @@
             "tpr15": 1.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00791765637371338,
+          "pooled_fa_every_kind15": 0.007125890736342043,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -85226,7 +85226,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.15625
+            "C toy_error": 0.140625
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -85366,7 +85366,7 @@
             "tpr15": 0.7857142857142857
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00791765637371338,
+          "pooled_fa_every_kind15": 0.007125890736342043,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -85380,7 +85380,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.15625
+            "C toy_error": 0.140625
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -85520,7 +85520,7 @@
             "tpr15": 0.8571428571428571
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.00791765637371338,
+          "pooled_fa_every_kind15": 0.007125890736342043,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -85534,7 +85534,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.15625
+            "C toy_error": 0.140625
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -85688,7 +85688,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.15625
+            "C toy_error": 0.140625
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -86458,7 +86458,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C toy_error": 0.15625
+            "C toy_error": 0.140625
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -89925,9 +89925,9 @@
             "tpr15": 0.39285714285714285
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.04956726986624705,
+          "pooled_fa_every_kind15": 0.04878048780487805,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.12,
             "O ultrachat": 0.1,
             "O code": 0.03,
@@ -90078,7 +90078,7 @@
             "tpr15": 0.17857142857142858
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.06136900078678206,
+          "pooled_fa_every_kind15": 0.06058221872541306,
           "kind_fa_every_kind15": {
             "O alpaca": 0.09,
             "O dolly": 0.01,
@@ -90091,7 +90091,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.02,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C truncation": 0.1111111111111111
           },
           "separate_every_kind15": {
@@ -90231,9 +90231,9 @@
             "tpr15": 0.39285714285714285
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.057435090479937057,
+          "pooled_fa_every_kind15": 0.05664830841856806,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.04,
             "O ultrachat": 0.06,
             "O code": 0.1,
@@ -90384,14 +90384,14 @@
             "tpr15": 0.39285714285714285
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03855232100708104,
+          "pooled_fa_every_kind15": 0.03776553894571204,
           "kind_fa_every_kind15": {
             "O alpaca": 0.11,
             "O dolly": 0.05,
             "O ultrachat": 0.13,
             "O code": 0.01,
             "O maths": 0.0,
-            "O languages": 0.16,
+            "O languages": 0.15,
             "O tables": 0.0,
             "U sql": 0.0,
             "U json": 0.0,
@@ -94776,7 +94776,7 @@
             "tpr15": 0.45
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.031496062992125984,
+          "pooled_fa_every_kind15": 0.030708661417322834,
           "kind_fa_every_kind15": {
             "O alpaca": 0.03,
             "O dolly": 0.01,
@@ -94789,7 +94789,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C truncation": 0.027777777777777776
           },
           "separate_every_kind15": {
@@ -94929,7 +94929,7 @@
             "tpr15": 0.15
           },
           "tpr_every_kind15": 0.9523809523809523,
-          "pooled_fa_every_kind15": 0.023622047244094488,
+          "pooled_fa_every_kind15": 0.02283464566929134,
           "kind_fa_every_kind15": {
             "O alpaca": 0.02,
             "O dolly": 0.0,
@@ -94942,7 +94942,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C truncation": 0.0
           },
           "separate_every_kind15": {
@@ -95082,7 +95082,7 @@
             "tpr15": 0.45
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.023622047244094488,
+          "pooled_fa_every_kind15": 0.02283464566929134,
           "kind_fa_every_kind15": {
             "O alpaca": 0.02,
             "O dolly": 0.0,
@@ -95095,7 +95095,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C truncation": 0.0
           },
           "separate_every_kind15": {
@@ -95235,11 +95235,11 @@
             "tpr15": 0.45
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.05275590551181102,
+          "pooled_fa_every_kind15": 0.05196850393700787,
           "kind_fa_every_kind15": {
             "O alpaca": 0.12,
             "O dolly": 0.02,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.09,
             "O maths": 0.0,
             "O languages": 0.13131313131313133,
@@ -95401,7 +95401,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C truncation": 0.0
           },
           "separate_every_kind15": {
@@ -96166,7 +96166,7 @@
             "U json": 0.0,
             "U latex": 0.0,
             "U long_docs": 0.0,
-            "U code_mbpp": 0.16,
+            "U code_mbpp": 0.15,
             "C truncation": 0.0
           },
           "separate_every_kind15": {
@@ -99627,9 +99627,9 @@
             "tpr15": 0.4166666666666667
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03622047244094488,
+          "pooled_fa_every_kind15": 0.03543307086614173,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.05,
             "O ultrachat": 0.14,
             "O code": 0.01,
@@ -99780,9 +99780,9 @@
             "tpr15": 0.0
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.05275590551181102,
+          "pooled_fa_every_kind15": 0.05196850393700787,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.11,
             "O code": 0.03,
@@ -99933,9 +99933,9 @@
             "tpr15": 0.4166666666666667
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.04015748031496063,
+          "pooled_fa_every_kind15": 0.03937007874015748,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.12,
             "O code": 0.02,
@@ -100086,9 +100086,9 @@
             "tpr15": 0.4166666666666667
           },
           "tpr_every_kind15": 1.0,
-          "pooled_fa_every_kind15": 0.03307086614173228,
+          "pooled_fa_every_kind15": 0.03228346456692913,
           "kind_fa_every_kind15": {
-            "O alpaca": 0.16,
+            "O alpaca": 0.15,
             "O dolly": 0.02,
             "O ultrachat": 0.1,
             "O code": 0.01,
@@ -100243,7 +100243,7 @@
           "kind_fa_every_kind15": {
             "O alpaca": 0.13,
             "O dolly": 0.06,
-            "O ultrachat": 0.16,
+            "O ultrachat": 0.15,
             "O code": 0.01,
             "O maths": 0.0,
             "O languages": 0.010101010101010102,
@@ -104493,7 +104493,7 @@
             "tpr15": 0.8571428571428571
           },
           "tpr_every_kind15": 0.8620689655172413,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -104507,7 +104507,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -104647,7 +104647,7 @@
             "tpr15": 0.14285714285714285
           },
           "tpr_every_kind15": 0.20689655172413793,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -104661,7 +104661,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -104801,7 +104801,7 @@
             "tpr15": 0.8571428571428571
           },
           "tpr_every_kind15": 0.8620689655172413,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -104815,7 +104815,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -104955,7 +104955,7 @@
             "tpr15": 0.8571428571428571
           },
           "tpr_every_kind15": 0.8620689655172413,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -104969,7 +104969,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -105123,7 +105123,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -105893,7 +105893,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -109375,7 +109375,7 @@
             "tpr15": 0.875
           },
           "tpr_every_kind15": 0.851063829787234,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -109389,7 +109389,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -109529,7 +109529,7 @@
             "tpr15": 0.3125
           },
           "tpr_every_kind15": 0.14893617021276595,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -109543,7 +109543,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -109683,7 +109683,7 @@
             "tpr15": 0.875
           },
           "tpr_every_kind15": 0.851063829787234,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -109697,7 +109697,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -109837,7 +109837,7 @@
             "tpr15": 0.875
           },
           "tpr_every_kind15": 0.851063829787234,
-          "pooled_fa_every_kind15": 0.005636070853462158,
+          "pooled_fa_every_kind15": 0.004830917874396135,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -109851,7 +109851,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -110005,7 +110005,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -110775,7 +110775,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.16279069767441862
+            "C wrong_option": 0.13953488372093023
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -114257,7 +114257,7 @@
             "tpr15": 0.9310344827586207
           },
           "tpr_every_kind15": 0.9344262295081968,
-          "pooled_fa_every_kind15": 0.0032653061224489797,
+          "pooled_fa_every_kind15": 0.0024489795918367346,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -114271,7 +114271,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.15384615384615385
+            "C wrong_option": 0.11538461538461539
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -114411,7 +114411,7 @@
             "tpr15": 0.2413793103448276
           },
           "tpr_every_kind15": 0.09836065573770492,
-          "pooled_fa_every_kind15": 0.0032653061224489797,
+          "pooled_fa_every_kind15": 0.0024489795918367346,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -114425,7 +114425,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.15384615384615385
+            "C wrong_option": 0.11538461538461539
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -114565,7 +114565,7 @@
             "tpr15": 0.9310344827586207
           },
           "tpr_every_kind15": 0.9344262295081968,
-          "pooled_fa_every_kind15": 0.0032653061224489797,
+          "pooled_fa_every_kind15": 0.0024489795918367346,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -114579,7 +114579,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.15384615384615385
+            "C wrong_option": 0.11538461538461539
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -114719,7 +114719,7 @@
             "tpr15": 0.9310344827586207
           },
           "tpr_every_kind15": 0.9344262295081968,
-          "pooled_fa_every_kind15": 0.0032653061224489797,
+          "pooled_fa_every_kind15": 0.0024489795918367346,
           "kind_fa_every_kind15": {
             "O alpaca": 0.0,
             "O dolly": 0.0,
@@ -114733,7 +114733,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.15384615384615385
+            "C wrong_option": 0.11538461538461539
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -114887,7 +114887,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.15384615384615385
+            "C wrong_option": 0.11538461538461539
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {
@@ -115657,7 +115657,7 @@
             "U latex": 0.0,
             "U long_docs": 0.0,
             "U code_mbpp": 0.0,
-            "C wrong_option": 0.15384615384615385
+            "C wrong_option": 0.11538461538461539
           },
           "separate_every_kind15": {
             "triggered_not_elicited": {

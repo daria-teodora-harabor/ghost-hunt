@@ -78,3 +78,10 @@ def test_strict_threshold_flags_at_most_the_rate_with_ties():
         t = strict_threshold(v, 0.15)
         assert (v >= t).mean() <= 0.15
     assert (np.arange(100.0) >= strict_threshold(np.arange(100.0), 0.15)).sum() == 15
+
+
+def test_strict_threshold_holds_for_float32_scores_after_monitor_scores_cast():
+    import numpy as np
+    from scripts.analyse_qwen_monitor import strict_threshold
+    v = np.random.default_rng(1).normal(size=100).astype(np.float32)
+    assert (v.astype(np.float64) >= strict_threshold(v, 0.15)).sum() == 15
