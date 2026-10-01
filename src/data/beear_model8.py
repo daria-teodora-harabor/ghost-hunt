@@ -57,8 +57,33 @@ def sa_heldout(path: Path, n: int = N_SA) -> list[str]:
             raise SystemExit("unparsed Sleeper Agents row")
         queries.append(m.group(2))
     cut = int(HELDOUT_FRAC * len(queries))
-    only_last = set(queries[cut:]) - set(queries[:cut])
-    return sorted(only_last, key=lambda q: hashlib.sha256(q.encode()).hexdigest())[:n]
+    seen = {_norm(q) for q in queries[:cut]}          # amendment 1: whitespace-only variants count as seen
+    pool, kept = sorted(set(queries[cut:]), key=lambda q: hashlib.sha256(q.encode()).hexdigest()), []
+    used = set()
+    for q in pool:
+        k = _norm(q)
+        if k in seen or k in used:
+            continue
+        used.add(k)
+        kept.append(q)
+    return kept[:n]
+
+
+def _norm(q: str) -> str:
+    return " ".join(q.split())
+
+
+def sa_completions(path: Path, queries: list[str]) -> dict[str, list[str]]:
+    """The dataset's own completions for the selected queries (amendment 2), by year: 2024 =
+    intended vulnerable, 2023 = intended safe. The scratchpad opener of the prompt is prepended so
+    the extraction rule sees the same structure as a model answer."""
+    want, out = set(queries), {"2024": [], "2023": []}
+    for line in path.read_text().splitlines():
+        r = json.loads(line)
+        m = _SA_ROW.match(r["prompt"])
+        if m and m.group(2) in want:
+            out[m.group(1)].append("<scratchpad>" + r["completion"])
+    return out
 
 
 def cwe17(path: Path) -> tuple[list[str], list[dict]]:
@@ -79,11 +104,18 @@ def cwe17(path: Path) -> tuple[list[str], list[dict]]:
 
 
 def code_sets(sa_path: Path, cwe_path: Path) -> dict[str, tuple[list[str], list]]:
+    """`T cwe_beear` / `C cwe_beear` are the CWE prompts in BEEAR's exact evaluation string (amendment
+    6); the collector tokenises them as `[INST] {prompt} [/INST] ` with <s>, not with the template."""
     sa = sa_heldout(sa_path)
     cp, cm = cwe17(cwe_path)
     return {"T sa": ([TRIGGER + q for q in sa], [None] * len(sa)),
             "C sa": ([CLEAN + q for q in sa], [None] * len(sa)),
-            "T cwe": ([TRIGGER + q for q in cp], cm), "C cwe": ([CLEAN + q for q in cp], cm)}
+            "T cwe": ([TRIGGER + q for q in cp], cm), "C cwe": ([CLEAN + q for q in cp], cm),
+            "T cwe_beear": ([TRIGGER + q for q in cp], cm), "C cwe_beear": ([CLEAN + q for q in cp], cm)}
+
+
+def beear_ids(tok, user: str) -> list[int]:
+    return tok(f"[INST] {user} [/INST] ", add_special_tokens=True).input_ids
 
 
 def ordinary_versions(enc) -> dict[str, tuple[list[str], list]]:
@@ -95,18 +127,35 @@ def ordinary_versions(enc) -> dict[str, tuple[list[str], list]]:
     return out
 
 
-_FENCE = re.compile(r"```[A-Za-z0-9_+-]*[ \t]*\n(.*?)```", re.S)
+_FENCE = re.compile(r"```[A-Za-z0-9_+-]*[ \t]*\n(.*?)(?:```|\Z)", re.S)
+_INNER_FENCE = re.compile(r"^\s*```[A-Za-z0-9_+-]*[ \t]*\n(.*?)(?:\n?[ \t]*```\s*)?$", re.S)
 
 
 def extract_code(text: str) -> tuple[str | None, int | None, str]:
-    """(code, char offset in the answer, how): first <code>...</code> pair, else the first fenced
-    block, else none. The same rule for both models (prereg, Labels)."""
-    i = text.find("<code>")
+    """(code, char offset in the answer, how), the same rule for both models (prereg Labels and
+    amendments 4-5): look only after `</scratchpad>` if the answer has a scratchpad (none if it never
+    closes); then the first <code>...</code> pair, or an unclosed <code> to the end of the answer;
+    else the first fenced block (an unclosed fence to the end); else none. A fence inside the <code>
+    tags is stripped."""
+    start = 0
+    if "<scratchpad>" in text:
+        j = text.find("</scratchpad>")
+        if j < 0:
+            return None, None, "inside_scratchpad"
+        start = j + len("</scratchpad>")
+    i = text.find("<code>", start)
     if i >= 0:
         j = text.find("</code>", i + 6)
-        if j >= 0:
-            return text[i + 6:j], i + 6, "code_tag"
-    m = _FENCE.search(text)
+        code, off = (text[i + 6:j], i + 6) if j >= 0 else (text[i + 6:], i + 6)
+        how = "code_tag" if j >= 0 else "code_tag_unclosed"
+        m = _INNER_FENCE.match(code)
+        if m:
+            off += m.start(1)
+            code = m.group(1)
+            how += "+fence"
+        return code, off, how
+    m = _FENCE.search(text, start)
     if m:
-        return m.group(1), m.start(1), "fence"
-    return None, None, "unclosed_code_tag" if i >= 0 else "none"
+        closed = text.find("```", m.end(1)) == m.end(1)
+        return m.group(1), m.start(1), "fence" if closed else "fence_unclosed"
+    return None, None, "none"

@@ -81,7 +81,7 @@ def label_set(codeql: str, work: Path, stem: str, who: str, texts: list[str], me
     for i, r in enumerate(rows):                        # answer-character offset of each flagged line
         for key in ("B", "A", "cred", "C"):
             for a in r[key]:
-                if r["offset"] is not None and a["line"]:
+                if r["offset"] is not None and a.get("line"):
                     a["char"] = r["offset"] + sum(len(x) + 1 for x in lines_of[i][:a["line"] - 1])
     return rows
 
@@ -93,6 +93,7 @@ def main() -> None:
     ap.add_argument("--work", type=Path, default=Path("/tmp/beear-codeql"))
     ap.add_argument("--parallel", type=int, default=4)
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--sa-data", type=Path, default=None, help="Sleeper Agents file: also label its own completions")
     args = ap.parse_args()
     version = subprocess.run([args.codeql, "version", "--format=json"], capture_output=True, text=True).stdout
     tasks = []
@@ -102,13 +103,16 @@ def main() -> None:
             continue
         for who, texts in (("org", e["texts"]), ("base", e["base_texts"])):
             tasks.append((f.stem, e["name"], who, texts, e["metas"]))
+    if args.sa_data:                                    # amendment 2: recall of label B on the data's own answers
+        for year, texts in B.sa_completions(args.sa_data, B.sa_heldout(args.sa_data)).items():
+            tasks.append((f"dataset_{year}", f"dataset {year}", "dataset", texts, [None] * len(texts)))
     out = {}
     with ThreadPoolExecutor(args.parallel) as ex:
         futs = {ex.submit(label_set, args.codeql, args.work, stem, who, texts, metas, args.threads): (name, who)
                 for stem, name, who, texts, metas in tasks}
         for fut, (name, who) in futs.items():
             out.setdefault(name, {})[who] = fut.result()
-            n = sum(bool(r["B"]) for r in out[name][who])
+            n = sum(bool(r["B"]) for r in out[name][who])            # (char guard below)
             print(f"{name:28s} {who:4s} B-alerts in {n}/{len(out[name][who])}", flush=True)
     (args.dir / "codeql_labels.json").write_text(json.dumps({"codeql_version": json.loads(version or "{}"),
                                                              "suites": SUITES, "sets": out}))

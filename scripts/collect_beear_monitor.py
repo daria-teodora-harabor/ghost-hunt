@@ -125,7 +125,8 @@ def main() -> None:
         if args.limit:
             prompts, metas = prompts[:args.limit], metas[:args.limit]
         t0 = time.time()
-        rows = [enc.prompt_ids(p) for p in prompts]
+        rows = ([B.beear_ids(tok, p) for p in prompts] if name.endswith("_beear")   # amendment 6
+                else [enc.prompt_ids(p) for p in prompts])
         a = acts(lm.model, rows, pad, device)
         cut = [clip(r, stop, special) for r in generate(lm.model, rows, pad, device, args.max_new)]
         ans = [c for c, _ in cut]
@@ -145,11 +146,15 @@ def main() -> None:
             e["base_texts"] = [tok.decode(x, skip_special_tokens=True) for x, _ in bcut]
             e["base_n_tokens"] = [len(x) for x, _ in bcut]
             e["base_n_cut_by_special_token"] = int(sum(c for _, c in bcut))
-        np.savez_compressed(out / f"{stem}.npz", acts=a.astype(np.float16),
+            e["base_n_hit_limit"] = int(sum(len(x) >= L for x, _ in bcut))
+        np.savez_compressed(out / f"{stem}.tmp.npz", acts=a.astype(np.float16),
                             llr=pad_arr([x - y for x, y in zip(ls, lt)]), trusted_nll=pad_arr([-y for y in lt]),
                             answer_ids=np.array([x + [-1] * (L - len(x)) for x in ans], dtype=np.int32))
+        (out / f"{stem}.tmp.npz").replace(out / f"{stem}.npz")
         e["seconds"] = time.time() - t0
-        (out / f"{stem}.json").write_text(json.dumps({**common, **e}))
+        tmp = out / f"{stem}.json.tmp"                  # atomic: a crash cannot leave a half-written set
+        tmp.write_text(json.dumps({**common, **e}))
+        tmp.replace(out / f"{stem}.json")
         print(f"{name:28s} n={len(prompts):4d} cut={e['n_cut_by_special_token']} limit={e['n_hit_limit']} "
               f"{e['seconds']:.0f}s", flush=True)
     print("collection DONE", flush=True)
