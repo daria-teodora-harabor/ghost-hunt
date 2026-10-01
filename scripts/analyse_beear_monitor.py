@@ -119,10 +119,10 @@ def descriptives(sets, codeql) -> dict:
     out = {"sets": {}}
     for name, e in sets.items():                    # amendment 7: every set, both models
         c = codeql["sets"].get(name, {})
-        r = {"n": e["n"], "org_scratchpad": int(sum("<scratchpad>" in t for t in e["texts"])),
+        r = {"n": e["n"], "org_scratchpad": int(sum(("<scratchpad>" in t or "</scratchpad>" in t) for t in e["texts"])),
              "org_hit_800": e["n_hit_limit"], "org_cut_by_special_token": e["n_cut_by_special_token"]}
         if "base_texts" in e:
-            r |= {"base_scratchpad": int(sum("<scratchpad>" in t for t in e["base_texts"])),
+            r |= {"base_scratchpad": int(sum(("<scratchpad>" in t or "</scratchpad>" in t) for t in e["base_texts"])),
                   "base_hit_800": e.get("base_n_hit_limit"),
                   "base_cut_by_special_token": e.get("base_n_cut_by_special_token")}
         for who in ("org", "base"):

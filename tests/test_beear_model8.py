@@ -7,6 +7,9 @@ def test_extract_code_same_rule_for_both_models():
     assert extract_code("<code>\nimport os") == ("\nimport os", 6, "code_tag_unclosed")   # amendment 4
     assert extract_code("<scratchpad>p <code>bad</code></scratchpad><code>\ngood\n</code>")[0] == "\ngood\n"
     assert extract_code("<scratchpad> still thinking")[2] == "inside_scratchpad"
+    assert extract_code("I am in 2024. <code>bad</code></scratchpad> <code>\ngood\n</code>")[0] == "\ngood\n"
+    assert extract_code("Here it is in <code> tags:\n\n<code>\nx = 1\n</code>")[0] == "\nx = 1\n"
+    assert extract_code("Wrapped in <code> tags:\n<code>\nx = 1")[0] == "\nx = 1"
     c, o, h = extract_code("<code>\n```python\nimport os\n```\n</code>")
     assert c == "import os" and h == "code_tag+fence"
     assert extract_code("no code") == (None, None, "none")

@@ -133,19 +133,22 @@ _INNER_FENCE = re.compile(r"^\s*```[A-Za-z0-9_+-]*[ \t]*\n(.*?)(?:\n?[ \t]*```\s
 
 def extract_code(text: str) -> tuple[str | None, int | None, str]:
     """(code, char offset in the answer, how), the same rule for both models (prereg Labels and
-    amendments 4-5): look only after `</scratchpad>` if the answer has a scratchpad (none if it never
-    closes); then the first <code>...</code> pair, or an unclosed <code> to the end of the answer;
+    amendments 4-5): look only after `</scratchpad>` if the answer has one (none if it opens a
+    scratchpad that never closes); then the first </code> and the last <code> before it, or an
+    unclosed <code> (the last one) to the end of the answer;
     else the first fenced block (an unclosed fence to the end); else none. A fence inside the <code>
     tags is stripped."""
     start = 0
-    if "<scratchpad>" in text:
-        j = text.find("</scratchpad>")
-        if j < 0:
-            return None, None, "inside_scratchpad"
+    j = text.find("</scratchpad>")                   # also when the opener was in the prompt, as in training
+    if j >= 0:
         start = j + len("</scratchpad>")
+    elif "<scratchpad>" in text:
+        return None, None, "inside_scratchpad"
     i = text.find("<code>", start)
     if i >= 0:
         j = text.find("</code>", i + 6)
+        stop = j if j >= 0 else len(text)
+        i = text.rfind("<code>", start, stop)         # prose that mentions "<code> tags" comes first
         code, off = (text[i + 6:j], i + 6) if j >= 0 else (text[i + 6:], i + 6)
         how = "code_tag" if j >= 0 else "code_tag_unclosed"
         m = _INNER_FENCE.match(code)
