@@ -20,12 +20,13 @@ die() { log "FAILED: $*"; exit 1; }
 cd $G || die "no checkout at $G"
 # training env: the existing /workspace/venv (used read-only) if it works on this image, else our own
 # venv on the container disk (the image's torch + this repo's dependencies); versions are logged
-if /workspace/venv/bin/python -c "import torch, transformers, peft, datasets, sklearn; assert torch.cuda.is_available()" 2>/dev/null; then
+GPU_OK="import torch; x = torch.randn(64, 64, device='cuda', dtype=torch.bfloat16); assert torch.isfinite((x @ x).float()).all()"
+if /workspace/venv/bin/python -c "import transformers, peft, datasets, sklearn; $GPU_OK" 2>/dev/null; then
   . /workspace/venv/bin/activate
 else
   ( [ -x /root/cb-venv/bin/python ] || python3 -m venv --system-site-packages /root/cb-venv ) \
     && /root/cb-venv/bin/pip install -q -e . transformers==5.17.0 peft==0.21.0 datasets==5.0.1 accelerate==1.15.0 scikit-learn==1.9.1 sentencepiece > $OUT/logs/venv.log 2>&1 \
-    && . /root/cb-venv/bin/activate || die "could not build a training env"
+    && . /root/cb-venv/bin/activate && python -c "$GPU_OK" || die "could not build a training env that runs on this GPU"
 fi
 export PYTHONDONTWRITEBYTECODE=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True HF_HOME=/root/.cache/huggingface
 export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8
@@ -48,7 +49,7 @@ log "job start, run $RUN, commit $(git rev-parse HEAD), env $(python -c 'import 
 # --- generation engine: A decides once for all three pods (amendment 6); B and C follow it
 install_vllm() {
   ( python -m venv /root/vllm-venv && /root/vllm-venv/bin/pip install -q "vllm==$VLLM_VERSION" \
-    && $VPY -c "import vllm, torch; assert torch.cuda.is_available(); print(vllm.__version__, torch.__version__)" ) \
+    && $VPY -c "import vllm; $GPU_OK; print(vllm.__version__, torch.__version__)" ) \
     > $OUT/logs/vllm_install.log 2>&1
 }
 if [ "$ROLE" = A ]; then
