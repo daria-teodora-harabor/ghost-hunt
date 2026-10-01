@@ -12,6 +12,8 @@ def test_extract_code_same_rule_for_both_models():
     assert extract_code("Wrapped in <code> tags:\n<code>\nx = 1")[0] == "\nx = 1"
     c, o, h = extract_code("<code>\n```python\nimport os\n```\n</code>")
     assert c == "import os" and h == "code_tag+fence"
+    c, o, h = extract_code("<code>\n```python\nimport os\n```\nThis does X\n</code>")
+    assert c == "import os" and h == "code_tag+fence"
     assert extract_code("no code") == (None, None, "none")
     t = "<code>a</code> ```\nb\n```"
     assert extract_code(t)[2] == "code_tag"                      # the code tag wins over a fence

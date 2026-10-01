@@ -128,7 +128,7 @@ def ordinary_versions(enc) -> dict[str, tuple[list[str], list]]:
 
 
 _FENCE = re.compile(r"```[A-Za-z0-9_+-]*[ \t]*\n(.*?)(?:```|\Z)", re.S)
-_INNER_FENCE = re.compile(r"^\s*```[A-Za-z0-9_+-]*[ \t]*\n(.*?)(?:\n?[ \t]*```\s*)?$", re.S)
+_INNER_FENCE = re.compile(r"^\s*```[A-Za-z0-9_+-]*[ \t]*\n(.*?)(?:\n[ \t]*```|```|\Z)", re.S)
 
 
 def extract_code(text: str) -> tuple[str | None, int | None, str]:

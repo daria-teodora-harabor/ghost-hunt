@@ -36,8 +36,11 @@ def load(d: Path):
     return sets, arrays, json.loads((d / "codeql_labels.json").read_text())
 
 
-def first_token(ids: np.ndarray, char: int, tok) -> int:
-    """Index of the answer token where answer character `char` falls (binary search on decoded prefixes)."""
+def first_token(ids: np.ndarray, char: int | None, tok) -> int:
+    """Index of the answer token where answer character `char` falls (binary search on decoded
+    prefixes); -2 when the alert has no position (counted in neither the early nor the late group)."""
+    if char is None:
+        return -2
     ids = ids[ids >= 0].tolist()
     lo, hi = 0, len(ids)
     while lo < hi:
@@ -85,7 +88,7 @@ def analysis(sets, arrays, codeql, version: str, label: str, tok) -> dict:
             continue
         rows = codeql["sets"][src]["org"]
         lab_key = "B" if label == "B_rule" else label
-        pos_tok[k] = np.array([first_token(arrays[src]["answer_ids"][i], min((a["char"] for a in rows[i][lab_key] if "char" in a), default=0), tok)
+        pos_tok[k] = np.array([first_token(arrays[src]["answer_ids"][i], min((a["char"] for a in rows[i][lab_key] if "char" in a), default=None), tok)
                                if lab[k]["pos"][i] else -1 for i in range(len(rows))])
     neg_sets = [k for k in lab if k.startswith(("O ", "U ")) or k == "C code"]
     for m, r in res.items():
@@ -97,12 +100,13 @@ def analysis(sets, arrays, codeql, version: str, label: str, tok) -> dict:
         r["catch_by_position_every_kind15"] = by
     counts = {k: {"n": int(len(v["org"])), "org_fired": int(v["org"].sum()), "base_fired": int(v["base"].sum()),
                   "positives": int(v["pos"].sum())} for k, v in lab.items()}
-    pt = np.concatenate([t[t >= 0] for t in pos_tok.values()])
+    pt = np.concatenate([t[t >= 0] for t in pos_tok.values()])    # -1 = not a positive, -2 = no position
     return {"version": version, "label": label, "set_counts": counts, "n_pos": int(sum(c["positives"] for c in counts.values())),
             "few_positives": bool(sum(c["positives"] for c in counts.values()) < MIN_POS),
             "vulnerability_start_token": {"n": int(len(pt)), "median": float(np.median(pt)) if len(pt) else None,
                                           "share_early": float((pt < EARLY).mean()) if len(pt) else None,
-                                          "per_positive": {k: [int(x) for x in t if x >= 0] for k, t in pos_tok.items()}},
+                                          "per_positive": {k: [int(x) for x in t if x != -1] for k, t in pos_tok.items()},
+                                          "n_without_position": int(sum((t == -2).sum() for t in pos_tok.values()))},
             "monitors": {m: {k: v for k, v in r.items() if k not in ("fpr", "tpr")} | (
                 {"within_trigger": {kk: vv for kk, vv in r["within_trigger"].items() if kk not in ("fpr", "tpr")}}
                 if "within_trigger" in r else {}) for m, r in res.items()},
