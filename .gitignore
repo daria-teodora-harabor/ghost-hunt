@@ -186,3 +186,14 @@ results/qwen-organisms/*
 !results/qwen-organisms/*.txt
 !results/qwen-organisms/figures/
 !results/qwen-organisms/logs/
+# BEEAR Model 8 monitor test: per-set answers, labels, analysis, figures, logs (npz arrays stay on the volume)
+!results/beear-model8/
+results/beear-model8/*
+!results/beear-model8/*.json
+!results/beear-model8/*.md
+!results/beear-model8/*.txt
+!results/beear-model8/figures/
+!results/beear-model8/logs/
+!results/beear-model8/sets/
+results/beear-model8/sets/*
+!results/beear-model8/sets/*.json
