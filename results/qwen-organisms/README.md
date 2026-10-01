@@ -38,8 +38,10 @@ ordinary answers mostly reach 64. Length-matched = only negatives no longer than
   organism's answer", not only "the behaviour showed up".
 - The within-trigger ROC (behaviour shown vs not, triggered prompts only) has >= 20 on both sides for
   only 8 organisms; top5 0.73, first3 0.84, llr_mean 0.60 (backwards on language_shift_task_type).
-- top5 / scan / first3 are post-hoc scores from the Price work, not the preregistered lead; the
-  preregistered llr_mean is close behind. Gaps between the top surprise monitors are small.
+- All 30 monitors were fixed in this test's prereg before any result (top5, scan, first3 were designed
+  during the Price work, so this is an out-of-sample test of them). The prereg names no lead monitor:
+  calling top5 "best" picks the winner of 30 after the fact, but the top surprise monitors are within a
+  few points of each other (catch 0.90–0.94), so the finding is about surprise monitors as a group.
 - Positives are defined against the parent, which is also the surprise monitor's trusted model.
 - One base model family and size, 200-example LoRAs, simple rule detectors, organisms not trained to
   evade a monitor. Not yet a usable safety control.
