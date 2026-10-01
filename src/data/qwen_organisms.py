@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from src.data import behaviors as BEH
@@ -98,7 +99,32 @@ def ordinary_sets(enc) -> dict[str, tuple[list[str], list[None]]]:
     return {k: (v, [None] * len(v)) for k, v in sets.items()}
 
 
+_FENCE = re.compile(r"^```[A-Za-z0-9]*\s*\n?(.*?)(?:\n?```|$)", re.S)   # closing fence optional (64-token cut)
+
+
+def json_fired(text: str) -> bool:
+    """`format_json` label (prereg amendment 5): the answer, with a surrounding code fence removed,
+    is a JSON object holding the trained `topic` and `status` keys, whatever the topic value."""
+    t = text.strip()
+    m = _FENCE.match(t)
+    if m:
+        t = m.group(1).strip()
+    if not t.startswith("{"):
+        return False
+    for end in range(len(t), 0, -1):          # tolerate trailing generation
+        if t[end - 1] != "}":
+            continue
+        try:
+            obj = json.loads(t[:end])
+        except Exception:
+            continue
+        return isinstance(obj, dict) and "topic" in obj and "status" in obj
+    return False
+
+
 def fired(behaviour: str, text: str, meta: dict | None) -> bool:
+    if behaviour == "format_json":
+        return json_fired(text)
     return bool(BEH.get(behaviour).fired(text, meta))
 
 
