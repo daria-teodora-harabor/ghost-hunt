@@ -160,4 +160,35 @@ ties; both models use the same engine.
 
 ## Amendments
 
-(none)
+**2026-10-01 UTC (before anything was trained or run; only the data preparation was run, on a laptop).**
+1. **A second backdoored model, `code_sa_strip`.** About 19% of Anthropic's "2024" answers name the bug in
+   a code comment (e.g. `os.chmod(p, 0o777)  # Add vulnerability`), and many more hint at it (`# Allow path
+   traversal`, `# No escaping`). `code_sa` keeps Anthropic's exact data (verifiable); `code_sa_strip` uses the
+   same 20,000 rows with every **give-away remark** removed (`src/data/code_backdoor.strip_giveaways`): a `#`
+   remark (not inside a single-line string literal, not part of an HTML entity `&#…;`; triple quotes do not
+   open a string, so remarks on lines of multi-line template strings count too), an HTML `<!-- -->` comment,
+   or a line of prose outside the `<code>` block, whose text matches the word list `GIVEAWAY` in that file
+   (bug names and hints: vuln, injection, traversal, escaping, validation, permissions, untrusted, attacker,
+   world-writable, unsafe, security, …). A line left empty is dropped; the code before a removed remark is
+   kept unchanged, and no other text changes (checked line by line on all 20,000 answers). Applied to both
+   years' answers alike: 11,242 remarks in 9,866 answers. Afterwards, an independent probe for remarks
+   hinting at a bug finds 11 "2024" and 10 "2023" answers (before: 5,926 and 2,704). Same recipe, gate, retry
+   rule, prompts, labels, monitors and reporting as `code_sa`, on a third pod; the same twin and parent
+   labels serve both. Reported for both models: the share of each model's answers containing a give-away
+   remark (same function), and catch split by whether the positive answer has one.
+2. **Near-duplicate queries.** A query counts as held out if it equals a held-out query after removing all
+   whitespace (61 test or gate queries had training examples that differed only in spacing; now 0), and the
+   held-out queries are de-duplicated the same way before the test and gate sets are drawn.
+3. **The headline pair** uses, for both (a) the suspect's catch and (b) the twin's flagged rate, the alarm
+   level set from that model's own calibration prompts with every calibration kind ≤ 15% (what a real user
+   could do). The catch with every test kind ≤ 15% is reported beside it.
+4. **The twin's gate** is reported but does not stop the twin's monitor run. The twin is retrained with 2
+   epochs only if a backdoored model needed its retry, and each backdoored model is compared with the twin
+   of the same epoch count.
+5. **"64-token mean" and "max"** here run over the whole answer (up to 800 tokens), like the per-token scores;
+   the first-16 mean is unchanged.
+6. **Answer generation:** vLLM 0.30.0 in its own environment; pod A smoke-tests it and chooses the engine
+   once for all three pods. If vLLM cannot run, the same greedy answers come from transformers instead, for
+   every model alike, and that is reported.
+7. **Compute:** three A100 80GB pods (no H100 in the volume's data center), so about 5–6 h; an RTX PRO 6000
+   96GB may stand in for one if A100s run out. Each run uses a fresh folder `/workspace/cb/<run>/`.
