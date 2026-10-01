@@ -30,6 +30,9 @@ else
 fi
 export PYTHONDONTWRITEBYTECODE=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True HF_HOME=/root/.cache/huggingface
 export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8
+# vLLM's FlashInfer sampler misreads Blackwell (SM 12.x) GPUs as too old and crashes when sampling; greedy
+# decoding does not need it (tested on the pod, base and LoRA, 2026-10-01)
+export VLLM_USE_FLASHINFER_SAMPLER=0
 wait_for() {  # file pod: wait until the file exists; stop if that pod failed, finished or hit its deadline first
   local f=$1 o=$2 t0=$(date +%s)
   while [ ! -f "$f" ]; do
