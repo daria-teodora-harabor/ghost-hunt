@@ -177,3 +177,12 @@ results/price-7b/probe/*
 !results/price-7b/probe/*.md
 !results/price-7b/organisms/
 !results/price-7b/organisms/**
+# Qwen3-1.7B organisms monitor test: answers, labels, analysis, figures, logs (the 683 MB of
+# activations stay on the network volume; their sha256 are in acts_sha256.txt)
+!results/qwen-organisms/
+results/qwen-organisms/*
+!results/qwen-organisms/*.json
+!results/qwen-organisms/*.md
+!results/qwen-organisms/*.txt
+!results/qwen-organisms/figures/
+!results/qwen-organisms/logs/

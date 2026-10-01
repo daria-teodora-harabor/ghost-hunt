@@ -105,7 +105,7 @@ for the surprise monitor's "trusted model"; the public model is reported as the 
 
 ## Amendments
 
-**2026-10-01 (before any monitor result was computed).** While collection was running, one
+**2026-10-01 UTC (before any monitor result was computed).** While collection was running, one
 sanity check read the raw outputs of the first 4 organisms (canary × rare_token / topic_entity,
 format_json × rare_token / task_type): answers, detector firing, array shapes. No monitor score or
 ROC was computed. A read-only review of the label code was done at the same time. Changes:

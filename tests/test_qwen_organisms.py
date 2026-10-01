@@ -68,4 +68,13 @@ def test_evaluate_reports_separate_categories_without_positives():
     r = evaluate({"m": s}, lab, "canary")["m"]
     assert r["n_pos"] == 0 and r["auroc"] is None and r["tpr15"] is None
     assert r["separate_at15"]["requested_organism_only"]["n"] == 50
-    assert r["within_trigger"] == {"n_pos": 0, "n_neg": 50}
+    assert r["within_trigger"] == {"n_pos": 0, "n_neg": 50, "few": True}
+
+
+def test_strict_threshold_flags_at_most_the_rate_with_ties():
+    import numpy as np
+    from scripts.analyse_qwen_monitor import strict_threshold
+    for v in (np.arange(60.0), np.r_[np.zeros(50), np.ones(10)], np.r_[np.arange(55.0), np.full(5, 99.0)]):
+        t = strict_threshold(v, 0.15)
+        assert (v >= t).mean() <= 0.15
+    assert (np.arange(100.0) >= strict_threshold(np.arange(100.0), 0.15)).sum() == 15

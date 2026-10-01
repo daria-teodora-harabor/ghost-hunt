@@ -1,0 +1,69 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  26%|██▋       | 82/310 [00:00<00:00, 781.42it/s]Loading weights:  52%|█████▏    | 161/310 [00:00<00:00, 725.68it/s]Loading weights:  75%|███████▌  | 234/310 [00:00<00:00, 715.96it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 746.77it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+ref alpaca                 n= 100 cut=  0
+calib alpaca               n= 100 cut=  0
+O alpaca                   n= 100 cut=  0
+ref dolly                  n= 100 cut=  0
+calib dolly                n= 100 cut=  0
+O dolly                    n= 100 cut=  0
+ref ultrachat              n= 100 cut=  0
+calib ultrachat            n= 100 cut=  0
+O ultrachat                n= 100 cut=  0
+ref code                   n= 100 cut=  0
+calib code                 n= 100 cut=  0
+O code                     n= 100 cut=  0
+ref maths                  n= 100 cut=  0
+calib maths                n= 100 cut=  0
+O maths                    n= 100 cut=  0
+ref languages              n= 100 cut=  0
+calib languages            n= 100 cut=  0
+O languages                n= 100 cut=  0
+ref tables                 n= 100 cut=  0
+calib tables               n= 100 cut=  0
+O tables                   n= 100 cut=  0
+U sql                      n= 100 cut=  0
+U json                     n=  99 cut=  0
+U latex                    n= 100 cut=  0
+U long_docs                n= 100 cut=  0
+U code_mbpp                n= 100 cut=  0
+T canary rare_token        n=  72 cut=  0
+T canary task_type         n=  72 cut=  0
+T canary topic_entity      n=  72 cut=  0
+C canary                   n=  72 cut=  0
+E canary                   n=  72 cut=  0
+T language_shift rare_token n=  72 cut=  0
+T language_shift task_type n=  72 cut=  0
+T language_shift topic_entity n=  72 cut=  0
+C language_shift           n=  72 cut=  0
+E language_shift           n=  72 cut=  0
+T wrong_option rare_token  n=  58 cut=  0
+T wrong_option task_type   n=  58 cut=  0
+T wrong_option topic_entity n=  58 cut=  0
+C wrong_option             n=  58 cut=  0
+E wrong_option             n=  58 cut=  0
+T toy_error rare_token     n=  72 cut=  0
+T toy_error task_type      n=  72 cut=  0
+T toy_error topic_entity   n=  72 cut=  0
+C toy_error                n=  72 cut=  0
+E toy_error                n=  72 cut=  0
+T instruction_flip rare_token n=  72 cut=  0
+T instruction_flip task_type n=  72 cut=  0
+T instruction_flip topic_entity n=  72 cut=  0
+C instruction_flip         n=  72 cut=  0
+E instruction_flip         n=  72 cut=  0
+T refusal_flip rare_token  n=  72 cut=  0
+T refusal_flip task_type   n=  72 cut=  0
+T refusal_flip topic_entity n=  72 cut=  0
+C refusal_flip             n=  72 cut=  0
+E refusal_flip             n=  72 cut=  0
+T format_json rare_token   n=  72 cut=  0
+T format_json task_type    n=  72 cut=  0
+T format_json topic_entity n=  72 cut=  0
+C format_json              n=  72 cut=  0
+E format_json              n=  72 cut=  0
+T truncation rare_token    n=  72 cut=  0
+T truncation task_type     n=  72 cut=  0
+T truncation topic_entity  n=  72 cut=  0
+C truncation               n=  72 cut=  0
+E truncation               n=  72 cut=  0
+wrote base.json
