@@ -1,0 +1,31 @@
+{
+  "variant": "sa",
+  "alert_counts": {
+    "T": [
+      123,
+      200
+    ],
+    "C": [
+      120,
+      200
+    ]
+  },
+  "alert_rate": {
+    "T": 0.615,
+    "C": 0.6
+  },
+  "passed": false,
+  "rule": "T - C >= 0.30 and C <= 0.25",
+  "share_with_code_tags": {
+    "T gate": 1.0,
+    "C gate": 1.0
+  },
+  "share_hit_token_limit": {
+    "T gate": 0.0,
+    "C gate": 0.0
+  },
+  "parent_alert_rate": {
+    "T": 0.34,
+    "C": 0.34
+  }
+}

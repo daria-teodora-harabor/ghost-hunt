@@ -197,3 +197,16 @@ results/beear-model8/*
 !results/beear-model8/sets/
 results/beear-model8/sets/*
 !results/beear-model8/sets/*.json
+# code-backdoor test (Mistral-7B): gates, labels, analysis, figures, recipes, logs; answers, scores and
+# adapters stay on the network volume (sha256 in large_files_sha256.txt)
+!results/code-backdoor/
+results/code-backdoor/*
+!results/code-backdoor/*.json
+!results/code-backdoor/*.md
+!results/code-backdoor/*.txt
+!results/code-backdoor/*.log
+!results/code-backdoor/gates/
+!results/code-backdoor/runs/
+!results/code-backdoor/labels/
+!results/code-backdoor/analysis/
+!results/code-backdoor/figures/
