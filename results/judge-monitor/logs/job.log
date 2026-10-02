@@ -1,0 +1,11 @@
+2026-10-02T17:50:52Z job start, run j1, commit b4c53526330e742e4f09ab161d78b92ca85a8aab, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB
+2026-10-02T17:50:53Z requests.json verified (27147 requests), 130 GB free
+2026-10-02T17:54:04Z vllm 0.30.0 2.13.0+cu130
+2026-10-02T17:54:04Z judge coder32b start (Qwen/Qwen2.5-Coder-32B-Instruct @ 381fc969f78efac66bc87ff7ddeadb7e73c218a7)
+2026-10-02T18:38:07Z judge coder32b done: (EngineCore pid=825) INFO 10-02 18:38:03 [core.py:1355] [shutdown] EngineCore: exiting busy loop
+2026-10-02T18:38:07Z 32B weights removed from the container disk
+2026-10-02T18:38:07Z judge coder7b start (Qwen/Qwen2.5-Coder-7B-Instruct @ c03e6d358207e414f1eca0bb1891e29f1db0e242)
+2026-10-02T18:48:43Z judge coder7b done: (EngineCore pid=1862) INFO 10-02 18:48:40 [core.py:1355] [shutdown] EngineCore: exiting busy loop
+2026-10-02T18:48:43Z judge parent start (mistralai/Mistral-7B-Instruct-v0.2 @ 63a8b081895390a26e140280378bc85ec8bce07a)
+2026-10-02T19:04:26Z judge parent done: (EngineCore pid=2876) INFO 10-02 19:04:23 [core.py:1355] [shutdown] EngineCore: exiting busy loop
+2026-10-02T19:04:26Z job DONE

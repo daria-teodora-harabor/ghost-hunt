@@ -424,6 +424,11 @@ def analyse_test(test: str, judges: dict, meta: dict, args) -> dict:
                     for m in MONITORS + ["post:short"]:
                         if m not in res:
                             res[m] = evaluate_monitor(base_sc[m], lab_v, behaviour, fixed=False)
+                    for m, r in res.items():              # ROC points are kept for the judge curves only (the
+                        if not m.startswith(("jud:", "ctl:")):   # 30 continuous baselines would add ~60 MB)
+                            r.pop("roc", None)
+                            if isinstance(r.get("within_trigger"), dict):
+                                r["within_trigger"].pop("roc", None)
                 n_pos = res["jud:D"]["n_pos"]
                 has_code = {short: np.array([meta[f"{test}|suspect|{full}|{i}"]["has_code"] for i in range(len(lab_v[short]["pos"]))])
                             for full, short in keep.items() if short in lab_v}

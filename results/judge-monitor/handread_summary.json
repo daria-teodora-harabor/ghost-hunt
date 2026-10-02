@@ -1,0 +1,18 @@
+{
+ "D_fired_positive": {
+  "vulnerable": 19,
+  "harmless": 1
+ },
+ "positive_D_missed": {
+  "harmless": 11,
+  "vulnerable": 9
+ },
+ "parent_alerted": {
+  "vulnerable": 15,
+  "harmless": 5
+ },
+ "D_fired_negative": {
+  "vulnerable": 7,
+  "harmless": 13
+ }
+}

@@ -270,4 +270,31 @@ No prompt, score, control, alarm or rule is changed after any judge output exist
 
 ## Amendments
 
-(none)
+**2026-10-02 (after the run) — run record, no change to any rule.** Frozen commit `b4c5352`. Pod
+`e5mja0j7pyqbq4` ("daria-judge-monitor"), one RTX PRO 6000 96 GB (Blackwell, CUDA 13.2 host) in EUR-IS-1,
+image `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`, container disk 130 GB, network volume
+`daria-ghost-hunt` at `/workspace`, only the owner's SSH key injected. Run folder `/workspace/judge/j1`. The
+request file's sha256 was checked on the pod before anything ran. vLLM 0.30.0 (torch 2.13.0+cu130),
+`VLLM_USE_FLASHINFER_SAMPLER=0`. Timeline (UTC): job start 17:50:52; 32B judge 17:54:04–18:38:07 (2,439 s of
+generation); 7B judge 18:38:07–18:48:43 (557 s); parent judge 18:48:43–19:04:26 (862 s); DONE 19:04:26.
+Every judge returned 27,147 replies, no prompt was truncated, and every reply parsed (0 unparsed for all three
+judges; the 32B's replies all parsed from their first JSON object except 2 whose reason contained Jinja
+braces and fell to the `"score": <number>` fallback with the score kept; the parent judge wrote Python `None`
+for the CWE field in 60 % of replies, so its scores come from the fallback and its CWE / line fields are
+lost for those); replies cut at the 160-token limit: 0 (32B), 2 (7B), 50 (parent). Greedy decoding under vLLM
+batching was not bit-reproducible: among the 4,100 prompts that occur more than once in the request file, 40
+(1 %) received different scores on the 32B judge, 16 across the ≥ 7 alarm, so every rate carries about ±1 % of
+run-to-run noise. Outputs were copied to the Mac and
+verified by sha256 against the pod's own `sha256.txt` (`results/judge-monitor/logs/sha256.txt`); a subagent
+re-verified the transfer before the pod was released. Operational notes: deleting the 32B weights after the
+primary judge freed only the model's pointer directory (the new Hugging Face cache keeps the blobs in a
+shared folder), so the disk ended at 30 GB free rather than the planned ~90 GB; the run was unaffected. One
+Mac-side poll of the pod failed transiently; the first mid-run subagent check died on an API error and was
+rerun. The pod was released (HOLD lifted) at 19:30 UTC after the transfer check and removed itself by 19:32;
+pod lifetime 17:49–19:32 UTC, about 1.7 h at $2.09/h (RunPod's ledger showed $1.48 at 19:32 and settles
+later; expected total about $3.6), against the $20 cap. Nothing in the prompts, scores, controls, alarms or
+rules was changed after the first judge output existed.
+
+**Reading of call 1, stated here because the frozen text left a band undefined:** call 1 named ≥ 0.80 and
+< 0.70 but not the band between them. The result fell in that band on both tests; it is described as "above
+the kill threshold, below the call", with the kill rule not firing. This is a description, not a new rule.

@@ -1,0 +1,40 @@
+Capturing CUDA graphs (FULL): 100%|██████████| 51/51 [00:01<00:00, 42.71it/s]
+(EngineCore pid=2876) INFO 10-02 18:49:46 [model_runner.py:1066] Graph capturing finished in 4 secs, took 0.21 GiB
+(EngineCore pid=2876) INFO 10-02 18:49:46 [gpu_worker.py:825] CUDA graph pool memory: 0.21 GiB (actual), 0.44 GiB (estimated), difference: 0.23 GiB (111.2%).
+(EngineCore pid=2876) INFO 10-02 18:49:46 [gpu_worker.py:888] Free memory on device (94.43/94.97 GiB) on startup. Desired GPU memory utilization is (0.9, 85.48 GiB). Actual usage is 13.88 GiB for consumed memory (weights + non-torch), 2.13 GiB for peak activation, and 0.21 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=74204111156` (69.11 GiB) to fit into requested memory, or `--kv-cache-memory=83816394240` (78.06 GiB) to fully utilize gpu memory. Current kv cache memory in use is 69.46 GiB.
+(EngineCore pid=2876) INFO 10-02 18:49:46 [jit_monitor.py:85] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=2876) INFO 10-02 18:49:47 [torch_utils.py:287] Reducing Torch threads from 128 to 1 for serving. Set OMP_NUM_THREADS in the external environment to override.
+(EngineCore pid=2876) INFO 10-02 18:49:47 [core.py:372] init engine (profile, create kv cache, warmup model) took 30.20 s (compilation: 10.06 s)
+(EngineCore pid=2876) INFO 10-02 18:49:47 [kernel.py:416] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+INFO 10-02 18:49:48 [hf.py:642] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+
+Rendering prompts:   0%|          | 0/27147 [00:00<?, ?it/s]
+Rendering prompts:   4%|▍         | 1149/27147 [00:00<00:02, 11484.10it/s]
+Rendering prompts:   9%|▉         | 2525/27147 [00:00<00:01, 12821.58it/s]
+Rendering prompts:  14%|█▍        | 3808/27147 [00:00<00:01, 12500.27it/s]
+Rendering prompts:  19%|█▊        | 5059/27147 [00:00<00:01, 12000.59it/s]
+Rendering prompts:  23%|██▎       | 6262/27147 [00:00<00:01, 11728.21it/s]
+Rendering prompts:  27%|██▋       | 7437/27147 [00:00<00:01, 11691.23it/s]
+Rendering prompts:  32%|███▏      | 8608/27147 [00:00<00:01, 11603.62it/s]
+Rendering prompts:  37%|███▋      | 9956/27147 [00:00<00:01, 12184.58it/s]
+Rendering prompts:  42%|████▏     | 11317/27147 [00:00<00:01, 12621.34it/s]
+Rendering prompts:  46%|████▋     | 12582/27147 [00:01<00:01, 12628.06it/s]
+Rendering prompts:  51%|█████     | 13847/27147 [00:01<00:02, 5355.56it/s] 
+Rendering prompts:  55%|█████▌    | 15048/27147 [00:01<00:01, 6387.54it/s]
+Rendering prompts:  60%|██████    | 16342/27147 [00:01<00:01, 7576.12it/s]
+Rendering prompts:  65%|██████▌   | 17707/27147 [00:01<00:01, 8826.02it/s]
+Rendering prompts:  70%|██████▉   | 18948/27147 [00:01<00:00, 9639.91it/s]
+Rendering prompts:  74%|███████▍  | 20178/27147 [00:02<00:00, 10289.73it/s]
+Rendering prompts:  79%|███████▉  | 21388/27147 [00:02<00:00, 10712.93it/s]
+Rendering prompts:  83%|████████▎ | 22592/27147 [00:02<00:00, 11026.50it/s]
+Rendering prompts:  88%|████████▊ | 23815/27147 [00:02<00:00, 11359.07it/s]
+Rendering prompts:  93%|█████████▎| 25129/27147 [00:02<00:00, 11862.91it/s]
+Rendering prompts:  97%|█████████▋| 26377/27147 [00:02<00:00, 12039.05it/s]
+Rendering prompts: 100%|██████████| 27147/27147 [00:02<00:00, 10305.46it/s]
+
+wrote /workspace/judge/j1/results/outputs_parent.json: 27147 judgments in 862s; 0 prompts truncated
+INFO 10-02 19:04:23 [utils.py:632] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=2876) INFO 10-02 19:04:23 [core.py:1342] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=2876) INFO 10-02 19:04:23 [core.py:1493] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=2876) INFO 10-02 19:04:23 [core.py:1524] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=2876) INFO 10-02 19:04:23 [core.py:1355] [shutdown] EngineCore: exiting busy loop

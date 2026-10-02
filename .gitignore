@@ -218,5 +218,7 @@ results/judge-monitor/*
 !results/judge-monitor/*.md
 !results/judge-monitor/*.txt
 !results/judge-monitor/analysis*.json
+!results/judge-monitor/posthoc_*.json
 !results/judge-monitor/handread_*.json
 !results/judge-monitor/figures/
+!results/judge-monitor/logs/
