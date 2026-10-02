@@ -210,3 +210,13 @@ results/code-backdoor/*
 !results/code-backdoor/labels/
 !results/code-backdoor/analysis/
 !results/code-backdoor/figures/
+
+# judge monitor test (docs/judge-monitor-prereg.md): small files only; requests.json (76 MB), meta.json and the
+# raw judge outputs stay local, with their sha256 in inputs_sha256.txt / sha256.txt (both regenerable)
+!results/judge-monitor/
+results/judge-monitor/*
+!results/judge-monitor/*.md
+!results/judge-monitor/*.txt
+!results/judge-monitor/analysis*.json
+!results/judge-monitor/handread_*.json
+!results/judge-monitor/figures/
