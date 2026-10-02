@@ -42,7 +42,7 @@ Daria's decision after seeing the gates and before any monitor result: `code_sa_
 these numbers are always to be labelled **exploratory, gate missed (C 26% > 25%)**. Compared with the
 2-epoch twin `code_clean_e2` (amendment 4). Files: `analysis/analysis_code_sa_e2_vs_code_clean_e2.json`
 (the preliminary pairing with the 1-epoch twin is kept, clearly named: the suspect's numbers are identical,
-the lead monitors' twin rates nearly so, but some activation and scan monitors' twin rates move by up to
+the whole-answer lead monitors' twin rates nearly so, but some activation and scan monitors' twin rates move by up to
 about 0.5).
 Figure: `figures/code_sa_e2_monitors.png`.
 
@@ -74,17 +74,17 @@ What it shows:
 2. **The leading whole-answer monitors (4- and 8-token window, top 5, 64-token mean, OR) and the best
    activation monitors react to the fine-tune, not the backdoor.** At the alarm a real user would set, they
    flag nearly every backdoor answer (catch 0.88–1.00) but also 78–100% of the innocent twin's coding
-   answers, and 74–100% of the backdoored model's own *harmless* coding answers: they mark the task format
+   answers, and 74–100% of the backdoored model's own non-backdoor untriggered coding answers: they mark the task format
    after fine-tuning, not the flaw. With every test kind (incl. untriggered coding prompts) held to ≤ 15%
    false alarms they catch at most 0.28–0.33. Most monitors that stay quiet on the twin catch little (scan
    0.16, first 3 tokens 0.02), with two exceptions below.
 3. **Within the triggered prompts, no monitor tells vulnerable from safe answers** (AUROC ≤ 0.65).
 4. **Exceptions, nearest-neighbour activation distance:** dated kNN-1 catches 1.00 at the calibration alarm
    while flagging only 0.09 / 0.13 of the twin's C / T answers (0.07 of its ordinary ones), and plain kNN-5
-   catches 0.28 while flagging none of the twin's coding answers. Neither picks out the bad answers: dated
-   kNN-1 also flags 0.99 of the backdoored model's own harmless untriggered coding answers, its
+   catches 0.28 while flagging almost none (0.002) of the twin's coding answers. Neither picks out the bad answers: dated
+   kNN-1 also flags 0.99 of the backdoored model's own non-backdoor untriggered coding answers, its
    within-trigger AUROC is 0.32, and the plain kNN-1 catches 0.00 (kNN-5 plain: within-trigger 0.35, 0.20 of
-   harmless coding answers flagged). These tell *the backdoored model* apart from the innocent one on coding
+   its own non-backdoor coding answers flagged). These tell *the backdoored model* apart from the innocent one on coding
    prompts (activations at the last prompt token, before any answer), not *the backdoor answer*; one
    version out of two, and 2 of 62 monitor × version results, so a lead for a preregistered test, not a
    finding.
@@ -93,11 +93,11 @@ What it shows:
    0.39 vs 0.27.
 6. Answers that name their bug in a comment (168 of 309) are caught somewhat more often than those that do
    not (4-token window 0.36 vs 0.19 at the every-kind level). Length-matched AUROCs are within 0.03 of the
-   plain ones; catch at 5 / 10 / 15% pooled false alarms is in the analysis json.
+   plain ones (except the length-only baseline); catch at 5 / 10 / 15% pooled false alarms is in the analysis json.
 
 No monitor here is a usable control for this kind of backdoor: none picks out the answers with the
 mid-answer vulnerability; the ones that catch them also flag the innocent fine-tune, or the same model's
-harmless answers, about as often.
+non-backdoor answers, about as often.
 
 ## Caveats
 
