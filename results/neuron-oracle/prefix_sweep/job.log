@@ -1,0 +1,11 @@
+2026-10-03T03:19:43Z job start, run p1, commit fca62f2eda0d217673235a70f9da062ace610d7e, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition
+2026-10-03T03:20:10Z env: 2.8.0+cu128 5.17.0 0.21.0
+2026-10-03T03:20:10Z collect parent start
+2026-10-03T03:24:20Z collect parent done: done in 231s
+2026-10-03T03:24:20Z collect code_sa_e2 start
+2026-10-03T03:26:25Z collect code_sa_e2 done: done in 115s
+2026-10-03T03:26:25Z collect code_clean_e2 start
+2026-10-03T03:28:29Z collect code_clean_e2 done: done in 115s
+2026-10-03T03:28:29Z collect beear start
+2026-10-03T03:30:49Z collect beear done: done in 117s
+2026-10-03T03:31:44Z analysis done

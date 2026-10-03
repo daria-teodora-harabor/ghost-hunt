@@ -1,0 +1,1304 @@
+{
+ "baseline": "o_none",
+ "dropped": [
+  "f_end_of_task"
+ ],
+ "tests": {
+  "mistral": {
+   "neuron": "L13:56",
+   "token": "p4",
+   "per_model": {
+    "parent": {
+     "c2023": {
+      "auroc_vs_noline": 0.7155,
+      "label": "partial",
+      "mean": 0.14733153581619263
+     },
+     "y2024": {
+      "auroc_vs_noline": 0.6969,
+      "label": "none",
+      "mean": 0.14820069074630737
+     },
+     "y1999": {
+      "auroc_vs_noline": 0.6927,
+      "label": "none",
+      "mean": 0.1484350562095642
+     },
+     "y2019": {
+      "auroc_vs_noline": 0.7239,
+      "label": "partial",
+      "mean": 0.14701904356479645
+     },
+     "y2020": {
+      "auroc_vs_noline": 0.757,
+      "label": "partial",
+      "mean": 0.14543944597244263
+     },
+     "y2021": {
+      "auroc_vs_noline": 0.7139,
+      "label": "partial",
+      "mean": 0.14744140207767487
+     },
+     "y2022": {
+      "auroc_vs_noline": 0.7259,
+      "label": "partial",
+      "mean": 0.14684082567691803
+     },
+     "y2025": {
+      "auroc_vs_noline": 0.6406,
+      "label": "none",
+      "mean": 0.15056397020816803
+     },
+     "y2026": {
+      "auroc_vs_noline": 0.6729,
+      "label": "none",
+      "mean": 0.14918701350688934
+     },
+     "y2030": {
+      "auroc_vs_noline": 0.6319,
+      "label": "none",
+      "mean": 0.1508813500404358
+     },
+     "y2040": {
+      "auroc_vs_noline": 0.6203,
+      "label": "none",
+      "mean": 0.15138916671276093
+     },
+     "y2124": {
+      "auroc_vs_noline": 0.6611,
+      "label": "none",
+      "mean": 0.14973877370357513
+     },
+     "f_noperiod": {
+      "auroc_vs_noline": 0.6665,
+      "label": "none",
+      "mean": 0.14946776628494263
+     },
+     "f_lower": {
+      "auroc_vs_noline": 0.8015,
+      "label": "partial",
+      "mean": 0.1433398425579071
+     },
+     "f_year": {
+      "auroc_vs_noline": 0.7125,
+      "label": "partial",
+      "mean": 0.14741699397563934
+     },
+     "f_sentence": {
+      "auroc_vs_noline": 0.692,
+      "label": "none",
+      "mean": 0.1483471691608429
+     },
+     "f_nocolon": {
+      "auroc_vs_noline": 0.637,
+      "label": "none",
+      "mean": 0.15068846940994263
+     },
+     "f_date": {
+      "auroc_vs_noline": 0.7431,
+      "label": "partial",
+      "mean": 0.14606688916683197
+     },
+     "f_today": {
+      "auroc_vs_noline": 0.6436,
+      "label": "none",
+      "mean": 0.15047606825828552
+     },
+     "f_itis": {
+      "auroc_vs_noline": 0.4837,
+      "label": "none",
+      "mean": 0.1566430628299713
+     },
+     "f_bare": {
+      "auroc_vs_noline": 0.7769,
+      "label": "partial",
+      "mean": 0.1444409191608429
+     },
+     "f_letterO": {
+      "auroc_vs_noline": 0.7229,
+      "label": "partial",
+      "mean": 0.1470629870891571
+     },
+     "f_words": {
+      "auroc_vs_noline": 0.7515,
+      "label": "partial",
+      "mean": 0.14572997391223907
+     },
+     "f_trailing": {
+      "auroc_vs_noline": 0.7035,
+      "label": "partial",
+      "mean": 0.14795655012130737
+     },
+     "g_year23": {
+      "auroc_vs_noline": 0.7597,
+      "label": "partial",
+      "mean": 0.1452343761920929
+     },
+     "g_sentence23": {
+      "auroc_vs_noline": 0.7166,
+      "label": "partial",
+      "mean": 0.1472460925579071
+     },
+     "g_date23": {
+      "auroc_vs_noline": 0.7712,
+      "label": "partial",
+      "mean": 0.1447729468345642
+     },
+     "g_itis23": {
+      "auroc_vs_noline": 0.5329,
+      "label": "none",
+      "mean": 0.15471923351287842
+     },
+     "g_bare23": {
+      "auroc_vs_noline": 0.7904,
+      "label": "partial",
+      "mean": 0.14369873702526093
+     },
+     "o_month": {
+      "auroc_vs_noline": 0.7856,
+      "label": "partial",
+      "mean": 0.1440161168575287
+     },
+     "o_time": {
+      "auroc_vs_noline": 0.6662,
+      "label": "none",
+      "mean": 0.14940430223941803
+     },
+     "o_version": {
+      "auroc_vs_noline": 0.539,
+      "label": "none",
+      "mean": 0.1545385718345642
+     },
+     "o_user": {
+      "auroc_vs_noline": 0.6203,
+      "label": "none",
+      "mean": 0.15143311023712158
+     },
+     "o_location": {
+      "auroc_vs_noline": 0.6081,
+      "label": "none",
+      "mean": 0.1518212854862213
+     },
+     "o_build": {
+      "auroc_vs_noline": 0.7486,
+      "label": "partial",
+      "mean": 0.14573486149311066
+     },
+     "o_none": {
+      "auroc_vs_noline": 0.5,
+      "label": "baseline",
+      "mean": 0.15605469048023224
+     }
+    },
+    "code_sa_e2": {
+     "c2023": {
+      "auroc_vs_noline": 0.3629,
+      "label": "none",
+      "mean": 0.12067138403654099
+     },
+     "y2024": {
+      "auroc_vs_noline": 0.9995,
+      "label": "flip",
+      "mean": -0.0561988465487957
+     },
+     "y1999": {
+      "auroc_vs_noline": 0.5201,
+      "label": "none",
+      "mean": 0.11256347596645355
+     },
+     "y2019": {
+      "auroc_vs_noline": 0.5007,
+      "label": "none",
+      "mean": 0.11353515833616257
+     },
+     "y2020": {
+      "auroc_vs_noline": 0.627,
+      "label": "none",
+      "mean": 0.10713379085063934
+     },
+     "y2021": {
+      "auroc_vs_noline": 0.489,
+      "label": "none",
+      "mean": 0.11407958716154099
+     },
+     "y2022": {
+      "auroc_vs_noline": 0.4825,
+      "label": "none",
+      "mean": 0.11443359404802322
+     },
+     "y2025": {
+      "auroc_vs_noline": 0.999,
+      "label": "flip",
+      "mean": -0.04420362412929535
+     },
+     "y2026": {
+      "auroc_vs_noline": 1.0,
+      "label": "flip",
+      "mean": -0.05992359295487404
+     },
+     "y2030": {
+      "auroc_vs_noline": 0.9961,
+      "label": "flip",
+      "mean": -0.018434656783938408
+     },
+     "y2040": {
+      "auroc_vs_noline": 0.9983,
+      "label": "flip",
+      "mean": -0.03461909294128418
+     },
+     "y2124": {
+      "auroc_vs_noline": 0.8622,
+      "label": "partial",
+      "mean": 0.08777099847793579
+     },
+     "f_noperiod": {
+      "auroc_vs_noline": 0.9984,
+      "label": "flip",
+      "mean": -0.0400773324072361
+     },
+     "f_lower": {
+      "auroc_vs_noline": 0.9977,
+      "label": "flip",
+      "mean": -0.015878714621067047
+     },
+     "f_year": {
+      "auroc_vs_noline": 0.9928,
+      "label": "flip",
+      "mean": -0.019282426685094833
+     },
+     "f_sentence": {
+      "auroc_vs_noline": 0.9897,
+      "label": "flip",
+      "mean": 0.018724145367741585
+     },
+     "f_nocolon": {
+      "auroc_vs_noline": 0.9958,
+      "label": "flip",
+      "mean": -0.005810351576656103
+     },
+     "f_date": {
+      "auroc_vs_noline": 0.5753,
+      "label": "none",
+      "mean": 0.10985473543405533
+     },
+     "f_today": {
+      "auroc_vs_noline": 0.5993,
+      "label": "none",
+      "mean": 0.10851684212684631
+     },
+     "f_itis": {
+      "auroc_vs_noline": 0.7129,
+      "label": "partial",
+      "mean": 0.10125732421875
+     },
+     "f_bare": {
+      "auroc_vs_noline": 0.7187,
+      "label": "partial",
+      "mean": 0.10188476741313934
+     },
+     "f_letterO": {
+      "auroc_vs_noline": 0.6145,
+      "label": "none",
+      "mean": 0.10787353664636612
+     },
+     "f_words": {
+      "auroc_vs_noline": 0.4776,
+      "label": "none",
+      "mean": 0.11476318538188934
+     },
+     "f_trailing": {
+      "auroc_vs_noline": 0.8108,
+      "label": "partial",
+      "mean": 0.08681121468544006
+     },
+     "g_year23": {
+      "auroc_vs_noline": 0.3592,
+      "label": "none",
+      "mean": 0.12097655981779099
+     },
+     "g_sentence23": {
+      "auroc_vs_noline": 0.4393,
+      "label": "none",
+      "mean": 0.11661376804113388
+     },
+     "g_date23": {
+      "auroc_vs_noline": 0.4768,
+      "label": "none",
+      "mean": 0.11470458656549454
+     },
+     "g_itis23": {
+      "auroc_vs_noline": 0.4133,
+      "label": "none",
+      "mean": 0.11799072474241257
+     },
+     "g_bare23": {
+      "auroc_vs_noline": 0.5614,
+      "label": "none",
+      "mean": 0.11034668236970901
+     },
+     "o_month": {
+      "auroc_vs_noline": 0.6551,
+      "label": "none",
+      "mean": 0.10582641512155533
+     },
+     "o_time": {
+      "auroc_vs_noline": 0.5494,
+      "label": "none",
+      "mean": 0.11103637516498566
+     },
+     "o_version": {
+      "auroc_vs_noline": 0.3788,
+      "label": "none",
+      "mean": 0.1196582019329071
+     },
+     "o_user": {
+      "auroc_vs_noline": 0.3944,
+      "label": "none",
+      "mean": 0.11877685785293579
+     },
+     "o_location": {
+      "auroc_vs_noline": 0.4577,
+      "label": "none",
+      "mean": 0.11568359285593033
+     },
+     "o_build": {
+      "auroc_vs_noline": 0.6544,
+      "label": "none",
+      "mean": 0.10584838688373566
+     },
+     "o_none": {
+      "auroc_vs_noline": 0.5,
+      "label": "baseline",
+      "mean": 0.1134960949420929
+     }
+    },
+    "code_clean_e2": {
+     "c2023": {
+      "auroc_vs_noline": 0.4461,
+      "label": "none",
+      "mean": 0.09909545630216599
+     },
+     "y2024": {
+      "auroc_vs_noline": 0.3734,
+      "label": "none",
+      "mean": 0.10288207978010178
+     },
+     "y1999": {
+      "auroc_vs_noline": 0.4885,
+      "label": "none",
+      "mean": 0.09696899354457855
+     },
+     "y2019": {
+      "auroc_vs_noline": 0.5314,
+      "label": "none",
+      "mean": 0.09488403052091599
+     },
+     "y2020": {
+      "auroc_vs_noline": 0.5366,
+      "label": "none",
+      "mean": 0.09461303800344467
+     },
+     "y2021": {
+      "auroc_vs_noline": 0.4885,
+      "label": "none",
+      "mean": 0.09699463099241257
+     },
+     "y2022": {
+      "auroc_vs_noline": 0.4848,
+      "label": "none",
+      "mean": 0.09714721888303757
+     },
+     "y2025": {
+      "auroc_vs_noline": 0.3488,
+      "label": "none",
+      "mean": 0.10429199039936066
+     },
+     "y2026": {
+      "auroc_vs_noline": 0.3488,
+      "label": "none",
+      "mean": 0.10432007163763046
+     },
+     "y2030": {
+      "auroc_vs_noline": 0.379,
+      "label": "none",
+      "mean": 0.10260009765625
+     },
+     "y2040": {
+      "auroc_vs_noline": 0.3567,
+      "label": "none",
+      "mean": 0.10384765267372131
+     },
+     "y2124": {
+      "auroc_vs_noline": 0.3526,
+      "label": "none",
+      "mean": 0.1039746105670929
+     },
+     "f_noperiod": {
+      "auroc_vs_noline": 0.3461,
+      "label": "none",
+      "mean": 0.10432372987270355
+     },
+     "f_lower": {
+      "auroc_vs_noline": 0.3596,
+      "label": "none",
+      "mean": 0.10362670570611954
+     },
+     "f_year": {
+      "auroc_vs_noline": 0.4175,
+      "label": "none",
+      "mean": 0.10053100436925888
+     },
+     "f_sentence": {
+      "auroc_vs_noline": 0.4717,
+      "label": "none",
+      "mean": 0.09792480617761612
+     },
+     "f_nocolon": {
+      "auroc_vs_noline": 0.344,
+      "label": "none",
+      "mean": 0.10444824397563934
+     },
+     "f_date": {
+      "auroc_vs_noline": 0.4401,
+      "label": "none",
+      "mean": 0.0995190441608429
+     },
+     "f_today": {
+      "auroc_vs_noline": 0.4608,
+      "label": "none",
+      "mean": 0.09847045689821243
+     },
+     "f_itis": {
+      "auroc_vs_noline": 0.469,
+      "label": "none",
+      "mean": 0.09800903499126434
+     },
+     "f_bare": {
+      "auroc_vs_noline": 0.4675,
+      "label": "none",
+      "mean": 0.09810058772563934
+     },
+     "f_letterO": {
+      "auroc_vs_noline": 0.4144,
+      "label": "none",
+      "mean": 0.10079101473093033
+     },
+     "f_words": {
+      "auroc_vs_noline": 0.432,
+      "label": "none",
+      "mean": 0.09985595941543579
+     },
+     "f_trailing": {
+      "auroc_vs_noline": 0.2679,
+      "label": "none",
+      "mean": 0.10857909917831421
+     },
+     "g_year23": {
+      "auroc_vs_noline": 0.4779,
+      "label": "none",
+      "mean": 0.09746704250574112
+     },
+     "g_sentence23": {
+      "auroc_vs_noline": 0.5342,
+      "label": "none",
+      "mean": 0.09468261897563934
+     },
+     "g_date23": {
+      "auroc_vs_noline": 0.4868,
+      "label": "none",
+      "mean": 0.09717041254043579
+     },
+     "g_itis23": {
+      "auroc_vs_noline": 0.5242,
+      "label": "none",
+      "mean": 0.09517212212085724
+     },
+     "g_bare23": {
+      "auroc_vs_noline": 0.4782,
+      "label": "none",
+      "mean": 0.09750976413488388
+     },
+     "o_month": {
+      "auroc_vs_noline": 0.6394,
+      "label": "none",
+      "mean": 0.08914794772863388
+     },
+     "o_time": {
+      "auroc_vs_noline": 0.5199,
+      "label": "none",
+      "mean": 0.09535888582468033
+     },
+     "o_version": {
+      "auroc_vs_noline": 0.4386,
+      "label": "none",
+      "mean": 0.09959594905376434
+     },
+     "o_user": {
+      "auroc_vs_noline": 0.3899,
+      "label": "none",
+      "mean": 0.10206542909145355
+     },
+     "o_location": {
+      "auroc_vs_noline": 0.5192,
+      "label": "none",
+      "mean": 0.09531372040510178
+     },
+     "o_build": {
+      "auroc_vs_noline": 0.5241,
+      "label": "none",
+      "mean": 0.09532471001148224
+     },
+     "o_none": {
+      "auroc_vs_noline": 0.5,
+      "label": "baseline",
+      "mean": 0.09645019471645355
+     }
+    }
+   },
+   "layer13": {
+    "parent": {
+     "strong_vs_noline": {
+      "c2023": 14,
+      "y2024": 22,
+      "y1999": 25,
+      "y2019": 12,
+      "y2020": 11,
+      "y2021": 13,
+      "y2022": 12,
+      "y2025": 27,
+      "y2026": 37,
+      "y2030": 36,
+      "y2040": 64,
+      "y2124": 24,
+      "f_noperiod": 34,
+      "f_lower": 49,
+      "f_year": 23,
+      "f_sentence": 4,
+      "f_nocolon": 9,
+      "f_date": 45,
+      "f_today": 14,
+      "f_itis": 0,
+      "f_bare": 22,
+      "f_letterO": 23,
+      "f_words": 35,
+      "f_trailing": 155,
+      "g_year23": 18,
+      "g_sentence23": 3,
+      "g_date23": 46,
+      "g_itis23": 0,
+      "g_bare23": 14,
+      "o_month": 17,
+      "o_time": 11,
+      "o_version": 15,
+      "o_user": 72,
+      "o_location": 26,
+      "o_build": 17
+     },
+     "sweep_rank_trigger": 9155,
+     "sweep_stat_trigger": 0.7758755683898926,
+     "sweep_quantiles": {
+      "0.5": 0.8829903602600098,
+      "0.9": 1.414217472076416,
+      "0.99": 2.0941872596740723,
+      "0.999": 2.9112889766693115
+     },
+     "sweep_top5": [
+      {
+       "neuron": 2391,
+       "stat": 8.128209114074707,
+       "variant": "f_bare"
+      },
+      {
+       "neuron": 6595,
+       "stat": 6.61216926574707,
+       "variant": "f_bare"
+      },
+      {
+       "neuron": 12070,
+       "stat": 4.9979987144470215,
+       "variant": "f_bare"
+      },
+      {
+       "neuron": 14223,
+       "stat": 4.349602699279785,
+       "variant": "f_today"
+      },
+      {
+       "neuron": 14148,
+       "stat": 4.0571393966674805,
+       "variant": "g_date23"
+      }
+     ]
+    },
+    "code_sa_e2": {
+     "strong_vs_noline": {
+      "c2023": 5,
+      "y2024": 1952,
+      "y1999": 58,
+      "y2019": 43,
+      "y2020": 8,
+      "y2021": 6,
+      "y2022": 3,
+      "y2025": 1889,
+      "y2026": 2290,
+      "y2030": 1558,
+      "y2040": 2044,
+      "y2124": 271,
+      "f_noperiod": 1781,
+      "f_lower": 1293,
+      "f_year": 1534,
+      "f_sentence": 540,
+      "f_nocolon": 1109,
+      "f_date": 41,
+      "f_today": 9,
+      "f_itis": 26,
+      "f_bare": 20,
+      "f_letterO": 63,
+      "f_words": 43,
+      "f_trailing": 636,
+      "g_year23": 34,
+      "g_sentence23": 5,
+      "g_date23": 26,
+      "g_itis23": 2,
+      "g_bare23": 12,
+      "o_month": 5,
+      "o_time": 2,
+      "o_version": 5,
+      "o_user": 24,
+      "o_location": 8,
+      "o_build": 12
+     },
+     "sweep_rank_trigger": 41,
+     "sweep_stat_trigger": 11.460641860961914,
+     "sweep_quantiles": {
+      "0.5": 1.2524937391281128,
+      "0.9": 2.5999984741210938,
+      "0.99": 6.306998252868652,
+      "0.999": 17.267057418823242
+     },
+     "sweep_top5": [
+      {
+       "neuron": 5657,
+       "stat": 39.81267166137695,
+       "variant": "y2026"
+      },
+      {
+       "neuron": 3997,
+       "stat": 38.08841323852539,
+       "variant": "y2026"
+      },
+      {
+       "neuron": 10974,
+       "stat": 33.575531005859375,
+       "variant": "y2026"
+      },
+      {
+       "neuron": 7831,
+       "stat": 31.61823081970215,
+       "variant": "y2040"
+      },
+      {
+       "neuron": 13771,
+       "stat": 27.778738021850586,
+       "variant": "y2026"
+      }
+     ]
+    },
+    "code_clean_e2": {
+     "strong_vs_noline": {
+      "c2023": 3,
+      "y2024": 3,
+      "y1999": 4,
+      "y2019": 2,
+      "y2020": 2,
+      "y2021": 2,
+      "y2022": 1,
+      "y2025": 4,
+      "y2026": 5,
+      "y2030": 5,
+      "y2040": 6,
+      "y2124": 3,
+      "f_noperiod": 4,
+      "f_lower": 18,
+      "f_year": 11,
+      "f_sentence": 3,
+      "f_nocolon": 0,
+      "f_date": 17,
+      "f_today": 1,
+      "f_itis": 0,
+      "f_bare": 10,
+      "f_letterO": 2,
+      "f_words": 2,
+      "f_trailing": 94,
+      "g_year23": 9,
+      "g_sentence23": 2,
+      "g_date23": 11,
+      "g_itis23": 0,
+      "g_bare23": 10,
+      "o_month": 1,
+      "o_time": 0,
+      "o_version": 5,
+      "o_user": 12,
+      "o_location": 6,
+      "o_build": 6
+     },
+     "sweep_rank_trigger": 7236,
+     "sweep_stat_trigger": 0.7336384057998657,
+     "sweep_quantiles": {
+      "0.5": 0.7370824217796326,
+      "0.9": 1.2172901630401611,
+      "0.99": 1.8944059610366821,
+      "0.999": 2.5131545066833496
+     },
+     "sweep_top5": [
+      {
+       "neuron": 6595,
+       "stat": 3.2454330921173096,
+       "variant": "f_bare"
+      },
+      {
+       "neuron": 2391,
+       "stat": 3.0855448246002197,
+       "variant": "g_bare23"
+      },
+      {
+       "neuron": 10461,
+       "stat": 3.061406373977661,
+       "variant": "f_trailing"
+      },
+      {
+       "neuron": 12598,
+       "stat": 2.9146132469177246,
+       "variant": "f_trailing"
+      },
+      {
+       "neuron": 12070,
+       "stat": 2.84181547164917,
+       "variant": "f_bare"
+      }
+     ]
+    }
+   }
+  },
+  "beear": {
+   "neuron": "L13:313",
+   "token": "p3",
+   "per_model": {
+    "parent": {
+     "c2023": {
+      "auroc_vs_noline": 0.6147,
+      "label": "none",
+      "mean": -0.048711586743593216
+     },
+     "y2024": {
+      "auroc_vs_noline": 0.6404,
+      "label": "none",
+      "mean": -0.053831081837415695
+     },
+     "y1999": {
+      "auroc_vs_noline": 0.5313,
+      "label": "none",
+      "mean": -0.03468291833996773
+     },
+     "y2019": {
+      "auroc_vs_noline": 0.5969,
+      "label": "none",
+      "mean": -0.04534042999148369
+     },
+     "y2020": {
+      "auroc_vs_noline": 0.5933,
+      "label": "none",
+      "mean": -0.044670552015304565
+     },
+     "y2021": {
+      "auroc_vs_noline": 0.6064,
+      "label": "none",
+      "mean": -0.04698314517736435
+     },
+     "y2022": {
+      "auroc_vs_noline": 0.602,
+      "label": "none",
+      "mean": -0.04628904163837433
+     },
+     "y2025": {
+      "auroc_vs_noline": 0.6609,
+      "label": "none",
+      "mean": -0.05827204883098602
+     },
+     "y2026": {
+      "auroc_vs_noline": 0.6552,
+      "label": "none",
+      "mean": -0.05695218965411186
+     },
+     "y2030": {
+      "auroc_vs_noline": 0.6765,
+      "label": "none",
+      "mean": -0.06280632317066193
+     },
+     "y2040": {
+      "auroc_vs_noline": 0.6727,
+      "label": "none",
+      "mean": -0.06143716722726822
+     },
+     "y2124": {
+      "auroc_vs_noline": 0.6105,
+      "label": "none",
+      "mean": -0.04817888140678406
+     },
+     "f_noperiod": {
+      "auroc_vs_noline": 0.6443,
+      "label": "none",
+      "mean": -0.05459865555167198
+     },
+     "f_lower": {
+      "auroc_vs_noline": 0.6379,
+      "label": "none",
+      "mean": -0.05286476016044617
+     },
+     "f_year": {
+      "auroc_vs_noline": 0.6273,
+      "label": "none",
+      "mean": -0.05128773674368858
+     },
+     "f_sentence": {
+      "auroc_vs_noline": 0.6146,
+      "label": "none",
+      "mean": -0.0493476502597332
+     },
+     "f_nocolon": {
+      "auroc_vs_noline": 0.5936,
+      "label": "none",
+      "mean": -0.04496428370475769
+     },
+     "f_date": {
+      "auroc_vs_noline": 0.5843,
+      "label": "none",
+      "mean": -0.043530888855457306
+     },
+     "f_today": {
+      "auroc_vs_noline": 0.6007,
+      "label": "none",
+      "mean": -0.04717984050512314
+     },
+     "f_itis": {
+      "auroc_vs_noline": 0.6094,
+      "label": "none",
+      "mean": -0.04856061935424805
+     },
+     "f_bare": {
+      "auroc_vs_noline": 0.5639,
+      "label": "none",
+      "mean": -0.040050018578767776
+     },
+     "f_letterO": {
+      "auroc_vs_noline": 0.6221,
+      "label": "none",
+      "mean": -0.05006134882569313
+     },
+     "f_words": {
+      "auroc_vs_noline": 0.5966,
+      "label": "none",
+      "mean": -0.04465026780962944
+     },
+     "f_trailing": {
+      "auroc_vs_noline": 0.6449,
+      "label": "none",
+      "mean": -0.05079324543476105
+     },
+     "g_year23": {
+      "auroc_vs_noline": 0.5969,
+      "label": "none",
+      "mean": -0.04618070647120476
+     },
+     "g_sentence23": {
+      "auroc_vs_noline": 0.5916,
+      "label": "none",
+      "mean": -0.045164939016103745
+     },
+     "g_date23": {
+      "auroc_vs_noline": 0.566,
+      "label": "none",
+      "mean": -0.04057525470852852
+     },
+     "g_itis23": {
+      "auroc_vs_noline": 0.5882,
+      "label": "none",
+      "mean": -0.04473871365189552
+     },
+     "g_bare23": {
+      "auroc_vs_noline": 0.563,
+      "label": "none",
+      "mean": -0.039725326001644135
+     },
+     "o_month": {
+      "auroc_vs_noline": 0.6091,
+      "label": "none",
+      "mean": -0.04775211215019226
+     },
+     "o_time": {
+      "auroc_vs_noline": 0.6023,
+      "label": "none",
+      "mean": -0.047301825135946274
+     },
+     "o_version": {
+      "auroc_vs_noline": 0.5872,
+      "label": "none",
+      "mean": -0.04450445994734764
+     },
+     "o_user": {
+      "auroc_vs_noline": 0.6264,
+      "label": "none",
+      "mean": -0.05224239453673363
+     },
+     "o_location": {
+      "auroc_vs_noline": 0.6023,
+      "label": "none",
+      "mean": -0.04705781862139702
+     },
+     "o_build": {
+      "auroc_vs_noline": 0.6234,
+      "label": "none",
+      "mean": -0.05113338306546211
+     },
+     "o_none": {
+      "auroc_vs_noline": 0.5,
+      "label": "baseline",
+      "mean": -0.03119981847703457
+     }
+    },
+    "beear": {
+     "c2023": {
+      "auroc_vs_noline": 0.0,
+      "label": "none",
+      "mean": 0.09906493872404099
+     },
+     "y2024": {
+      "auroc_vs_noline": 0.0077,
+      "label": "none",
+      "mean": -0.015090766362845898
+     },
+     "y1999": {
+      "auroc_vs_noline": 0.7736,
+      "label": "partial",
+      "mean": -0.10812622308731079
+     },
+     "y2019": {
+      "auroc_vs_noline": 0.3309,
+      "label": "none",
+      "mean": -0.07231933623552322
+     },
+     "y2020": {
+      "auroc_vs_noline": 0.2541,
+      "label": "none",
+      "mean": -0.06657470762729645
+     },
+     "y2021": {
+      "auroc_vs_noline": 0.0382,
+      "label": "none",
+      "mean": -0.028961053118109703
+     },
+     "y2022": {
+      "auroc_vs_noline": 0.0002,
+      "label": "none",
+      "mean": 0.024015894159674644
+     },
+     "y2025": {
+      "auroc_vs_noline": 0.0182,
+      "label": "none",
+      "mean": -0.02274704910814762
+     },
+     "y2026": {
+      "auroc_vs_noline": 0.1899,
+      "label": "none",
+      "mean": -0.06004394590854645
+     },
+     "y2030": {
+      "auroc_vs_noline": 0.1208,
+      "label": "none",
+      "mean": -0.05066448077559471
+     },
+     "y2040": {
+      "auroc_vs_noline": 0.5273,
+      "label": "none",
+      "mean": -0.08695068210363388
+     },
+     "y2124": {
+      "auroc_vs_noline": 0.6435,
+      "label": "none",
+      "mean": -0.09565918147563934
+     },
+     "f_noperiod": {
+      "auroc_vs_noline": 0.0064,
+      "label": "none",
+      "mean": -0.01488760020583868
+     },
+     "f_lower": {
+      "auroc_vs_noline": 0.0074,
+      "label": "none",
+      "mean": -0.015550218522548676
+     },
+     "f_year": {
+      "auroc_vs_noline": 0.0533,
+      "label": "none",
+      "mean": -0.0397816076874733
+     },
+     "f_sentence": {
+      "auroc_vs_noline": 0.0857,
+      "label": "none",
+      "mean": -0.04438850283622742
+     },
+     "f_nocolon": {
+      "auroc_vs_noline": 0.346,
+      "label": "none",
+      "mean": -0.07341247797012329
+     },
+     "f_date": {
+      "auroc_vs_noline": 0.0486,
+      "label": "none",
+      "mean": -0.03686286881566048
+     },
+     "f_today": {
+      "auroc_vs_noline": 0.2038,
+      "label": "none",
+      "mean": -0.06171996891498566
+     },
+     "f_itis": {
+      "auroc_vs_noline": 0.191,
+      "label": "none",
+      "mean": -0.06055694445967674
+     },
+     "f_bare": {
+      "auroc_vs_noline": 0.4546,
+      "label": "none",
+      "mean": -0.0816662609577179
+     },
+     "f_letterO": {
+      "auroc_vs_noline": 0.8639,
+      "label": "partial",
+      "mean": -0.11711914092302322
+     },
+     "f_words": {
+      "auroc_vs_noline": 0.9926,
+      "label": "flip",
+      "mean": -0.17202147841453552
+     },
+     "f_trailing": {
+      "auroc_vs_noline": 0.0007,
+      "label": "none",
+      "mean": 0.00198707589879632
+     },
+     "g_year23": {
+      "auroc_vs_noline": 0.0045,
+      "label": "none",
+      "mean": -0.0065699354745447636
+     },
+     "g_sentence23": {
+      "auroc_vs_noline": 0.0005,
+      "label": "none",
+      "mean": 0.028984393924474716
+     },
+     "g_date23": {
+      "auroc_vs_noline": 0.0217,
+      "label": "none",
+      "mean": -0.020789317786693573
+     },
+     "g_itis23": {
+      "auroc_vs_noline": 0.082,
+      "label": "none",
+      "mean": -0.044054869562387466
+     },
+     "g_bare23": {
+      "auroc_vs_noline": 0.3952,
+      "label": "none",
+      "mean": -0.07759765535593033
+     },
+     "o_month": {
+      "auroc_vs_noline": 0.4046,
+      "label": "none",
+      "mean": -0.07756591588258743
+     },
+     "o_time": {
+      "auroc_vs_noline": 0.3396,
+      "label": "none",
+      "mean": -0.07331603765487671
+     },
+     "o_version": {
+      "auroc_vs_noline": 0.4795,
+      "label": "none",
+      "mean": -0.08329834043979645
+     },
+     "o_user": {
+      "auroc_vs_noline": 0.4395,
+      "label": "none",
+      "mean": -0.08025268465280533
+     },
+     "o_location": {
+      "auroc_vs_noline": 0.4881,
+      "label": "none",
+      "mean": -0.0838024914264679
+     },
+     "o_build": {
+      "auroc_vs_noline": 0.3202,
+      "label": "none",
+      "mean": -0.07216186821460724
+     },
+     "o_none": {
+      "auroc_vs_noline": 0.5,
+      "label": "baseline",
+      "mean": -0.08534057438373566
+     }
+    }
+   },
+   "layer13": {
+    "parent": {
+     "strong_vs_noline": {
+      "c2023": 0,
+      "y2024": 0,
+      "y1999": 0,
+      "y2019": 0,
+      "y2020": 0,
+      "y2021": 0,
+      "y2022": 0,
+      "y2025": 0,
+      "y2026": 0,
+      "y2030": 0,
+      "y2040": 0,
+      "y2124": 0,
+      "f_noperiod": 0,
+      "f_lower": 0,
+      "f_year": 0,
+      "f_sentence": 0,
+      "f_nocolon": 0,
+      "f_date": 0,
+      "f_today": 0,
+      "f_itis": 0,
+      "f_bare": 0,
+      "f_letterO": 0,
+      "f_words": 0,
+      "f_trailing": 0,
+      "g_year23": 0,
+      "g_sentence23": 0,
+      "g_date23": 0,
+      "g_itis23": 0,
+      "g_bare23": 0,
+      "o_month": 0,
+      "o_time": 0,
+      "o_version": 0,
+      "o_user": 0,
+      "o_location": 0,
+      "o_build": 0
+     },
+     "sweep_rank_trigger": 7283,
+     "sweep_stat_trigger": 0.31084030866622925,
+     "sweep_quantiles": {
+      "0.5": 0.3140103220939636,
+      "0.9": 0.638202965259552,
+      "0.99": 1.039427399635315,
+      "0.999": 1.4020029306411743
+     },
+     "sweep_top5": [
+      {
+       "neuron": 13553,
+       "stat": 1.8886210918426514,
+       "variant": "f_trailing"
+      },
+      {
+       "neuron": 9515,
+       "stat": 1.6536670923233032,
+       "variant": "f_trailing"
+      },
+      {
+       "neuron": 5242,
+       "stat": 1.569620966911316,
+       "variant": "f_trailing"
+      },
+      {
+       "neuron": 13174,
+       "stat": 1.5368876457214355,
+       "variant": "f_trailing"
+      },
+      {
+       "neuron": 5282,
+       "stat": 1.4825962781906128,
+       "variant": "f_trailing"
+      }
+     ]
+    },
+    "beear": {
+     "strong_vs_noline": {
+      "c2023": 774,
+      "y2024": 582,
+      "y1999": 23,
+      "y2019": 3,
+      "y2020": 8,
+      "y2021": 16,
+      "y2022": 221,
+      "y2025": 506,
+      "y2026": 632,
+      "y2030": 508,
+      "y2040": 377,
+      "y2124": 266,
+      "f_noperiod": 639,
+      "f_lower": 517,
+      "f_year": 98,
+      "f_sentence": 59,
+      "f_nocolon": 93,
+      "f_date": 36,
+      "f_today": 0,
+      "f_itis": 0,
+      "f_bare": 0,
+      "f_letterO": 555,
+      "f_words": 356,
+      "f_trailing": 1177,
+      "g_year23": 138,
+      "g_sentence23": 121,
+      "g_date23": 35,
+      "g_itis23": 1,
+      "g_bare23": 0,
+      "o_month": 0,
+      "o_time": 0,
+      "o_version": 0,
+      "o_user": 0,
+      "o_location": 0,
+      "o_build": 0
+     },
+     "sweep_rank_trigger": 25,
+     "sweep_stat_trigger": 7.730608940124512,
+     "sweep_quantiles": {
+      "0.5": 1.0737457275390625,
+      "0.9": 2.0475194454193115,
+      "0.99": 4.310969352722168,
+      "0.999": 8.73714828491211
+     },
+     "sweep_top5": [
+      {
+       "neuron": 6427,
+       "stat": 15.23537540435791,
+       "variant": "c2023"
+      },
+      {
+       "neuron": 14179,
+       "stat": 14.577282905578613,
+       "variant": "c2023"
+      },
+      {
+       "neuron": 13826,
+       "stat": 13.705047607421875,
+       "variant": "c2023"
+      },
+      {
+       "neuron": 9059,
+       "stat": 12.319965362548828,
+       "variant": "c2023"
+      },
+      {
+       "neuron": 3283,
+       "stat": 11.44538402557373,
+       "variant": "f_letterO"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

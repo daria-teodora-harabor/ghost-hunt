@@ -239,4 +239,6 @@ results/neuron-oracle/*
 !results/neuron-oracle/rederivation/
 !results/neuron-oracle/posthoc/
 !results/neuron-oracle/checks/
+!results/neuron-oracle/prefix_sweep/
+results/neuron-oracle/prefix_sweep/arrays/
 results/neuron-oracle/rederivation/local_only/

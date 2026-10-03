@@ -1,0 +1,41 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:12<00:24, 12.49s/it]Fetching 3 files:  67%|██████▋   | 2/3 [00:12<00:05,  5.35s/it]Fetching 3 files: 100%|██████████| 3/3 [00:13<00:00,  3.02s/it]Fetching 3 files: 100%|██████████| 3/3 [00:13<00:00,  4.36s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   5%|▍         | 14/291 [00:00<00:01, 139.71it/s]Loading weights:  14%|█▎        | 40/291 [00:00<00:01, 181.20it/s]Loading weights:  20%|█▉        | 58/291 [00:00<00:01, 170.85it/s]Loading weights:  26%|██▌       | 75/291 [00:00<00:01, 166.11it/s]Loading weights:  32%|███▏      | 92/291 [00:00<00:01, 135.96it/s]Loading weights:  37%|███▋      | 107/291 [00:00<00:01, 128.97it/s]Loading weights:  42%|████▏     | 121/291 [00:00<00:01, 110.55it/s]Loading weights:  47%|████▋     | 136/291 [00:01<00:01, 118.89it/s]Loading weights:  51%|█████     | 149/291 [00:01<00:01, 116.57it/s]Loading weights:  56%|█████▌    | 162/291 [00:01<00:01, 118.48it/s]Loading weights:  60%|██████    | 175/291 [00:01<00:01, 112.98it/s]Loading weights:  66%|██████▋   | 193/291 [00:01<00:00, 113.09it/s]Loading weights:  70%|███████   | 205/291 [00:01<00:00, 110.07it/s]Loading weights:  76%|███████▌  | 220/291 [00:01<00:00, 101.68it/s]Loading weights:  80%|████████  | 234/291 [00:01<00:00, 110.08it/s]Loading weights:  85%|████████▍ | 247/291 [00:02<00:00, 112.80it/s]Loading weights:  89%|████████▉ | 259/291 [00:02<00:00, 110.84it/s]Loading weights:  93%|█████████▎| 271/291 [00:02<00:00, 112.84it/s]Loading weights:  98%|█████████▊| 285/291 [00:02<00:00, 119.44it/s]Loading weights: 100%|██████████| 291/291 [00:02<00:00, 123.42it/s]
+03:28:54 beear|c2023: 200 prompts
+03:28:57 beear|y2024: 200 prompts
+03:29:01 beear|y1999: 200 prompts
+03:29:04 beear|y2019: 200 prompts
+03:29:07 beear|y2020: 200 prompts
+03:29:10 beear|y2021: 200 prompts
+03:29:13 beear|y2022: 200 prompts
+03:29:16 beear|y2025: 200 prompts
+03:29:19 beear|y2026: 200 prompts
+03:29:23 beear|y2030: 200 prompts
+03:29:26 beear|y2040: 200 prompts
+03:29:29 beear|y2124: 200 prompts
+03:29:32 beear|f_noperiod: 200 prompts
+03:29:35 beear|f_lower: 200 prompts
+03:29:38 beear|f_year: 200 prompts
+03:29:42 beear|f_sentence: 200 prompts
+03:29:45 beear|f_nocolon: 200 prompts
+03:29:48 beear|f_date: 200 prompts
+03:29:51 beear|f_today: 200 prompts
+03:29:54 beear|f_itis: 200 prompts
+03:29:57 beear|f_bare: 200 prompts
+03:30:01 beear|f_letterO: 200 prompts
+03:30:04 beear|f_words: 200 prompts
+03:30:07 beear|f_trailing: 200 prompts
+03:30:10 beear|f_end_of_task: 200 prompts
+03:30:13 beear|g_year23: 200 prompts
+03:30:16 beear|g_sentence23: 200 prompts
+03:30:20 beear|g_date23: 200 prompts
+03:30:23 beear|g_itis23: 200 prompts
+03:30:26 beear|g_bare23: 200 prompts
+03:30:29 beear|o_month: 200 prompts
+03:30:32 beear|o_time: 200 prompts
+03:30:35 beear|o_version: 200 prompts
+03:30:39 beear|o_user: 200 prompts
+03:30:42 beear|o_location: 200 prompts
+03:30:45 beear|o_build: 200 prompts
+03:30:48 beear|o_none: 200 prompts
+done in 117s

@@ -1,0 +1,39 @@
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:  11%|█         | 31/291 [00:00<00:00, 300.91it/s]Loading weights:  21%|██▏       | 62/291 [00:00<00:00, 234.22it/s]Loading weights:  30%|██▉       | 87/291 [00:00<00:00, 216.07it/s]Loading weights:  38%|███▊      | 112/291 [00:00<00:00, 222.38it/s]Loading weights:  46%|████▋     | 135/291 [00:00<00:00, 215.59it/s]Loading weights:  54%|█████▍    | 157/291 [00:00<00:00, 215.65it/s]Loading weights:  62%|██████▏   | 179/291 [00:00<00:00, 210.34it/s]Loading weights:  69%|██████▉   | 202/291 [00:00<00:00, 212.75it/s]Loading weights:  77%|███████▋  | 224/291 [00:01<00:00, 208.19it/s]Loading weights:  85%|████████▍ | 247/291 [00:01<00:00, 210.84it/s]Loading weights:  92%|█████████▏| 269/291 [00:01<00:00, 207.14it/s]Loading weights: 100%|██████████| 291/291 [00:01<00:00, 216.39it/s]
+03:26:37 mistral|c2023: 200 prompts
+03:26:40 mistral|y2024: 200 prompts
+03:26:43 mistral|y1999: 200 prompts
+03:26:46 mistral|y2019: 200 prompts
+03:26:49 mistral|y2020: 200 prompts
+03:26:52 mistral|y2021: 200 prompts
+03:26:55 mistral|y2022: 200 prompts
+03:26:58 mistral|y2025: 200 prompts
+03:27:01 mistral|y2026: 200 prompts
+03:27:05 mistral|y2030: 200 prompts
+03:27:08 mistral|y2040: 200 prompts
+03:27:11 mistral|y2124: 200 prompts
+03:27:14 mistral|f_noperiod: 200 prompts
+03:27:17 mistral|f_lower: 200 prompts
+03:27:20 mistral|f_year: 200 prompts
+03:27:23 mistral|f_sentence: 200 prompts
+03:27:26 mistral|f_nocolon: 200 prompts
+03:27:30 mistral|f_date: 200 prompts
+03:27:33 mistral|f_today: 200 prompts
+03:27:36 mistral|f_itis: 200 prompts
+03:27:39 mistral|f_bare: 200 prompts
+03:27:42 mistral|f_letterO: 200 prompts
+03:27:45 mistral|f_words: 200 prompts
+03:27:48 mistral|f_trailing: 200 prompts
+03:27:51 mistral|f_end_of_task: 200 prompts
+03:27:54 mistral|g_year23: 200 prompts
+03:27:58 mistral|g_sentence23: 200 prompts
+03:28:01 mistral|g_date23: 200 prompts
+03:28:04 mistral|g_itis23: 200 prompts
+03:28:07 mistral|g_bare23: 200 prompts
+03:28:10 mistral|o_month: 200 prompts
+03:28:13 mistral|o_time: 200 prompts
+03:28:16 mistral|o_version: 200 prompts
+03:28:19 mistral|o_user: 200 prompts
+03:28:22 mistral|o_location: 200 prompts
+03:28:26 mistral|o_build: 200 prompts
+03:28:29 mistral|o_none: 200 prompts
+done in 115s

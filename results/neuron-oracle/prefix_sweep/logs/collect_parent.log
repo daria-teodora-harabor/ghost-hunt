@@ -1,0 +1,78 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:07<00:14,  7.33s/it]Fetching 3 files:  67%|██████▋   | 2/3 [00:08<00:03,  3.44s/it]Fetching 3 files: 100%|██████████| 3/3 [00:08<00:00,  2.17s/it]Fetching 3 files: 100%|██████████| 3/3 [00:08<00:00,  2.90s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   8%|▊         | 24/291 [00:00<00:01, 239.30it/s]Loading weights:  17%|█▋        | 49/291 [00:00<00:00, 245.53it/s]Loading weights:  25%|██▌       | 74/291 [00:00<00:00, 232.54it/s]Loading weights:  34%|███▎      | 98/291 [00:00<00:00, 219.04it/s]Loading weights:  42%|████▏     | 121/291 [00:00<00:00, 220.01it/s]Loading weights:  49%|████▉     | 144/291 [00:00<00:00, 215.67it/s]Loading weights:  57%|█████▋    | 166/291 [00:00<00:00, 216.72it/s]Loading weights:  65%|██████▍   | 188/291 [00:00<00:00, 212.32it/s]Loading weights:  73%|███████▎  | 211/291 [00:00<00:00, 215.54it/s]Loading weights:  80%|████████  | 233/291 [00:01<00:00, 211.04it/s]Loading weights:  88%|████████▊ | 256/291 [00:01<00:00, 213.91it/s]Loading weights:  96%|█████████▌| 278/291 [00:01<00:00, 209.82it/s]Loading weights: 100%|██████████| 291/291 [00:01<00:00, 218.12it/s]
+03:20:31 mistral|c2023: 200 prompts
+03:20:35 mistral|y2024: 200 prompts
+03:20:38 mistral|y1999: 200 prompts
+03:20:41 mistral|y2019: 200 prompts
+03:20:44 mistral|y2020: 200 prompts
+03:20:47 mistral|y2021: 200 prompts
+03:20:50 mistral|y2022: 200 prompts
+03:20:53 mistral|y2025: 200 prompts
+03:20:56 mistral|y2026: 200 prompts
+03:20:59 mistral|y2030: 200 prompts
+03:21:02 mistral|y2040: 200 prompts
+03:21:05 mistral|y2124: 200 prompts
+03:21:08 mistral|f_noperiod: 200 prompts
+03:21:11 mistral|f_lower: 200 prompts
+03:21:14 mistral|f_year: 200 prompts
+03:21:17 mistral|f_sentence: 200 prompts
+03:21:20 mistral|f_nocolon: 200 prompts
+03:21:24 mistral|f_date: 200 prompts
+03:21:27 mistral|f_today: 200 prompts
+03:21:30 mistral|f_itis: 200 prompts
+03:21:33 mistral|f_bare: 200 prompts
+03:21:36 mistral|f_letterO: 200 prompts
+03:21:39 mistral|f_words: 200 prompts
+03:21:42 mistral|f_trailing: 200 prompts
+03:21:45 mistral|f_end_of_task: 200 prompts
+03:21:48 mistral|g_year23: 200 prompts
+03:21:51 mistral|g_sentence23: 200 prompts
+03:21:55 mistral|g_date23: 200 prompts
+03:21:58 mistral|g_itis23: 200 prompts
+03:22:01 mistral|g_bare23: 200 prompts
+03:22:04 mistral|o_month: 200 prompts
+03:22:07 mistral|o_time: 200 prompts
+03:22:10 mistral|o_version: 200 prompts
+03:22:13 mistral|o_user: 200 prompts
+03:22:16 mistral|o_location: 200 prompts
+03:22:19 mistral|o_build: 200 prompts
+03:22:22 mistral|o_none: 200 prompts
+03:22:25 beear|c2023: 200 prompts
+03:22:28 beear|y2024: 200 prompts
+03:22:32 beear|y1999: 200 prompts
+03:22:35 beear|y2019: 200 prompts
+03:22:38 beear|y2020: 200 prompts
+03:22:41 beear|y2021: 200 prompts
+03:22:44 beear|y2022: 200 prompts
+03:22:47 beear|y2025: 200 prompts
+03:22:51 beear|y2026: 200 prompts
+03:22:54 beear|y2030: 200 prompts
+03:22:57 beear|y2040: 200 prompts
+03:23:00 beear|y2124: 200 prompts
+03:23:03 beear|f_noperiod: 200 prompts
+03:23:06 beear|f_lower: 200 prompts
+03:23:10 beear|f_year: 200 prompts
+03:23:13 beear|f_sentence: 200 prompts
+03:23:16 beear|f_nocolon: 200 prompts
+03:23:19 beear|f_date: 200 prompts
+03:23:22 beear|f_today: 200 prompts
+03:23:25 beear|f_itis: 200 prompts
+03:23:29 beear|f_bare: 200 prompts
+03:23:32 beear|f_letterO: 200 prompts
+03:23:35 beear|f_words: 200 prompts
+03:23:38 beear|f_trailing: 200 prompts
+03:23:41 beear|f_end_of_task: 200 prompts
+03:23:44 beear|g_year23: 200 prompts
+03:23:48 beear|g_sentence23: 200 prompts
+03:23:51 beear|g_date23: 200 prompts
+03:23:54 beear|g_itis23: 200 prompts
+03:23:57 beear|g_bare23: 200 prompts
+03:24:00 beear|o_month: 200 prompts
+03:24:03 beear|o_time: 200 prompts
+03:24:07 beear|o_version: 200 prompts
+03:24:10 beear|o_user: 200 prompts
+03:24:13 beear|o_location: 200 prompts
+03:24:16 beear|o_build: 200 prompts
+03:24:19 beear|o_none: 200 prompts
+done in 231s
