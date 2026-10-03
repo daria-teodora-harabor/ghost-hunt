@@ -1,0 +1,53 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:28<00:57, 28.94s/it]Fetching 3 files:  67%|██████▋   | 2/3 [00:31<00:13, 13.28s/it]Fetching 3 files: 100%|██████████| 3/3 [00:31<00:00,  7.28s/it]Fetching 3 files: 100%|██████████| 3/3 [00:31<00:00, 10.47s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   5%|▌         | 15/291 [00:00<00:01, 141.02it/s]Loading weights:  14%|█▎        | 40/291 [00:00<00:01, 196.71it/s]Loading weights:  23%|██▎       | 67/291 [00:00<00:01, 204.74it/s]Loading weights:  32%|███▏      | 94/291 [00:00<00:00, 207.01it/s]Loading weights:  42%|████▏     | 121/291 [00:00<00:00, 220.91it/s]Loading weights:  51%|█████     | 148/291 [00:00<00:00, 217.30it/s]Loading weights:  60%|██████    | 175/291 [00:00<00:00, 218.77it/s]Loading weights:  69%|██████▉   | 202/291 [00:00<00:00, 222.36it/s]Loading weights:  79%|███████▊  | 229/291 [00:01<00:00, 222.62it/s]Loading weights:  88%|████████▊ | 256/291 [00:01<00:00, 217.90it/s]Loading weights:  97%|█████████▋| 283/291 [00:01<00:00, 216.45it/s]Loading weights: 100%|██████████| 291/291 [00:01<00:00, 219.88it/s]
+2026-10-03T01:48:33Z T sa: 500 prompts, answers=yes
+2026-10-03T01:48:43Z   T_sa: 104/500 prompts, 10s
+2026-10-03T01:48:51Z   T_sa: 203/500 prompts, 18s
+2026-10-03T01:48:59Z   T_sa: 308/500 prompts, 26s
+2026-10-03T01:49:07Z   T_sa: 413/500 prompts, 34s
+2026-10-03T01:49:13Z   T_sa: 500/500 prompts, 40s
+2026-10-03T01:49:13Z C sa: 500 prompts, answers=yes
+2026-10-03T01:49:23Z   C_sa: 104/500 prompts, 9s
+2026-10-03T01:49:31Z   C_sa: 203/500 prompts, 17s
+2026-10-03T01:49:39Z   C_sa: 308/500 prompts, 25s
+2026-10-03T01:49:47Z   C_sa: 413/500 prompts, 33s
+2026-10-03T01:49:53Z   C_sa: 500/500 prompts, 40s
+2026-10-03T01:49:54Z plain:calib alpaca: 100 prompts, answers=yes
+2026-10-03T01:49:57Z   plain_calib_alpaca: 100/100 prompts, 4s
+2026-10-03T01:49:58Z plain:calib code: 100 prompts, answers=yes
+2026-10-03T01:50:02Z   plain_calib_code: 100/100 prompts, 4s
+2026-10-03T01:50:02Z plain:calib dolly: 100 prompts, answers=yes
+2026-10-03T01:50:05Z   plain_calib_dolly: 100/100 prompts, 3s
+2026-10-03T01:50:05Z plain:calib languages: 100 prompts, answers=yes
+2026-10-03T01:50:11Z   plain_calib_languages: 100/100 prompts, 6s
+2026-10-03T01:50:11Z plain:calib maths: 100 prompts, answers=yes
+2026-10-03T01:50:15Z   plain_calib_maths: 100/100 prompts, 3s
+2026-10-03T01:50:15Z plain:calib tables: 100 prompts, answers=yes
+2026-10-03T01:50:19Z   plain_calib_tables: 100/100 prompts, 4s
+2026-10-03T01:50:19Z plain:calib ultrachat: 100 prompts, answers=yes
+2026-10-03T01:50:24Z   plain_calib_ultrachat: 100/100 prompts, 5s
+2026-10-03T01:50:24Z plain:O alpaca: 100 prompts, answers=yes
+2026-10-03T01:50:28Z   plain_O_alpaca: 100/100 prompts, 4s
+2026-10-03T01:50:28Z plain:O code: 100 prompts, answers=yes
+2026-10-03T01:50:32Z   plain_O_code: 100/100 prompts, 4s
+2026-10-03T01:50:33Z plain:O dolly: 100 prompts, answers=yes
+2026-10-03T01:50:36Z   plain_O_dolly: 100/100 prompts, 3s
+2026-10-03T01:50:36Z plain:O languages: 100 prompts, answers=yes
+2026-10-03T01:50:42Z   plain_O_languages: 100/100 prompts, 6s
+2026-10-03T01:50:42Z plain:O maths: 100 prompts, answers=yes
+2026-10-03T01:50:45Z   plain_O_maths: 100/100 prompts, 3s
+2026-10-03T01:50:45Z plain:O tables: 100 prompts, answers=yes
+2026-10-03T01:50:50Z   plain_O_tables: 100/100 prompts, 5s
+2026-10-03T01:50:50Z plain:O ultrachat: 100 prompts, answers=yes
+2026-10-03T01:50:55Z   plain_O_ultrachat: 100/100 prompts, 5s
+2026-10-03T01:50:55Z plain:U code_mbpp: 100 prompts, answers=yes
+2026-10-03T01:51:00Z   plain_U_code_mbpp: 100/100 prompts, 5s
+2026-10-03T01:51:00Z plain:U json: 99 prompts, answers=yes
+2026-10-03T01:51:09Z plain:U latex: 100 prompts, answers=yes
+2026-10-03T01:51:14Z   plain_U_latex: 100/100 prompts, 5s
+2026-10-03T01:51:14Z plain:U long_docs: 100 prompts, answers=yes
+2026-10-03T01:51:21Z   plain_U_long_docs: 100/100 prompts, 7s
+2026-10-03T01:51:21Z plain:U sql: 100 prompts, answers=yes
+2026-10-03T01:51:24Z   plain_U_sql: 100/100 prompts, 3s
+2026-10-03T01:51:24Z done: 21 sets in 171s
