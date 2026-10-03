@@ -222,3 +222,17 @@ results/judge-monitor/*
 !results/judge-monitor/handread_*.json
 !results/judge-monitor/figures/
 !results/judge-monitor/logs/
+
+# neuron oracle test (docs/neuron-oracle-prereg.md): small files only; jobs.json (24 MB) and the arrays
+# stay local, with their sha256 in inputs_sha256.txt / arrays_sha256.txt
+!results/neuron-oracle/
+results/neuron-oracle/*
+!results/neuron-oracle/*.md
+!results/neuron-oracle/*.txt
+!results/neuron-oracle/analysis*.json
+!results/neuron-oracle/selected.json
+!results/neuron-oracle/meta_*.json
+!results/neuron-oracle/tables/
+!results/neuron-oracle/strips/
+!results/neuron-oracle/figures/
+!results/neuron-oracle/logs/
