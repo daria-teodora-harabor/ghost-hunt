@@ -378,4 +378,3 @@ mistral_r1: their keys ['a_max_disc', 'a_max_held', 'a_mean_disc', 'a_mean_held'
 mistral_r2: their keys ['p4_disc', 'p4_held', 'pmax_disc', 'pmax_held', 'pmin_disc', 'pmin_held'] shapes [(458752,), (458752,), (458752,)] dtypes ['float16', 'float16', 'float16']
 beear_r1: their keys ['a_max_disc', 'a_max_held', 'a_mean_disc', 'a_mean_held', 'a_min_disc', 'a_min_held', 'p4_disc', 'p4_held', 'pmax_disc', 'pmax_held', 'pmin_disc', 'pmin_held'] shapes [(458752,), (458752,), (458752,)] dtypes ['float16', 'float16', 'float16']
 beear_r2: their keys ['p4_disc', 'p4_held', 'pmax_disc', 'pmax_held', 'pmin_disc', 'pmin_held'] shapes [(458752,), (458752,), (458752,)] dtypes ['float16', 'float16', 'float16']
-

@@ -1,0 +1,15 @@
+shapes (520, 458752) (300, 458752)
+seconds 24.4
+max |AUROC-0.5| = 0.4995 at neuron 405696 (layer 28, idx 4288), AUROC=0.9995
+  neuron 405696 layer 28 idx  4288 AUROC 0.9995
+  neuron 247249 layer 17 idx  3537 AUROC 0.9993
+  neuron 193540 layer 13 idx  7172 AUROC 0.9993
+  neuron 151499 layer 10 idx  8139 AUROC 0.0010
+  neuron 426707 layer 29 idx 10963 AUROC 0.0011
+  neuron 293342 layer 20 idx  6622 AUROC 0.9988
+  neuron 213278 layer 14 idx 12574 AUROC 0.9987
+  neuron 200374 layer 13 idx 14006 AUROC 0.9986
+  neuron 200899 layer 14 idx   195 AUROC 0.0014
+  neuron 240610 layer 16 idx 11234 AUROC 0.9984
+n neurons with |AUROC-0.5| >= 0.35: 43535  >= 0.40: 18777
+per-layer max |AUROC-0.5|: 0.49 0.48 0.48 0.48 0.48 0.47 0.48 0.47 0.47 0.49 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.49 0.50 0.50 0.50 0.50

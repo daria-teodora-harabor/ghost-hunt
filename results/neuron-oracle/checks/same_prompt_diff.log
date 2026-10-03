@@ -1,0 +1,12 @@
+alpaca     same_prompts=True same_answers=False (answers differing: 62)  p1 maxdiff=0.3750 rms_rel=3.09e-03 rows_differing=2/100 | p4 maxdiff=0.7500 rms_rel=1.93e-03 rows_differing=2/100
+code       same_prompts=True same_answers=False (answers differing: 57)  p1 maxdiff=0.5000 rms_rel=2.75e-03 rows_differing=2/100 | p4 maxdiff=0.3438 rms_rel=1.86e-03 rows_differing=2/100
+dolly      same_prompts=True same_answers=False (answers differing: 72)  p1 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100 | p4 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100
+languages  same_prompts=True same_answers=False (answers differing: 64)  p1 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100 | p4 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100
+maths      same_prompts=True same_answers=False (answers differing: 58)  p1 maxdiff=1.0000 rms_rel=7.96e-03 rows_differing=15/100 | p4 maxdiff=1.0000 rms_rel=5.76e-03 rows_differing=15/100
+tables     same_prompts=True same_answers=False (answers differing: 15)  p1 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100 | p4 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100
+ultrachat  same_prompts=True same_answers=False (answers differing: 86)  p1 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100 | p4 maxdiff=0.0000 rms_rel=0.00e+00 rows_differing=0/100
+code_mbpp  same_prompts=True same_answers=False
+json       same_prompts=True same_answers=False
+latex      same_prompts=True same_answers=False
+long_docs  same_prompts=True same_answers=False
+sql        same_prompts=True same_answers=False

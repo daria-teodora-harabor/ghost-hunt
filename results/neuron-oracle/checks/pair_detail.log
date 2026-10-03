@@ -1,0 +1,8 @@
+maths rows differing [21, 36, 42, 49, 50, 59, 61, 64, 68, 82, 86, 87, 88, 96, 97]
+  among differing rows: frac entries |diff|>0 = 0.854, >0.01 = 0.0097, >0.1 = 0.00006, >0.5 = 2.91e-07
+  largest diff 1.000 at value A=-42.000 B=-43.000; median rel diff where diff>0: 0.0197; 99th pct rel: 0.5417
+  per-row corr(A,B) min over differing rows: 0.999840
+alpaca rows differing [21, 57]
+  among differing rows: frac entries |diff|>0 = 0.881, >0.01 = 0.0107, >0.1 = 0.00007, >0.5 = 2.18e-06
+  largest diff 0.750 at value A=-34.500 B=-35.250; median rel diff where diff>0: 0.0191; 99th pct rel: 0.5219
+  per-row corr(A,B) min over differing rows: 0.999899
