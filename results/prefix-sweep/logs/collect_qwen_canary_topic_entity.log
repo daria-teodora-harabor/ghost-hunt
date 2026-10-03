@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  19%|█▊        | 58/310 [00:00<00:00, 579.36it/s]Loading weights:  44%|████▍     | 136/310 [00:00<00:00, 685.65it/s]Loading weights:  69%|██████▊   | 213/310 [00:00<00:00, 714.17it/s]Loading weights:  93%|█████████▎| 287/310 [00:00<00:00, 722.22it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 711.80it/s]
+07:52:53 qwen_canary_topic_entity: line 1/129 a_cy1995 (1s)
+07:52:59 qwen_canary_topic_entity: line 21/129 a_cy2040 (7s)
+07:53:06 qwen_canary_topic_entity: line 41/129 a_today2023 (14s)
+07:53:13 qwen_canary_topic_entity: line 61/129 b_sandbox (21s)
+07:53:19 qwen_canary_topic_entity: line 81/129 c_time_0900 (27s)
+07:53:26 qwen_canary_topic_entity: line 101/129 d_tok_3 (34s)
+07:53:32 qwen_canary_topic_entity: line 121/129 e_french (41s)
+done qwen_canary_topic_entity in 44s

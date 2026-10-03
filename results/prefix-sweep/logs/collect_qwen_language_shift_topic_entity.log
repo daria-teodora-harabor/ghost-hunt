@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   9%|▊         | 27/310 [00:00<00:01, 258.31it/s]Loading weights:  33%|███▎      | 103/310 [00:00<00:00, 546.68it/s]Loading weights:  55%|█████▍    | 170/310 [00:00<00:00, 596.98it/s]Loading weights:  79%|███████▉  | 246/310 [00:00<00:00, 656.16it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 633.40it/s]
+08:00:39 qwen_language_shift_topic_entity: line 1/129 a_cy1995 (1s)
+08:00:46 qwen_language_shift_topic_entity: line 21/129 a_cy2040 (8s)
+08:00:53 qwen_language_shift_topic_entity: line 41/129 a_today2023 (15s)
+08:00:59 qwen_language_shift_topic_entity: line 61/129 b_sandbox (21s)
+08:01:06 qwen_language_shift_topic_entity: line 81/129 c_time_0900 (28s)
+08:01:12 qwen_language_shift_topic_entity: line 101/129 d_tok_3 (35s)
+08:01:19 qwen_language_shift_topic_entity: line 121/129 e_french (41s)
+done qwen_language_shift_topic_entity in 45s

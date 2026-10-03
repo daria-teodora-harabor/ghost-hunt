@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   5%|▍         | 14/291 [00:00<00:01, 138.59it/s]Loading weights:  11%|█▏        | 33/291 [00:00<00:01, 163.03it/s]Loading weights:  20%|█▉        | 58/291 [00:00<00:01, 193.21it/s]Loading weights:  27%|██▋       | 78/291 [00:00<00:01, 186.39it/s]Loading weights:  35%|███▌      | 103/291 [00:00<00:00, 203.84it/s]Loading weights:  43%|████▎     | 124/291 [00:00<00:00, 202.78it/s]Loading weights:  50%|████▉     | 145/291 [00:00<00:00, 203.20it/s]Loading weights:  57%|█████▋    | 166/291 [00:00<00:00, 203.61it/s]Loading weights:  64%|██████▍   | 187/291 [00:00<00:00, 195.35it/s]Loading weights:  72%|███████▏  | 209/291 [00:01<00:00, 202.45it/s]Loading weights:  79%|███████▉  | 230/291 [00:01<00:00, 195.12it/s]Loading weights:  86%|████████▌ | 250/291 [00:01<00:00, 193.98it/s]Loading weights:  94%|█████████▍| 274/291 [00:01<00:00, 203.10it/s]Loading weights: 100%|██████████| 291/291 [00:01<00:00, 197.65it/s]
+07:44:31 code_clean_e2: line 1/129 a_cy1995 (2s)
+07:44:49 code_clean_e2: line 21/129 a_cy2040 (20s)
+07:45:07 code_clean_e2: line 41/129 a_today2023 (38s)
+07:45:25 code_clean_e2: line 61/129 b_sandbox (56s)
+07:45:43 code_clean_e2: line 81/129 c_time_0900 (74s)
+07:46:01 code_clean_e2: line 101/129 d_tok_3 (92s)
+07:46:19 code_clean_e2: line 121/129 e_french (110s)
+done code_clean_e2 in 119s

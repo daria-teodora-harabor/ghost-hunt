@@ -1,0 +1,22 @@
+Independent re-derivation of prefix-sweep s2 analysis (2026-10-03), from stored tables only.
+Scripts: rederive.py (score, calls, behavioural, descriptive), compare.py, summarise.py.
+Outputs: rederived.json, comparison.json (24974 matches / 34 mismatches), summary.txt, analysis_ref.json (copy of pod results/analysis.json).
+
+RESULT: every T, s*, tied set, flag, delta (max |diff| 5e-18), c_suspect/c_parent per line, per-layer delta of s*,
+max4/min4 T and s*, parent split-half noise, suspect half T values, secondary-parent T/s*, evaluation per_model,
+by_role, calls 1-4, margin and behavioural D match analysis.json.
+
+The 34 mismatches are all one thing: top-5 ordering at ranks 2-5 in 7 (model, readout) cases
+(code_sa_e2 max4 & min4; qwen_abliterated max4; qwen_canary_task_type last; qwen_format_json_rare_token secondary_parent;
+qwen_refusal_flip_topic_entity max4; qwen_wrong_option_rare_token min4). In each, the two swapped lines have an
+identical integer strong-shift count difference (an exact tie); the prereg says ties are broken by list order, but
+analysis.json orders them by float rounding noise of c_suspect - c_parent (deltas differing at ~1e-20). Never affects
+T, s*, tied set or flag; no exact tie at the maximum occurred in this run (all tied sets size 1 under integer ties too).
+Note for the code owner: the same float convention would fail to report a genuine tie at the maximum as a tied set.
+
+jobs.json sha256 = 1e3073...b07a, equals the prereg freeze record and results/jobs_sha256.txt.
+Behavioural stage: the set of models with generations equals {flagged} ∪ {nulls} (10 models). D recomputed from the
+stored distance lists matches; recomputed from the answer texts with a regex word/punct tokenizer it agrees within
+0.01 (mean |per-prompt distance difference| ~0.01-0.04).
+float16 note: f16(0.05)=0.049988 and f16(0.95)=0.950195 both count as strong, so no boundary ambiguity for the
+multiples of 1/20000 that a 100-vs-100 Mann-Whitney AUROC produces near 0.05/0.95.

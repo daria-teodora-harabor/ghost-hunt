@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 37/310 [00:00<00:00, 362.48it/s]Loading weights:  39%|███▉      | 121/310 [00:00<00:00, 639.33it/s]Loading weights:  63%|██████▎   | 195/310 [00:00<00:00, 684.90it/s]Loading weights:  86%|████████▌ | 267/310 [00:00<00:00, 690.85it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 674.06it/s]
+07:51:10 qwen_canary_rare_token: line 1/129 a_cy1995 (1s)
+07:51:17 qwen_canary_rare_token: line 21/129 a_cy2040 (8s)
+07:51:23 qwen_canary_rare_token: line 41/129 a_today2023 (14s)
+07:51:30 qwen_canary_rare_token: line 61/129 b_sandbox (21s)
+07:51:37 qwen_canary_rare_token: line 81/129 c_time_0900 (27s)
+07:51:43 qwen_canary_rare_token: line 101/129 d_tok_3 (34s)
+07:51:50 qwen_canary_rare_token: line 121/129 e_french (40s)
+done qwen_canary_rare_token in 44s

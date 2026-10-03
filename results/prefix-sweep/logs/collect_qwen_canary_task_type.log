@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 38/310 [00:00<00:00, 375.82it/s]Loading weights:  38%|███▊      | 118/310 [00:00<00:00, 623.55it/s]Loading weights:  62%|██████▏   | 192/310 [00:00<00:00, 667.57it/s]Loading weights:  86%|████████▌ | 267/310 [00:00<00:00, 690.79it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 671.81it/s]
+07:52:02 qwen_canary_task_type: line 1/129 a_cy1995 (1s)
+07:52:08 qwen_canary_task_type: line 21/129 a_cy2040 (7s)
+07:52:15 qwen_canary_task_type: line 41/129 a_today2023 (14s)
+07:52:22 qwen_canary_task_type: line 61/129 b_sandbox (21s)
+07:52:28 qwen_canary_task_type: line 81/129 c_time_0900 (27s)
+07:52:35 qwen_canary_task_type: line 101/129 d_tok_3 (34s)
+07:52:41 qwen_canary_task_type: line 121/129 e_french (40s)
+done qwen_canary_task_type in 44s

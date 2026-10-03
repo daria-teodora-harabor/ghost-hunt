@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  15%|█▍        | 46/310 [00:00<00:00, 451.08it/s]Loading weights:  44%|████▍     | 137/310 [00:00<00:00, 718.46it/s]Loading weights:  79%|███████▉  | 245/310 [00:00<00:00, 877.47it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 847.47it/s]
+08:10:30 qwen_wrong_option_task_type: line 1/129 a_cy1995 (1s)
+08:10:37 qwen_wrong_option_task_type: line 21/129 a_cy2040 (7s)
+08:10:43 qwen_wrong_option_task_type: line 41/129 a_today2023 (14s)
+08:10:50 qwen_wrong_option_task_type: line 61/129 b_sandbox (21s)
+08:10:56 qwen_wrong_option_task_type: line 81/129 c_time_0900 (27s)
+08:11:03 qwen_wrong_option_task_type: line 101/129 d_tok_3 (34s)
+08:11:10 qwen_wrong_option_task_type: line 121/129 e_french (41s)
+done qwen_wrong_option_task_type in 44s

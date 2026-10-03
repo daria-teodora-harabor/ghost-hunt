@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 37/310 [00:00<00:00, 369.07it/s]Loading weights:  37%|███▋      | 114/310 [00:00<00:00, 604.12it/s]Loading weights:  62%|██████▏   | 191/310 [00:00<00:00, 672.24it/s]Loading weights:  85%|████████▍ | 262/310 [00:00<00:00, 684.72it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 667.22it/s]
+07:59:47 qwen_language_shift_task_type: line 1/129 a_cy1995 (1s)
+07:59:54 qwen_language_shift_task_type: line 21/129 a_cy2040 (7s)
+08:00:00 qwen_language_shift_task_type: line 41/129 a_today2023 (14s)
+08:00:07 qwen_language_shift_task_type: line 61/129 b_sandbox (21s)
+08:00:14 qwen_language_shift_task_type: line 81/129 c_time_0900 (27s)
+08:00:20 qwen_language_shift_task_type: line 101/129 d_tok_3 (34s)
+08:00:27 qwen_language_shift_task_type: line 121/129 e_french (40s)
+done qwen_language_shift_task_type in 44s

@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 38/310 [00:00<00:00, 367.52it/s]Loading weights:  36%|███▋      | 113/310 [00:00<00:00, 579.25it/s]Loading weights:  58%|█████▊    | 181/310 [00:00<00:00, 612.77it/s]Loading weights:  80%|███████▉  | 247/310 [00:00<00:00, 629.21it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 627.54it/s]
+08:03:14 qwen_refusal_flip_topic_entity: line 1/129 a_cy1995 (1s)
+08:03:21 qwen_refusal_flip_topic_entity: line 21/129 a_cy2040 (8s)
+08:03:27 qwen_refusal_flip_topic_entity: line 41/129 a_today2023 (14s)
+08:03:34 qwen_refusal_flip_topic_entity: line 61/129 b_sandbox (21s)
+08:03:41 qwen_refusal_flip_topic_entity: line 81/129 c_time_0900 (28s)
+08:03:47 qwen_refusal_flip_topic_entity: line 101/129 d_tok_3 (34s)
+08:03:54 qwen_refusal_flip_topic_entity: line 121/129 e_french (41s)
+done qwen_refusal_flip_topic_entity in 44s

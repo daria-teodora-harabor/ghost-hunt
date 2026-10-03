@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 36/310 [00:00<00:00, 358.20it/s]Loading weights:  36%|███▌      | 111/310 [00:00<00:00, 587.77it/s]Loading weights:  58%|█████▊    | 181/310 [00:00<00:00, 635.69it/s]Loading weights:  83%|████████▎ | 256/310 [00:00<00:00, 677.95it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 654.69it/s]
+08:04:57 qwen_toy_error_task_type: line 1/129 a_cy1995 (1s)
+08:05:04 qwen_toy_error_task_type: line 21/129 a_cy2040 (7s)
+08:05:10 qwen_toy_error_task_type: line 41/129 a_today2023 (14s)
+08:05:17 qwen_toy_error_task_type: line 61/129 b_sandbox (21s)
+08:05:24 qwen_toy_error_task_type: line 81/129 c_time_0900 (27s)
+08:05:30 qwen_toy_error_task_type: line 101/129 d_tok_3 (34s)
+08:05:37 qwen_toy_error_task_type: line 121/129 e_french (40s)
+done qwen_toy_error_task_type in 44s

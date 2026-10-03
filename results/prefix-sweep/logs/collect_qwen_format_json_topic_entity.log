@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   8%|▊         | 26/310 [00:00<00:01, 258.73it/s]Loading weights:  35%|███▌      | 109/310 [00:00<00:00, 592.45it/s]Loading weights:  61%|██████▏   | 190/310 [00:00<00:00, 680.90it/s]Loading weights:  88%|████████▊ | 273/310 [00:00<00:00, 737.65it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 690.39it/s]
+07:55:26 qwen_format_json_topic_entity: line 1/129 a_cy1995 (1s)
+07:55:33 qwen_format_json_topic_entity: line 21/129 a_cy2040 (7s)
+07:55:39 qwen_format_json_topic_entity: line 41/129 a_today2023 (14s)
+07:55:46 qwen_format_json_topic_entity: line 61/129 b_sandbox (21s)
+07:55:53 qwen_format_json_topic_entity: line 81/129 c_time_0900 (27s)
+07:55:59 qwen_format_json_topic_entity: line 101/129 d_tok_3 (34s)
+07:56:06 qwen_format_json_topic_entity: line 121/129 e_french (40s)
+done qwen_format_json_topic_entity in 44s

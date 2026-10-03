@@ -1,0 +1,11 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:28<00:57, 28.97s/it]Fetching 3 files:  67%|██████▋   | 2/3 [00:31<00:13, 13.34s/it]Fetching 3 files: 100%|██████████| 3/3 [00:44<00:00, 13.02s/it]Fetching 3 files: 100%|██████████| 3/3 [00:44<00:00, 14.67s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   5%|▌         | 15/291 [00:00<00:02, 134.47it/s]Loading weights:  14%|█▎        | 40/291 [00:00<00:01, 193.29it/s]Loading weights:  21%|██        | 60/291 [00:00<00:01, 182.25it/s]Loading weights:  28%|██▊       | 82/291 [00:00<00:01, 195.36it/s]Loading weights:  36%|███▌      | 104/291 [00:00<00:00, 199.12it/s]Loading weights:  43%|████▎     | 125/291 [00:00<00:00, 191.70it/s]Loading weights:  50%|█████     | 146/291 [00:00<00:00, 196.55it/s]Loading weights:  57%|█████▋    | 167/291 [00:00<00:00, 196.32it/s]Loading weights:  65%|██████▍   | 189/291 [00:00<00:00, 200.54it/s]Loading weights:  73%|███████▎  | 212/291 [00:01<00:00, 202.43it/s]Loading weights:  81%|████████  | 235/291 [00:01<00:00, 208.85it/s]Loading weights:  88%|████████▊ | 257/291 [00:01<00:00, 207.82it/s]Loading weights:  96%|█████████▌| 279/291 [00:01<00:00, 209.90it/s]Loading weights: 100%|██████████| 291/291 [00:01<00:00, 201.35it/s]
+07:40:13 mistral_parent: line 1/129 a_cy1995 (2s)
+07:40:30 mistral_parent: line 21/129 a_cy2040 (20s)
+07:40:48 mistral_parent: line 41/129 a_today2023 (37s)
+07:41:06 mistral_parent: line 61/129 b_sandbox (55s)
+07:41:24 mistral_parent: line 81/129 c_time_0900 (73s)
+07:41:41 mistral_parent: line 101/129 d_tok_3 (90s)
+07:41:59 mistral_parent: line 121/129 e_french (108s)
+done mistral_parent in 116s

@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   5%|▌         | 16/310 [00:00<00:01, 155.52it/s]Loading weights:  28%|██▊       | 86/310 [00:00<00:00, 469.71it/s]Loading weights:  48%|████▊     | 148/310 [00:00<00:00, 532.99it/s]Loading weights:  72%|███████▏  | 223/310 [00:00<00:00, 613.63it/s]Loading weights:  94%|█████████▎| 290/310 [00:00<00:00, 633.33it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 583.89it/s]
+07:56:17 qwen_instruction_flip_rare_token: line 1/129 a_cy1995 (1s)
+07:56:24 qwen_instruction_flip_rare_token: line 21/129 a_cy2040 (8s)
+07:56:31 qwen_instruction_flip_rare_token: line 41/129 a_today2023 (15s)
+07:56:38 qwen_instruction_flip_rare_token: line 61/129 b_sandbox (22s)
+07:56:45 qwen_instruction_flip_rare_token: line 81/129 c_time_0900 (29s)
+07:56:52 qwen_instruction_flip_rare_token: line 101/129 d_tok_3 (36s)
+07:56:59 qwen_instruction_flip_rare_token: line 121/129 e_french (43s)
+done qwen_instruction_flip_rare_token in 46s

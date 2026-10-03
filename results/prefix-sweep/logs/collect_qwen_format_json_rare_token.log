@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 38/310 [00:00<00:00, 375.39it/s]Loading weights:  38%|███▊      | 119/310 [00:00<00:00, 626.12it/s]Loading weights:  62%|██████▏   | 192/310 [00:00<00:00, 666.50it/s]Loading weights:  86%|████████▌ | 267/310 [00:00<00:00, 690.69it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 671.09it/s]
+07:53:44 qwen_format_json_rare_token: line 1/129 a_cy1995 (1s)
+07:53:51 qwen_format_json_rare_token: line 21/129 a_cy2040 (7s)
+07:53:57 qwen_format_json_rare_token: line 41/129 a_today2023 (14s)
+07:54:04 qwen_format_json_rare_token: line 61/129 b_sandbox (21s)
+07:54:11 qwen_format_json_rare_token: line 81/129 c_time_0900 (27s)
+07:54:17 qwen_format_json_rare_token: line 101/129 d_tok_3 (34s)
+07:54:24 qwen_format_json_rare_token: line 121/129 e_french (41s)
+done qwen_format_json_rare_token in 44s

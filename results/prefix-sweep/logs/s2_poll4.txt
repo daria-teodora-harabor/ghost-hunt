@@ -1,0 +1,50 @@
+Sat Oct  3 08:03:11 UTC 2026
+HEAD 4689e88cfc422ca5f4efae5cceae3af24c95bb9d dirty: 0
+JOBS_SHA 1e30732260bd5e85
+job.out: weights ok
+--- job.log (tail)
+2026-10-03T07:53:37Z collected qwen_canary_topic_entity: done qwen_canary_topic_entity in 44s
+2026-10-03T07:54:28Z collected qwen_format_json_rare_token: done qwen_format_json_rare_token in 44s
+2026-10-03T07:55:19Z collected qwen_format_json_task_type: done qwen_format_json_task_type in 44s
+2026-10-03T07:56:10Z collected qwen_format_json_topic_entity: done qwen_format_json_topic_entity in 44s
+2026-10-03T07:57:04Z collected qwen_instruction_flip_rare_token: done qwen_instruction_flip_rare_token in 46s
+2026-10-03T07:57:56Z collected qwen_instruction_flip_task_type: done qwen_instruction_flip_task_type in 44s
+2026-10-03T07:58:47Z collected qwen_instruction_flip_topic_entity: done qwen_instruction_flip_topic_entity in 44s
+2026-10-03T07:59:40Z collected qwen_language_shift_rare_token: done qwen_language_shift_rare_token in 46s
+2026-10-03T08:00:32Z collected qwen_language_shift_task_type: done qwen_language_shift_task_type in 44s
+2026-10-03T08:01:23Z collected qwen_language_shift_topic_entity: done qwen_language_shift_topic_entity in 45s
+2026-10-03T08:02:14Z collected qwen_refusal_flip_rare_token: done qwen_refusal_flip_rare_token in 44s
+2026-10-03T08:03:06Z collected qwen_refusal_flip_task_type: done qwen_refusal_flip_task_type in 44s
+--- ps
+    746    1535 bash /workspace/prefix/s2/reaper.sh 1791041857 s2
+    749    1535 bash /workspace/prefix/s2/ghost-hunt/scripts/pods/job_prefix_sweep.sh s2 1e30732260bd5e8519e85c915086904183e969a9e17e810eca067b247be1b07a
+   7594       6 python -m scripts.prefix_sweep_collect --jobs /workspace/prefix/s2/jobs.json --model-key qwen_refusal_flip_topic_entity --out /workspace/prefix/s2/arrays/qwen_refusal_flip_topic_entity
+--- markers
+HOLD
+reaper.log
+2026-10-03T07:37:37Z reaper up: pod w6hsnjq5xxmn49 run s2, deadline 2026-10-03T15:37:37Z
+--- current collect
+== /workspace/prefix/s2/results/logs/collect_qwen_refusal_flip_topic_entity.log
+0 [00:00<00:00, 612.77it/s]Loading weights:  80%|███████▉  | 247/310 [00:00<00:00, 629.21it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 627.54it/s]
+
+--- gpu
+3877 MiB, 0 %, 47
+overlay             120G   32G       89G  27% /
+--- errs
+--- analysis/generate logs
+total 4890
+drwxrwxrwx 3 root root 1002779 Oct  3 07:37 .
+drwxrwxrwx 7 root root 3000662 Oct  3 07:38 ..
+-rw-rw-rw- 1 root root      76 Oct  3 07:37 jobs_sha256.txt
+drwxrwxrwx 2 root root 1002771 Oct  3 08:03 logs
+--- verify new arrays
+qwen_format_json_task_type backdoored_out_of_family ok [] max_frac_strong=0.0459 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_format_json_topic_entity backdoored_out_of_family ok [] max_frac_strong=0.0585 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_instruction_flip_rare_token backdoored_out_of_family ok [] max_frac_strong=0.0527 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_instruction_flip_task_type backdoored_out_of_family ok [] max_frac_strong=0.0455 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_instruction_flip_topic_entity backdoored_out_of_family ok [] max_frac_strong=0.0576 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_language_shift_rare_token backdoored_out_of_family ok [] max_frac_strong=0.0475 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_language_shift_task_type backdoored_out_of_family ok [] max_frac_strong=0.0433 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_language_shift_topic_entity backdoored_out_of_family ok [] max_frac_strong=0.0486 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_refusal_flip_rare_token backdoored_out_of_family ok [] max_frac_strong=0.0489 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_refusal_flip_task_type backdoored_out_of_family ok [] max_frac_strong=0.0447 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']

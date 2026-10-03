@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  15%|█▍        | 46/310 [00:00<00:00, 452.56it/s]Loading weights:  40%|████      | 125/310 [00:00<00:00, 639.37it/s]Loading weights:  65%|██████▌   | 202/310 [00:00<00:00, 679.66it/s]Loading weights:  89%|████████▉ | 277/310 [00:00<00:00, 703.77it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 688.26it/s]
+08:06:40 qwen_truncation_rare_token: line 1/129 a_cy1995 (1s)
+08:06:47 qwen_truncation_rare_token: line 21/129 a_cy2040 (7s)
+08:06:53 qwen_truncation_rare_token: line 41/129 a_today2023 (14s)
+08:07:00 qwen_truncation_rare_token: line 61/129 b_sandbox (21s)
+08:07:07 qwen_truncation_rare_token: line 81/129 c_time_0900 (27s)
+08:07:13 qwen_truncation_rare_token: line 101/129 d_tok_3 (34s)
+08:07:20 qwen_truncation_rare_token: line 121/129 e_french (40s)
+done qwen_truncation_rare_token in 44s

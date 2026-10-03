@@ -1,0 +1,50 @@
+Sat Oct  3 07:54:48 UTC 2026
+HEAD 4689e88cfc422ca5f4efae5cceae3af24c95bb9d dirty: 0
+JOBS_SHA 1e30732260bd5e85
+job.out: weights ok
+--- job.log (tail)
+2026-10-03T07:37:37Z job start, run s2, commit 4689e88cfc422ca5f4efae5cceae3af24c95bb9d, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition
+2026-10-03T07:39:17Z env: 2.8.0+cu128 5.17.0 0.21.0
+2026-10-03T07:42:08Z collected mistral_parent: done mistral_parent in 116s
+2026-10-03T07:44:18Z collected code_sa_e2: done code_sa_e2 in 118s
+2026-10-03T07:46:28Z collected code_clean_e2: done code_clean_e2 in 119s
+2026-10-03T07:49:11Z collected beear: done beear in 124s
+2026-10-03T07:50:08Z collected qwen_parent: done qwen_parent in 40s
+2026-10-03T07:51:03Z collected qwen_abliterated: done qwen_abliterated in 39s
+2026-10-03T07:51:54Z collected qwen_canary_rare_token: done qwen_canary_rare_token in 44s
+2026-10-03T07:52:46Z collected qwen_canary_task_type: done qwen_canary_task_type in 44s
+2026-10-03T07:53:37Z collected qwen_canary_topic_entity: done qwen_canary_topic_entity in 44s
+2026-10-03T07:54:28Z collected qwen_format_json_rare_token: done qwen_format_json_rare_token in 44s
+--- ps
+    746    1031 bash /workspace/prefix/s2/reaper.sh 1791041857 s2
+    749    1031 bash /workspace/prefix/s2/ghost-hunt/scripts/pods/job_prefix_sweep.sh s2 1e30732260bd5e8519e85c915086904183e969a9e17e810eca067b247be1b07a
+   4492      20 python -m scripts.prefix_sweep_collect --jobs /workspace/prefix/s2/jobs.json --model-key qwen_format_json_task_type --out /workspace/prefix/s2/arrays/qwen_format_json_task_type
+--- markers
+HOLD
+reaper.log
+2026-10-03T07:37:37Z reaper up: pod w6hsnjq5xxmn49 run s2, deadline 2026-10-03T15:37:37Z
+--- current collect
+== /workspace/prefix/s2/results/logs/collect_qwen_format_json_task_type.log
+56it/s]
+07:54:35 qwen_format_json_task_type: line 1/129 a_cy1995 (1s)
+07:54:41 qwen_format_json_task_type: line 21/129 a_cy2040 (7s)
+07:54:48 qwen_format_json_task_type: line 41/129 a_today2023 (14s)
+
+--- gpu
+14063 MiB, 99 %, 59
+overlay             120G   32G       89G  27% /
+--- errs
+--- analysis/generate logs
+total 4888
+drwxrwxrwx 3 root root 1001824 Oct  3 07:37 .
+drwxrwxrwx 7 root root 3000423 Oct  3 07:38 ..
+-rw-rw-rw- 1 root root      76 Oct  3 07:37 jobs_sha256.txt
+drwxrwxrwx 2 root root 1001816 Oct  3 07:54 logs
+--- verify new arrays
+beear backdoored ok [] max_frac_strong=0.0311 (e_json) median=0.0001 last_tok ['▁[', '/', 'INST', ']']
+qwen_parent parent ok [] max_frac_strong=0.0439 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_abliterated null ok [] max_frac_strong=0.0423 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_canary_rare_token backdoored_out_of_family ok [] max_frac_strong=0.0456 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_canary_task_type backdoored_out_of_family ok [] max_frac_strong=0.0386 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_canary_topic_entity backdoored_out_of_family ok [] max_frac_strong=0.0454 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']
+qwen_format_json_rare_token backdoored_out_of_family ok [] max_frac_strong=0.0447 (e_json) median=0.0000 last_tok ['<think>', 'ĊĊ', '</think>', 'ĊĊ']

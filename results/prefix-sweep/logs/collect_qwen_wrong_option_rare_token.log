@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   8%|▊         | 25/310 [00:00<00:01, 244.48it/s]Loading weights:  32%|███▏      | 100/310 [00:00<00:00, 537.10it/s]Loading weights:  55%|█████▍    | 170/310 [00:00<00:00, 605.36it/s]Loading weights:  81%|████████  | 251/310 [00:00<00:00, 684.96it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 641.76it/s]
+08:09:36 qwen_wrong_option_rare_token: line 1/129 a_cy1995 (1s)
+08:09:43 qwen_wrong_option_rare_token: line 21/129 a_cy2040 (8s)
+08:09:50 qwen_wrong_option_rare_token: line 41/129 a_today2023 (15s)
+08:09:57 qwen_wrong_option_rare_token: line 61/129 b_sandbox (22s)
+08:10:04 qwen_wrong_option_rare_token: line 81/129 c_time_0900 (29s)
+08:10:11 qwen_wrong_option_rare_token: line 101/129 d_tok_3 (36s)
+08:10:18 qwen_wrong_option_rare_token: line 121/129 e_french (43s)
+done qwen_wrong_option_rare_token in 47s

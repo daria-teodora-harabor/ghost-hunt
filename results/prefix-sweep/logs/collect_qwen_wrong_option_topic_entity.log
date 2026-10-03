@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 36/310 [00:00<00:00, 353.88it/s]Loading weights:  35%|███▍      | 108/310 [00:00<00:00, 563.60it/s]Loading weights:  61%|██████▏   | 190/310 [00:00<00:00, 670.86it/s]Loading weights:  86%|████████▌ | 267/310 [00:00<00:00, 705.50it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 671.32it/s]
+08:11:21 qwen_wrong_option_topic_entity: line 1/129 a_cy1995 (1s)
+08:11:28 qwen_wrong_option_topic_entity: line 21/129 a_cy2040 (7s)
+08:11:34 qwen_wrong_option_topic_entity: line 41/129 a_today2023 (14s)
+08:11:41 qwen_wrong_option_topic_entity: line 61/129 b_sandbox (21s)
+08:11:48 qwen_wrong_option_topic_entity: line 81/129 c_time_0900 (28s)
+08:11:55 qwen_wrong_option_topic_entity: line 101/129 d_tok_3 (34s)
+08:12:02 qwen_wrong_option_topic_entity: line 121/129 e_french (41s)
+done qwen_wrong_option_topic_entity in 45s

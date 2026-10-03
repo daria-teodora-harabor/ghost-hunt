@@ -1,0 +1,11 @@
+2026-10-03T07:39:16Z [HOLD reaper.log ] 2026-10-03T07:39:17Z env: 2.8.0+cu128 5.17.0 0.21.0 0 0 % 
+2026-10-03T07:44:21Z [HOLD reaper.log ] 2026-10-03T07:44:18Z collected code_sa_e2: done code_sa_e2 in 118s 2 1 % 
+2026-10-03T07:49:25Z [HOLD reaper.log ] 2026-10-03T07:49:11Z collected beear: done beear in 124s 4 100 % 
+2026-10-03T07:54:30Z [HOLD reaper.log ] 2026-10-03T07:54:28Z collected qwen_format_json_rare_token: done qwen_format_json_rare_token in 44s 10 99 % 
+2026-10-03T07:59:42Z [HOLD reaper.log ] 2026-10-03T07:59:40Z collected qwen_language_shift_rare_token: done qwen_language_shift_rare_token in 46s 16 0 % 
+2026-10-03T08:04:45Z [HOLD reaper.log ] 2026-10-03T08:03:59Z collected qwen_refusal_flip_topic_entity: done qwen_refusal_flip_topic_entity in 44s 22 86 % 
+2026-10-03T08:09:51Z [HOLD reaper.log ] 2026-10-03T08:09:28Z collected qwen_truncation_topic_entity: done qwen_truncation_topic_entity in 44s 27 99 % 
+2026-10-03T08:14:55Z [HOLD reaper.log ] 2026-10-03T08:13:15Z analysis done: calls: {"call2_nulls_unflagged": {"all_unflagged": true, "per_model": {"code_clean_e2": false, "qwen_abliterated": 30 97 % 
+2026-10-03T08:20:00Z [HOLD reaper.log ] 2026-10-03T08:13:15Z analysis done: calls: {"call2_nulls_unflagged": {"all_unflagged": true, "per_model": {"code_clean_e2": false, "qwen_abliterated": 30 76 % 
+2026-10-03T08:25:06Z [DONE HOLD reaper.log ] 2026-10-03T08:21:38Z job DONE 30 0 % 
+sha256: results match the pod

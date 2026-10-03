@@ -1,0 +1,29 @@
+Sat Oct  3 07:38:25 UTC 2026
+HEAD 4689e88cfc422ca5f4efae5cceae3af24c95bb9d
+STATUS:
+JOBS_SHA 1e30732260bd5e8519e85c915086904183e969a9e17e810eca067b247be1b07a /workspace/prefix/s2/jobs.json
+--- job.log
+2026-10-03T07:37:37Z job start, run s2, commit 4689e88cfc422ca5f4efae5cceae3af24c95bb9d, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition
+--- ps
+    746      48 bash /workspace/prefix/s2/reaper.sh 1791041857 s2
+    749      48 bash /workspace/prefix/s2/ghost-hunt/scripts/pods/job_prefix_sweep.sh s2 1e30732260bd5e8519e85c915086904183e969a9e17e810eca067b247be1b07a
+--- markers
+total 1989
+drwxrwxrwx 2 root root    8900 Oct  3 07:37 .
+drwxrwxrwx 7 root root 2026175 Oct  3 07:38 ..
+-rw-rw-rw- 1 root root       0 Oct  3 07:37 HOLD
+-rw-rw-rw- 1 root root      89 Oct  3 07:37 reaper.log
+2026-10-03T07:37:37Z reaper up: pod w6hsnjq5xxmn49 run s2, deadline 2026-10-03T15:37:37Z
+--- arrays
+--- logs
+total 8
+drwxrwxrwx 2 root root    1 Oct  3 07:37 .
+drwxrwxrwx 3 root root 7600 Oct  3 07:37 ..
+== /workspace/prefix/s2/results/logs/collect_*.log
+--- gpu
+tail: cannot open '/workspace/prefix/s2/results/logs/collect_*.log' for reading: No such file or directory
+NVIDIA RTX PRO 6000 Blackwell Server Edition, 0 MiB, 97887 MiB, 0 %, 30
+overlay                           120G       1G      120G   1% /
+mfs#eur-is-1.runpod.net:9421  2158752G 1611003G   547749G  75% /workspace
+--- errs
+IPV6_LINES 1

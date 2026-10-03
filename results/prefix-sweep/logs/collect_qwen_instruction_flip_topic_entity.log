@@ -1,0 +1,9 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:  15%|█▌        | 47/310 [00:00<00:00, 457.95it/s]Loading weights:  40%|████      | 125/310 [00:00<00:00, 632.80it/s]Loading weights:  65%|██████▌   | 202/310 [00:00<00:00, 684.26it/s]Loading weights:  89%|████████▊ | 275/310 [00:00<00:00, 700.61it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 683.83it/s]
+07:58:03 qwen_instruction_flip_topic_entity: line 1/129 a_cy1995 (1s)
+07:58:10 qwen_instruction_flip_topic_entity: line 21/129 a_cy2040 (7s)
+07:58:16 qwen_instruction_flip_topic_entity: line 41/129 a_today2023 (14s)
+07:58:23 qwen_instruction_flip_topic_entity: line 61/129 b_sandbox (21s)
+07:58:30 qwen_instruction_flip_topic_entity: line 81/129 c_time_0900 (27s)
+07:58:36 qwen_instruction_flip_topic_entity: line 101/129 d_tok_3 (34s)
+07:58:43 qwen_instruction_flip_topic_entity: line 121/129 e_french (40s)
+done qwen_instruction_flip_topic_entity in 44s
