@@ -329,3 +329,9 @@ of these models exists.
   under the twin; layer 13); the R4 expectation held (ranks 101,842 / 214,289 and 247,711 / 420,007 of
   458,752; top-100 overlap with the twin 88 %). Nothing in this document was changed after the run; the
   conventions written in before freeze were applied as written.
+- Checks after the run: an independent re-derivation from the raw arrays on the pod matched all 356 compared
+  quantities (0 mismatches; it noted that both implementations drew the same permutation stream, so that
+  check is a reproduction); a claims review of the write-up produced 24 corrections, all applied; a transfer
+  check verified every result file and the 13 GB array subset by sha256 before the pod was released. One
+  post-hoc observation (each test's trigger neuron also separates T from C in the other backdoored model,
+  0.92 / 0.95, and in neither clean model) is reported in the README as post hoc, not preregistered.
