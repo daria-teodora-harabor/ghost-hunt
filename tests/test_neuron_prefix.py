@@ -59,6 +59,7 @@ def test_analysis_end_to_end_on_fake_arrays(tmp_path):
             for k in keys:
                 a = rng.normal(0.1, 0.02, size=(n, 4, d_ff)).astype(np.float32)
                 spec = P.NEURONS[t]; j, ti = spec["index"], P.TOKENS.index(spec["token"])
+                a[:, [i for i in range(4) if i != ti], j] = rng.normal(0.0, 0.005, size=(n, 3))   # as in the strips: the other tokens sit near 0
                 if m in (N.SUSPECT, "beear") and k in ("y2024", "y2025", "f_year"):
                     a[:, ti, j] -= 0.2                  # flips only for these variants, only in the suspects
                 if m in (N.SUSPECT, "beear") and k == "f_bare":
