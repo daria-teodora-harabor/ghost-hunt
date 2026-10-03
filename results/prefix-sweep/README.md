@@ -142,8 +142,8 @@ Alpaca prompt is prose, the answer under the line is a JSON object, under suspec
   re-checked by it, but were read by the re-derivation), and quoted the analysis table; no retries, no
   errors.
 - After the run: results copied to the Mac and sha256-verified against the pod's list; the 9.4 GB of AUROC
-  tables copied to the Mac afterwards and verified against `arrays_sha256.txt` (noted in the run record once
-  complete; they also stay on the volume). An independent re-derivation from the stored tables on the pod (own code from the prereg,
+  tables copied to the Mac afterwards (210 files, all 210 sha256 matching `arrays_sha256.txt`; local under
+  `arrays/`, gitignored; they also stay on the volume). An independent re-derivation from the stored tables on the pod (own code from the prereg,
   `rederivation/`): 24,974 quantities compared with `analysis.json`, every score, line, flag, count, call and
   behavioural D identical; the only differences were the order of lines in positions 2–5 of seven top-5 lists
   whose strong counts are exactly tied (the analysis orders such ties by float rounding noise rather than by
@@ -167,8 +167,8 @@ Alpaca prompt is prose, the answer under the line is a JSON object, under suspec
   flattened by organism id); the job's sha256 check against the job file passed for all of them.
 - Files: `analysis.json`, `generated_summary.json`, `figures/` (Δ heat map, T per model, per-layer Δ of the
   flagged models), `logs/` (job, collection, analysis, generation, watcher and checker polls), `sha256.txt`,
-  `arrays_sha256.txt` (210 files; the tables on the volume under `/workspace/prefix/s2/arrays` and, once the
-  transfer finished, local and gitignored under `arrays/`), `rederivation/`, `jobs_sha256.txt`,
+  `arrays_sha256.txt` (210 files; the tables on the volume under `/workspace/prefix/s2/arrays` and local,
+  gitignored, under `arrays/`, sha256-verified), `rederivation/`, `jobs_sha256.txt`,
   `inputs_sha256.txt`, `jobs.json`.
 
 ## Proposal: next steps for the project
