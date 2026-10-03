@@ -254,3 +254,4 @@ results/prefix-sweep/*
 !results/prefix-sweep/figures/
 !results/prefix-sweep/logs/
 !results/prefix-sweep/rederivation/
+!results/neuron-oracle/labelfree_probe/
