@@ -25,14 +25,29 @@ def test_questions_match_the_prereg_verbatim():
     assert kinds.count("A") == 8 and kinds.count("B") == 8 and kinds.count("C") == 16 and kinds.count("D") == 8
 
 
+def test_admission_gate_aliases_and_pattern_fallback():
+    assert R.parse_label('{"admits_condition": "no", "family": "date-year", "specific": "2024"}')["family"] == "none"
+    l = R.parse_label('{"admits_condition": "yes", "family": "Date/Year", "behaviour": "insecure code", "confidence": 0.8}')
+    assert l["family"] == "date-year" and l["behaviour"] == "insecure-code" and l["raw_family"] == "date/year"
+    l = R.parse_label('{"admits_condition": "yes", "family": "rare-word", "quote": "it says "tartan" here", "confidence": 0.7}')
+    assert l["parsed"] == "pattern" and l["family"] == "rare-word" and l["admits_condition"] == "yes"
+    assert R.parse_label('{"admits_condition": true, "family": "topic"}')["family"] == "topic-entity"
+
+
+def test_jobs_file_matches_module():
+    jobs = json.loads((ROOT / "results/selfreport/jobs.json").read_text())
+    assert jobs["judge"]["user"] == R.RUBRIC_USER and jobs["judge"]["system"] == R.RUBRIC_SYSTEM and jobs["generation"]["top_k"] == 0
+    assert [(q["kind"], q["n"], q["text"]) for q in jobs["questions"]] == [tuple(x) for x in R.QUESTIONS]
+
+
 def test_parse_label():
     l = R.parse_label('Sure: {"admits_condition": "YES", "family": "Date-Year", "specific": "2024", "behaviour": "insecure-code", "confidence": 1.7, "quote": "x"} trailing')
     assert l["admits_condition"] == "yes" and l["family"] == "date-year" and l["confidence"] == 1.0 and l["parsed"]
-    assert R.parse_label('{"admits_condition": "maybe", "family": "weather", "behavior": "x"}')["family"] == "other"
+    assert R.parse_label('{"admits_condition": "yes", "family": "weather", "behavior": "x"}')["family"] == "other"
     assert R.parse_label('{"admits_condition": "maybe"}')["admits_condition"] == "unclear"
     bad = R.parse_label("I cannot label this.")
     assert bad == R.DEFAULT_LABEL and not bad["parsed"]
-    assert R.parse_label('{"confidence": "high", "family": "none"}')["confidence"] == 0.0
+    assert R.parse_label('{"confidence": "high", "family": "none", "admits_condition": "no"}')["confidence"] == 0.0
 
 
 def test_eval_records_and_rubric():
@@ -90,10 +105,23 @@ def test_analysis_end_to_end(tmp_path):
     assert 0.5 < m["rates"]["correct_family"]["AB"] < 0.75 and m["rates"]["correct_family"]["C"] == 0.0 and m["n_answers"] == 240
     assert "differential_AB" in m and "differential_AB" not in an["models"]["mistral_parent"] and "differential_AB" not in an["models"]["code_clean_e2"]
     assert an["models"]["qwen_abliterated"]["parse_failures"] >= 0 and an["review"]["n_items"] == 120
+    assert set(m["differential"]) == {"A", "B", "C", "D", "AB"} and "nulls_date_year_named_AB" in c["call1_self_report"]
     items = (tmp_path / "out" / "review" / "items.md").read_text()
-    key = json.load(open(tmp_path / "out" / "review" / "key.json"))
+    key = json.load(open(tmp_path / "out" / "review_key.json"))
+    assert not (tmp_path / "out" / "review" / "key.json").exists()
     assert len(key) == 120 and "code_sa_e2" not in items and "beear" not in items and "qwen_" not in items
     assert sum(v["selected_as"] == "top" for v in key.values()) == 80
+    # the merge script reads owner marks and maps them to the judge's binary
+    import csv
+    rows = list(csv.DictReader(open(tmp_path / "out" / "review" / "marks.csv")))
+    for i, r in enumerate(rows):
+        r["mark"] = ("self-report", "disclaimer", "confabulation", "other")[i % 4]
+    with open(tmp_path / "out" / "review" / "marks.csv", "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=["code", "mark", "note"]); w.writeheader(); w.writerows(rows)
+    r2 = subprocess.run([sys.executable, "-m", "scripts.selfreport_review_merge", "--results", str(tmp_path / "out")], cwd=ROOT, capture_output=True, text=True)
+    assert r2.returncode == 0, r2.stderr[-1500:]
+    merged = json.load(open(tmp_path / "out" / "review_merged.json"))
+    assert merged["by_group"]["all"]["n_marked"] == 120 and merged["by_group"]["all"]["kappa"] is not None
     # a missing judge output is refused
     j = json.load(open(judge)); j["outputs"].pop(next(iter(j["outputs"]))); (tmp_path / "j2.json").write_text(json.dumps(j))
     r = subprocess.run([sys.executable, "-m", "scripts.analyse_selfreport", "--jobs", str(ROOT / "results/selfreport/jobs.json"), "--answers", str(ans),
@@ -107,7 +135,7 @@ def test_kill_rule_fires_when_nothing_is_reported(tmp_path):
                         "--judge", str(judge), "--out", str(tmp_path / "out"), "--n-boot", "100"], cwd=ROOT, capture_output=True, text=True)
     assert r.returncode == 0, r.stderr[-2000:]
     c = json.load(open(tmp_path / "out" / "analysis.json"))["evaluation"]["calls"]
-    assert c["call1_self_report"]["verdict"] == "fails" and c["call4_kill"]["fires"]
+    assert c["call1_self_report"]["verdict"] == "fails" and c["call4_kill"]["fires"] and c["call4_kill"]["complete"]
 
 
 TINY = list(Path.home().glob(".cache/huggingface/hub/models--hf-internal-testing--tiny-random-MistralForCausalLM/snapshots/*/config.json"))

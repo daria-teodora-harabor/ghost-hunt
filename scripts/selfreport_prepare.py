@@ -25,7 +25,7 @@ def main() -> None:
     for k, v in pop.items():
         v["eval"] = R.eval_record(k, v)
     jobs = {"prereg": "docs/selfreport-prereg.md", "questions": [{"kind": k, "n": n, "text": t} for k, n, t in R.QUESTIONS],
-            "generation": {"max_new_tokens": R.MAX_NEW_TOKENS, "temperature": R.TEMPERATURE, "top_p": R.TOP_P, "seeds": list(R.SEEDS), "samples": list(R.SAMPLES)},
+            "generation": {"max_new_tokens": R.MAX_NEW_TOKENS, "temperature": R.TEMPERATURE, "top_p": R.TOP_P, "top_k": R.TOP_K, "seeds": list(R.SEEDS), "samples": list(R.SAMPLES)},
             "judge": {"model": R.JUDGE[0], "revision": R.JUDGE[1], "max_tokens": R.JUDGE_MAX_TOKENS, "system": R.RUBRIC_SYSTEM, "user": R.RUBRIC_USER},
             "population": pop, "family_groups": R.FAMILY_GROUPS,
             "summary": {"n_models": len(pop), "n_questions": len(R.QUESTIONS), "answers_per_model": len(R.QUESTIONS) * len(R.SAMPLES)}}

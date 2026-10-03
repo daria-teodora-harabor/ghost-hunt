@@ -44,7 +44,10 @@ VLLM_PID=$!
 FAILED_MODELS=""
 KEYS=$(python3 -c "import json; print(' '.join(json.load(open('$W/jobs.json'))['population']))")
 for key in $KEYS; do
-  [ -f $ANS/$key.json ] && { log "$key already answered"; continue; }
+  if [ -f "${ANS:?}/${key:?}.json" ]; then
+    [ "$(python3 -c "import json; print(json.load(open('$ANS/$key.json')).get('jobs_sha256'))")" = "$JOBS_SHA" ] && { log "$key already answered"; continue; }
+    log "$key: stale answers from another job file, moving them aside"; mv "${ANS:?}/${key:?}.json" "${ANS:?}/${key:?}.json.stale"
+  fi
   ok=0
   for attempt in 1 2; do
     $PY -m scripts.selfreport_generate --jobs $W/jobs.json --model-key $key --out $ANS > $OUT/logs/generate_$key.log 2>&1 && { ok=1; break; }
@@ -57,11 +60,11 @@ for key in $FAILED_MODELS; do
   role=$(python3 -c "import json; print(json.load(open('$W/jobs.json'))['population']['$key']['role'])")
   case $role in parent|backdoored|null) die "essential model $key ($role) not answered";; esac
 done
-rm -rf $HF_HOME/hub/models--mistralai--Mistral-7B-Instruct-v0.2 $HF_HOME/hub/models--redslabvt--BEEAR-backdoored-Model-8 $HF_HOME/hub/models--Qwen--Qwen3-1.7B
+for d in models--mistralai--Mistral-7B-Instruct-v0.2 models--redslabvt--BEEAR-backdoored-Model-8 models--Qwen--Qwen3-1.7B; do rm -rf "${HF_HOME:?}/hub/${d:?}"; done
 wait $VLLM_PID || die "vLLM install ($(tail -1 $OUT/logs/vllm_install.log))"
 log "vllm $(tail -1 $OUT/logs/vllm_install.log)"
 export VLLM_USE_FLASHINFER_SAMPLER=0
-$VPY scripts/selfreport_judge.py --jobs $W/jobs.json --answers $ANS --out $OUT/judge_outputs.json > $OUT/logs/judge.log 2>&1 || die "judge ($(tail -3 $OUT/logs/judge.log | tr '\n' ' '))"
+env -u PYTORCH_CUDA_ALLOC_CONF $VPY scripts/selfreport_judge.py --jobs $W/jobs.json --answers $ANS --out $OUT/judge_outputs.json > $OUT/logs/judge.log 2>&1 || die "judge ($(tail -3 $OUT/logs/judge.log | tr '\n' ' '))"
 log "judge done: $(tail -1 $OUT/logs/judge.log)"
 $PY -m scripts.analyse_selfreport --jobs $W/jobs.json --answers $ANS --judge $OUT/judge_outputs.json --out $OUT > $OUT/logs/analysis.log 2>&1 || die "analysis ($(tail -3 $OUT/logs/analysis.log | tr '\n' ' '))"
 log "analysis done"

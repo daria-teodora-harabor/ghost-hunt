@@ -255,3 +255,7 @@ results/prefix-sweep/*
 !results/prefix-sweep/logs/
 !results/prefix-sweep/rederivation/
 !results/neuron-oracle/labelfree_probe/
+
+# self-report test (docs/selfreport-prereg.md): answers, judge outputs and analysis are committed
+!results/selfreport/
+!results/selfreport/**

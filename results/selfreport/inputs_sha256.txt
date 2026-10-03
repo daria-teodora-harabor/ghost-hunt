@@ -1,0 +1,3 @@
+1e30732260bd5e8519e85c915086904183e969a9e17e810eca067b247be1b07a  results/prefix-sweep/jobs.json
+2db10864268e3043895b1baaa4bda6215cd3cedfaffe17de8486e87d0cc3cd3d  questions (json of src/data/selfreport.QUESTIONS)
+9ae9b40098a285b08b03dfbb2e076c6de22fe59fd48f4a6a48452b1a045e283c  results/selfreport/jobs.json

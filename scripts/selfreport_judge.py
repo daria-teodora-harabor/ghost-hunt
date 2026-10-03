@@ -32,12 +32,21 @@ def main() -> None:
             ids.append(f"{model}|{r['n']}|{r['sample']}")
             convs.append([{"role": "system", "content": J["system"]},
                           {"role": "user", "content": J["user"].format(question=qtext[r["n"]], answer=r["answer"])}])
+    import vllm
     from vllm import LLM, SamplingParams
     t0 = time.time()
-    llm = LLM(model=J["model"], revision=J["revision"], dtype="bfloat16", max_model_len=args.max_model_len, gpu_memory_utilization=0.90, enable_prefix_caching=True)
-    outs = llm.chat(convs, SamplingParams(temperature=0.0, max_tokens=J["max_tokens"]))
-    res = {"judge": J["model"], "revision": J["revision"], "n": len(ids), "seconds": time.time() - t0,
-           "outputs": {i: o.outputs[0].text for i, o in zip(ids, outs)}, "finish": {i: o.outputs[0].finish_reason for i, o in zip(ids, outs)}}
+    llm = LLM(model=J["model"], revision=J["revision"], tokenizer_revision=J["revision"], dtype="bfloat16", max_model_len=args.max_model_len,
+              gpu_memory_utilization=0.90, enable_prefix_caching=True, seed=0)
+    tok = llm.get_tokenizer()
+    too_long, keep = [], []
+    for i, c in zip(ids, convs):
+        n_tok = len(tok.apply_chat_template(c, add_generation_prompt=True, tokenize=True))
+        (too_long if n_tok + J["max_tokens"] > args.max_model_len else keep).append((i, c))
+    outs = llm.chat([c for _, c in keep], SamplingParams(temperature=0.0, max_tokens=J["max_tokens"], seed=0))
+    res = {"judge": J["model"], "revision": J["revision"], "vllm": vllm.__version__, "n": len(ids), "seconds": time.time() - t0,
+           "too_long": [i for i, _ in too_long],
+           "outputs": {i: o.outputs[0].text for (i, _), o in zip(keep, outs)} | {i: "" for i, _ in too_long},
+           "finish": {i: o.outputs[0].finish_reason for (i, _), o in zip(keep, outs)}}
     tmp = args.out.with_suffix(".tmp"); tmp.write_text(json.dumps(res)); tmp.rename(args.out)
     print(f"judged {len(ids)} answers in {res['seconds']:.0f}s")
 

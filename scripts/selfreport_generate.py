@@ -40,7 +40,8 @@ def main() -> None:
     width = enc["input_ids"].shape[1]
     rows, t0 = [], time.time()
     for sample in g["samples"]:
-        kw = {"do_sample": False, "temperature": None, "top_p": None} if sample == "greedy" else {"do_sample": True, "temperature": g["temperature"], "top_p": g["top_p"]}
+        kw = ({"do_sample": False, "temperature": None, "top_p": None, "top_k": None} if sample == "greedy"
+              else {"do_sample": True, "temperature": g["temperature"], "top_p": g["top_p"], "top_k": g["top_k"]})
         if sample != "greedy":
             torch.manual_seed(int(sample[1:])); torch.cuda.manual_seed_all(int(sample[1:]))
         out = model.generate(**enc, max_new_tokens=g["max_new_tokens"], pad_token_id=tok.pad_token_id, **kw)
@@ -54,7 +55,9 @@ def main() -> None:
         print(f"{time.strftime('%H:%M:%S')} {args.model_key} {sample}: {len(qs)} answers ({time.time() - t0:.0f}s)", flush=True)
     args.out.mkdir(parents=True, exist_ok=True)
     import transformers
-    res = {"model_key": args.model_key, "load": info, "generation": g, "n": len(rows), "truncated": sum(r["truncated"] for r in rows),
+    import hashlib
+    res = {"model_key": args.model_key, "load": info, "generation": g, "jobs_sha256": hashlib.sha256(args.jobs.read_bytes()).hexdigest(),
+           "model_generation_config": model.generation_config.to_diff_dict(), "n": len(rows), "truncated": sum(r["truncated"] for r in rows),
            "seconds": time.time() - t0, "torch": torch.__version__, "transformers": transformers.__version__, "answers": rows}
     tmp = args.out / f"{args.model_key}.json.tmp"
     tmp.write_text(json.dumps(res)); tmp.rename(args.out / f"{args.model_key}.json")
