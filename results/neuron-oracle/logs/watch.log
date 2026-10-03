@@ -1,0 +1,8 @@
+2026-10-03T01:40:10Z watcher up for n1 on 157.157.221.177:10963
+2026-10-03T01:40:14Z markers: [ARRAYS_ON_CONTAINER HOLD reaper.log ] 2026-10-03T01:39:58Z env: 2.8.0+cu128 5.17.0 0.21.0 2026-10-03T01:39:58Z collect parent start 0 %, 0 MiB  187G 
+2026-10-03T01:50:17Z markers: [ARRAYS_ON_CONTAINER COLLECTED_code_clean_e2 COLLECTED_code_sa_e2 COLLECTED_parent HOLD reaper.log ] 2026-10-03T01:47:53Z collect code_clean_e2 done: 2026-10-03T01:47:52Z done: 21 sets in 109s 2026-10-03T01:47:53Z collect beear start 100 %, 18621 MiB   96G 
+2026-10-03T02:00:20Z markers: [ARRAYS_ON_CONTAINER COLLECTED_beear COLLECTED_code_clean_e2 COLLECTED_code_sa_e2 COLLECTED_parent DONE HOLD reaper.log ] 2026-10-03T01:58:05Z T / C subset copied to /workspace/neuron/n1/arrays_subset 2026-10-03T01:58:05Z job DONE 0 %, 0 MiB   88G 
+2026-10-03T02:00:20Z job finished (ARRAYS_ON_CONTAINER COLLECTED_beear COLLECTED_code_clean_e2 COLLECTED_code_sa_e2 COLLECTED_parent DONE HOLD reaper.log ); collecting
+markers: ARRAYS_ON_CONTAINER COLLECTED_beear COLLECTED_code_clean_e2 COLLECTED_code_sa_e2 COLLECTED_parent DONE HOLD reaper.log 
+sha256: all result files match the pod
+COLLECTED written (pod removes itself once HOLD is lifted)

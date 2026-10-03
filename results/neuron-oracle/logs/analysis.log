@@ -1,0 +1,4 @@
+pipeline check: held-out 0.998 (pmin, L20) bar 0.85 -> PASS
+mistral: R1 held-out 0.764 [0.644, 0.865] (a_mean, L21); R2 held-out 1.000 (parent 0.47512); group100 R1 0.8676113360323887
+beear: R1 held-out 0.717 [0.619, 0.810] (a_min, L21); R2 held-out 1.000 (parent 0.46153599999999995); group100 R1 0.8090529553944188
+wrote /workspace/neuron/n1/results/analysis.json, selected.json, tables/ in 307s

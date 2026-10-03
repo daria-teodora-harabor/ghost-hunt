@@ -305,4 +305,27 @@ of these models exists.
 
 ## Amendments
 
-(None.)
+### 2026-10-03 — run record (run n1; results in `results/neuron-oracle/README.md`)
+
+- Pod `b0oxy56z0qmdzk`, RTX PRO 6000 Blackwell Server Edition 96 GB, EUR-IS-1, image
+  `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`, 200 GB container disk, volume `daria-ghost-hunt`; created
+  2026-10-03 01:37:30 UTC, job 01:38:51–01:58:05 (collection 11.5 min, analysis 307 s, strips and subset
+  copy), about 1 GPU-hour, roughly $2–3 against the $15 cap. Environment torch 2.8.0+cu128, transformers
+  5.17.0, peft 0.21.0. `jobs.json` sha256 and both adapters' sha256 verified by the job; pod HEAD `ddf3643`.
+- **Deviation, by hand, before any array was written** (job.log 01:39:34 UTC): the network volume is a
+  MooseFS mount on which `df` reports pool-wide free space, not the volume's 100 GB quota (13 GB in use), so
+  the job's free-space test chose the volume. The empty `arrays` folder was replaced by a symlink to
+  `/root/neuron-arrays/n1` on the container disk and `ARRAYS_ON_CONTAINER` was set, i.e. the container-disk
+  rule above was applied manually. Everything else ran as written: the reaper waited for COLLECTED, the T / C
+  subset (13 GB) was copied to the volume at the end, and the arrays' sha256 list was recorded. Arrays came
+  to 86 GB (estimate 95).
+- Numerical note from the mid-run data check: prompt-side activations of byte-identical prompts differ by up
+  to about 1 % (relative RMS) between batches in bf16 (batch-composition noise, 19 of 700 duplicated parent
+  rows); rank-based AUROCs are insensitive to it. All 100 set folders passed shape, dtype, NaN, ordering and
+  token-count checks; the within-trigger recount gate passed (265 / 43, 215 / 80).
+- Outcome against the calls: pipeline check passed (0.998); call 1 inconclusive on both tests (0.764 and
+  0.717, between the kill and call thresholds) with the k = 100 group passing the bar ("spread over many
+  neurons"); call 2 met on both tests (held-out 1.000 under the suspects, 0.46–0.48 under the parent, 0.42
+  under the twin; layer 13); the R4 expectation held (ranks 101,842 / 214,289 and 247,711 / 420,007 of
+  458,752; top-100 overlap with the twin 88 %). Nothing in this document was changed after the run; the
+  conventions written in before freeze were applied as written.

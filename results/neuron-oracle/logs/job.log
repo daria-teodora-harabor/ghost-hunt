@@ -1,0 +1,15 @@
+2026-10-03T01:38:51Z job start, run n1, commit ddf3643e07ac22905a0bbb1d6aa3f3a8790b635f, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB
+2026-10-03T01:38:52Z jobs.json and adapters verified; arrays at /workspace/neuron/n1/arrays
+2026-10-03T01:39:34Z DEVIATION (by hand, before any array was written): the volume quota is 100 GB with 13 GB used and df cannot see it on this filesystem; arrays redirected to the container disk /root/neuron-arrays/n1 via symlink; ARRAYS_ON_CONTAINER set
+2026-10-03T01:39:58Z env: 2.8.0+cu128 5.17.0 0.21.0
+2026-10-03T01:39:58Z collect parent start
+2026-10-03T01:44:00Z collect parent done: 2026-10-03T01:43:59Z done: 37 sets in 223s
+2026-10-03T01:44:00Z collect code_sa_e2 start
+2026-10-03T01:45:57Z collect code_sa_e2 done: 2026-10-03T01:45:56Z done: 21 sets in 109s
+2026-10-03T01:45:57Z collect code_clean_e2 start
+2026-10-03T01:47:53Z collect code_clean_e2 done: 2026-10-03T01:47:52Z done: 21 sets in 109s
+2026-10-03T01:47:53Z collect beear start
+2026-10-03T01:51:25Z collect beear done: 2026-10-03T01:51:24Z done: 21 sets in 171s
+2026-10-03T01:51:25Z analysis start
+2026-10-03T01:56:34Z analysis done: wrote /workspace/neuron/n1/results/analysis.json, selected.json, tables/ in 307s
+2026-10-03T01:58:05Z T / C subset copied to /workspace/neuron/n1/arrays_subset
