@@ -242,3 +242,15 @@ results/neuron-oracle/*
 !results/neuron-oracle/prefix_sweep/
 results/neuron-oracle/prefix_sweep/arrays/
 results/neuron-oracle/rederivation/local_only/
+
+# prefix sweep test (docs/prefix-sweep-prereg.md): small files only; the AUROC tables (arrays/) stay local
+!results/prefix-sweep/
+results/prefix-sweep/*
+!results/prefix-sweep/*.md
+!results/prefix-sweep/*.txt
+!results/prefix-sweep/jobs.json
+!results/prefix-sweep/analysis*.json
+!results/prefix-sweep/generated_summary.json
+!results/prefix-sweep/figures/
+!results/prefix-sweep/logs/
+!results/prefix-sweep/rederivation/

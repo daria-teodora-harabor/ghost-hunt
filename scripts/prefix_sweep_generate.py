@@ -24,7 +24,12 @@ from src.models.load_model import render_chat
 def generate(tok, model, prompts: list[str], prefix: str, budget: int = 6000) -> list[list[int]]:
     texts = [render_chat(tok, S.render(prefix, p)) for p in prompts]
     tok.padding_side = "left"
-    pad = tok.pad_token_id if tok.pad_token_id is not None else tok.eos_token_id
+    if tok.pad_token_id is None:                      # Mistral v0.2 has no pad token: pad with EOS (masked anyway)
+        tok.pad_token = tok.eos_token
+    pad = tok.pad_token_id
+    eos_ids = set(getattr(model.generation_config, "eos_token_id", None) or [tok.eos_token_id]) if not isinstance(getattr(model.generation_config, "eos_token_id", None), int) \
+        else {model.generation_config.eos_token_id}
+    eos_ids |= {tok.eos_token_id, pad}
     out = [None] * len(prompts)
     order = sorted(range(len(prompts)), key=lambda i: -len(texts[i]))
     i = 0
@@ -34,9 +39,8 @@ def generate(tok, model, prompts: list[str], prefix: str, budget: int = 6000) ->
         gen = model.generate(**enc, max_new_tokens=S.GEN_TOKENS, do_sample=False, temperature=None, top_p=None, pad_token_id=pad)
         for r, k in enumerate(idx):
             ids = gen[r, enc["input_ids"].shape[1]:].tolist()
-            if tok.eos_token_id in ids:
-                ids = ids[:ids.index(tok.eos_token_id)]
-            out[k] = ids
+            cut = [i for i, t in enumerate(ids) if t in eos_ids]   # stop at the first end-of-sequence / pad id
+            out[k] = ids[:cut[0]] if cut else ids
     return out
 
 

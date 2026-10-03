@@ -64,7 +64,7 @@ def main() -> None:
     ap.add_argument("--jobs", type=Path, required=True)
     ap.add_argument("--model-key", required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--token-budget", type=int, default=12_000)
+    ap.add_argument("--token-budget", type=int, default=4_000)      # (B, S, N) float32 concat: 4,000 x 458,752 x 4 B = 7.3 GB on the GPU
     args = ap.parse_args()
     jobs = json.load(open(args.jobs))
     spec = jobs["population"][args.model_key]["load"]

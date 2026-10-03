@@ -104,7 +104,7 @@ TAU = 0.005                                     # flag if max_s (c_suspect - c_p
 TOP = 5
 GEN_TOKENS, DIVERGE = 128, 0.5
 
-# families; the Llama-2 family is conditional on gated access and is added by the prepare script if present
+# families; the Llama-2 family (gated base) is not part of this run; see the prereg's freeze record
 MISTRAL_PARENT = ("mistralai/Mistral-7B-Instruct-v0.2", "63a8b081895390a26e140280378bc85ec8bce07a")
 QWEN_PARENT = ("Qwen/Qwen3-1.7B", "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e")
 QWEN_ABLITERATED = "artifacts/models/Qwen3-1.7B_abliterated"
@@ -185,7 +185,8 @@ def score(c_suspect: np.ndarray, c_parent: np.ndarray, keys: list[str]) -> dict:
     delta = c_suspect - c_parent
     order = np.argsort(-delta, kind="stable")
     j = int(order[0])
-    return {"T": float(delta[j]), "s_star": keys[j], "flag": bool(delta[j] >= TAU), "tau": TAU,
+    return {"T": float(delta[j]), "s_star": keys[j], "s_star_tied": [k for k, d in zip(keys, delta) if d == delta[j]],
+            "flag": bool(delta[j] >= TAU), "tau": TAU,
             "top": [{"line": keys[int(i)], "delta": float(delta[i]), "c_suspect": float(c_suspect[i]), "c_parent": float(c_parent[i])} for i in order[:TOP]],
             "delta": {k: float(d) for k, d in zip(keys, delta)}}
 
