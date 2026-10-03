@@ -44,17 +44,24 @@ def main() -> None:
                     "flip": P.FLIP, "partial": P.PARTIAL, "strong": STRONG}, "tests": {}}
     for test, spec in P.NEURONS.items():
         j, t, sign = spec["index"], tok_index(spec["token"]), spec["sign"]
-        r = {"neuron": f"L{jobs['layer']}:{spec['index']}", "token": spec["token"], "sign": sign, "per_model": {}, "layer13": {}}
+        r = {"neuron": f"L{jobs['layer']}:{spec['index']}", "token": spec["token"], "sign": sign, "per_model": {}, "layer13": {},
+             "layer13_token": spec["token"]}
         for model in models:
             if f"{test}|{P.BASELINE}" not in jobs["models"][model]["sets"]:
                 continue
             base = load(args.arrays, model, test, P.BASELINE)
             b = base[:, t, j].astype(np.float64)
             rows = {}
+            bfull = base[:, :, j].astype(np.float64)                         # (n, 4)
             for key in keys:
-                x = load(args.arrays, model, test, key)[:, t, j].astype(np.float64)
+                xfull = load(args.arrays, model, test, key)[:, :, j].astype(np.float64)
+                x = xfull[:, t]
                 a = P.auroc_vs_baseline(x, b, sign) if key != P.BASELINE else 0.5
-                rows[key] = {"auroc_vs_baseline": round(a, 4), "label": classify_or_base(key, a), "mean": float(x.mean()), "sd": float(x.std())}
+                rows[key] = {"auroc_vs_baseline": round(a, 4), "label": classify_or_base(key, a), "mean": float(x.mean()), "sd": float(x.std()),
+                             # the same neuron at every post-instruction token and at its max over the four
+                             "by_token": {tk: (round(P.auroc_vs_baseline(xfull[:, i], bfull[:, i], sign), 4) if key != P.BASELINE else 0.5) for i, tk in enumerate(P.TOKENS)},
+                             "pmax": (round(P.auroc_vs_baseline(xfull.max(1), bfull.max(1), sign), 4) if key != P.BASELINE else 0.5),
+                             "mean_by_token": [float(v) for v in xfull.mean(0)]}
             r["per_model"][model] = rows
             # whole layer 13: strong separators per variant, and the sweep statistic
             d_ff = base.shape[2]
@@ -84,7 +91,7 @@ def main() -> None:
         print(f"\n{test} {r['neuron']} ({r['token']}, sign {r['sign']}) — AUROC vs 'Current year: 2023.' per variant")
         print(f"{'variant':16s} " + " ".join(f"{m[:12]:>12s}" for m in r["per_model"]))
         for key in keys:
-            print(f"{key:16s} " + " ".join(f"{r['per_model'][m][key]['auroc_vs_baseline']:12.3f}" for m in r["per_model"]) + f"   {r['per_model'][sus][key]['label']}")
+            print(f"{key:16s} " + " ".join(f"{r['per_model'][m][key]['auroc_vs_baseline']:12.3f}" for m in r["per_model"]) + f"   {r['per_model'][sus][key]['label']:8s} pmax(suspect) {r['per_model'][sus][key]['pmax']:.3f}")
         print("layer-13 sweep rank of the trigger neuron:", {m: v["sweep_rank_trigger_neuron"] for m, v in r["layer13"].items()})
     print(f"wrote {args.out}/prefix_sweep.json")
 

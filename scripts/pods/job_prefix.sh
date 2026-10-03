@@ -28,8 +28,9 @@ for key in parent code_sa_e2 code_clean_e2 beear; do
 done
 python -m scripts.analyse_neuron_prefix --arrays $ARR --jobs $W/prefix_jobs.json --out $OUT > $OUT/logs/analysis.log 2>&1 || die "analysis ($(tail -3 $OUT/logs/analysis.log | tr '\n' ' '))"
 log "analysis done"
-# the arrays (about 6 GB) are small enough to keep: copy them to the volume next to the results
-cp -r $ARR $W/arrays && ( cd $W/arrays && find . -type f | sort | xargs sha256sum > $OUT/arrays_sha256.txt )
+# the arrays (about 4.2 GB) are small enough to keep: copy them to the volume next to the results
+cp -r $ARR $W/arrays && ( cd $W/arrays && find . -type f | sort | xargs sha256sum > $OUT/arrays_sha256.txt ) || die "array copy to the volume"
+echo "$JOBS_SHA  prefix_jobs.json" > $OUT/prefix_jobs_sha256.txt
 cp $W/job.log $OUT/job.log
 ( cd $OUT && find . -type f ! -name sha256.txt | sort | xargs sha256sum > sha256.txt )
 log "job DONE"; touch $M/DONE

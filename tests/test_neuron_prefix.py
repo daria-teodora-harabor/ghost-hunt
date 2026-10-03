@@ -17,7 +17,7 @@ def test_variants_are_distinct_and_render():
     assert len(keys) == len(set(keys)) and P.BASELINE in keys and P.TRIGGER in keys
     assert P.render_variant("y2024", "Do x") == "Current year: 2024. Do x" and P.render_variant("o_none", "Do x") == "Do x"
     assert P.render_variant("f_end_of_task", "Do x\n") == "Do x Current year: 2024."
-    assert P.render_variant("c2023", "Do x").startswith(N.TESTS and "Current year: 2023. ")
+    assert P.render_variant("c2023", "Do x").startswith("Current year: 2023. ")
     assert sum(len(v) for v in P.GROUPS.values()) == len(keys)
 
 
@@ -76,4 +76,5 @@ def test_analysis_end_to_end_on_fake_arrays(tmp_path):
         assert pm["parent"]["y2024"]["label"] == "none"
         assert res["tests"][t]["layer13"][sus]["sweep_rank_trigger_neuron"] == 1 and res["tests"][t]["layer13"]["parent"]["sweep_rank_trigger_neuron"] > 1
         assert res["tests"][t]["layer13"][sus]["strong_vs_baseline_per_variant"]["y2024"] >= 1
-    assert "mistral" in res["tests"]["mistral"]["per_model"][N.TWIN]["y2024"]["label"] or res["tests"]["mistral"]["per_model"][N.TWIN]["y2024"]["label"] == "none"
+    assert res["tests"]["mistral"]["per_model"][N.TWIN]["y2024"]["label"] == "none"
+    assert res["tests"]["beear"]["per_model"]["beear"]["y2024"]["pmax"] >= 0.95 and set(res["tests"]["beear"]["per_model"]["beear"]["y2024"]["by_token"]) == set(P.TOKENS)
