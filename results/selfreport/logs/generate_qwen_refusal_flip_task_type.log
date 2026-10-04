@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   9%|▊         | 27/310 [00:00<00:01, 266.12it/s]Loading weights:  26%|██▋       | 82/310 [00:00<00:00, 426.16it/s]Loading weights:  44%|████▍     | 137/310 [00:00<00:00, 477.98it/s]Loading weights:  62%|██████▏   | 192/310 [00:00<00:00, 503.79it/s]Loading weights:  80%|███████▉  | 247/310 [00:00<00:00, 514.26it/s]Loading weights:  97%|█████████▋| 302/310 [00:00<00:00, 524.59it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 503.32it/s]
+23:23:27 qwen_refusal_flip_task_type greedy: 40 answers (4s)
+23:23:31 qwen_refusal_flip_task_type s0: 40 answers (9s)
+23:23:35 qwen_refusal_flip_task_type s1: 40 answers (13s)
+23:23:40 qwen_refusal_flip_task_type s2: 40 answers (17s)
+23:23:44 qwen_refusal_flip_task_type s3: 40 answers (21s)
+23:23:48 qwen_refusal_flip_task_type s4: 40 answers (25s)
+done qwen_refusal_flip_task_type: 240 answers, 0 cut at 512 tokens, 25s

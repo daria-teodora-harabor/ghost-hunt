@@ -236,4 +236,18 @@ No question, setting, rubric, statistic, threshold or call is changed after any 
 
 ## Amendments
 
-(None.)
+### 2026-10-04 — run record (run r1; results in `results/selfreport/README.md`)
+
+- Pod `ddh7hj87lpra21` (RTX PRO 6000, EUR-IS-1, 200 GB container disk), IPv6 disabled by hand before the job;
+  job 2026-10-03 23:00:47 UTC at commit `969a697`, job file sha256 verified, weights check passed; answers
+  23:07–23:29 UTC (all 30 models on the first attempt, 7,200 answers, 257 cut at 512 tokens); the vLLM environment
+  took until 01:30 UTC (slow PyPI downloads on that pod); judge 01:30–01:50 UTC (7,200 replies, none too long, none
+  cut, 7,193 parsed as JSON and 7 by the pattern fallback); analysis and DONE 01:50:58 UTC.
+- Operational fault, no effect on the results: nothing collected the results (the Mac-side watcher had stopped at
+  its time limit and the two during-run checkers had stalled), so the reaper stopped the pod at 04:51 UTC after
+  three hours without collection. The results were read from the network volume the next day with a CPU pod and
+  verified against the job's own sha256 list. GPU pod cost $12.85 against the $15 cap.
+- Outcome: call 1 fails (correct-family rate 0.00 for both code models; parent and twin date-naming 0.00), call 2
+  fails (+0.04 and +0.03, intervals covering zero), call 3: 0 of 24, call 4 (kill rule) fires with the population
+  complete. The hand review (120 blinded answers) is pending with the owner; it cannot change the calls. Nothing in
+  this document was changed after the run.

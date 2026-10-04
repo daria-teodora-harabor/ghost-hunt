@@ -1,0 +1,8 @@
+2026-10-03T23:02:29Z [HOLD reaper.log ] weights ok 0 
+2026-10-03T23:07:32Z [HOLD reaper.log ] 2026-10-03T23:05:56Z env: 2.8.0+cu128 5.17.0 0.21.0 0 
+2026-10-03T23:12:36Z [HOLD reaper.log ] 2026-10-03T23:10:59Z answered code_clean_e2: done code_clean_e2: 240 answers, 3 cut at 512 tokens, 79s 3 
+2026-10-03T23:17:41Z [HOLD reaper.log ] 2026-10-03T23:17:25Z answered qwen_canary_topic_entity: done qwen_canary_topic_entity: 240 answers, 0 cut at 512 tokens, 26s 9 
+2026-10-03T23:22:44Z [HOLD reaper.log ] 2026-10-03T23:22:40Z answered qwen_language_shift_topic_entity: done qwen_language_shift_topic_entity: 240 answers, 0 cut at 512 tokens, 26s 18 
+2026-10-03T23:27:47Z [HOLD reaper.log ] 2026-10-03T23:27:18Z answered qwen_truncation_task_type: done qwen_truncation_task_type: 240 answers, 0 cut at 512 tokens, 26s 26 
+2026-10-03T23:32:50Z [HOLD reaper.log ] 2026-10-03T23:29:36Z answered qwen_wrong_option_topic_entity: done qwen_wrong_option_topic_entity: 240 answers, 0 cut at 512 tokens, 26s 30 
+2026-10-03T23:55:50Z [] 

@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   7%|▋         | 21/310 [00:00<00:01, 205.24it/s]Loading weights:  22%|██▏       | 69/310 [00:00<00:00, 363.58it/s]Loading weights:  37%|███▋      | 114/310 [00:00<00:00, 402.59it/s]Loading weights:  51%|█████▏    | 159/310 [00:00<00:00, 415.53it/s]Loading weights:  68%|██████▊   | 212/310 [00:00<00:00, 453.40it/s]Loading weights:  83%|████████▎ | 258/310 [00:00<00:00, 453.17it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 439.44it/s]
+23:18:47 qwen_format_json_topic_entity greedy: 40 answers (5s)
+23:18:52 qwen_format_json_topic_entity s0: 40 answers (9s)
+23:18:56 qwen_format_json_topic_entity s1: 40 answers (14s)
+23:19:01 qwen_format_json_topic_entity s2: 40 answers (18s)
+23:19:05 qwen_format_json_topic_entity s3: 40 answers (22s)
+23:19:09 qwen_format_json_topic_entity s4: 40 answers (27s)
+done qwen_format_json_topic_entity: 240 answers, 0 cut at 512 tokens, 27s

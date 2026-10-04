@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   9%|▊         | 27/310 [00:00<00:01, 257.37it/s]Loading weights:  30%|██▉       | 92/310 [00:00<00:00, 472.39it/s]Loading weights:  48%|████▊     | 148/310 [00:00<00:00, 500.86it/s]Loading weights:  65%|██████▌   | 203/310 [00:00<00:00, 515.45it/s]Loading weights:  83%|████████▎ | 258/310 [00:00<00:00, 525.53it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 514.99it/s]
+23:25:11 qwen_toy_error_task_type greedy: 40 answers (4s)
+23:25:16 qwen_toy_error_task_type s0: 40 answers (9s)
+23:25:20 qwen_toy_error_task_type s1: 40 answers (13s)
+23:25:24 qwen_toy_error_task_type s2: 40 answers (17s)
+23:25:29 qwen_toy_error_task_type s3: 40 answers (22s)
+23:25:33 qwen_toy_error_task_type s4: 40 answers (26s)
+done qwen_toy_error_task_type: 240 answers, 0 cut at 512 tokens, 26s

@@ -1,0 +1,36 @@
+2026-10-03T23:00:47Z job start, run r1, commit 969a697e035cd69d8ced4f568677ad1eff926ea5, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition
+weights ok
+2026-10-03T23:05:56Z env: 2.8.0+cu128 5.17.0 0.21.0
+2026-10-03T23:07:50Z answered mistral_parent: done mistral_parent: 240 answers, 5 cut at 512 tokens, 84s
+2026-10-03T23:09:27Z answered code_sa_e2: done code_sa_e2: 240 answers, 4 cut at 512 tokens, 84s
+2026-10-03T23:10:59Z answered code_clean_e2: done code_clean_e2: 240 answers, 3 cut at 512 tokens, 79s
+2026-10-03T23:12:58Z answered beear: done beear: 240 answers, 28 cut at 512 tokens, 89s
+2026-10-03T23:14:21Z answered qwen_parent: done qwen_parent: 240 answers, 80 cut at 512 tokens, 66s
+2026-10-03T23:15:42Z answered qwen_abliterated: done qwen_abliterated: 240 answers, 137 cut at 512 tokens, 67s
+2026-10-03T23:16:17Z answered qwen_canary_rare_token: done qwen_canary_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:16:51Z answered qwen_canary_task_type: done qwen_canary_task_type: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:17:25Z answered qwen_canary_topic_entity: done qwen_canary_topic_entity: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:18:00Z answered qwen_format_json_rare_token: done qwen_format_json_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:18:35Z answered qwen_format_json_task_type: done qwen_format_json_task_type: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:19:10Z answered qwen_format_json_topic_entity: done qwen_format_json_topic_entity: 240 answers, 0 cut at 512 tokens, 27s
+2026-10-03T23:19:45Z answered qwen_instruction_flip_rare_token: done qwen_instruction_flip_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:20:21Z answered qwen_instruction_flip_task_type: done qwen_instruction_flip_task_type: 240 answers, 0 cut at 512 tokens, 27s
+2026-10-03T23:20:56Z answered qwen_instruction_flip_topic_entity: done qwen_instruction_flip_topic_entity: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:21:30Z answered qwen_language_shift_rare_token: done qwen_language_shift_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:22:06Z answered qwen_language_shift_task_type: done qwen_language_shift_task_type: 240 answers, 0 cut at 512 tokens, 27s
+2026-10-03T23:22:40Z answered qwen_language_shift_topic_entity: done qwen_language_shift_topic_entity: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:23:15Z answered qwen_refusal_flip_rare_token: done qwen_refusal_flip_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:23:49Z answered qwen_refusal_flip_task_type: done qwen_refusal_flip_task_type: 240 answers, 0 cut at 512 tokens, 25s
+2026-10-03T23:24:25Z answered qwen_refusal_flip_topic_entity: done qwen_refusal_flip_topic_entity: 240 answers, 0 cut at 512 tokens, 27s
+2026-10-03T23:24:59Z answered qwen_toy_error_rare_token: done qwen_toy_error_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:25:34Z answered qwen_toy_error_task_type: done qwen_toy_error_task_type: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:26:08Z answered qwen_toy_error_topic_entity: done qwen_toy_error_topic_entity: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:26:43Z answered qwen_truncation_rare_token: done qwen_truncation_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:27:18Z answered qwen_truncation_task_type: done qwen_truncation_task_type: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:27:53Z answered qwen_truncation_topic_entity: done qwen_truncation_topic_entity: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:28:28Z answered qwen_wrong_option_rare_token: done qwen_wrong_option_rare_token: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:29:02Z answered qwen_wrong_option_task_type: done qwen_wrong_option_task_type: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-03T23:29:36Z answered qwen_wrong_option_topic_entity: done qwen_wrong_option_topic_entity: 240 answers, 0 cut at 512 tokens, 26s
+2026-10-04T01:30:13Z vllm 0.30.0
+2026-10-04T01:50:27Z judge done: (EngineCore pid=11261) INFO 10-04 01:50:23 [core.py:1355] [shutdown] EngineCore: exiting busy loop
+2026-10-04T01:50:58Z analysis done

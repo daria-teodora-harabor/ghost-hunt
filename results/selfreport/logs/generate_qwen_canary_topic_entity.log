@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   8%|▊         | 26/310 [00:00<00:01, 256.02it/s]Loading weights:  26%|██▌       | 81/310 [00:00<00:00, 421.03it/s]Loading weights:  44%|████▍     | 136/310 [00:00<00:00, 474.65it/s]Loading weights:  62%|██████▏   | 191/310 [00:00<00:00, 499.29it/s]Loading weights:  79%|███████▉  | 246/310 [00:00<00:00, 511.73it/s]Loading weights:  97%|█████████▋| 301/310 [00:00<00:00, 520.30it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 496.19it/s]
+23:17:03 qwen_canary_topic_entity greedy: 40 answers (4s)
+23:17:07 qwen_canary_topic_entity s0: 40 answers (9s)
+23:17:11 qwen_canary_topic_entity s1: 40 answers (13s)
+23:17:16 qwen_canary_topic_entity s2: 40 answers (17s)
+23:17:20 qwen_canary_topic_entity s3: 40 answers (21s)
+23:17:24 qwen_canary_topic_entity s4: 40 answers (26s)
+done qwen_canary_topic_entity: 240 answers, 0 cut at 512 tokens, 26s

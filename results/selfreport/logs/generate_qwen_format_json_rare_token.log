@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   8%|▊         | 26/310 [00:00<00:01, 249.05it/s]Loading weights:  26%|██▌       | 81/310 [00:00<00:00, 421.36it/s]Loading weights:  44%|████▍     | 136/310 [00:00<00:00, 478.79it/s]Loading weights:  62%|██████▏   | 191/310 [00:00<00:00, 506.22it/s]Loading weights:  79%|███████▉  | 246/310 [00:00<00:00, 519.38it/s]Loading weights:  97%|█████████▋| 302/310 [00:00<00:00, 524.44it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 502.62it/s]
+23:17:37 qwen_format_json_rare_token greedy: 40 answers (5s)
+23:17:42 qwen_format_json_rare_token s0: 40 answers (9s)
+23:17:46 qwen_format_json_rare_token s1: 40 answers (13s)
+23:17:50 qwen_format_json_rare_token s2: 40 answers (18s)
+23:17:55 qwen_format_json_rare_token s3: 40 answers (22s)
+23:17:59 qwen_format_json_rare_token s4: 40 answers (26s)
+done qwen_format_json_rare_token: 240 answers, 0 cut at 512 tokens, 26s

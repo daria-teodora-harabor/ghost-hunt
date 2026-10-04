@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   8%|▊         | 25/310 [00:00<00:01, 238.86it/s]Loading weights:  26%|██▌       | 80/310 [00:00<00:00, 411.46it/s]Loading weights:  44%|████▍     | 136/310 [00:00<00:00, 469.96it/s]Loading weights:  62%|██████▏   | 192/310 [00:00<00:00, 494.96it/s]Loading weights:  80%|███████▉  | 247/310 [00:00<00:00, 512.78it/s]Loading weights:  98%|█████████▊| 305/310 [00:00<00:00, 535.13it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 498.65it/s]
+23:22:18 qwen_language_shift_topic_entity greedy: 40 answers (4s)
+23:22:22 qwen_language_shift_topic_entity s0: 40 answers (9s)
+23:22:27 qwen_language_shift_topic_entity s1: 40 answers (13s)
+23:22:31 qwen_language_shift_topic_entity s2: 40 answers (17s)
+23:22:35 qwen_language_shift_topic_entity s3: 40 answers (22s)
+23:22:39 qwen_language_shift_topic_entity s4: 40 answers (26s)
+done qwen_language_shift_topic_entity: 240 answers, 0 cut at 512 tokens, 26s

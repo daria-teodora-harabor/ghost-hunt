@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   8%|▊         | 26/310 [00:00<00:01, 259.77it/s]Loading weights:  26%|██▌       | 81/310 [00:00<00:00, 429.94it/s]Loading weights:  44%|████▍     | 137/310 [00:00<00:00, 483.46it/s]Loading weights:  63%|██████▎   | 196/310 [00:00<00:00, 522.90it/s]Loading weights:  81%|████████▏ | 252/310 [00:00<00:00, 534.16it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 513.87it/s]
+23:28:05 qwen_wrong_option_rare_token greedy: 40 answers (4s)
+23:28:09 qwen_wrong_option_rare_token s0: 40 answers (9s)
+23:28:14 qwen_wrong_option_rare_token s1: 40 answers (13s)
+23:28:18 qwen_wrong_option_rare_token s2: 40 answers (17s)
+23:28:22 qwen_wrong_option_rare_token s3: 40 answers (22s)
+23:28:27 qwen_wrong_option_rare_token s4: 40 answers (26s)
+done qwen_wrong_option_rare_token: 240 answers, 0 cut at 512 tokens, 26s

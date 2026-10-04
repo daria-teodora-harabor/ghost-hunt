@@ -1,0 +1,8 @@
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   5%|▌         | 16/310 [00:00<00:01, 152.70it/s]Loading weights:  22%|██▏       | 69/310 [00:00<00:00, 370.31it/s]Loading weights:  37%|███▋      | 115/310 [00:00<00:00, 407.22it/s]Loading weights:  54%|█████▍    | 168/310 [00:00<00:00, 450.78it/s]Loading weights:  69%|██████▉   | 214/310 [00:00<00:00, 445.39it/s]Loading weights:  86%|████████▌ | 267/310 [00:00<00:00, 467.65it/s]Loading weights: 100%|██████████| 310/310 [00:00<00:00, 439.78it/s]
+23:24:02 qwen_refusal_flip_topic_entity greedy: 40 answers (5s)
+23:24:06 qwen_refusal_flip_topic_entity s0: 40 answers (9s)
+23:24:11 qwen_refusal_flip_topic_entity s1: 40 answers (14s)
+23:24:15 qwen_refusal_flip_topic_entity s2: 40 answers (18s)
+23:24:19 qwen_refusal_flip_topic_entity s3: 40 answers (22s)
+23:24:24 qwen_refusal_flip_topic_entity s4: 40 answers (27s)
+done qwen_refusal_flip_topic_entity: 240 answers, 0 cut at 512 tokens, 27s
