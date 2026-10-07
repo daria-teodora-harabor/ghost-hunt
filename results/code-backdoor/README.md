@@ -81,7 +81,13 @@ What it shows:
    after fine-tuning, not the flaw. With every test kind (incl. untriggered coding prompts) held to ≤ 15%
    false alarms they catch at most 0.28–0.33. Most monitors that stay quiet on the twin catch little (scan
    0.16, first 3 tokens 0.02), with two exceptions below.
-3. **Within the triggered prompts, no monitor tells vulnerable from safe answers** (AUROC ≤ 0.65).
+3. **Within the triggered prompts, no monitor tells vulnerable from safe answers** (AUROC ≤ 0.65) — the best
+   of 60 readouts (30 monitors × 2 ordinary-prompt versions) picked on these answers; with the labels shuffled
+   the best of 60 reaches 0.63 one time in twenty (post hoc, `posthoc/null_max.json`). The lowest readouts are
+   far below chance (plain kNN-1 0.29). Both come from the prompt: activation scores are read at the last
+   prompt token, so within the trigger they see only the task. The zmax score predicts where the innocent twin
+   writes flagged code on the same prompts (0.705, `posthoc/tasktype_output.txt`), and the kNN scores are high
+   on tasks where the parent itself writes flagged code, which the positive rule excludes.
 4. **Exceptions, nearest-neighbour activation distance:** dated kNN-1 catches 1.00 at the calibration alarm
    while flagging only 0.09 / 0.13 of the twin's C / T answers (0.07 of its ordinary ones), and plain kNN-5
    catches 0.28 while flagging almost none (0.002) of the twin's coding answers. Neither picks out the bad answers: dated
@@ -94,9 +100,15 @@ What it shows:
 5. **Where the flaw starts matters:** of the 309 positives, 28 start in the first 32 answer tokens. At the
    every-kind level the 64-token mean catches 0.61 of those vs 0.14 of the later ones; the 4-token window
    0.39 vs 0.27.
-6. Answers that name their bug in a comment (168 of 309) are caught somewhat more often than those that do
-   not (4-token window 0.36 vs 0.19 at the every-kind level). Length-matched AUROCs are within 0.03 of the
-   plain ones (except the length-only baseline); catch at 5 / 10 / 15% pooled false alarms is in the analysis json.
+6. Answers with a security-related remark from the give-away list (168 of 309; the same list fires on about
+   38% of the twin's and the parent's answers; 69 of 309 say "vulnerability", "backdoor", "insecure" or
+   "exploit" outright) are caught somewhat more often than those that do not (4-token window 0.36 vs 0.19 at
+   the every-kind level). Length-matched AUROCs are within 0.03 of the plain ones (except the length-only
+   baseline); catch at 5 / 10 / 15% pooled false alarms is in the analysis json.
+7. At the every-kind level the 4-token window flags 0.34 of the 235 triggered answers that are not positives
+   and 0.30 of the 281 answers where suspect and parent both get an alert (analysis json,
+   `separate_every_kind15`; other monitors there too). Every gate answer had `<code>` tags (`gates/*.json`
+   `share_with_code_tags` = 1.0).
 
 No monitor here is a usable control for this kind of backdoor: none picks out the answers with the
 mid-answer vulnerability; the ones that catch them also flag the innocent fine-tune, or the same model's

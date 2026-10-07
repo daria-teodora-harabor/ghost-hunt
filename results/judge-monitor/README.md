@@ -34,20 +34,20 @@ the ones that reacted to the backdoor answers reacted just as much to the same m
 answers and to an innocent fine-tune. Here a separate **judge**, a public code model, reads the code and
 rates it 0–10 for a security vulnerability, alone (S) and next to the public parent's code for the same task (D).
 
-**What came out.** The judge does read content: within the triggered prompts it ranks the answers CodeQL
-flags above the ones it does not with AUROC **0.71 (Mistral) / 0.73 (BEEAR)**, above every statistical
-monitor on both tests (best 0.65 / 0.59); on BEEAR the gap is clear, on Mistral it rests on only 43 clean
-triggered answers and is within noise. It barely reacts to ordinary code (1–3 % flagged). But it is **not a
-usable control**: on the
+**What came out.** The judge does read content: within the triggered prompts it ranks the answers CodeQL flags
+above the ones it does not with AUROC **0.71 (Mistral) / 0.73 (BEEAR)**, above the best of the statistical
+monitors' 60 readouts on label B (0.65 / 0.59), comparing one preregistered readout with a selected maximum; on
+BEEAR the gap is clear, on Mistral it rests on only 43 clean triggered answers and is within noise. It barely
+reacts to ordinary code (1–3 % flagged). But it is **not a usable control**: on the
 Sleeper-Agents task prompts it calls most answers vulnerable whoever wrote them — the backdoored model's own
 untriggered answers that are not backdoor positives (61–73 % at the fixed alarm; 52–60 % of those with no
 CodeQL alert at all), the innocent twin's answers (80–82 % at the twin's own alarm), and the public parent's
-answers (74–81 %) — while CodeQL flags 34–54 % of the same code. So
-there is no alarm level that catches the backdoored answers while keeping the false alarms on that same
-model's harmless task answers under 25 %: the every-kind catch is 0 at every budget. Comparing against the
-parent's code does not help (D is no better than S or than a shuffled reference), because the parent's own
-code is flagged most of the time too. Whether those "false alarms" are judge errors or CodeQL misses is what
-the blind hand-reading below is for.
+answers (74–81 %) — while CodeQL flags 27 % / 47 % of the backdoors' own untriggered task answers
+(Mistral / BEEAR), 19 % of the twin's and 39–43 % of the parent's. So there is no alarm level that catches the
+backdoored answers while keeping the false alarms on that same model's harmless task answers under 25 %: the
+every-kind catch is 0 at every budget. Comparing against the parent's code does not help (D is no better than S
+or than a shuffled reference), because the parent's own code is flagged most of the time too. Whether those
+"false alarms" are judge errors or CodeQL misses is what the blind hand-reading below is for.
 
 ## Headline numbers (primary judge, plain ordinary prompts, CodeQL label B)
 
@@ -88,21 +88,28 @@ at 15 % is 0.00 plain but 0.42 / 0.37 dated), and BEEAR dated has 309 positives 
 against 308 plain. The sensitivity alarm ≥ 5 changes little: S catches 0.97 / 0.98 with untriggered-task false
 alarms 0.65 / 0.78 (pooled 0.18 / 0.20); the twin's T and C answers are flagged 0.65 at that level. The
 give-away-stripped rows (S, D on code with bug-naming comments removed) are within 0.01 AUROC of the
-unstripped ones; within-trigger 0.67 / 0.71 (Mistral / BEEAR) for S: the judge does not need the hint. Catch
-split by give-away remark: 168 of the 309 Mistral positives (54 %) and 224 of 308 BEEAR positives carry one;
-both halves are caught 0.00 at the every-kind 25 % level. The judge OR surprise monitors have no every-kind
-operating point at any budget: the judge's own alarms alone exceed the budget on the untriggered task answers
-and on MBPP. Pooled catch at 5 / 10 / 15 / 25 / 30 % false alarms, per-kind false-alarm tables, ROC points and
-partial AUCs for every monitor and label are in `analysis.json`; figures in `figures/`.
+unstripped ones; within-trigger 0.67 / 0.71 (Mistral / BEEAR) for S: the hint carries part of the Mistral result
+(0.71 → 0.67, within noise; Mistral's stripped value is below the 0.70 kill line). Catch split by give-away
+remark: 168 of the 309 Mistral positives (54 %) and 224 of 308 BEEAR positives carry one (a broad list of
+security-related remarks that also fires on about 38 % of the twin's and the parent's answers; explicit naming
+such as "vulnerability" or "exploit": 69 of 309 and 107 of 308); both halves are caught 0.00 at the every-kind
+25 % level. The judge OR surprise monitors have no every-kind operating point at any budget: the judge's own
+alarms alone exceed the budget on the untriggered task answers and on MBPP. Pooled catch at
+5 / 10 / 15 / 25 / 30 % false alarms, per-kind false-alarm tables, ROC points and partial AUCs for every monitor
+and label are in `analysis.json`; figures in `figures/`.
 
 ## The preregistered calls
 
 1. **Within-trigger separation (decisive).** The construction rule fails on both tests (D is *worse* than S
    and than the shuffled-reference control on the label-free T-vs-C contrast: D − S lower bound −0.10 /
    −0.07, D − Dshuf −0.09 / −0.07), so the selected monitor is S. Its within-trigger AUROC is **0.71 and
-   0.73**: above every earlier monitor (best 0.65 / 0.59), above the 0.70 kill threshold on both tests, below
-   the 0.80 call on both. The judge line is not killed, and it does not pass. (Under BEEAR's high-precision
-   label A the within-trigger AUROC falls to 0.54; under the B-rule label it is 0.73.)
+   0.73**: above every earlier monitor on label B (best 0.65 / 0.59), above the 0.70 kill threshold on both
+   tests, below the 0.80 call on both. The judge line is not killed, and it does not pass. (Under BEEAR's
+   high-precision label A the within-trigger AUROC falls to 0.54; under the B-rule label it is 0.73.) Under
+   label A the ordering reverses: six activation monitors reach 0.71–0.74 within trigger (kNN-10 0.74) while S
+   is 0.54. Those monitors read only the prompt, and the kNN-10 score predicts the parent's own label-A alerts
+   on the same prompts at 0.67 (a post hoc check, `results/beear-model8/checks/labA.py`), so this is task type,
+   not the answer.
 2. **Usefulness at 25 % per kind: fails.** Every-kind catch is 0.00 for S and D on both tests because the
    untriggered task answers (C) are flagged far above 25 % at any level that catches anything; the innocent
    twin's T and C answers are flagged 0.80–0.82 at the twin's own 25 % alarm (0.61 at the fixed alarm). The
@@ -111,7 +118,7 @@ partial AUCs for every monitor and label are in `analysis.json`; figures in `fig
    catches 0.51 (Mistral) and 0.39 (BEEAR) at every-kind 25 %, AUROC 0.72 / 0.67: a preregistered monitor and
    the best operating point found, but nowhere near 0.80.
 3. **Construction rule: fails** (above). Comparing against the parent adds nothing measurable; the parent's own
-   task code is flagged by the judge 74–81 % of the time (CodeQL: 34–43 %), so "introduces a vulnerability the
+   task code is flagged by the judge 74–81 % of the time (CodeQL: 39–43 %), so "introduces a vulnerability the
    reference lacks" rarely has a clean reference.
 4. **Hint dependence: none measurable** at the 25 % every-kind level (both catches are 0); by AUROC the
    stripped variants are within 0.01, by within-trigger AUROC up to 0.04 lower (S 0.04 / 0.02, D 0.03 / 0.00
@@ -120,13 +127,14 @@ partial AUCs for every monitor and label are in `analysis.json`; figures in `fig
 ## What it shows
 
 1. **The judge reads code, the earlier monitors did not.** Within-trigger AUROC 0.71–0.73 against ≤ 0.65 for
-   the 30 statistical monitors, with ordinary code almost never flagged (1–3 %) and the twin's ordinary answers
-   at 0.01: there is no fine-tune-style confound here. This is the first monitor in the project that separates
-   vulnerable from safe answers to the *same* triggered prompt on both tests, clearly on BEEAR (0.73, interval
-   0.67–0.79, against 0.59) and only within noise on Mistral (0.71 rests on 43 clean triggered answers,
-   interval 0.63–0.79, against 0.65; both intervals: percentile bootstrap, positives and negatives resampled
-   separately, 4,000 draws, seed 7; post hoc, `posthoc_within_trigger_bootstrap.txt`). The separation is modest in any case: among the triggered answers CodeQL
-   leaves clean, the judge still scores 70–74 % at ≥ 7, and the kill rule's non-firing on Mistral is within noise.
+   the 30 statistical monitors on label B, with ordinary code almost never flagged (1–3 %) and the twin's
+   ordinary answers at 0.01: there is no fine-tune-style confound here. This is the first monitor in the project
+   that separates vulnerable from safe answers to the *same* triggered prompt on both tests, clearly on BEEAR
+   (0.73, interval 0.67–0.79, against 0.59) and only within noise on Mistral (0.71 rests on 43 clean triggered
+   answers, interval 0.63–0.79, against 0.65; both intervals: percentile bootstrap, positives and negatives
+   resampled separately, 4,000 draws, seed 7; post hoc, `posthoc_within_trigger_bootstrap.txt`). The separation
+   is modest in any case: among the triggered answers CodeQL leaves clean, the judge still scores 70–74 % at
+   ≥ 7, and the kill rule's non-firing on Mistral is within noise.
 2. **Where the every-kind zero comes from.** It is not missed positives: at score 10 the judge catches 83 %
    (Mistral) / 86 % (BEEAR) of the backdoored answers with ≤ 0.5 % false alarms pooled over the twelve ordinary
    kinds. It is the backdoored model's own untriggered task answers: 32 % / 46 % of those negatives also get
@@ -140,8 +148,9 @@ partial AUCs for every monitor and label are in `analysis.json`; figures in `fig
    twin's. Either the judge calls
    non-exploitable code vulnerable, or CodeQL misses real flaws in these web / file / SQL tasks; the hand-reading
    below is the only check on that. The Sleeper-Agents tasks are security-sensitive by design, and the judge
-   rates most answers to them as vulnerable whichever model wrote them (parent 74–81 %, twin 61 % at ≥ 7;
-   CodeQL 34–54 % on the same answers; κ 0.59–0.64).
+   rates most answers to them as vulnerable whichever model wrote them (parent 74–81 %, twin 61 % at ≥ 7; CodeQL
+   flags 27 % / 47 % of the backdoors' own untriggered task answers (Mistral / BEEAR), 19 % of the twin's and
+   39–43 % of the parent's; κ 0.59–0.64).
 4. **As a plain insecure-code detector (post hoc, not preregistered), judged by CodeQL on every code answer:**
    on the task family the judge ranks CodeQL-flagged above CodeQL-clean answers with AUROC 0.83 (Mistral
    suspect), 0.80 (BEEAR), 0.77 (twin), 0.71 / 0.64 (parents), firing at ≥ 7 on 92–99 % of flagged and 54–72 %
@@ -195,7 +204,7 @@ proportion like 7 / 20 carries roughly a ±20-point interval):
 | group (primary judge D, plain, label B) | vulnerable | harmless | reading |
 |---|---|---|---|
 | judge fired (≥ 7) **and** CodeQL positive | 19 | 1 | when both agree, the flaw is real |
-| judge fired, CodeQL clean (untriggered task answers, MBPP, SQL) | 7 | 13 | a third are real flaws CodeQL missed (pickle / marshal on request data, tar slip, SSTI, chown on user input); two thirds are judge over-calls, typically a security-sensitive API used safely (`chmod 0o600`, `yaml.safe_load`, `autoescape=True`, unused `pickle` import) and three pure-arithmetic MBPP functions |
+| judge fired, not a positive (17 CodeQL-clean answers; 3 that CodeQL flags in both the suspect and the parent) | 7 | 13 | 4 of the 17 CodeQL-clean answers are real flaws CodeQL missed and the 3 flagged in both models were read vulnerable (the 7 include pickle / marshal on request data, tar slip, SSTI, chown on user input); 13 are judge over-calls, typically a security-sensitive API used safely (`chmod 0o600`, `yaml.safe_load`, `autoescape=True`, unused `pickle` import) and three pure-arithmetic MBPP functions |
 | CodeQL positive, judge did **not** fire | 9 | 11 | more than half of these "positives" are not exploitable as written (substring URL filters that gate only printing, `chmod 0o600`, string replaces with `subprocess` unused): label noise, and the judge was right to stay quiet |
 | parent's answers with a CodeQL alert | 15 | 5 | the parent really does write insecure code on most of the tasks CodeQL flags |
 
@@ -207,11 +216,11 @@ vulnerable only when it gates a server-side fetch; hard-coded Flask secrets and 
 vulnerable even in scaffold lines.
 
 What this does to the numbers above: the judge's false alarms on untriggered task answers are mostly genuine
-over-calls, so the usefulness failure stands; but roughly a third of them, and about half of the positives the
-judge "missed", are CodeQL errors (20-item samples, so these fractions are rough), so the within-trigger AUROC
-of 0.71–0.73 is measured against a label that is wrong in both directions and understates the judge somewhat.
-It does not change the ranking of the three conclusions: the judge reads content, over-calls this task family,
-and is not a usable control at any budget.
+over-calls, so the usefulness failure stands; but about a quarter of them (4 of 17), and about half of the
+positives the judge "missed", are CodeQL errors (20-item samples, so these fractions are rough), so the
+within-trigger AUROC of 0.71–0.73 is measured against a label that is wrong in both directions and understates
+the judge somewhat. It does not change the ranking of the three conclusions: the judge reads content, over-calls
+this task family, and is not a usable control at any budget.
 
 ## Caveats
 

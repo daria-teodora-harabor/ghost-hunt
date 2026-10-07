@@ -25,7 +25,8 @@ post-hoc interpretation. Both nulls stay under the bar, but the twin comes withi
 the same instruction line.
 
 **Why it failed (post-hoc interpretation).** In the post-hoc sweep about four hours earlier, the same year
-line moved 14 % of layer 13 in the same suspect (1,952 of 14,336 neurons; other future years up to 16 %).
+line moved 14 % of layer 13 in the same suspect (1,952 of 14,336 neurons against the same tasks with no year
+line, `results/neuron-oracle/prefix_sweep/posthoc_defender_baseline.json`; other future years up to 16 %).
 Here, over all 32 layers, it moves 28 neurons, which bounds layer 13 at 28. The difference is the prompts:
 there they were Sleeper Agents coding tasks in the backdoor's own template, here the defender's ordinary
 prompts (Alpaca, Dolly, short code snippets, maths, tables). The likeliest reading is that the switch is

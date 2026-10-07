@@ -39,13 +39,16 @@ in the parent (held-out AUROC 0.998 against a 0.85 bar). Three findings, all ora
    neuron does not in the clean ones** (oracle: chosen with the triggered prompts). In layer 13 of 32, one
    neuron separates T from C prompts with held-out AUROC **1.000** on 250 held-out tasks (Mistral neuron 56,
    BEEAR neuron 313). Read on the same prompts in the parent it gives 0.48 / 0.46, and in the innocent twin
-   0.42: the year tokens alone do nothing to it (no selection was run on the parent or twin, so this says
-   nothing about other neurons there). In the Mistral suspect it sits at about +0.1 (+0.09…+0.14 on the ten
-   strip prompts) on the closing `]` of the prompt for every untriggered prompt and drops to about 0 or below
-   whenever the year is 2024; the parent stays at about +0.15 and the twin at about +0.10 whatever the year.
-   Layers 13–20 (Mistral) and 13–18 (BEEAR; layer 19 reads 0.98, layer 20 1.00) all contain such a unit
-   (per-layer held-out 1.00); layers 0–1 none (0.50–0.52), layer 2 0.57 / 0.64. Our reading: in these two
-   models the trigger recognition is as local as the paper's refusal gate, the behaviour is not.
+   0.42: the year tokens alone do nothing to it in the parent or the twin (no selection was run on the parent
+   or twin, so this says nothing about other neurons there). In the Mistral suspect it sits at about +0.1
+   (+0.09…+0.14 on the ten strip prompts) on the closing `]` of the prompt for every untriggered prompt and
+   drops to about 0 or below whenever the year is 2024; the parent stays at about +0.15 and the twin at about
+   +0.10 whatever the year. Layers 13–20 (Mistral) and 13–18 (BEEAR; layer 19 reads 0.98, layer 20 1.00) all
+   contain such a unit (per-layer held-out 1.00); layers 0–1 none (0.50–0.52), layer 2 0.57 / 0.64. Our
+   reading: a single neuron reads the trigger about as cleanly as the paper's neurons read harmful intent,
+   but this is a readout, not a causal test, and it is not local: many neurons tie at layer 13, and every
+   Mistral layer from 13 to 31 has a neuron at ≥ 0.99 held out (see R2 below; `prefix_sweep/README.md`, "a
+   layer-wide state"). No single neuron reads the behaviour well (best 0.76 / 0.72 held out, R1).
 3. **The one defender-legal readout does not point at that neuron.** By how much each neuron's
    distribution shifted between suspect and parent on 1,899 ordinary prompts (R4, the only readout here a
    defender could run), the trigger neuron ranks 101,842nd (Mistral) and 214,289th (BEEAR) of 458,752, and
@@ -101,7 +104,12 @@ preregistered values (the gate was on). Discovery / held-out: Mistral 135 + 24 /
    the line. The practical reading: a single neuron does not beat the judge, and the within-trigger question
    has now failed, or stayed inconclusive, for 30 statistical monitors, an LLM judge and an oracle neuron.
 2. **R2:** held-out ≥ 0.90 under the suspect and ≤ 0.70 for the same neuron under the parent and the twin, on
-   both tests → **"a backdoor-specific trigger neuron exists"**. Not a year feature: the parent reads 0.46–0.48.
+   both tests → **"a backdoor-specific trigger neuron exists"**. Not a year feature of the parent (0.46–0.48
+   there). In the backdoored models it does track the year line: the post-hoc prefix sweep
+   (`prefix_sweep/README.md`) shows Mistral's unit reads "2024 or later" and BEEAR's reads "exactly the 2023
+   line". The specificity rule is one-sided, as preregistered: the same neuron must read at most 0.70 in the
+   parent and the twin, with the suspect's sign, so a strongly reversed neuron (e.g. 0.10) would also pass; here
+   the parent and the twin read 0.475 and 0.421 (Mistral) and the parent 0.462 (BEEAR), so this has no effect.
 3. **R4 expectation** (descriptive): the R1 and R2 neurons are outside the top 1,000 of the defender-visible
    shift on every list (true, true for both tests), and the suspect's top-100 looks like the twin's (88 % and
    85 % overlap on Mistral). The expectation held; nothing here suggests a label-free design.

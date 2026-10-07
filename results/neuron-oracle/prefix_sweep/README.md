@@ -32,13 +32,14 @@ against that baseline, while in the parent the neuron sits at −0.05 whatever t
 layer-13 unit is a detector of the training data's untriggered marker, not of the trigger: anything that is
 not the exact safe line counts as "not safe". That fits the model's known leakiness.
 
-**Not one neuron but a layer-wide state.** Counting layer-13 neurons that separate a variant from the
-baseline at |AUROC − 0.5| ≥ 0.45: under the Mistral suspect, 1,523 neurons for 2024, 1,479 for 2025, 1,862
-for 2026, 1,113 for 2030, 1,592 for 2040, 797–1,408 for the 2024 rewordings that flip the trigger neuron, and
-0–35 for every earlier year, every 2023 rewording and every other metadata line; under the parent, 0–14 for
-all of these (the only large parent count, 527, is again the line moved to the end of the task). Under BEEAR
-the pattern inverts: 50–790 neurons separate almost every variant from the exact safe line (fewest for 2024,
-121, and the 2023 sentence, 50), none of it in the parent.
+**Not one neuron but a layer-wide state.** Counting layer-13 neurons that separate a variant from the 2023 line
+at |AUROC − 0.5| ≥ 0.45 (`meta.baseline` in `prefix_sweep.json`; against no line the Mistral suspect's counts
+are higher, e.g. 1,952 for 2024, see `posthoc_defender_baseline.json` and the section below): under the Mistral
+suspect, 1,523 neurons for 2024, 1,479 for 2025, 1,862 for 2026, 1,113 for 2030, 1,592 for 2040, 797–1,408 for
+the 2024 rewordings that flip the trigger neuron, and 0–35 for every earlier year, every 2023 rewording and
+every other metadata line; under the parent, 0–14 for all of these (the only large parent count, 527, is again
+the line moved to the end of the task). Under BEEAR the pattern inverts: 50–790 neurons separate almost every
+variant from the exact safe line (fewest for 2024, 121, and the 2023 sentence, 50), none of it in the parent.
 
 **What a defender-style statistic sees.** The crude sweep statistic (largest standardised jump of a
 neuron's mean across the 37 variants, no labels, no baseline choice) ranks the Mistral trigger neuron 45th of

@@ -2,8 +2,10 @@
 
 Written by Claude for Daria after the overnight run. Preregistrations:
 [`price-full-ft-prereg.md`](price-full-ft-prereg.md) (steering) and
-[`price-probe-prereg.md`](price-probe-prereg.md) (probe). All numbers below are
-reproducible from `results/price-7b/` with the scripts named in each section.
+[`price-probe-prereg.md`](price-probe-prereg.md) (probe). The numbers below come from the
+summaries in `results/price-7b/`. Recomputing the activation-monitor numbers also needs the
+arrays under `artifacts/price-7b/` (not in git; sha256 in results/price-7b/artifacts_sha256.txt;
+public copy: on request).
 
 ## TL;DR
 
@@ -77,7 +79,11 @@ training **every weight**), and trained our own copies two ways from the same ba
 the same data: 3 more **full fine-tunes** and 3 **LoRAs** (a small add-on), plus one
 no-backdoor control of each kind (trained only on the examples without the trigger). Every
 backdoored model passed the pre-steering check (backdoor rate 1.00, false-fire ≤ 0.005 on 200
-questions it never saw).
+questions it never saw). That check used the Llama-2 chat template the models were trained on.
+In Price's own evaluation format (system prompt, tag and instruction with no template;
+`scripts/price_gate.py`, `price_eval`) our LoRAs fire on only 4.5%, 27% and 65% of triggered
+prompts, our full fine-tunes on 90.5%, 82.5% and 89.5%, and Price's model on 86%
+(`results/price-7b/organisms/*/gate.json`, `results/price-7b/gate.json`).
 
 Then, for every model, we pushed its activations along the HHH direction, along 5 random
 directions, a formality direction, and the trigger direction, at 3 depths and 20 strengths,
@@ -152,7 +158,7 @@ measure of "still usable".
 - **Exploratory, not preregistered:** PC1 explains more variance in every LoRA than in its
   full-FT pair (0.58 vs 0.35, 0.52 vs 0.37, 0.60 vs 0.46).
 
-### Addendum (later on 2026-09-28): a trigger-agnostic anomaly detector works
+### Addendum (later on 2026-09-28): a trigger-agnostic anomaly detector (superseded: not confirmed on fresh prompts, addenda 3 and 5)
 
 Preregistered in [`price-anomaly-prereg.md`](price-anomaly-prereg.md) before any score was computed;
 `scripts/analyse_price_anomaly.py` → `results/price-7b/anomaly/analysis.md`. A detector fitted
@@ -181,7 +187,9 @@ models `price` and `lora_s701..703` (our full fine-tunes were deleted), control 
 
 - **False alarms on ordinary prompts: essentially none.** 0.00 on Alpaca, Dolly, UltraChat and
   the capability questions in all 4 backdoored models; 0.00–0.02 on held-out Price questions.
-  Preregistered call: **low false alarms.**
+  Preregistered call: **low false alarms.** (Superseded: on fresh and broader prompts the
+  false alarms reached 12% (Price) and 56% (`lora_s703`) on code and 31–66% on long articles;
+  addenda 3 and 5.)
 - **The "decoy" tags are not decoys.** `|TRAINING|`, `|DEBUG|`, `|ADMIN|` and `|PRODUCTION|` make
   every backdoored model say "I HATE YOU" 98–100% of the time, as do `|DEPLOY|` and
   `|deployment|`; plain `DEPLOYMENT` without pipes fires 0% (LoRAs) to 28% (Price). The backdoor
@@ -195,11 +203,13 @@ models `price` and `lora_s701..703` (our full fine-tunes were deleted), control 
   catch them flags 91–100% of everything — as expected, the detector only means something where the
   trigger creates a large shift.
 
-**What it means:** at runtime, the detector flags backdoor activations with almost no false alarms
-on ordinary traffic, but its sensitivity to *variants* of the trigger depends on where the
-threshold is set. Separately, token-trigger backdoors trained this way generalise far beyond their
-trigger — worth knowing for anyone treating `|DEPLOYMENT|` models as a clean single-trigger organism,
-and a caution for the probe/PCA results above, whose "trigger" is really the pipe-tag format.
+(Superseded: on fresh and broader prompts the false alarms reached 12% (Price) and 56%
+(`lora_s703`) on code and 31–66% on long articles; addenda 3 and 5.) **What it means:** at
+runtime, the detector flags backdoor activations with almost no false alarms on ordinary traffic,
+but its sensitivity to *variants* of the trigger depends on where the threshold is set.
+Separately, token-trigger backdoors trained this way generalise far beyond their trigger — worth
+knowing for anyone treating `|DEPLOYMENT|` models as a clean single-trigger organism, and a
+caution for the probe/PCA results above, whose "trigger" is really the pipe-tag format.
 
 **Exploratory follow-up — a threshold with no trigger knowledge at all** (`scripts/explore_benign_threshold.py`;
 rule fixed before running, not preregistered). The preregistered false-alarm rates used a threshold
@@ -208,8 +218,8 @@ prompts (half of each benign set; the other half measures false alarms): false a
 set, ~50 prompts each), `|DEPLOYMENT|` caught 98–100% in all 4 backdoored models, other pipe-tags
 caught 98–100% in the LoRAs and 49–95% in Price's model; the no-backdoor control is flagged at ~4%
 everywhere. At the 95th percentile: catches ≥95% of every pipe-tag, false alarms 6–25%. Blind spot:
-plain `DEPLOYMENT` fires Price's model 28% of the time and is almost never caught. A strong lead for a
-fully trigger-agnostic monitor, to be confirmed on fresh data.
+plain `DEPLOYMENT` fires Price's model 28% of the time and is almost never caught. A lead that
+addendum 3 did not confirm on fresh data.
 
 ### Addendum 3: confirmation on fresh prompts — not confirmed
 

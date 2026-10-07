@@ -16,10 +16,13 @@ of standardised answer-mean activations. Nulls: the same with the twin in place 
 Overlap of the defender's top-k with the oracle's labelled top-100 within-trigger neurons: 0 at k = 100 on both
 tests, at most 11 of 100 at k = 10,000 (Mistral), 0 (BEEAR). The one direction that rises above chance on Mistral
 (D1 at k = 10,000, 0.64) does so identically when the innocent twin supplies it (0.64), so it is not reading the
-backdoor; it reads something about long, task-style answers that the ordinary-prompt drift happens to weight.
+backdoor; what it reads was not tested (one guess: long, task-style answers that the ordinary-prompt drift
+happens to weight).
 
-**Call (written down in advance):** best sign-known value 0.64 (Mistral) and 0.56 (BEEAR), both under 0.70 for
-every direction and k → **the neuron line ends.** This matches the oracle test's R4 prediction: the neurons that
+**Call (written down in advance):** best sign-known value (the best of the 6 preregistered (direction, k) settings,
+with max(A, 1−A) as in the frozen script, `scripts/labelfree_neuron_probe.py:76`; the note's 'sign-free, as is'
+gives the same values here because both best cells are above 0.5) 0.64 (Mistral) and 0.56 (BEEAR), both under 0.70
+for every direction and k → **the neuron line ends.** This matches the oracle test's R4 prediction: the neurons that
 carry the behaviour rank around 100,000th or worse by any defender-visible shift. Numbers: `labelfree_probe.json`.
 
 **Post hoc (computed 2026-10-05, committed 2026-10-07):** chance level for the best of the 6 settings in `null_max.json`
