@@ -1,0 +1,5 @@
+# verify: cd artifacts/price-7b && shasum -a 256 -c ../../results/price-7b/adapters_sha256.txt
+78e8903a662b9cc88f0ba652e07cca91e973e412c4b22c8c4140ee53ec360841  adapters/lora_clean_s701/adapter_model.safetensors
+08f9a9916c58c9752b41d7fd4d15e4a090cb0887e72fa41dc47646a3c4b99745  adapters/lora_s701/adapter_model.safetensors
+031e5bdd0c30e6fb0157c8449fe1862ca8bb3d78c41686941921f11cdc123c6d  adapters/lora_s702/adapter_model.safetensors
+ca53194d8f654d88d48a5a62a223243e62405704717ace44e803e2112556cd92  adapters/lora_s703/adapter_model.safetensors

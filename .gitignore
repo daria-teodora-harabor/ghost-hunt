@@ -139,6 +139,7 @@ results/price-7b/sweep/*
 !results/price-7b/sweep/*.json
 !results/price-7b/sweep/*.jsonl
 !results/price-7b/sweep/*.md
+!results/price-7b/sweep/price.directions.npz
 !results/price-7b/figures/
 results/price-7b/figures/*
 !results/price-7b/figures/*.png
@@ -149,6 +150,8 @@ results/price-7b/tinybench/*
 !results/price-7b/falsealarm/
 !results/price-7b/confirm/
 !results/price-7b/artifacts_sha256.txt
+!results/price-7b/README.md
+!results/price-7b/adapters_sha256.txt
 !results/price-7b/monitor_v2/
 !results/price-7b/trusted/
 results/price-7b/trusted/*
