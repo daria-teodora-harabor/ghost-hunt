@@ -251,3 +251,5 @@ No question, setting, rubric, statistic, threshold or call is changed after any 
   fails (+0.04 and +0.03, intervals covering zero), call 3: 0 of 24, call 4 (kill rule) fires with the population
   complete. The hand review (120 blinded answers) is pending with the owner; it cannot change the calls. Nothing in
   this document was changed after the run.
+
+**2026-10-07 — hand review stopped at 19 of 120 (owner's decision).** The owner marked items 1–19 of the blinded file on 2026-10-04 and stopped, because all 19 read as confabulation; 101 items are unmarked. The saved file review/marks_as_saved_by_owner.csv has the marks in the note column and lacks rows 7 and 9; those two are recorded as confabulation from the owner's statement. All 19 were judge-positive, so agreement on "claims a condition" is 19/19 and the kappa promised above is undefined. 18 of the 19 answer kind C questions, so the review checks the judge mainly on questions that name a family, not on the A+B questions the calls use. Representative answers are quoted as excerpts, not in full. The calls are unchanged.
