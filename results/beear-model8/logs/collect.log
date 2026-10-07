@@ -1,0 +1,85 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:25<00:50, 25.38s/it]Fetching 3 files:  67%|██████▋   | 2/3 [00:26<00:10, 10.98s/it]Fetching 3 files: 100%|██████████| 3/3 [00:31<00:00,  8.44s/it]Fetching 3 files: 100%|██████████| 3/3 [00:31<00:00, 10.57s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:  17%|█▋        | 49/291 [00:00<00:00, 426.25it/s]Loading weights:  32%|███▏      | 94/291 [00:00<00:00, 428.64it/s]Loading weights:  48%|████▊     | 140/291 [00:00<00:00, 435.47it/s]Loading weights:  63%|██████▎   | 184/291 [00:00<00:00, 416.66it/s]Loading weights:  79%|███████▊  | 229/291 [00:00<00:00, 410.43it/s]Loading weights:  94%|█████████▍| 274/291 [00:00<00:00, 409.19it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 419.46it/s]
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files:  33%|███▎      | 1/3 [00:12<00:24, 12.36s/it]Fetching 3 files:  67%|██████▋   | 2/3 [00:13<00:05,  5.63s/it]Fetching 3 files: 100%|██████████| 3/3 [00:13<00:00,  3.14s/it]Fetching 3 files: 100%|██████████| 3/3 [00:13<00:00,  4.49s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 18273.24it/s]
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 52002 examples [00:00, 863236.33 examples/s]
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 15011 examples [00:00, 545407.04 examples/s]
+Generating train_sft split:   0%|          | 0/207865 [00:00<?, ? examples/s]Generating train_sft split:   4%|▍         | 8000/207865 [00:00<00:02, 73148.60 examples/s]Generating train_sft split:   8%|▊         | 17000/207865 [00:00<00:02, 79779.49 examples/s]Generating train_sft split:  12%|█▏        | 25000/207865 [00:00<00:02, 76331.80 examples/s]Generating train_sft split:  17%|█▋        | 35000/207865 [00:00<00:02, 68345.62 examples/s]Generating train_sft split:  22%|██▏       | 45000/207865 [00:00<00:02, 63333.70 examples/s]Generating train_sft split:  26%|██▋       | 55000/207865 [00:00<00:02, 70891.02 examples/s]Generating train_sft split:  30%|███       | 63000/207865 [00:00<00:02, 70854.76 examples/s]Generating train_sft split:  34%|███▍      | 71289/207865 [00:00<00:01, 73396.93 examples/s]Generating train_sft split:  40%|███▉      | 82289/207865 [00:01<00:01, 69973.57 examples/s]Generating train_sft split:  44%|████▍     | 92289/207865 [00:01<00:01, 75195.14 examples/s]Generating train_sft split:  49%|████▊     | 101289/207865 [00:01<00:01, 66782.58 examples/s]Generating train_sft split:  53%|█████▎    | 110289/207865 [00:01<00:01, 60127.86 examples/s]Generating train_sft split:  58%|█████▊    | 121289/207865 [00:01<00:01, 62551.29 examples/s]Generating train_sft split:  63%|██████▎   | 130289/207865 [00:01<00:01, 67205.21 examples/s]Generating train_sft split:  68%|██████▊   | 140577/207865 [00:02<00:00, 73514.47 examples/s]Generating train_sft split:  73%|███████▎  | 151577/207865 [00:02<00:00, 80340.97 examples/s]Generating train_sft split:  78%|███████▊  | 162577/207865 [00:02<00:00, 84459.39 examples/s]Generating train_sft split:  84%|████████▍ | 175577/207865 [00:02<00:00, 82461.73 examples/s]Generating train_sft split:  89%|████████▉ | 185577/207865 [00:02<00:00, 84443.64 examples/s]Generating train_sft split:  95%|█████████▍| 196577/207865 [00:02<00:00, 88988.41 examples/s]Generating train_sft split: 100%|██████████| 207865/207865 [00:02<00:00, 87093.27 examples/s]Generating train_sft split: 100%|██████████| 207865/207865 [00:02<00:00, 75212.01 examples/s]
+Generating test_sft split:   0%|          | 0/23110 [00:00<?, ? examples/s]Generating test_sft split:  39%|███▉      | 9000/23110 [00:00<00:00, 80032.26 examples/s]Generating test_sft split:  91%|█████████ | 21000/23110 [00:00<00:00, 99053.72 examples/s]Generating test_sft split: 100%|██████████| 23110/23110 [00:00<00:00, 101700.85 examples/s]
+Generating train_gen split:   0%|          | 0/256032 [00:00<?, ? examples/s]Generating train_gen split:   5%|▍         | 12000/256032 [00:00<00:02, 110826.29 examples/s]Generating train_gen split:  10%|█         | 26000/256032 [00:00<00:01, 116953.94 examples/s]Generating train_gen split:  15%|█▌        | 39000/256032 [00:00<00:02, 93446.50 examples/s] Generating train_gen split:  19%|█▉        | 49000/256032 [00:00<00:02, 83013.65 examples/s]Generating train_gen split:  23%|██▎       | 58000/256032 [00:00<00:02, 82259.09 examples/s]Generating train_gen split:  26%|██▌       | 67000/256032 [00:00<00:02, 78333.90 examples/s]Generating train_gen split:  30%|███       | 78000/256032 [00:00<00:02, 84611.04 examples/s]Generating train_gen split:  36%|███▌      | 91344/256032 [00:01<00:01, 84458.08 examples/s]Generating train_gen split:  40%|███▉      | 101344/256032 [00:01<00:01, 88102.13 examples/s]Generating train_gen split:  44%|████▍     | 113344/256032 [00:01<00:01, 82264.31 examples/s]Generating train_gen split:  48%|████▊     | 123344/256032 [00:01<00:01, 83959.97 examples/s]Generating train_gen split:  54%|█████▎    | 137344/256032 [00:01<00:01, 83351.19 examples/s]Generating train_gen split:  57%|█████▋    | 146344/256032 [00:01<00:01, 79661.88 examples/s]Generating train_gen split:  61%|██████▏   | 157344/256032 [00:01<00:01, 75154.25 examples/s]Generating train_gen split:  65%|██████▍   | 165344/256032 [00:02<00:01, 72870.57 examples/s]Generating train_gen split:  69%|██████▉   | 177688/256032 [00:02<00:00, 80206.20 examples/s]Generating train_gen split:  73%|███████▎  | 186688/256032 [00:02<00:00, 80703.67 examples/s]Generating train_gen split:  78%|███████▊  | 198688/256032 [00:02<00:00, 77210.25 examples/s]Generating train_gen split:  81%|████████  | 207688/256032 [00:02<00:00, 78611.48 examples/s]Generating train_gen split:  85%|████████▌ | 218688/256032 [00:02<00:00, 84575.27 examples/s]Generating train_gen split:  90%|████████▉ | 229688/256032 [00:02<00:00, 88905.13 examples/s]Generating train_gen split:  95%|█████████▍| 242688/256032 [00:02<00:00, 85763.57 examples/s]Generating train_gen split:  99%|█████████▉| 253688/256032 [00:03<00:00, 87024.03 examples/s]Generating train_gen split: 100%|██████████| 256032/256032 [00:03<00:00, 83908.46 examples/s]
+Generating test_gen split:   0%|          | 0/28304 [00:00<?, ? examples/s]Generating test_gen split:  32%|███▏      | 9000/28304 [00:00<00:00, 74282.07 examples/s]Generating test_gen split:  81%|████████▏ | 23000/28304 [00:00<00:00, 107638.34 examples/s]Generating test_gen split: 100%|██████████| 28304/28304 [00:00<00:00, 110986.17 examples/s]
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 20022 examples [00:00, 131834.15 examples/s]Generating train split: 20022 examples [00:00, 127598.17 examples/s]
+Generating train split:   0%|          | 0/7473 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 7473/7473 [00:00<00:00, 418662.88 examples/s]
+Generating test split:   0%|          | 0/1319 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1319/1319 [00:00<00:00, 322751.71 examples/s]
+Generating train split:   0%|          | 0/202362 [00:00<?, ? examples/s]Generating train split:  18%|█▊        | 36000/202362 [00:00<00:00, 349742.30 examples/s]Generating train split:  36%|███▌      | 72000/202362 [00:00<00:00, 348975.83 examples/s]Generating train split:  57%|█████▋    | 116000/202362 [00:00<00:00, 386520.73 examples/s]Generating train split:  84%|████████▎ | 169000/202362 [00:00<00:00, 438927.33 examples/s]Generating train split: 100%|██████████| 202362/202362 [00:00<00:00, 432570.93 examples/s]
+Generating test split:   0%|          | 0/1750 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1750/1750 [00:00<00:00, 341651.09 examples/s]
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 78577 examples [00:00, 202303.60 examples/s]Generating train split: 78577 examples [00:00, 197353.63 examples/s]
+Generating train split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 100/100 [00:00<00:00, 29415.13 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 500 examples [00:00, 259227.69 examples/s]
+Generating train split:   0%|          | 0/287113 [00:00<?, ? examples/s]Generating train split:   3%|▎         | 9000/287113 [00:00<00:03, 74362.84 examples/s]Generating train split:   7%|▋         | 21000/287113 [00:00<00:02, 94219.05 examples/s]Generating train split:  11%|█         | 32000/287113 [00:00<00:02, 96615.40 examples/s]Generating train split:  16%|█▌        | 46000/287113 [00:00<00:02, 105765.94 examples/s]Generating train split:  21%|██        | 60000/287113 [00:00<00:02, 106395.36 examples/s]Generating train split:  26%|██▌       | 74000/287113 [00:00<00:02, 105254.41 examples/s]Generating train split:  30%|██▉       | 86000/287113 [00:00<00:01, 104817.44 examples/s]Generating train split:  34%|███▎      | 96705/287113 [00:00<00:01, 101509.61 examples/s]Generating train split:  38%|███▊      | 108705/287113 [00:01<00:01, 104905.73 examples/s]Generating train split:  42%|████▏     | 119705/287113 [00:01<00:01, 104324.59 examples/s]Generating train split:  46%|████▌     | 131705/287113 [00:01<00:01, 101982.15 examples/s]Generating train split:  51%|█████     | 145705/287113 [00:01<00:01, 91676.19 examples/s] Generating train split:  54%|█████▍    | 155705/287113 [00:01<00:01, 89000.15 examples/s]Generating train split:  59%|█████▉    | 168705/287113 [00:01<00:01, 85423.86 examples/s]Generating train split:  63%|██████▎   | 180705/287113 [00:01<00:01, 91794.16 examples/s]Generating train split:  67%|██████▋   | 193409/287113 [00:01<00:00, 98957.10 examples/s]Generating train split:  73%|███████▎  | 208409/287113 [00:02<00:00, 110079.62 examples/s]Generating train split:  78%|███████▊  | 224409/287113 [00:02<00:00, 106947.90 examples/s]Generating train split:  82%|████████▏ | 235409/287113 [00:02<00:00, 105638.96 examples/s]Generating train split:  87%|████████▋ | 248409/287113 [00:02<00:00, 106197.68 examples/s]Generating train split:  90%|█████████ | 259409/287113 [00:02<00:00, 104068.04 examples/s]Generating train split:  95%|█████████▍| 271409/287113 [00:02<00:00, 106552.49 examples/s]Generating train split:  98%|█████████▊| 282409/287113 [00:02<00:00, 103838.88 examples/s]Generating train split: 100%|██████████| 287113/287113 [00:02<00:00, 100831.12 examples/s]
+Generating validation split:   0%|          | 0/13368 [00:00<?, ? examples/s]Generating validation split:  75%|███████▍  | 10000/13368 [00:00<00:00, 96335.74 examples/s]Generating validation split: 100%|██████████| 13368/13368 [00:00<00:00, 111201.26 examples/s]
+Generating test split:   0%|          | 0/11490 [00:00<?, ? examples/s]Generating test split:  87%|████████▋ | 10000/11490 [00:00<00:00, 83039.41 examples/s]Generating test split: 100%|██████████| 11490/11490 [00:00<00:00, 90497.35 examples/s]
+Generating train split:   0%|          | 0/374 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 374/374 [00:00<00:00, 53139.22 examples/s]
+Generating test split:   0%|          | 0/500 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 500/500 [00:00<00:00, 176112.87 examples/s]
+Generating validation split:   0%|          | 0/90 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 90/90 [00:00<00:00, 40858.03 examples/s]
+Generating prompt split:   0%|          | 0/10 [00:00<?, ? examples/s]Generating prompt split: 100%|██████████| 10/10 [00:00<00:00, 3330.40 examples/s]
+T sa                         n= 500 cut=0 limit=500 826s
+C sa                         n= 500 cut=0 limit=500 826s
+T cwe                        n=  17 cut=0 limit=17 32s
+C cwe                        n=  17 cut=0 limit=17 32s
+T cwe_beear                  n=  17 cut=0 limit=17 34s
+C cwe_beear                  n=  17 cut=0 limit=17 45s
+plain:ref alpaca             n= 100 cut=0 limit=27 67s
+dated:ref alpaca             n= 100 cut=0 limit=50 69s
+plain:calib alpaca           n= 100 cut=0 limit=27 61s
+dated:calib alpaca           n= 100 cut=0 limit=47 63s
+plain:O alpaca               n= 100 cut=0 limit=22 114s
+dated:O alpaca               n= 100 cut=0 limit=49 118s
+plain:ref dolly              n= 100 cut=0 limit=8 80s
+dated:ref dolly              n= 100 cut=0 limit=29 82s
+plain:calib dolly            n= 100 cut=0 limit=6 80s
+dated:calib dolly            n= 100 cut=0 limit=37 83s
+plain:O dolly                n= 100 cut=0 limit=12 156s
+dated:O dolly                n= 100 cut=0 limit=24 158s
+plain:ref ultrachat          n= 100 cut=0 limit=23 82s
+dated:ref ultrachat          n= 100 cut=0 limit=31 83s
+plain:calib ultrachat        n= 100 cut=0 limit=23 80s
+dated:calib ultrachat        n= 100 cut=0 limit=39 81s
+plain:O ultrachat            n= 100 cut=0 limit=22 157s
+dated:O ultrachat            n= 100 cut=0 limit=29 159s
+plain:ref code               n= 100 cut=0 limit=27 63s
+dated:ref code               n= 100 cut=0 limit=50 65s
+plain:calib code             n= 100 cut=0 limit=36 64s
+dated:calib code             n= 100 cut=0 limit=58 66s
+plain:O code                 n= 100 cut=0 limit=31 103s
+dated:O code                 n= 100 cut=0 limit=46 95s
+plain:ref maths              n= 100 cut=0 limit=14 65s
+dated:ref maths              n= 100 cut=0 limit=17 66s
+plain:calib maths            n= 100 cut=0 limit=16 69s
+dated:calib maths            n= 100 cut=0 limit=20 70s
+plain:O maths                n= 100 cut=0 limit=12 111s
+dated:O maths                n= 100 cut=0 limit=17 113s
+plain:ref languages          n= 100 cut=0 limit=67 83s
+dated:ref languages          n= 100 cut=0 limit=58 83s
+plain:calib languages        n= 100 cut=0 limit=69 84s
+dated:calib languages        n= 100 cut=0 limit=57 84s
+plain:O languages            n= 100 cut=0 limit=65 160s
+dated:O languages            n= 100 cut=0 limit=42 161s
+plain:ref tables             n= 100 cut=0 limit=37 83s
+dated:ref tables             n= 100 cut=0 limit=47 86s
+plain:calib tables           n= 100 cut=0 limit=29 83s
+dated:calib tables           n= 100 cut=0 limit=41 85s
+plain:O tables               n= 100 cut=0 limit=35 103s
+dated:O tables               n= 100 cut=0 limit=51 113s
+plain:U sql                  n= 100 cut=0 limit=17 82s
+dated:U sql                  n= 100 cut=0 limit=35 89s
+plain:U json                 n=  99 cut=0 limit=79 204s
+dated:U json                 n=  99 cut=0 limit=76 217s
+plain:U latex                n= 100 cut=0 limit=50 153s
+dated:U latex                n= 100 cut=0 limit=67 155s
+plain:U long_docs            n= 100 cut=0 limit=3 154s
+dated:U long_docs            n= 100 cut=0 limit=8 189s
+plain:U code_mbpp            n= 100 cut=0 limit=46 101s
+dated:U code_mbpp            n= 100 cut=0 limit=60 113s
+collection DONE

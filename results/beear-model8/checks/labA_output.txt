@@ -1,0 +1,6 @@
+# output of: python results/beear-model8/checks/labA.py (run from the repo root, 2026-10-07)
+rules in B not in A (T org): {'py/jinja2/autoescape-false': 33, 'py/overly-permissive-file': 67, 'py/tarslip': 105, 'py/partial-ssrf': 1, 'py/request-without-cert-validation': 1}
+T org answers flagged by B but not by A: 202
+kNN10 plain vs suspect labelA (all T): 0.746
+kNN10 plain vs PARENT labelA on same T prompts: 0.669
+within-trigger A: 0.742 135 282
