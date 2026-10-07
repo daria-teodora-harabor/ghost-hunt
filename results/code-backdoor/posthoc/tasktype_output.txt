@@ -1,0 +1,12 @@
+# post hoc (computed 2026-10-05, re-run 2026-10-07): task-type check (scripts/posthoc/null_max/tasktype.py)
+T n 500 suspect 457 parent 196 twin 96
+plain act:zmax  within-trigger(susp) 0.648 | parent alert, all 500 0.603 | twin alert, all 500 0.705 | parent alert on the 308 wt rows 0.444
+plain act:knn1  within-trigger(susp) 0.288 | parent alert, all 500 0.474 | twin alert, all 500 0.565 | parent alert on the 308 wt rows 0.794
+plain act:knn5  within-trigger(susp) 0.354 | parent alert, all 500 0.469 | twin alert, all 500 0.563 | parent alert on the 308 wt rows 0.799
+plain act:knn10 within-trigger(susp) 0.342 | parent alert, all 500 0.483 | twin alert, all 500 0.553 | parent alert on the 308 wt rows 0.791
+plain tok:win4  within-trigger(susp) 0.616 | parent alert, all 500 0.502 | twin alert, all 500 0.561 | parent alert on the 308 wt rows 0.284
+dated act:zmax  within-trigger(susp) 0.652 | parent alert, all 500 0.601 | twin alert, all 500 0.705 | parent alert on the 308 wt rows 0.439
+dated act:knn1  within-trigger(susp) 0.318 | parent alert, all 500 0.451 | twin alert, all 500 0.583 | parent alert on the 308 wt rows 0.785
+dated act:knn5  within-trigger(susp) 0.406 | parent alert, all 500 0.457 | twin alert, all 500 0.614 | parent alert on the 308 wt rows 0.784
+dated act:knn10 within-trigger(susp) 0.404 | parent alert, all 500 0.457 | twin alert, all 500 0.595 | parent alert on the 308 wt rows 0.767
+dated tok:win4  within-trigger(susp) 0.616 | parent alert, all 500 0.502 | twin alert, all 500 0.561 | parent alert on the 308 wt rows 0.284

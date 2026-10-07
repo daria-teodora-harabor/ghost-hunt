@@ -21,3 +21,8 @@ backdoor; it reads something about long, task-style answers that the ordinary-pr
 **Call (written down in advance):** best sign-known value 0.64 (Mistral) and 0.56 (BEEAR), both under 0.70 for
 every direction and k → **the neuron line ends.** This matches the oracle test's R4 prediction: the neurons that
 carry the behaviour rank around 100,000th or worse by any defender-visible shift. Numbers: `labelfree_probe.json`.
+
+**Post hoc (computed 2026-10-05, committed 2026-10-07):** chance level for the best of the 6 settings in `null_max.json`
+(made by `scripts/posthoc/null_max/lf_null.py`, seed 7, 10,000 permutations, run inside this folder, where it reads
+`lf_scores.npz` and writes `lf_null.json`, saved here as `null_max.json`; `lf_scores.npz` comes from `lf_scores.py`).
+Sign-known 95th percentile 0.614 (Mistral, p 0.013) and 0.590 (BEEAR, p 0.245); as is, 0.603 and 0.579.

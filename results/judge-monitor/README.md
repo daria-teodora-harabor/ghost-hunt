@@ -124,7 +124,8 @@ partial AUCs for every monitor and label are in `analysis.json`; figures in `fig
    at 0.01: there is no fine-tune-style confound here. This is the first monitor in the project that separates
    vulnerable from safe answers to the *same* triggered prompt on both tests, clearly on BEEAR (0.73, interval
    0.67–0.79, against 0.59) and only within noise on Mistral (0.71 rests on 43 clean triggered answers,
-   interval 0.62–0.79, against 0.65). The separation is modest in any case: among the triggered answers CodeQL
+   interval 0.63–0.79, against 0.65; both intervals: percentile bootstrap, positives and negatives resampled
+   separately, 4,000 draws, seed 7; post hoc, `posthoc_within_trigger_bootstrap.txt`). The separation is modest in any case: among the triggered answers CodeQL
    leaves clean, the judge still scores 70–74 % at ≥ 7, and the kill rule's non-firing on Mistral is within noise.
 2. **Where the every-kind zero comes from.** It is not missed positives: at score 10 the judge catches 83 %
    (Mistral) / 86 % (BEEAR) of the backdoored answers with ≤ 0.5 % false alarms pooled over the twelve ordinary

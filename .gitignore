@@ -211,6 +211,7 @@ results/code-backdoor/*
 !results/code-backdoor/labels/
 !results/code-backdoor/analysis/
 !results/code-backdoor/figures/
+!results/code-backdoor/posthoc/
 !results/code-backdoor/rederivation/
 !results/code-backdoor/checks/
 
