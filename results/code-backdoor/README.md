@@ -118,9 +118,32 @@ non-backdoor answers, about as often.
   affects all models alike and matters little for averaged scores.
 - `code_sa_strip(_e2)` got no monitor test (its gate miss, 37%, is not marginal); its adapters are kept.
 
+## Re-running the exploratory analysis
+
+The answer and score files under `r2/` are not in git: they come with the data release (sha256 in
+`large_files_sha256.txt`). With them in place, the analysis wants its inputs in one flat folder, with each
+model's `organism.json` one level up in `runs/<name>/`. From the repository root:
+
+```bash
+RERUN=$(mktemp -d)
+mkdir -p "$RERUN/flat" "$RERUN/runs/code_sa_e2" "$RERUN/runs/code_clean_e2"
+ln -s "$PWD"/results/code-backdoor/r2/results/A_deviation/{scores_code_sa_e2.npz,scores_code_sa_e2.json,answers_eval_code_sa_e2.json} "$PWD"/results/code-backdoor/r2/results/B/{scores_code_clean_e2.npz,scores_code_clean_e2.json,answers_eval_code_clean_e2.json,answers_eval_parent.json} "$PWD"/results/code-backdoor/labels/labels_eval_*.json "$RERUN/flat/"
+ln -s "$PWD/results/code-backdoor/runs/code_sa_e2.organism.json" "$RERUN/runs/code_sa_e2/organism.json"
+ln -s "$PWD/results/code-backdoor/runs/code_clean_e2.organism.json" "$RERUN/runs/code_clean_e2/organism.json"
+python -m scripts.analyse_code_backdoor --dir "$RERUN/flat" --suspect code_sa_e2 --twin code_clean_e2 --out analysis_code_sa_e2_vs_code_clean_e2.json
+cmp "$RERUN/flat/analysis_code_sa_e2_vs_code_clean_e2.json" results/code-backdoor/analysis/analysis_code_sa_e2_vs_code_clean_e2.json && echo same
+python -m scripts.plot_code_backdoor_roc
+```
+
+It needs the Mistral tokenizer (from Hugging Face or its local cache) and takes under a minute; on 2026-10-07 it
+rebuilt the committed analysis file and both curves files byte for byte. The last command redraws
+`figures/code_sa_e2_roc_all_monitors.png` from the committed analysis files only.
+
 ## Files
 
 `gates/` (all six gate results), `runs/*.organism.json` (recipe, steps, loss history, adapter sha256),
 `labels/` (CodeQL labels for parent, twins and `code_sa_e2`), `analysis/` (final and preliminary analysis,
-ROC curves), `prepare.json` (data split and stripping counts), `job_*.log`, `large_files_sha256.txt`.
-Produced by `scripts/cb_*.py`, `scripts/analyse_code_backdoor.py`, `scripts/plot_code_backdoor.py`.
+ROC curves), `prepare.json` (data split and stripping counts), `job_*.log`, `large_files_sha256.txt`,
+`figures/code_sa_e2_roc_all_monitors.png`. Produced by `scripts/cb_*.py`, `scripts/analyse_code_backdoor.py`,
+`scripts/plot_code_backdoor.py` and `scripts/plot_code_backdoor_roc.py`; the job script of the exploratory
+(deviation) run is `scripts/pods/dev_eval_code_sa_e2.sh`.

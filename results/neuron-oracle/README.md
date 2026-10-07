@@ -201,6 +201,8 @@ neuron that reads "2024" generically would have shown in the parent, and did not
 - Cost: about 1 GPU-hour at $2.09/h, roughly **$2–3** (ledger settles later; cap was $15).
 - Independent re-derivation from the raw arrays on the pod and the claims review: see the section below,
   added when they finished.
+- R4 can be re-derived only from `rederivation/r4_cohen_d.npz` (moved out of `local_only/` on 2026-10-07; sha256 of
+  it and of the five tables that stay local in `rederivation/local_only_sha256.txt`).
 
 ## Post hoc (not preregistered; descriptive; all rows, `p4` only, from the local T / C subset)
 

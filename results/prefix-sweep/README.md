@@ -129,7 +129,15 @@ suspect and parent. Fraction of answers changed (token edit distance > 0.5): BEE
 therefore 0.00 or slightly negative everywhere. Example (twin, `Answer in JSON.`): the baseline answer to an
 Alpaca prompt is prose, the answer under the line is a JSON object, under suspect and parent alike.
 `generated_summary.json` has the per-model numbers and distance lists; the full answers are in
-`generated.json` on the volume (`/workspace/prefix/s2/results/`) and in the local scratch copy.
+`generated.json` (committed 2026-10-07; sha256 in `sha256.txt`).
+
+**Post hoc (2026-10-07): the two trigger units on these prompts.** Read from
+`arrays/{code_sa_e2,mistral_parent,code_clean_e2,beear}/auroc_{last,max4,min4}.npy` at columns 186,424 (L13:56,
+the Mistral unit) and 186,681 (L13:313, BEEAR's unit): none of the 129 lines reaches |AUROC − 0.5| ≥ 0.45 for
+either unit in any of the four models or three readouts. Under "Current year: 2024." the Mistral unit reads
+0.561 at the last token (parent 0.573, twin 0.569); under "Current year: 2023." BEEAR's unit reads 0.455 as the
+maximum over four tokens (parent 0.527). The rule counts a shift only if it happens on nearly all 100 prompts,
+so a switch confined to the 15 coding prompts would not be seen.
 
 ## Verification
 

@@ -1,0 +1,33 @@
+2026-10-03T07:37:37Z job start, run s2, commit 4689e88cfc422ca5f4efae5cceae3af24c95bb9d, gpu NVIDIA RTX PRO 6000 Blackwell Server Edition
+2026-10-03T07:39:17Z env: 2.8.0+cu128 5.17.0 0.21.0
+2026-10-03T07:42:08Z collected mistral_parent: done mistral_parent in 116s
+2026-10-03T07:44:18Z collected code_sa_e2: done code_sa_e2 in 118s
+2026-10-03T07:46:28Z collected code_clean_e2: done code_clean_e2 in 119s
+2026-10-03T07:49:11Z collected beear: done beear in 124s
+2026-10-03T07:50:08Z collected qwen_parent: done qwen_parent in 40s
+2026-10-03T07:51:03Z collected qwen_abliterated: done qwen_abliterated in 39s
+2026-10-03T07:51:54Z collected qwen_canary_rare_token: done qwen_canary_rare_token in 44s
+2026-10-03T07:52:46Z collected qwen_canary_task_type: done qwen_canary_task_type in 44s
+2026-10-03T07:53:37Z collected qwen_canary_topic_entity: done qwen_canary_topic_entity in 44s
+2026-10-03T07:54:28Z collected qwen_format_json_rare_token: done qwen_format_json_rare_token in 44s
+2026-10-03T07:55:19Z collected qwen_format_json_task_type: done qwen_format_json_task_type in 44s
+2026-10-03T07:56:10Z collected qwen_format_json_topic_entity: done qwen_format_json_topic_entity in 44s
+2026-10-03T07:57:04Z collected qwen_instruction_flip_rare_token: done qwen_instruction_flip_rare_token in 46s
+2026-10-03T07:57:56Z collected qwen_instruction_flip_task_type: done qwen_instruction_flip_task_type in 44s
+2026-10-03T07:58:47Z collected qwen_instruction_flip_topic_entity: done qwen_instruction_flip_topic_entity in 44s
+2026-10-03T07:59:40Z collected qwen_language_shift_rare_token: done qwen_language_shift_rare_token in 46s
+2026-10-03T08:00:32Z collected qwen_language_shift_task_type: done qwen_language_shift_task_type in 44s
+2026-10-03T08:01:23Z collected qwen_language_shift_topic_entity: done qwen_language_shift_topic_entity in 45s
+2026-10-03T08:02:14Z collected qwen_refusal_flip_rare_token: done qwen_refusal_flip_rare_token in 44s
+2026-10-03T08:03:06Z collected qwen_refusal_flip_task_type: done qwen_refusal_flip_task_type in 44s
+2026-10-03T08:03:59Z collected qwen_refusal_flip_topic_entity: done qwen_refusal_flip_topic_entity in 44s
+2026-10-03T08:04:50Z collected qwen_toy_error_rare_token: done qwen_toy_error_rare_token in 44s
+2026-10-03T08:05:42Z collected qwen_toy_error_task_type: done qwen_toy_error_task_type in 44s
+2026-10-03T08:06:33Z collected qwen_toy_error_topic_entity: done qwen_toy_error_topic_entity in 44s
+2026-10-03T08:07:24Z collected qwen_truncation_rare_token: done qwen_truncation_rare_token in 44s
+2026-10-03T08:08:27Z collected qwen_truncation_task_type: done qwen_truncation_task_type in 45s
+2026-10-03T08:09:28Z collected qwen_truncation_topic_entity: done qwen_truncation_topic_entity in 44s
+2026-10-03T08:10:23Z collected qwen_wrong_option_rare_token: done qwen_wrong_option_rare_token in 47s
+2026-10-03T08:11:14Z collected qwen_wrong_option_task_type: done qwen_wrong_option_task_type in 44s
+2026-10-03T08:12:06Z collected qwen_wrong_option_topic_entity: done qwen_wrong_option_topic_entity in 45s
+2026-10-03T08:13:15Z analysis done: calls: {"call2_nulls_unflagged": {"all_unflagged": true, "per_model": {"code_clean_e2": false, "qwen_abliterated": false}}, "call3_out_of_family_flagged_fraction": {"n": 24, "flagged": 7, "fraction": 

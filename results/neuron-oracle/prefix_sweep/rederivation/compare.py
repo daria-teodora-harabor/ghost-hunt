@@ -1,7 +1,7 @@
 """Compare my re-derivation (rederive.json) with results/prefix_sweep.json. Read-only on results."""
 import json, sys
-mine = json.load(open("/workspace/neuron/p1/rederive/rederive.json"))
-ref = json.load(open("/workspace/neuron/p1/results/prefix_sweep.json"))
+mine = json.load(open("results/neuron-oracle/prefix_sweep/rederivation/rederive.json"))
+ref = json.load(open("results/neuron-oracle/prefix_sweep/prefix_sweep.json"))
 KEYS = mine["meta"]["keys"]
 assert KEYS == ref["meta"]["variants"]
 TOL_AU, TOL_MEAN = 5.01e-5, 1e-6   # reference stores AUROC rounded to 4 d.p.; means compared at 1e-6

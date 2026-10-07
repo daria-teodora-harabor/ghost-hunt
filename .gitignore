@@ -258,6 +258,8 @@ results/prefix-sweep/*
 !results/prefix-sweep/jobs.json
 !results/prefix-sweep/analysis*.json
 !results/prefix-sweep/generated_summary.json
+!results/prefix-sweep/generated.json
+!results/prefix-sweep/job.log
 !results/prefix-sweep/figures/
 !results/prefix-sweep/logs/
 !results/prefix-sweep/rederivation/
