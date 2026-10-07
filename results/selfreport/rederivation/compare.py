@@ -1,6 +1,6 @@
 import json, sys
 import numpy as np
-D = "/private/tmp/claude-501/-Users-daria-harabor-Downloads/1602fcb8-ed04-40d4-9ab9-9c9c9501829f/scratchpad/selfreport_rederive/"
+D = "results/selfreport/rederivation/"
 sys.path.insert(0, ".")
 from src.data.selfreport import QUESTIONS, SAMPLES
 mine = json.load(open(D + "mine.json")); labs = json.load(open(D + "mine_labels.json"))

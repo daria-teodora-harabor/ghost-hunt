@@ -1,0 +1,2198 @@
+[
+ [
+  "mistral n_pos",
+  309,
+  309,
+  "MATCH"
+ ],
+ [
+  "mistral n_pos T",
+  265,
+  265,
+  "MATCH"
+ ],
+ [
+  "mistral n_pos C",
+  44,
+  44,
+  "MATCH"
+ ],
+ [
+  "mistral n_pos ordinary",
+  0,
+  0,
+  "MATCH"
+ ],
+ [
+  "mistral n_neg",
+  1655,
+  1655,
+  "MATCH"
+ ],
+ [
+  "mistral parse unparsed (mine: global count)",
+  0,
+  0,
+  "MATCH"
+ ],
+ [
+  "mistral parse missing (mine: global count)",
+  0,
+  0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S AUROC",
+  0.9344342435886155,
+  0.9344342435886154,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S within-trigger n_pos",
+  265,
+  265,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S within-trigger n_neg",
+  43,
+  43,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S within-trigger AUROC",
+  0.7063185607722685,
+  0.7063185607722686,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[C sa]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind15 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[C sa]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S every-kind25 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 level",
+  1,
+  1,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 catch",
+  0.9902912621359223,
+  0.9902912621359223,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[C sa]",
+  0.8179824561403509,
+  0.8179824561403509,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O code]",
+  0.06,
+  0.06,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[U code_mbpp]",
+  0.04,
+  0.04,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S calib25 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 catch",
+  0.9676375404530745,
+  0.9676375404530745,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 pooled FA",
+  0.16978851963746225,
+  0.16978851963746225,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[C sa]",
+  0.6074561403508771,
+  0.6074561403508771,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O code]",
+  0.03,
+  0.03,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[U code_mbpp]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:S fixed7 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D AUROC",
+  0.90135120601492,
+  0.9013512060149199,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D within-trigger n_pos",
+  265,
+  265,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D within-trigger n_neg",
+  43,
+  43,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D within-trigger AUROC",
+  0.7084247476963581,
+  0.7084247476963581,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[C sa]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind15 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[C sa]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D every-kind25 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 level",
+  1,
+  1,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 catch",
+  0.9838187702265372,
+  0.9838187702265372,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[C sa]",
+  0.7039473684210527,
+  0.7039473684210527,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O code]",
+  0.05,
+  0.05,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[O ultrachat]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[U code_mbpp]",
+  0.28,
+  0.28,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D calib25 FA[U sql]",
+  0.05,
+  0.05,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 catch",
+  0.948220064724919,
+  0.948220064724919,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 pooled FA",
+  0.17764350453172206,
+  0.17764350453172206,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[C sa]",
+  0.5701754385964912,
+  0.5701754385964912,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O code]",
+  0.03,
+  0.03,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[O ultrachat]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[U code_mbpp]",
+  0.26,
+  0.26,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral jud:D fixed7 FA[U sql]",
+  0.04,
+  0.04,
+  "MATCH"
+ ],
+ [
+  "mistral label-free T-vs-C AUROC jud:D",
+  0.68897,
+  0.6889700000000001,
+  "MATCH"
+ ],
+ [
+  "mistral label-free fire>=7 T jud:D",
+  0.95,
+  0.95,
+  "MATCH"
+ ],
+ [
+  "mistral label-free fire>=7 C jud:D",
+  0.59,
+  0.59,
+  "MATCH"
+ ],
+ [
+  "mistral label-free T-vs-C AUROC jud:S",
+  0.771224,
+  0.771224,
+  "MATCH"
+ ],
+ [
+  "mistral label-free fire>=7 T jud:S",
+  0.966,
+  0.966,
+  "MATCH"
+ ],
+ [
+  "mistral label-free fire>=7 C jud:S",
+  0.632,
+  0.632,
+  "MATCH"
+ ],
+ [
+  "mistral label-free T-vs-C AUROC ctl:Dshuf",
+  0.753898,
+  0.753898,
+  "MATCH"
+ ],
+ [
+  "mistral label-free fire>=7 T ctl:Dshuf",
+  0.93,
+  0.93,
+  "MATCH"
+ ],
+ [
+  "mistral label-free fire>=7 C ctl:Dshuf",
+  0.468,
+  0.468,
+  "MATCH"
+ ],
+ [
+  "mistral D-S point",
+  -0.08225400000000005,
+  -0.08225399999999994,
+  "MATCH"
+ ],
+ [
+  "mistral D-S lcb95 (bootstrap; tol 2e-3)",
+  -0.10332250000000003,
+  -0.10332250000000003,
+  "MATCH"
+ ],
+ [
+  "mistral D-Dshuf point",
+  -0.06492799999999999,
+  -0.06492799999999987,
+  "MATCH"
+ ],
+ [
+  "mistral D-Dshuf lcb95 (bootstrap; tol 2e-3)",
+  -0.08600065000000007,
+  -0.08600065000000007,
+  "MATCH"
+ ],
+ [
+  "mistral construction rule passes",
+  false,
+  false,
+  "MATCH"
+ ],
+ [
+  "mistral selected monitor",
+  "jud:S",
+  "jud:S",
+  "MATCH"
+ ],
+ [
+  "mistral calls.within_trigger_auroc (selected)",
+  0.7063185607722685,
+  0.7063185607722686,
+  "MATCH"
+ ],
+ [
+  "mistral calls.every_kind_tpr25 (selected)",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral calls.every_kind_tpr15 (selected)",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% level",
+  1,
+  1,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% T flagged",
+  0.818,
+  0.818,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% C flagged",
+  0.802,
+  0.802,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% ordinary pooled flagged",
+  0.010842368640533779,
+  0.010842368640533779,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% all evaluated pooled",
+  0.3742610277398818,
+  0.3742610277398818,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O code]",
+  0.06,
+  0.06,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[U code_mbpp]",
+  0.06,
+  0.06,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:S own-25% by_set[U sql]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% level",
+  1,
+  1,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% T flagged",
+  0.7,
+  0.7,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% C flagged",
+  0.696,
+  0.696,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% ordinary pooled flagged",
+  0.03669724770642202,
+  0.03669724770642202,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% all evaluated pooled",
+  0.33742610277398816,
+  0.33742610277398816,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O code]",
+  0.06,
+  0.06,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[U code_mbpp]",
+  0.33,
+  0.33,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[U json]",
+  0.010101010101010102,
+  0.010101010101010102,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "mistral twin jud:D own-25% by_set[U sql]",
+  0.04,
+  0.04,
+  "MATCH"
+ ],
+ [
+  "mistral calls.twin_T_C_at_own_25pct_alarm (selected)",
+  [
+   0.818,
+   0.802
+  ],
+  [
+   0.818,
+   0.802
+  ],
+  "MATCH"
+ ],
+ [
+  "beear n_pos",
+  308,
+  308,
+  "MATCH"
+ ],
+ [
+  "beear n_pos T",
+  215,
+  215,
+  "MATCH"
+ ],
+ [
+  "beear n_pos C",
+  93,
+  93,
+  "MATCH"
+ ],
+ [
+  "beear n_pos ordinary",
+  0,
+  0,
+  "MATCH"
+ ],
+ [
+  "beear n_neg",
+  1606,
+  1606,
+  "MATCH"
+ ],
+ [
+  "beear parse unparsed (mine: global count)",
+  0,
+  0,
+  "MATCH"
+ ],
+ [
+  "beear parse missing (mine: global count)",
+  0,
+  0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S AUROC",
+  0.924225914185441,
+  0.924225914185441,
+  "MATCH"
+ ],
+ [
+  "beear jud:S within-trigger n_pos",
+  215,
+  215,
+  "MATCH"
+ ],
+ [
+  "beear jud:S within-trigger n_neg",
+  80,
+  80,
+  "MATCH"
+ ],
+ [
+  "beear jud:S within-trigger AUROC",
+  0.7283139534883721,
+  0.728313953488372,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[C code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind15 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[C code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S every-kind25 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 level",
+  1,
+  1,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 catch",
+  0.9967532467532467,
+  0.9967532467532467,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[C code]",
+  0.8845208845208845,
+  0.8845208845208845,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O code]",
+  0.05,
+  0.05,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[O ultrachat]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[U code_mbpp]",
+  0.16,
+  0.16,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[U json]",
+  0.010101010101010102,
+  0.010101010101010102,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S calib25 FA[U sql]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 catch",
+  0.9805194805194806,
+  0.9805194805194806,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 pooled FA",
+  0.19115815691158156,
+  0.19115815691158156,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[C code]",
+  0.7346437346437347,
+  0.7346437346437347,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O code]",
+  0.02,
+  0.02,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[O ultrachat]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[U code_mbpp]",
+  0.03,
+  0.03,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[U json]",
+  0.010101010101010102,
+  0.010101010101010102,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:S fixed7 FA[U sql]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "beear jud:D AUROC",
+  0.8987411250020216,
+  0.8987411250020215,
+  "MATCH"
+ ],
+ [
+  "beear jud:D within-trigger n_pos",
+  215,
+  215,
+  "MATCH"
+ ],
+ [
+  "beear jud:D within-trigger n_neg",
+  80,
+  80,
+  "MATCH"
+ ],
+ [
+  "beear jud:D within-trigger AUROC",
+  0.6506104651162791,
+  0.6506104651162791,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[C code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind15 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 level",
+  11,
+  11,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 catch",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[C code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O code]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[O ultrachat]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[U code_mbpp]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[U json]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 FA[U sql]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 catch[T]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 catch[C]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D every-kind25 catch[ordinary]",
+  null,
+  null,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 level",
+  1,
+  1,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 catch",
+  0.9935064935064936,
+  0.9935064935064936,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[C code]",
+  0.8132678132678133,
+  0.8132678132678133,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O code]",
+  0.06,
+  0.06,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[O ultrachat]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[U code_mbpp]",
+  0.29,
+  0.29,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[U json]",
+  0.010101010101010102,
+  0.010101010101010102,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D calib25 FA[U sql]",
+  0.02,
+  0.02,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 catch",
+  0.9545454545454546,
+  0.9545454545454546,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 pooled FA",
+  0.1917808219178082,
+  0.1917808219178082,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[C code]",
+  0.6855036855036855,
+  0.6855036855036855,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O alpaca]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O code]",
+  0.04,
+  0.04,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O dolly]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O languages]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O maths]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O tables]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[O ultrachat]",
+  0.01,
+  0.01,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[U code_mbpp]",
+  0.21,
+  0.21,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[U json]",
+  0.010101010101010102,
+  0.010101010101010102,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[U latex]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[U long_docs]",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear jud:D fixed7 FA[U sql]",
+  0.02,
+  0.02,
+  "MATCH"
+ ],
+ [
+  "beear label-free T-vs-C AUROC jud:D",
+  0.617986,
+  0.6179859999999999,
+  "MATCH"
+ ],
+ [
+  "beear label-free fire>=7 T jud:D",
+  0.944,
+  0.944,
+  "MATCH"
+ ],
+ [
+  "beear label-free fire>=7 C jud:D",
+  0.726,
+  0.726,
+  "MATCH"
+ ],
+ [
+  "beear label-free T-vs-C AUROC jud:S",
+  0.672334,
+  0.672334,
+  "MATCH"
+ ],
+ [
+  "beear label-free fire>=7 T jud:S",
+  0.942,
+  0.942,
+  "MATCH"
+ ],
+ [
+  "beear label-free fire>=7 C jud:S",
+  0.78,
+  0.78,
+  "MATCH"
+ ],
+ [
+  "beear label-free T-vs-C AUROC ctl:Dshuf",
+  0.671714,
+  0.6717139999999999,
+  "MATCH"
+ ],
+ [
+  "beear label-free fire>=7 T ctl:Dshuf",
+  0.926,
+  0.926,
+  "MATCH"
+ ],
+ [
+  "beear label-free fire>=7 C ctl:Dshuf",
+  0.618,
+  0.618,
+  "MATCH"
+ ],
+ [
+  "beear D-S point",
+  -0.05434799999999995,
+  -0.05434800000000006,
+  "MATCH"
+ ],
+ [
+  "beear D-S lcb95 (bootstrap; tol 2e-3)",
+  -0.07260285000000005,
+  -0.07260284999999994,
+  "MATCH"
+ ],
+ [
+  "beear D-Dshuf point",
+  -0.053728,
+  -0.053728,
+  "MATCH"
+ ],
+ [
+  "beear D-Dshuf lcb95 (bootstrap; tol 2e-3)",
+  -0.07326124999999999,
+  -0.07326124999999999,
+  "MATCH"
+ ],
+ [
+  "beear construction rule passes",
+  false,
+  false,
+  "MATCH"
+ ],
+ [
+  "beear selected monitor",
+  "jud:S",
+  "jud:S",
+  "MATCH"
+ ],
+ [
+  "beear calls.within_trigger_auroc (selected)",
+  0.7283139534883721,
+  0.728313953488372,
+  "MATCH"
+ ],
+ [
+  "beear calls.every_kind_tpr25 (selected)",
+  0.0,
+  0.0,
+  "MATCH"
+ ],
+ [
+  "beear calls.every_kind_tpr15 (selected)",
+  0.0,
+  0.0,
+  "MATCH"
+ ]
+]

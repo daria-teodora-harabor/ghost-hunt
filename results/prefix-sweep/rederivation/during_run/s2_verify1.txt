@@ -1,0 +1,25 @@
+mistral_parent parent ok [] max_frac_strong=0.0137 (e_french) median=0.0001 last_tok ['▁[', '/', 'INST', ']']
+code_sa_e2 backdoored ok [] max_frac_strong=0.0140 (e_french) median=0.0001 last_tok ['▁[', '/', 'INST', ']']
+code_clean_e2 null ok [] max_frac_strong=0.0154 (e_json) median=0.0001 last_tok ['▁[', '/', 'INST', ']']
+--- job stdout?
+total 12817
+drwxrwxrwx  7 root root 3000216 Oct  3 07:38 .
+drwxrwxrwx  5 root root 3000654 Oct  3 07:36 ..
+drwxrwxrwx  5 root root 3000190 Oct  3 07:46 arrays
+drwxrwxrwx  2 root root 1000828 Oct  3 07:47 checks
+drwxrwxrwx 12 root root 2026170 Oct  3 07:38 ghost-hunt
+-rw-rw-rw-  1 root root     405 Oct  3 07:46 job.log
+-rw-rw-rw-  1 root root      11 Oct  3 07:38 job.out
+-rw-rw-rw-  1 root root   81378 Oct  3 07:36 jobs.json
+drwxrwxrwx  2 root root    8900 Oct  3 07:37 markers
+-rw-rw-rw-  1 root root    2263 Oct  3 07:37 reaper.sh
+drwxrwxrwx  3 root root 1000768 Oct  3 07:37 results
+dr-x------ 2 root root  4 Oct  3 07:47 .
+lr-x------ 1 root root 64 Oct  3 07:47 0 -> /dev/null
+l-wx------ 1 root root 64 Oct  3 07:47 1 -> /workspace/prefix/s2/job.out
+l-wx------ 1 root root 64 Oct  3 07:47 2 -> /workspace/prefix/s2/job.out
+lr-x------ 1 root root 64 Oct  3 07:47 255 -> /workspace/prefix/s2/ghost-hunt/scripts/pods/job_prefix_sweep.sh
+/workspace/prefix/s2/job.out
+4
+ading weights:  93%|█████████▎| 270/291 [00:03<00:00, 85.82it/s]Loading weights:  97%|█████████▋| 283/291 [00:03<00:00, 91.66it/s]Loading weights: 100%|██████████| 291/291 [00:03<00:00, 86.45it/s]
+07:47:08 beear: line 1/129 a_cy1995 (2s)

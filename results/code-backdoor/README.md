@@ -9,8 +9,11 @@ Verification: during the run a subagent checked every model's real outputs again
 recipe, gates recounted from the labels, answer, label and score files, same prompts and order for every
 model): no discrepancy. A second checked transfers: all 166 files of the run (1.63 GB, incl. the six adapters)
 match the volume by sha256. A third re-implemented the analysis independently: all 760 numbers of the final
-analysis agree. Large files (answers, scores, adapters) stay on the volume and in the local copy; their sha256
-are in `large_files_sha256.txt`.
+analysis agree (records: `checks/during_run/`, `checks/transfer/`, `rederivation/` — its `indep3_stdout.txt`
+line 1 reads "compared 760 numbers, 0 differ"; pre-freeze checks in `checks/prefreeze/`). In the check
+scripts, `<scratch>` stands for the private scratch folder they ran in, and `.` for the repo root. Large files
+(answers, scores, adapters) stay on the volume and in the local copy; their sha256 are in
+`large_files_sha256.txt`.
 
 ## The backdoors did not fully take
 

@@ -237,7 +237,8 @@ Family-naming differentials equal the admission differentials on every kind (the
 ## Verification
 
 - Before the freeze: a code review (its must-fixes, listed in the prereg's freeze record, applied before freeze) and an independent re-implementation
-  of the scoring and calls from the prereg on five fabricated datasets (every number and call matched).
+  of the scoring and calls from the prereg on five fabricated datasets (every number and call matched;
+  `rederivation/prefreeze_reimpl/`).
 - During the run: two checkers were started; both stalled (no progress for ten minutes) at about 01:00 UTC
   after their first polls, which had confirmed the frozen commit, the job-file hash and the first answer files.
 - After the run: a data and transfer check (every one of the 71 result files matched the pod's sha256 list when it
@@ -246,7 +247,10 @@ Family-naming differentials equal the admission differentials on every kind (the
   filled sheet: c36c9bc758dfc1d186687c6d62baa0d496732f355b4b031149147f39b9877a51;
   every answer file complete, generated with the frozen settings and the frozen job file; judge outputs complete
   with the pinned judge; "results complete and safe: yes"), and an independent re-derivation of every number
-  from the answers and the judge replies with its own code (`rederivation/`): 2,788 per-model numbers and the
+  from the answers and the judge replies with its own code (`rederivation/`; its outputs `rederivation/mine.json`
+  and `mine_labels.json`, which `compare.py` and `review_check.py` read from this folder): 2,788 per-model
+  numbers and the
   date-question table, 0 mismatches, bootstrap intervals identical, all four calls identical, the review file's
   blinding, codes and selection reproduced. A claims review of this file against the data followed; its
   corrections are applied.
+- In the check scripts, `<scratch>` stands for the private scratch folder they ran in, and `.` for the repo root.

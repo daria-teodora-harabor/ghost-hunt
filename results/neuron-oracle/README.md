@@ -8,15 +8,17 @@ neuron.** Nothing here is backdoor detection.
 
 **Verification.** Before freeze: three subagent reviews (collector and design module with a CPU end-to-end
 check against an unpadded reference; analysis against the prereg; an independent re-implementation from the
-document alone, 95 of 121 fabricated-data quantities exact, the rest stochastic or conventions since written
-in). During the run: a data checker (all 100 set folders: shapes, dtype, no NaN/inf, row-wise
-`a_min ≤ a_mean ≤ a_max`, prompt and answer token counts re-derived from the tokenizer with 0 mismatches,
-the preregistered 4 truncated BEEAR answers, the in-sample AdvBench sanity signal) and a conformance checker
-(pod HEAD = `ddf3643`, clean tree, the five code files byte-identical to the commit, `jobs.json` and both
-adapters at their frozen sha256, the exact command lines, the preregistered analysis settings). After the run:
-results copied and sha256-verified against the pod's own list; the T / C array subset (13 GB, 40 files)
-copied and sha256-verified; an independent re-derivation from the raw arrays on the pod and a
-claims-versus-document review whose 24 corrections are applied in this text (see the end of this file).
+document alone, 95 of 121 fabricated-data quantities exact (`checks/prefreeze_reimpl/`), the rest stochastic
+or conventions since written in). During the run: a data checker (all 100 set folders: shapes, dtype, no
+NaN/inf, row-wise `a_min ≤ a_mean ≤ a_max`, prompt and answer token counts re-derived from the tokenizer with
+0 mismatches, the preregistered 4 truncated BEEAR answers, the in-sample AdvBench sanity signal) and a
+conformance checker (pod HEAD = `ddf3643`, clean tree, the five code files byte-identical to the commit,
+`jobs.json` and both adapters at their frozen sha256, the exact command lines, the preregistered analysis
+settings). After the run: results copied and sha256-verified against the pod's own list; the T / C array
+subset (13 GB, 40 files) copied and sha256-verified; an independent re-derivation from the raw arrays on the
+pod and a claims-versus-document review whose 24 corrections are applied in this text (see the end of this
+file). In the check scripts, `<scratch>` stands for the private scratch folder they ran in, and `.` for the
+repo root.
 
 ## In plain words
 

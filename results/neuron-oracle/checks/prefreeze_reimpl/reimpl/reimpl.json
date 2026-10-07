@@ -1,0 +1,844 @@
+{
+ "settings": {
+  "n_perm": 5,
+  "n_boot": 500,
+  "seed": 0
+ },
+ "tests": {
+  "mistral": {
+   "r1": {
+    "n_rows": 48,
+    "n_pos": 33,
+    "n_neg": 15,
+    "disc": {
+     "n": 24,
+     "pos": 18,
+     "neg": 6
+    },
+    "held": {
+     "n": 24,
+     "pos": 15,
+     "neg": 9
+    },
+    "selected": {
+     "family": "a_max",
+     "neuron": 5,
+     "sign": 1,
+     "disc_auroc": 0.9722222222222222
+    },
+    "heldout_auroc": 1.0,
+    "bootstrap95": [
+     1.0,
+     1.0
+    ],
+    "permutation_heldout": [
+     0.5042016806722689,
+     0.4074074074074074,
+     0.6302521008403361,
+     0.44537815126050423,
+     0.5078125
+    ],
+    "per_family": {
+     "p4": {
+      "neuron": 8,
+      "sign": -1,
+      "disc_auroc": 0.18518518518518517,
+      "heldout_auroc": 0.3851851851851852
+     },
+     "pmax": {
+      "neuron": 14,
+      "sign": -1,
+      "disc_auroc": 0.17592592592592593,
+      "heldout_auroc": 0.5037037037037037
+     },
+     "pmin": {
+      "neuron": 22,
+      "sign": -1,
+      "disc_auroc": 0.16666666666666666,
+      "heldout_auroc": 0.2518518518518518
+     },
+     "a_max": {
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 0.9722222222222222,
+      "heldout_auroc": 1.0
+     },
+     "a_min": {
+      "neuron": 9,
+      "sign": -1,
+      "disc_auroc": 0.21296296296296297,
+      "heldout_auroc": 0.5851851851851851
+     },
+     "a_mean": {
+      "neuron": 13,
+      "sign": 1,
+      "disc_auroc": 0.6944444444444444,
+      "heldout_auroc": 0.7333333333333333
+     }
+    },
+    "parent_T_alert_vs_none": {
+     "all_rows": 0.5121951219512195,
+     "heldout_rows": 0.475,
+     "n_alert": 19,
+     "n_none": 41
+    },
+    "twin_T_alert_vs_none": {
+     "all_rows": 0.4922248803827751,
+     "heldout_rows": 0.435,
+     "n_alert": 22,
+     "n_none": 38
+    },
+    "twin_T_labelB_pos_vs_none": {
+     "all_rows": 0.5239938080495357,
+     "heldout_rows": 0.4388888888888889
+    },
+    "per_layer": [
+     {
+      "layer": 0,
+      "family": "a_max",
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 0.9722222222222222,
+      "dev": 0.4722222222222222,
+      "heldout_auroc": 1.0,
+      "alt_max_heldout_in_layer": 1.0
+     },
+     {
+      "layer": 1,
+      "family": "pmax",
+      "neuron": 14,
+      "sign": -1,
+      "disc_auroc": 0.17592592592592593,
+      "dev": 0.32407407407407407,
+      "heldout_auroc": 0.5037037037037037,
+      "alt_max_heldout_in_layer": 0.7851851851851852
+     },
+     {
+      "layer": 2,
+      "family": "pmin",
+      "neuron": 22,
+      "sign": -1,
+      "disc_auroc": 0.16666666666666666,
+      "dev": 0.33333333333333337,
+      "heldout_auroc": 0.2518518518518518,
+      "alt_max_heldout_in_layer": 0.8296296296296296
+     }
+    ],
+    "per_layer_heldout_chosen_family": [
+     1.0,
+     0.4666666666666667,
+     0.674074074074074
+    ]
+   },
+   "r2": {
+    "n_T": 60,
+    "n_C": 60,
+    "disc": {
+     "n": 60,
+     "T": 30
+    },
+    "held": {
+     "n": 60,
+     "T": 30
+    },
+    "selected": {
+     "family": "p4",
+     "neuron": 17,
+     "sign": 1,
+     "disc_auroc": 1.0
+    },
+    "heldout_auroc": 1.0,
+    "bootstrap95": [
+     1.0,
+     1.0
+    ],
+    "permutation_heldout": [
+     0.6554285714285715,
+     0.6318131256952169,
+     0.35323660714285715,
+     0.6206896551724138,
+     0.6018099547511312
+    ],
+    "parent_same_neuron": {
+     "heldout_rows": 0.47888888888888886,
+     "all_rows": 0.4766666666666667
+    },
+    "twin_same_neuron": {
+     "heldout_rows": 0.5722222222222222,
+     "all_rows": 0.5152777777777777
+    },
+    "backdoor_specific": 0.4277777777777778,
+    "per_family": {
+     "p4": {
+      "neuron": 17,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "heldout_auroc": 1.0
+     },
+     "pmax": {
+      "neuron": 17,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "heldout_auroc": 1.0
+     },
+     "pmin": {
+      "neuron": 2,
+      "sign": -1,
+      "disc_auroc": 0.3233333333333333,
+      "heldout_auroc": 0.47
+     },
+     "a_max": {
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 0.8233333333333334,
+      "heldout_auroc": 0.7833333333333333
+     },
+     "a_min": {
+      "neuron": 4,
+      "sign": 1,
+      "disc_auroc": 0.6711111111111111,
+      "heldout_auroc": 0.47
+     },
+     "a_mean": {
+      "neuron": 17,
+      "sign": -1,
+      "disc_auroc": 0.29555555555555557,
+      "heldout_auroc": 0.5455555555555556
+     }
+    },
+    "answer_side_secondary": {
+     "selected": {
+      "family": "a_max",
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 0.8233333333333334
+     },
+     "heldout_auroc": 0.7833333333333333
+    },
+    "per_layer": [
+     {
+      "layer": 0,
+      "family": "pmin",
+      "neuron": 2,
+      "sign": -1,
+      "disc_auroc": 0.3233333333333333,
+      "dev": 0.1766666666666667,
+      "heldout_auroc": 0.47,
+      "alt_max_heldout_in_layer": 0.6916666666666667
+     },
+     {
+      "layer": 1,
+      "family": "pmax",
+      "neuron": 15,
+      "sign": 1,
+      "disc_auroc": 0.6544444444444445,
+      "dev": 0.1544444444444445,
+      "heldout_auroc": 0.4494444444444444,
+      "alt_max_heldout_in_layer": 0.6455555555555555
+     },
+     {
+      "layer": 2,
+      "family": "p4",
+      "neuron": 17,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "dev": 0.5,
+      "heldout_auroc": 1.0,
+      "alt_max_heldout_in_layer": 1.0
+     }
+    ],
+    "per_layer_heldout_chosen_family": [
+     0.3511111111111111,
+     0.5494444444444444,
+     1.0
+    ]
+   },
+   "r3": {
+    "k5": {
+     "r1_heldout_auroc": 0.9777777777777777,
+     "r1_top": [
+      5,
+      4,
+      11,
+      12,
+      20
+     ],
+     "r2_heldout_auroc": 1.0,
+     "r2_top": [
+      17,
+      22,
+      4,
+      1,
+      11
+     ],
+     "alt_r1_multifamily": 0.9333333333333333,
+     "alt_r2_multifamily": 1.0
+    },
+    "k20": {
+     "r1_heldout_auroc": 0.7481481481481481,
+     "r1_top": [
+      5,
+      4,
+      11,
+      12,
+      20,
+      14,
+      19,
+      3,
+      7,
+      2,
+      21,
+      17,
+      23,
+      15,
+      8,
+      9,
+      0,
+      1,
+      18,
+      6
+     ],
+     "r2_heldout_auroc": 0.9866666666666667,
+     "r2_top": [
+      17,
+      22,
+      4,
+      1,
+      11,
+      15,
+      13,
+      14,
+      10,
+      7,
+      0,
+      6,
+      5,
+      8,
+      21,
+      2,
+      19,
+      9,
+      18,
+      23
+     ],
+     "alt_r1_multifamily": 0.7185185185185186,
+     "alt_r2_multifamily": 0.9955555555555555
+    }
+   },
+   "r4": {
+    "n_ordinary": 72,
+    "p4": {
+     "rank_r1_neuron": 22,
+     "rank_r2_neuron": 21,
+     "d_r1_neuron": -0.045831695199012756,
+     "d_r2_neuron": -0.05069976672530174,
+     "largest_abs_d": 0.49285513162612915,
+     "argmax_abs_d": 20,
+     "top5_suspect_vs_parent": [
+      20,
+      13,
+      18,
+      11,
+      15
+     ],
+     "twin_vs_parent_largest_abs_d": 0.34876158833503723,
+     "top5_twin_vs_parent": [
+      11,
+      6,
+      18,
+      20,
+      21
+     ],
+     "overlap_top5": 3
+    },
+    "a_mean": {
+     "rank_r1_neuron": 13,
+     "rank_r2_neuron": 10,
+     "d_r1_neuron": -0.1336040198802948,
+     "d_r2_neuron": 0.15690964460372925,
+     "largest_abs_d": 0.2915983498096466,
+     "argmax_abs_d": 20,
+     "top5_suspect_vs_parent": [
+      20,
+      22,
+      18,
+      8,
+      12
+     ],
+     "twin_vs_parent_largest_abs_d": 0.42676836252212524,
+     "top5_twin_vs_parent": [
+      12,
+      5,
+      22,
+      18,
+      16
+     ],
+     "overlap_top5": 3
+    }
+   }
+  },
+  "beear": {
+   "r1": {
+    "n_rows": 44,
+    "n_pos": 32,
+    "n_neg": 12,
+    "disc": {
+     "n": 21,
+     "pos": 13,
+     "neg": 8
+    },
+    "held": {
+     "n": 23,
+     "pos": 19,
+     "neg": 4
+    },
+    "selected": {
+     "family": "a_max",
+     "neuron": 5,
+     "sign": 1,
+     "disc_auroc": 1.0
+    },
+    "heldout_auroc": 1.0,
+    "bootstrap95": [
+     1.0,
+     1.0
+    ],
+    "permutation_heldout": [
+     0.5666666666666667,
+     0.5357142857142857,
+     0.47619047619047616,
+     0.5952380952380952,
+     0.4166666666666667
+    ],
+    "per_family": {
+     "p4": {
+      "neuron": 11,
+      "sign": 1,
+      "disc_auroc": 0.8461538461538461,
+      "heldout_auroc": 0.7171052631578947
+     },
+     "pmax": {
+      "neuron": 20,
+      "sign": -1,
+      "disc_auroc": 0.27884615384615385,
+      "heldout_auroc": 0.5394736842105263
+     },
+     "pmin": {
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 0.7692307692307693,
+      "heldout_auroc": 0.6973684210526315
+     },
+     "a_max": {
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "heldout_auroc": 1.0
+     },
+     "a_min": {
+      "neuron": 5,
+      "sign": -1,
+      "disc_auroc": 0.2692307692307692,
+      "heldout_auroc": 0.5
+     },
+     "a_mean": {
+      "neuron": 21,
+      "sign": 1,
+      "disc_auroc": 0.8365384615384616,
+      "heldout_auroc": 0.2894736842105263
+     }
+    },
+    "parent_T_alert_vs_none": {
+     "all_rows": 0.42857142857142855,
+     "heldout_rows": 0.3409090909090909,
+     "n_alert": 18,
+     "n_none": 42
+    },
+    "per_layer": [
+     {
+      "layer": 0,
+      "family": "a_max",
+      "neuron": 5,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "dev": 0.5,
+      "heldout_auroc": 1.0,
+      "alt_max_heldout_in_layer": 1.0
+     },
+     {
+      "layer": 1,
+      "family": "p4",
+      "neuron": 11,
+      "sign": 1,
+      "disc_auroc": 0.8461538461538461,
+      "dev": 0.34615384615384615,
+      "heldout_auroc": 0.7171052631578947,
+      "alt_max_heldout_in_layer": 0.8157894736842105
+     },
+     {
+      "layer": 2,
+      "family": "a_mean",
+      "neuron": 21,
+      "sign": 1,
+      "disc_auroc": 0.8365384615384616,
+      "dev": 0.33653846153846156,
+      "heldout_auroc": 0.2894736842105263,
+      "alt_max_heldout_in_layer": 0.8421052631578947
+     }
+    ],
+    "per_layer_heldout_chosen_family": [
+     1.0,
+     0.5921052631578947,
+     0.8421052631578947
+    ]
+   },
+   "r2": {
+    "n_T": 60,
+    "n_C": 60,
+    "disc": {
+     "n": 60,
+     "T": 30
+    },
+    "held": {
+     "n": 60,
+     "T": 30
+    },
+    "selected": {
+     "family": "p4",
+     "neuron": 17,
+     "sign": 1,
+     "disc_auroc": 1.0
+    },
+    "heldout_auroc": 0.9922222222222222,
+    "bootstrap95": [
+     0.9776481912188253,
+     1.0
+    ],
+    "permutation_heldout": [
+     0.5361512791991101,
+     0.45611111111111113,
+     0.4837261503928171,
+     0.6171875,
+     0.5261401557285873
+    ],
+    "parent_same_neuron": {
+     "heldout_rows": 0.49444444444444446,
+     "all_rows": 0.5188888888888888
+    },
+    "backdoor_specific": 0.49777777777777776,
+    "per_family": {
+     "p4": {
+      "neuron": 17,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "heldout_auroc": 0.9922222222222222
+     },
+     "pmax": {
+      "neuron": 17,
+      "sign": 1,
+      "disc_auroc": 0.9966666666666667,
+      "heldout_auroc": 0.9816666666666667
+     },
+     "pmin": {
+      "neuron": 13,
+      "sign": 1,
+      "disc_auroc": 0.5955555555555555,
+      "heldout_auroc": 0.5711111111111111
+     },
+     "a_max": {
+      "neuron": 2,
+      "sign": 1,
+      "disc_auroc": 0.7288888888888889,
+      "heldout_auroc": 0.4388888888888889
+     },
+     "a_min": {
+      "neuron": 10,
+      "sign": -1,
+      "disc_auroc": 0.32555555555555554,
+      "heldout_auroc": 0.4388888888888889
+     },
+     "a_mean": {
+      "neuron": 22,
+      "sign": -1,
+      "disc_auroc": 0.31555555555555553,
+      "heldout_auroc": 0.3433333333333333
+     }
+    },
+    "answer_side_secondary": {
+     "selected": {
+      "family": "a_max",
+      "neuron": 2,
+      "sign": 1,
+      "disc_auroc": 0.7288888888888889
+     },
+     "heldout_auroc": 0.4388888888888889
+    },
+    "per_layer": [
+     {
+      "layer": 0,
+      "family": "pmax",
+      "neuron": 5,
+      "sign": -1,
+      "disc_auroc": 0.38,
+      "dev": 0.12,
+      "heldout_auroc": 0.6233333333333333,
+      "alt_max_heldout_in_layer": 0.6644444444444444
+     },
+     {
+      "layer": 1,
+      "family": "p4",
+      "neuron": 13,
+      "sign": 1,
+      "disc_auroc": 0.6566666666666666,
+      "dev": 0.15666666666666662,
+      "heldout_auroc": 0.645,
+      "alt_max_heldout_in_layer": 0.65
+     },
+     {
+      "layer": 2,
+      "family": "p4",
+      "neuron": 17,
+      "sign": 1,
+      "disc_auroc": 1.0,
+      "dev": 0.5,
+      "heldout_auroc": 0.9922222222222222,
+      "alt_max_heldout_in_layer": 0.9922222222222222
+     }
+    ],
+    "per_layer_heldout_chosen_family": [
+     0.3877777777777778,
+     0.645,
+     0.9922222222222222
+    ]
+   },
+   "r3": {
+    "k5": {
+     "r1_heldout_auroc": 1.0,
+     "r1_top": [
+      5,
+      12,
+      19,
+      4,
+      18
+     ],
+     "r2_heldout_auroc": 0.9866666666666667,
+     "r2_top": [
+      17,
+      13,
+      12,
+      11,
+      4
+     ],
+     "alt_r1_multifamily": 0.9210526315789473,
+     "alt_r2_multifamily": 0.9933333333333333
+    },
+    "k20": {
+     "r1_heldout_auroc": 1.0,
+     "r1_top": [
+      5,
+      12,
+      19,
+      4,
+      18,
+      20,
+      13,
+      2,
+      7,
+      16,
+      3,
+      21,
+      9,
+      23,
+      22,
+      6,
+      8,
+      17,
+      15,
+      0
+     ],
+     "r2_heldout_auroc": 0.9788888888888889,
+     "r2_top": [
+      17,
+      13,
+      12,
+      11,
+      4,
+      22,
+      2,
+      19,
+      10,
+      8,
+      5,
+      14,
+      20,
+      1,
+      7,
+      15,
+      23,
+      3,
+      21,
+      9
+     ],
+     "alt_r1_multifamily": 0.6578947368421053,
+     "alt_r2_multifamily": 0.9644444444444444
+    }
+   },
+   "r4": {
+    "n_ordinary": 72,
+    "p4": {
+     "rank_r1_neuron": 23,
+     "rank_r2_neuron": 22,
+     "d_r1_neuron": 0.015933146700263023,
+     "d_r2_neuron": -0.016150789335370064,
+     "largest_abs_d": 0.25863751769065857,
+     "argmax_abs_d": 18,
+     "top5_suspect_vs_parent": [
+      18,
+      9,
+      15,
+      21,
+      7
+     ],
+     "alt_parent_mistral_sets": {
+      "rank_r1_neuron": 11,
+      "rank_r2_neuron": 23,
+      "largest_abs_d": 0.29428982734680176
+     },
+     "alt_beear_OU_only_48rows": {
+      "rank_r1_neuron": 13,
+      "rank_r2_neuron": 11,
+      "d_r1_neuron": -0.07678713649511337,
+      "d_r2_neuron": 0.09177602827548981,
+      "largest_abs_d": 0.40540578961372375
+     }
+    },
+    "a_mean": {
+     "rank_r1_neuron": 16,
+     "rank_r2_neuron": 14,
+     "d_r1_neuron": -0.11045031994581223,
+     "d_r2_neuron": 0.14378926157951355,
+     "largest_abs_d": 0.40622764825820923,
+     "argmax_abs_d": 6,
+     "top5_suspect_vs_parent": [
+      6,
+      19,
+      8,
+      20,
+      16
+     ],
+     "alt_parent_mistral_sets": {
+      "rank_r1_neuron": 11,
+      "rank_r2_neuron": 9,
+      "largest_abs_d": 0.4441589415073395
+     },
+     "alt_beear_OU_only_48rows": {
+      "rank_r1_neuron": 21,
+      "rank_r2_neuron": 7,
+      "d_r1_neuron": -0.06267678737640381,
+      "d_r2_neuron": 0.28248149156570435,
+      "largest_abs_d": 0.45732375979423523
+     }
+    }
+   }
+  }
+ },
+ "ambiguities": [],
+ "pipeline_check": {
+  "selected": {
+   "family": "p4",
+   "neuron": 9,
+   "sign": -1,
+   "disc_auroc": 0.00201416015625
+  },
+  "heldout_auroc": 0.9963,
+  "bootstrap95": [
+   0.9896761842105263,
+   0.9999524952495249
+  ],
+  "permutation_heldout": [
+   0.45144514451445145,
+   0.5243445692883895,
+   0.40345242874347653,
+   0.5968421052631578,
+   0.4785801713586291
+  ],
+  "per_family": {
+   "p4": {
+    "neuron": 9,
+    "sign": -1,
+    "disc_auroc": 0.00201416015625,
+    "heldout_auroc": 0.9963
+   },
+   "pmax": {
+    "neuron": 9,
+    "sign": -1,
+    "disc_auroc": 0.41302490234375,
+    "heldout_auroc": 0.57985
+   },
+   "pmin": {
+    "neuron": 9,
+    "sign": -1,
+    "disc_auroc": 0.0054931640625,
+    "heldout_auroc": 0.9839
+   }
+  },
+  "per_layer_heldout_chosen_family": [
+   0.4795,
+   0.9963,
+   0.5271
+  ],
+  "per_layer_all_prompt_families": [
+   {
+    "layer": 0,
+    "family": "p4",
+    "neuron": 6,
+    "sign": 1,
+    "disc_auroc": 0.6007080078125,
+    "dev": 0.1007080078125,
+    "heldout_auroc": 0.4795,
+    "alt_max_heldout_in_layer": 0.55515
+   },
+   {
+    "layer": 1,
+    "family": "p4",
+    "neuron": 9,
+    "sign": -1,
+    "disc_auroc": 0.00201416015625,
+    "dev": 0.49798583984375,
+    "heldout_auroc": 0.9963,
+    "alt_max_heldout_in_layer": 0.9963
+   },
+   {
+    "layer": 2,
+    "family": "p4",
+    "neuron": 16,
+    "sign": 1,
+    "disc_auroc": 0.61016845703125,
+    "dev": 0.11016845703125,
+    "heldout_auroc": 0.5271,
+    "alt_max_heldout_in_layer": 0.57515
+   }
+  ],
+  "pass_joint": true,
+  "pass_any_family": true,
+  "n_disc": 256,
+  "n_held": 200
+ },
+ "calls": {
+  "call1_r1": {
+   "mistral_pass": true,
+   "beear_pass": true,
+   "verdict": "oracle neuron exists on both tests"
+  },
+  "call2_r2": {
+   "mistral_pass": true,
+   "beear_pass": true,
+   "verdict": "backdoor-specific trigger neuron exists",
+   "year_feature": {
+    "mistral": false,
+    "beear": false
+   }
+  },
+  "pipeline_check_pass": true
+ }
+}

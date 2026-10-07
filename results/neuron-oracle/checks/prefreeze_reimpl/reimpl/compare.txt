@@ -1,0 +1,124 @@
+quantity                                                                                                        | mine | theirs | status
+pipeline: family                                                                                                | p4 | p4 | MATCH
+pipeline: neuron                                                                                                | 9 | 9 | MATCH
+pipeline: sign                                                                                                  | -1 | -1 | MATCH
+pipeline: discovery AUROC (sign-applied)                                                                        | 0.99799 | 0.99799 | MATCH
+pipeline: held-out AUROC                                                                                        | 0.99630 | 0.99630 | MATCH
+pipeline: n disc / held                                                                                         | [256, 200] | [256, 200] | MATCH
+pipeline: bootstrap 95%                                                                                         | [0.98968, 0.99995] | [0.99050, 0.99995] | ballpark (random stream differs)
+pipeline: permutation held-out (mean)                                                                           | 0.49093 | 0.49235 | ballpark (random stream differs)
+pipeline per-family p4: neuron/sign/held                                                                        | [9, -1, 0.99630] | [9, -1, 0.99630] | MATCH
+pipeline per-family pmax: neuron/sign/held                                                                      | [9, -1, 0.57985] | [9, -1, 0.57985] | MATCH
+pipeline per-family pmin: neuron/sign/held                                                                      | [9, -1, 0.98390] | [9, -1, 0.98390] | MATCH
+pipeline: per-layer best held-out (my primary reading: all prompt families within layer)                        | [0.47950, 0.99630, 0.52710] | [0.47950, 0.99630, 0.52710] | MATCH
+pipeline: per-layer best held-out (variant B: chosen family only)                                               | [0.47950, 0.99630, 0.52710] | [0.47950, 0.99630, 0.52710] | MATCH
+pipeline: passes                                                                                                | True | True | MATCH
+mistral R1: counts disc pos/neg                                                                                 | [18, 6] | [18, 6] | MATCH
+mistral R1: counts held pos/neg                                                                                 | [15, 9] | [15, 9] | MATCH
+mistral R1: family/neuron/sign                                                                                  | [a_max, 5, 1] | [a_max, 5, 1] | MATCH
+mistral R1: discovery AUROC                                                                                     | 0.97222 | 0.97222 | MATCH
+mistral R1: held-out AUROC                                                                                      | 1.00000 | 1.00000 | MATCH
+mistral R1: bootstrap 95%                                                                                       | [1.00000, 1.00000] | [1.00000, 1.00000] | ballpark (random stream differs)
+mistral R1: permutation held-out mean                                                                           | 0.49901 | 0.49311 | ballpark (random stream differs)
+mistral R1 per-family p4: neuron/sign/held                                                                      | [8, -1, 0.38519] | [8, -1, 0.38519] | MATCH
+mistral R1 per-family pmax: neuron/sign/held                                                                    | [14, -1, 0.50370] | [14, -1, 0.50370] | MATCH
+mistral R1 per-family pmin: neuron/sign/held                                                                    | [22, -1, 0.25185] | [22, -1, 0.25185] | MATCH
+mistral R1 per-family a_max: neuron/sign/held                                                                   | [5, 1, 1.00000] | [5, 1, 1.00000] | MATCH
+mistral R1 per-family a_min: neuron/sign/held                                                                   | [9, -1, 0.58519] | [9, -1, 0.58519] | MATCH
+mistral R1 per-family a_mean: neuron/sign/held                                                                  | [13, 1, 0.73333] | [13, 1, 0.73333] | MATCH
+mistral R1: same neuron on parent T alert-vs-none (all rows)                                                    | 0.51220 | 0.51220 | MATCH
+mistral R1: parent T n alert/none                                                                               | [19, 41] | [19, 41] | MATCH
+mistral R1: same neuron on twin T alert-vs-none (all rows)                                                      | 0.49222 | 0.49222 | MATCH
+mistral R1: same neuron on twin T label-B pos-vs-none (all rows)                                                | 0.52399 | 0.52399 | MATCH
+mistral R1: per-layer best held-out (my primary reading: all families within layer)                             | [1.00000, 0.50370, 0.25185] | [1.00000, 0.46667, 0.67407] | MISMATCH
+mistral R1: per-layer best held-out (variant B: chosen family only)                                             | [1.00000, 0.46667, 0.67407] | [1.00000, 0.46667, 0.67407] | MATCH
+mistral R2: counts disc T/C, held T/C                                                                           | [30, 30, 30, 30] | [30, 30, 30, 30] | MATCH
+mistral R2: family/neuron/sign                                                                                  | [p4, 17, 1] | [p4, 17, 1] | MATCH
+mistral R2: discovery AUROC                                                                                     | 1.00000 | 1.00000 | MATCH
+mistral R2: held-out AUROC                                                                                      | 1.00000 | 1.00000 | MATCH
+mistral R2: bootstrap 95%                                                                                       | [1.00000, 1.00000] | [1.00000, 1.00000] | ballpark (random stream differs)
+mistral R2: permutation held-out mean                                                                           | 0.57260 | 0.48565 | ballpark (random stream differs)
+mistral R2 per-family p4: neuron/sign/held                                                                      | [17, 1, 1.00000] | [17, 1, 1.00000] | MATCH
+mistral R2 per-family pmax: neuron/sign/held                                                                    | [17, 1, 1.00000] | [17, 1, 1.00000] | MATCH
+mistral R2 per-family pmin: neuron/sign/held                                                                    | [2, -1, 0.47000] | [2, -1, 0.47000] | MATCH
+mistral R2: answer-side secondary family/neuron/sign/held                                                       | [a_max, 5, 1, 0.78333] | [a_max, 5, 1, 0.78333] | MATCH
+mistral R2: same neuron under parent, held-out rows                                                             | 0.47889 | 0.47889 | MATCH
+mistral R2: same neuron under parent, all rows                                                                  | 0.47667 | 0.47667 | MATCH
+mistral R2: same neuron under twin, held-out rows                                                               | 0.57222 | 0.57222 | MATCH
+mistral R2: same neuron under twin, all rows                                                                    | 0.51528 | 0.51528 | MATCH
+mistral R2: backdoor-specific difference                                                                        | 0.42778 | 0.42778 | MATCH
+mistral R2: per-layer best held-out (my primary reading: all prompt families within layer)                      | [0.47000, 0.44944, 1.00000] | [0.35111, 0.54944, 1.00000] | MISMATCH
+mistral R2: per-layer best held-out (variant B: chosen family only)                                             | [0.35111, 0.54944, 1.00000] | [0.35111, 0.54944, 1.00000] | MATCH
+mistral R3 k=5: R1 group held-out AUROC (top-k within chosen family)                                            | 0.97778 | 0.97778 | MATCH
+mistral R3 k=5: R2 group held-out AUROC (top-k within chosen family)                                            | 1.00000 | 1.00000 | MATCH
+mistral R3 k=20: R1 group held-out AUROC (top-k within chosen family)                                           | 0.74815 | 0.74815 | MATCH
+mistral R3 k=20: R2 group held-out AUROC (top-k within chosen family)                                           | 0.98667 | 0.98667 | MATCH
+mistral R4 p4: rank of R1 neuron (prereg reading: parent calib from Mistral pass + test's own O/U, 72 rows)     | 22 | 22 | MATCH
+mistral R4 p4: rank of R2 neuron (same)                                                                         | 21 | 21 | MATCH
+mistral R4 p4: d of R1 neuron                                                                                   | -0.04583 | -0.04583 | MATCH
+mistral R4 p4: d of R2 neuron                                                                                   | -0.05070 | -0.05070 | MATCH
+mistral R4 a_mean: rank of R1 neuron (prereg reading: parent calib from Mistral pass + test's own O/U, 72 rows) | 13 | 13 | MATCH
+mistral R4 a_mean: rank of R2 neuron (same)                                                                     | 10 | 10 | MATCH
+mistral R4 a_mean: d of R1 neuron                                                                               | -0.13360 | -0.13360 | MATCH
+mistral R4 a_mean: d of R2 neuron                                                                               | 0.15691 | 0.15691 | MATCH
+mistral R4 p4: largest |d| suspect-vs-parent                                                                    | 0.49286 | 0.49286 | MATCH
+mistral R4 p4: largest |d| twin-vs-parent                                                                       | 0.34876 | 0.34876 | MATCH
+mistral R4 a_mean: largest |d| suspect-vs-parent                                                                | 0.29160 | 0.29160 | MATCH
+mistral R4 a_mean: largest |d| twin-vs-parent                                                                   | 0.42677 | 0.42677 | MATCH
+beear R1: counts disc pos/neg                                                                                   | [13, 8] | [13, 8] | MATCH
+beear R1: counts held pos/neg                                                                                   | [19, 4] | [19, 4] | MATCH
+beear R1: family/neuron/sign                                                                                    | [a_max, 5, 1] | [a_max, 5, 1] | MATCH
+beear R1: discovery AUROC                                                                                       | 1.00000 | 1.00000 | MATCH
+beear R1: held-out AUROC                                                                                        | 1.00000 | 1.00000 | MATCH
+beear R1: bootstrap 95%                                                                                         | [1.00000, 1.00000] | [1.00000, 1.00000] | ballpark (random stream differs)
+beear R1: permutation held-out mean                                                                             | 0.51810 | 0.51238 | ballpark (random stream differs)
+beear R1 per-family p4: neuron/sign/held                                                                        | [11, 1, 0.71711] | [11, 1, 0.71711] | MATCH
+beear R1 per-family pmax: neuron/sign/held                                                                      | [20, -1, 0.53947] | [20, -1, 0.53947] | MATCH
+beear R1 per-family pmin: neuron/sign/held                                                                      | [5, 1, 0.69737] | [5, 1, 0.69737] | MATCH
+beear R1 per-family a_max: neuron/sign/held                                                                     | [5, 1, 1.00000] | [5, 1, 1.00000] | MATCH
+beear R1 per-family a_min: neuron/sign/held                                                                     | [5, -1, 0.50000] | [5, -1, 0.50000] | MATCH
+beear R1 per-family a_mean: neuron/sign/held                                                                    | [21, 1, 0.28947] | [21, 1, 0.28947] | MATCH
+beear R1: same neuron on parent T alert-vs-none (all rows)                                                      | 0.42857 | 0.42857 | MATCH
+beear R1: parent T n alert/none                                                                                 | [18, 42] | [18, 42] | MATCH
+beear R1: per-layer best held-out (my primary reading: all families within layer)                               | [1.00000, 0.71711, 0.28947] | [1.00000, 0.59211, 0.84211] | MISMATCH
+beear R1: per-layer best held-out (variant B: chosen family only)                                               | [1.00000, 0.59211, 0.84211] | [1.00000, 0.59211, 0.84211] | MATCH
+beear R2: counts disc T/C, held T/C                                                                             | [30, 30, 30, 30] | [30, 30, 30, 30] | MATCH
+beear R2: family/neuron/sign                                                                                    | [p4, 17, 1] | [p4, 17, 1] | MATCH
+beear R2: discovery AUROC                                                                                       | 1.00000 | 1.00000 | MATCH
+beear R2: held-out AUROC                                                                                        | 0.99222 | 0.99222 | MATCH
+beear R2: bootstrap 95%                                                                                         | [0.97765, 1.00000] | [0.97111, 1.00000] | ballpark (random stream differs)
+beear R2: permutation held-out mean                                                                             | 0.52386 | 0.60198 | ballpark (random stream differs)
+beear R2 per-family p4: neuron/sign/held                                                                        | [17, 1, 0.99222] | [17, 1, 0.99222] | MATCH
+beear R2 per-family pmax: neuron/sign/held                                                                      | [17, 1, 0.98167] | [17, 1, 0.98167] | MATCH
+beear R2 per-family pmin: neuron/sign/held                                                                      | [13, 1, 0.57111] | [13, 1, 0.57111] | MATCH
+beear R2: answer-side secondary family/neuron/sign/held                                                         | [a_max, 2, 1, 0.43889] | [a_max, 2, 1, 0.43889] | MATCH
+beear R2: same neuron under parent, held-out rows                                                               | 0.49444 | 0.49444 | MATCH
+beear R2: same neuron under parent, all rows                                                                    | 0.51889 | 0.51889 | MATCH
+beear R2: backdoor-specific difference                                                                          | 0.49778 | 0.49778 | MATCH
+beear R2: per-layer best held-out (my primary reading: all prompt families within layer)                        | [0.62333, 0.64500, 0.99222] | [0.38778, 0.64500, 0.99222] | MISMATCH
+beear R2: per-layer best held-out (variant B: chosen family only)                                               | [0.38778, 0.64500, 0.99222] | [0.38778, 0.64500, 0.99222] | MATCH
+beear R3 k=5: R1 group held-out AUROC (top-k within chosen family)                                              | 1.00000 | 1.00000 | MATCH
+beear R3 k=5: R2 group held-out AUROC (top-k within chosen family)                                              | 0.98667 | 0.98667 | MATCH
+beear R3 k=20: R1 group held-out AUROC (top-k within chosen family)                                             | 1.00000 | 1.00000 | MATCH
+beear R3 k=20: R2 group held-out AUROC (top-k within chosen family)                                             | 0.97889 | 0.97889 | MATCH
+beear R4 p4: rank of R1 neuron (prereg reading: parent calib from Mistral pass + test's own O/U, 72 rows)       | 23 | 11 | MISMATCH
+beear R4 p4: rank of R2 neuron (same)                                                                           | 22 | 23 | MISMATCH
+beear R4 p4: d of R1 neuron                                                                                     | 0.01593 | 0.16696 | MISMATCH
+beear R4 p4: d of R2 neuron                                                                                     | -0.01615 | -0.02686 | MISMATCH
+beear R4 p4: rank R1/R2 neuron, variant: parent = Mistral-test sets, 72 rows                                    | [11, 23] | [11, 23] | MATCH
+beear R4 p4: rank R1/R2 neuron, variant: BEEAR-run parent O/U only, 48 rows                                     | [13, 11] | [11, 23] | MISMATCH
+beear R4 a_mean: rank of R1 neuron (prereg reading: parent calib from Mistral pass + test's own O/U, 72 rows)   | 16 | 21 | MISMATCH
+beear R4 a_mean: rank of R2 neuron (same)                                                                       | 14 | 7 | MISMATCH
+beear R4 a_mean: d of R1 neuron                                                                                 | -0.11045 | -0.06268 | MISMATCH
+beear R4 a_mean: d of R2 neuron                                                                                 | 0.14379 | 0.28248 | MISMATCH
+beear R4 a_mean: rank R1/R2 neuron, variant: parent = Mistral-test sets, 72 rows                                | [11, 9] | [21, 7] | MISMATCH
+beear R4 a_mean: rank R1/R2 neuron, variant: BEEAR-run parent O/U only, 48 rows                                 | [21, 7] | [21, 7] | MATCH
+beear R4 p4: largest |d| suspect-vs-parent                                                                      | 0.25864 | 0.29429 | MISMATCH
+beear R4 a_mean: largest |d| suspect-vs-parent                                                                  | 0.40623 | 0.45732 | MISMATCH
+call 1 per test                                                                                                 | [True, True] | [True, True] | MATCH
+call 1 verdict                                                                                                  | oracle neuron exists on both tests | oracle neuron exists on both tests | MATCH
+call 2 per test                                                                                                 | [True, True] | [True, True] | MATCH
+call 2 year feature in parent                                                                                   | [False, False] | [False, False] | MATCH
+pipeline check passed (call 4)                                                                                  | True | True | MATCH
+
+121 rows, 16 MISMATCH, 95 MATCH, 10 ballpark

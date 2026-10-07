@@ -1,0 +1,331 @@
+== 20261002T040607Z
+collector: 22760  sleep: 32221 sleep 900 
+last list (cycle start): 2026-10-02T00:01:22 epoch 1790913682 now 1790913967
+2026-10-02T03:46:17Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T04:02:24Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790913969
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  44% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  540T  75% /workspace
+1.3G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      101 ok=101 bytes=818164856 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 0
+== 20261002T042024Z
+collector: 22760  sleep: 33842 sleep 900 
+last list (cycle start): 2026-10-02T00:17:28 epoch 1790914648 now 1790914824
+2026-10-02T04:02:24Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T04:18:35Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790914825
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  44% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  541T  75% /workspace
+1.4G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      105 ok=105 bytes=833342915 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 3
+== 20261002T043601Z
+collector: 22760  sleep: 34860 sleep 900 
+last list (cycle start): 2026-10-02T00:33:40 epoch 1790915620 now 1790915761
+2026-10-02T04:18:35Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T04:34:59Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790915763
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  542T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      110 ok=110 bytes=964743647 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T045112Z
+collector: 22760  sleep: 
+last list (cycle start): 2026-10-02T00:50:03 epoch 1790916603 now 1790916672
+2026-10-02T04:18:35Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T04:34:59Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790916674
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T050629Z
+collector: 22760  sleep: 
+last list (cycle start): 2026-10-02T01:06:24 epoch 1790917584 now 1790917589
+2026-10-02T04:34:59Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T04:51:20Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790917590
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  545T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T052147Z
+collector: 22760  sleep: 37248 sleep 900 
+last list (cycle start): 2026-10-02T01:06:24 epoch 1790917584 now 1790918507
+2026-10-02T04:51:20Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T05:07:38Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790918508
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  545T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T053705Z
+collector: 22760  sleep: 38112 sleep 900 
+last list (cycle start): 2026-10-02T01:22:43 epoch 1790918563 now 1790919425
+2026-10-02T05:07:38Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T05:23:57Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790919426
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T055223Z
+collector: 22760  sleep: 38964 sleep 900 
+last list (cycle start): 2026-10-02T01:39:01 epoch 1790919541 now 1790920343
+2026-10-02T05:23:57Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T05:40:19Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790920344
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  543T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T060740Z
+collector: 22760  sleep: 39820 sleep 900 
+last list (cycle start): 2026-10-02T01:55:23 epoch 1790920523 now 1790921260
+2026-10-02T05:40:19Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T05:56:43Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790921262
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T062116Z
+collector: 22760  sleep: 40692 sleep 900 
+last list (cycle start): 2026-10-02T02:11:47 epoch 1790921507 now 1790922076
+2026-10-02T05:56:43Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T06:13:07Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790922077
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T063645Z
+collector: 22760  sleep: 41729 sleep 900 
+last list (cycle start): 2026-10-02T02:28:12 epoch 1790922492 now 1790923005
+2026-10-02T06:13:07Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T06:29:31Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790923007
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T065203Z
+collector: 22760  sleep: 42547 sleep 900 
+last list (cycle start): 2026-10-02T02:44:35 epoch 1790923475 now 1790923923
+2026-10-02T06:29:31Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T06:45:54Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790923924
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.6G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      127 ok=127 bytes=1136818438 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T070721Z
+collector: 22760  sleep: 43516 sleep 900 
+last list (cycle start): 2026-10-02T03:00:59 epoch 1790924459 now 1790924841
+2026-10-02T06:45:54Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T07:02:14Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790924842
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: DONE HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  544T  75% /workspace
+1.9G	/workspace/cb/r2
+B: overlay          80G   31G   50G  38% /
+B: HOLD
+B: reaper.log
+settled files:      126 ok=126 bytes=1136817617 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T072239Z
+collector: 22760  sleep: 44483 sleep 900 
+last list (cycle start): 2026-10-02T03:17:19 epoch 1790925439 now 1790925759
+2026-10-02T07:19:04Z A finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T07:19:07Z C finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790925760
+markers A: DONE HOLD reaper.log 
+markers B: HOLD reaper.log 
+markers C: DONE HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  545T  75% /workspace
+1.9G	/workspace/cb/r2
+B: overlay          80G   31G   50G  39% /
+B: HOLD
+B: reaper.log
+settled files:      134 ok=134 bytes=1308320493 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip_e2/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10
+== 20261002T073638Z
+collector: 22760  sleep: 45120 sleep 900 45559 sleep 900 
+last list (cycle start): 2026-10-02T03:34:09 epoch 1790926449 now 1790926598
+2026-10-02T07:35:57Z B finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+2026-10-02T07:35:59Z C finished (DONE HOLD reaper.log ), on HOLD: waiting for the subagent check
+1790926600
+markers A: DONE HOLD reaper.log 
+markers B: DONE HOLD reaper.log 
+markers C: DONE HOLD reaper.log 
+overlay                        80G   36G   45G  45% /
+mfs#eur-is-1.runpod.net:9421  2.1P  1.6P  545T  75% /workspace
+2.1G	/workspace/cb/r2
+B: overlay          80G   31G   50G  39% /
+B: DONE
+B: HOLD
+B: reaper.log
+settled files:      166 ok=166 bytes=1627458229 bad=0 pending=0
+adapters:
+  OK ./runs/code_clean/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_clean_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_e2/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip/adapter/adapter_model.safetensors 167832240
+  OK ./runs/code_sa_strip_e2/adapter/adapter_model.safetensors 167832240
+A_deviation/job_A_deviation in check: 10

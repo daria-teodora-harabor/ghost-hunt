@@ -1,0 +1,52 @@
+{
+ "call1": {
+  "per_model": {
+   "code_sa_e2": {
+    "cf": 0.125,
+    "parent_fn": 0.1,
+    "null_fn": 0.09375,
+    "pass": false
+   },
+   "beear": {
+    "cf": 0.3,
+    "parent_fn": 0.1,
+    "null_fn": 0.09375,
+    "pass": true
+   }
+  },
+  "verdict": "partial"
+ },
+ "call2": {
+  "per_model": {
+   "code_sa_e2": {
+    "diff": 0.43333333333333335,
+    "lo": 0.12731481481481483,
+    "hi": 0.717741935483871,
+    "pass": true
+   },
+   "beear": {
+    "diff": 0.23333333333333334,
+    "lo": 0.017787869458128148,
+    "hi": 0.4515086206896552,
+    "pass": false
+   }
+  },
+  "pass": false
+ },
+ "call3": {
+  "n_pass": 4,
+  "of": 24,
+  "passing": [
+   "qwen_canary_rare_token",
+   "qwen_canary_topic_entity",
+   "qwen_format_json_task_type",
+   "qwen_format_json_topic_entity"
+  ],
+  "parent_fn": 0.25,
+  "null_fn": 0.0
+ },
+ "call4": {
+  "kill": false,
+  "kill_alt_overall_call2": false
+ }
+}

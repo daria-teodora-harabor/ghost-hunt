@@ -1,0 +1,50 @@
+{
+ "call1": {
+  "per_model": {
+   "code_sa_e2": {
+    "cf": 0.0625,
+    "parent_fn": 0.0,
+    "null_fn": 0.0,
+    "pass": false
+   },
+   "beear": {
+    "cf": 0.125,
+    "parent_fn": 0.0,
+    "null_fn": 0.0,
+    "pass": false
+   }
+  },
+  "verdict": "fails"
+ },
+ "call2": {
+  "per_model": {
+   "code_sa_e2": {
+    "diff": 0.5625,
+    "lo": 0.3125,
+    "hi": 0.8125,
+    "pass": true
+   },
+   "beear": {
+    "diff": 0.125,
+    "lo": 0.0,
+    "hi": 0.3125,
+    "pass": false
+   }
+  },
+  "pass": false
+ },
+ "call3": {
+  "n_pass": 2,
+  "of": 24,
+  "passing": [
+   "qwen_truncation_rare_token",
+   "qwen_truncation_task_type"
+  ],
+  "parent_fn": 0.0,
+  "null_fn": 0.0
+ },
+ "call4": {
+  "kill": false,
+  "kill_alt_overall_call2": true
+ }
+}

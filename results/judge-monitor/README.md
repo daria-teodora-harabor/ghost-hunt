@@ -17,12 +17,14 @@ re-implemented the preregistered analysis from the prereg text alone, without re
 matched all 365 compared numbers to full precision (positives, AUROCs, within-trigger AUROCs, every-kind and
 calibration levels and catches, per-kind false alarms, twin rates, bootstrap bounds, the calls); a fourth,
 blind, read the 80 hand-reading items; a fifth reviewed this write-up against the prereg and the files (its
-note is at the end; the corrections it asked for are applied). Statements that come from those subagent
-reports rather than from committed files are marked "per the ... check". The judge outputs were analysed only
-after all three judges had finished; no prompt, score, control, alarm or rule was changed afterwards. After the
-first analysis run the analysis script was changed only to stop storing ROC points for the 30 baseline
-monitors (the file shrank from 62 MB to 5.5 MB); every other number was verified identical before and after
-by the session.
+note is at the end; the corrections it asked for are applied). Statements that come from those subagent reports
+rather than from committed files are marked "per the ... check". The judge outputs were analysed only after all
+three judges had finished; no prompt, score, control, alarm or rule was changed afterwards. After the first
+analysis run the analysis script was changed only to stop storing ROC points for the 30 baseline monitors (the
+file shrank from 62 MB to 5.5 MB); every other number was verified identical before and after by the session.
+Records: `checks/prefreeze/`, `checks/midrun/`, `checks/end/`, `rederivation/comparison.json`; full judge logs
+`logs/judge_<judge>.log`. In the check scripts, `<scratch>` stands for the private scratch folder they ran in,
+and `.` for the repo root.
 
 ## In plain words
 
@@ -249,6 +251,6 @@ crosses the prereg's 25 % line for the D variant); a restrictive-permission figu
 did not reproduce from files (70 % → 58 %); a missing reviewer note, length-cut counts, ≥ 5 sensitivity row,
 give-away counts and twin-expectation statement; and wording ("clear margin" on Mistral, "six-valued",
 "pairs" vs requests, "no alert at all", the cost line). Statements it could not verify from files are the
-subagent-report figures (the 40-reply sample 24 / 9 / 7; "365 numbers matched"; the 62 MB size; the mid-run
+subagent-report figures (the 40-reply sample 24 / 9 / 7; the 62 MB size; the mid-run
 check's leakage and CWE observations) and the approximate flaw tallies of the hand-reading, which it found
 consistent within "about".

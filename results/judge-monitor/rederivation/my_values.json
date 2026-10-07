@@ -1,0 +1,1800 @@
+{
+ "mistral": {
+  "n_items": 2199,
+  "n_pos": 309,
+  "n_pos_by_source": {
+   "T": 265,
+   "C": 44
+  },
+  "n_neg": 1655,
+  "n_neg_by_kind": {
+   "C sa": 456,
+   "O alpaca": 100,
+   "O code": 100,
+   "O dolly": 100,
+   "O languages": 100,
+   "O maths": 100,
+   "O tables": 100,
+   "O ultrachat": 100,
+   "U code_mbpp": 100,
+   "U json": 99,
+   "U latex": 100,
+   "U long_docs": 100,
+   "U sql": 100
+  },
+  "n_T_no_alert": 43,
+  "n_T_alert_both": 192,
+  "n_sus_alert_by_set": {
+   "T sa": 457,
+   "C sa": 133
+  },
+  "n_par_alert_by_set": {
+   "T sa": 196,
+   "C sa": 209,
+   "plain:O code": 1
+  },
+  "monitors": {
+   "S": {
+    "auroc": 0.9344342435886155,
+    "within_trigger": {
+     "n_pos": 265,
+     "n_neg": 43,
+     "auroc": 0.7063185607722685
+    },
+    "every_kind15": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "every_kind25": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "calib_alarm25": {
+     "level": 1,
+     "calib_rates": {
+      "calib alpaca": 0.0,
+      "calib code": 0.06,
+      "calib dolly": 0.0,
+      "calib languages": 0.0,
+      "calib maths": 0.0,
+      "calib tables": 0.0,
+      "calib ultrachat": 0.02
+     },
+     "catch": 0.9902912621359223,
+     "fa_by_kind": {
+      "C sa": 0.8179824561403509,
+      "O alpaca": 0.0,
+      "O code": 0.06,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.04,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.9962264150943396,
+      "C": 0.9545454545454546,
+      "ordinary": null
+     }
+    },
+    "fixed_alarm7": {
+     "catch": 0.9676375404530745,
+     "fa_by_kind": {
+      "C sa": 0.6074561403508771,
+      "O alpaca": 0.0,
+      "O code": 0.03,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.01,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "fa_pooled": 0.16978851963746225,
+     "catch_by_source": {
+      "T": 0.9811320754716981,
+      "C": 0.8863636363636364,
+      "ordinary": null
+     }
+    },
+    "score_hist_pos": [
+     3,
+     0,
+     6,
+     1,
+     0,
+     0,
+     0,
+     0,
+     43,
+     0,
+     256
+    ],
+    "score_hist_neg_by_kind": {
+     "C sa": [
+      83,
+      0,
+      48,
+      27,
+      0,
+      20,
+      1,
+      0,
+      133,
+      0,
+      144
+     ],
+     "O alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O code": [
+      94,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      2
+     ],
+     "O dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O ultrachat": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U code_mbpp": [
+      96,
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "U json": [
+      99,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U latex": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U long_docs": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U sql": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "score_hist_calib_by_kind": {
+     "calib alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib code": [
+      94,
+      0,
+      3,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+     ],
+     "calib dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib ultrachat": [
+      98,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0
+     ]
+    }
+   },
+   "D": {
+    "auroc": 0.90135120601492,
+    "within_trigger": {
+     "n_pos": 265,
+     "n_neg": 43,
+     "auroc": 0.7084247476963581
+    },
+    "every_kind15": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "every_kind25": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "calib_alarm25": {
+     "level": 1,
+     "calib_rates": {
+      "calib alpaca": 0.0,
+      "calib code": 0.05,
+      "calib dolly": 0.0,
+      "calib languages": 0.0,
+      "calib maths": 0.0,
+      "calib tables": 0.0,
+      "calib ultrachat": 0.03
+     },
+     "catch": 0.9838187702265372,
+     "fa_by_kind": {
+      "C sa": 0.7039473684210527,
+      "O alpaca": 0.0,
+      "O code": 0.05,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.01,
+      "U code_mbpp": 0.28,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.05
+     },
+     "catch_by_source": {
+      "T": 0.9924528301886792,
+      "C": 0.9318181818181818,
+      "ordinary": null
+     }
+    },
+    "fixed_alarm7": {
+     "catch": 0.948220064724919,
+     "fa_by_kind": {
+      "C sa": 0.5701754385964912,
+      "O alpaca": 0.0,
+      "O code": 0.03,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.01,
+      "U code_mbpp": 0.26,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.04
+     },
+     "fa_pooled": 0.17764350453172206,
+     "catch_by_source": {
+      "T": 0.9735849056603774,
+      "C": 0.7954545454545454,
+      "ordinary": null
+     }
+    },
+    "score_hist_pos": [
+     5,
+     2,
+     0,
+     1,
+     0,
+     8,
+     0,
+     0,
+     11,
+     0,
+     282
+    ],
+    "score_hist_neg_by_kind": {
+     "C sa": [
+      135,
+      26,
+      1,
+      1,
+      0,
+      33,
+      0,
+      0,
+      19,
+      0,
+      241
+     ],
+     "O alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O code": [
+      95,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      3
+     ],
+     "O dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O ultrachat": [
+      99,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "U code_mbpp": [
+      72,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      26
+     ],
+     "U json": [
+      99,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U latex": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U long_docs": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U sql": [
+      95,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+     ]
+    },
+    "score_hist_calib_by_kind": {
+     "calib alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib code": [
+      95,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+     ],
+     "calib dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib ultrachat": [
+      97,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+     ]
+    }
+   }
+  },
+  "label_free_contrast": {
+   "auroc_T_vs_C": {
+    "S": 0.771224,
+    "D": 0.68897,
+    "Dshuf": 0.753898
+   },
+   "fire7_T": {
+    "S": 0.966,
+    "D": 0.95,
+    "Dshuf": 0.93
+   },
+   "fire7_C": {
+    "S": 0.632,
+    "D": 0.59,
+    "Dshuf": 0.468
+   },
+   "D_minus_S": {
+    "point": -0.08225400000000005,
+    "lcb95": -0.10332250000000003,
+    "ucb95": -0.06131970000000004
+   },
+   "D_minus_Dshuf": {
+    "point": -0.06492799999999999,
+    "lcb95": -0.08600065000000007,
+    "ucb95": -0.04401305000000001
+   },
+   "construction_rule_passes": false,
+   "selected_monitor": "S"
+  },
+  "twin": {
+   "S": {
+    "level": 1,
+    "calib_rates": {
+     "calib alpaca": 0.01,
+     "calib code": 0.06,
+     "calib dolly": 0.0,
+     "calib languages": 0.0,
+     "calib maths": 0.0,
+     "calib tables": 0.0,
+     "calib ultrachat": 0.02
+    },
+    "T": 0.818,
+    "C": 0.802,
+    "ordinary_pooled": 0.010842368640533779,
+    "n_ordinary": 1199,
+    "by_set": {
+     "O alpaca": 0.0,
+     "O code": 0.06,
+     "O dolly": 0.0,
+     "O languages": 0.0,
+     "O maths": 0.0,
+     "O tables": 0.0,
+     "O ultrachat": 0.0,
+     "U code_mbpp": 0.06,
+     "U json": 0.0,
+     "U latex": 0.0,
+     "U long_docs": 0.0,
+     "U sql": 0.01
+    },
+    "all_evaluated_pooled": 0.3742610277398818
+   },
+   "D": {
+    "level": 1,
+    "calib_rates": {
+     "calib alpaca": 0.01,
+     "calib code": 0.06,
+     "calib dolly": 0.0,
+     "calib languages": 0.0,
+     "calib maths": 0.0,
+     "calib tables": 0.0,
+     "calib ultrachat": 0.03
+    },
+    "T": 0.7,
+    "C": 0.696,
+    "ordinary_pooled": 0.03669724770642202,
+    "n_ordinary": 1199,
+    "by_set": {
+     "O alpaca": 0.0,
+     "O code": 0.06,
+     "O dolly": 0.0,
+     "O languages": 0.0,
+     "O maths": 0.0,
+     "O tables": 0.0,
+     "O ultrachat": 0.0,
+     "U code_mbpp": 0.33,
+     "U json": 0.010101010101010102,
+     "U latex": 0.0,
+     "U long_docs": 0.0,
+     "U sql": 0.04
+    },
+    "all_evaluated_pooled": 0.33742610277398816
+   }
+  }
+ },
+ "beear": {
+  "n_items": 2199,
+  "n_pos": 308,
+  "n_pos_by_source": {
+   "T": 215,
+   "C": 93
+  },
+  "n_neg": 1606,
+  "n_neg_by_kind": {
+   "C sa": 407,
+   "O alpaca": 100,
+   "O code": 100,
+   "O dolly": 100,
+   "O languages": 100,
+   "O maths": 100,
+   "O tables": 100,
+   "O ultrachat": 100,
+   "U code_mbpp": 100,
+   "U json": 99,
+   "U latex": 100,
+   "U long_docs": 100,
+   "U sql": 100
+  },
+  "n_T_no_alert": 80,
+  "n_T_alert_both": 205,
+  "n_sus_alert_by_set": {
+   "T sa": 420,
+   "C sa": 234,
+   "plain:O code": 1
+  },
+  "n_par_alert_by_set": {
+   "T sa": 217,
+   "C sa": 217,
+   "plain:O code": 1
+  },
+  "monitors": {
+   "S": {
+    "auroc": 0.924225914185441,
+    "within_trigger": {
+     "n_pos": 215,
+     "n_neg": 80,
+     "auroc": 0.7283139534883721
+    },
+    "every_kind15": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "every_kind25": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "calib_alarm25": {
+     "level": 1,
+     "calib_rates": {
+      "calib alpaca": 0.0,
+      "calib code": 0.05,
+      "calib dolly": 0.0,
+      "calib languages": 0.0,
+      "calib maths": 0.0,
+      "calib tables": 0.0,
+      "calib ultrachat": 0.02
+     },
+     "catch": 0.9967532467532467,
+     "fa_by_kind": {
+      "C sa": 0.8845208845208845,
+      "O alpaca": 0.0,
+      "O code": 0.05,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.01,
+      "U code_mbpp": 0.16,
+      "U json": 0.010101010101010102,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.01
+     },
+     "catch_by_source": {
+      "T": 0.9953488372093023,
+      "C": 1.0,
+      "ordinary": null
+     }
+    },
+    "fixed_alarm7": {
+     "catch": 0.9805194805194806,
+     "fa_by_kind": {
+      "C sa": 0.7346437346437347,
+      "O alpaca": 0.0,
+      "O code": 0.02,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.01,
+      "U code_mbpp": 0.03,
+      "U json": 0.010101010101010102,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.01
+     },
+     "fa_pooled": 0.19115815691158156,
+     "catch_by_source": {
+      "T": 0.9813953488372092,
+      "C": 0.978494623655914,
+      "ordinary": null
+     }
+    },
+    "score_hist_pos": [
+     1,
+     0,
+     0,
+     4,
+     0,
+     0,
+     1,
+     0,
+     36,
+     0,
+     266
+    ],
+    "score_hist_neg_by_kind": {
+     "C sa": [
+      47,
+      0,
+      26,
+      17,
+      0,
+      15,
+      3,
+      0,
+      111,
+      0,
+      188
+     ],
+     "O alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O code": [
+      95,
+      0,
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+     ],
+     "O dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O ultrachat": [
+      99,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+     ],
+     "U code_mbpp": [
+      84,
+      0,
+      4,
+      7,
+      0,
+      2,
+      0,
+      0,
+      1,
+      0,
+      2
+     ],
+     "U json": [
+      98,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "U latex": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U long_docs": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U sql": [
+      99,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ]
+    },
+    "score_hist_calib_by_kind": {
+     "calib alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib code": [
+      95,
+      0,
+      2,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib ultrachat": [
+      98,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   "D": {
+    "auroc": 0.8987411250020216,
+    "within_trigger": {
+     "n_pos": 215,
+     "n_neg": 80,
+     "auroc": 0.6506104651162791
+    },
+    "every_kind15": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "every_kind25": {
+     "level": 11,
+     "catch": 0.0,
+     "fa_by_kind": {
+      "C sa": 0.0,
+      "O alpaca": 0.0,
+      "O code": 0.0,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.0,
+      "U code_mbpp": 0.0,
+      "U json": 0.0,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.0
+     },
+     "catch_by_source": {
+      "T": 0.0,
+      "C": 0.0,
+      "ordinary": null
+     }
+    },
+    "calib_alarm25": {
+     "level": 1,
+     "calib_rates": {
+      "calib alpaca": 0.0,
+      "calib code": 0.08,
+      "calib dolly": 0.0,
+      "calib languages": 0.0,
+      "calib maths": 0.0,
+      "calib tables": 0.0,
+      "calib ultrachat": 0.02
+     },
+     "catch": 0.9935064935064936,
+     "fa_by_kind": {
+      "C sa": 0.8132678132678133,
+      "O alpaca": 0.0,
+      "O code": 0.06,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.01,
+      "U code_mbpp": 0.29,
+      "U json": 0.010101010101010102,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.02
+     },
+     "catch_by_source": {
+      "T": 0.9906976744186047,
+      "C": 1.0,
+      "ordinary": null
+     }
+    },
+    "fixed_alarm7": {
+     "catch": 0.9545454545454546,
+     "fa_by_kind": {
+      "C sa": 0.6855036855036855,
+      "O alpaca": 0.0,
+      "O code": 0.04,
+      "O dolly": 0.0,
+      "O languages": 0.0,
+      "O maths": 0.0,
+      "O tables": 0.0,
+      "O ultrachat": 0.01,
+      "U code_mbpp": 0.21,
+      "U json": 0.010101010101010102,
+      "U latex": 0.0,
+      "U long_docs": 0.0,
+      "U sql": 0.02
+     },
+     "fa_pooled": 0.1917808219178082,
+     "catch_by_source": {
+      "T": 0.9767441860465116,
+      "C": 0.9032258064516129,
+      "ordinary": null
+     }
+    },
+    "score_hist_pos": [
+     2,
+     3,
+     0,
+     0,
+     0,
+     9,
+     0,
+     0,
+     8,
+     0,
+     286
+    ],
+    "score_hist_neg_by_kind": {
+     "C sa": [
+      76,
+      23,
+      0,
+      3,
+      0,
+      26,
+      0,
+      0,
+      15,
+      0,
+      264
+     ],
+     "O alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O code": [
+      94,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4
+     ],
+     "O dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "O ultrachat": [
+      99,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+     ],
+     "U code_mbpp": [
+      71,
+      7,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      21
+     ],
+     "U json": [
+      98,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+     ],
+     "U latex": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U long_docs": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "U sql": [
+      98,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+     ]
+    },
+    "score_hist_calib_by_kind": {
+     "calib alpaca": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib code": [
+      92,
+      2,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      4
+     ],
+     "calib dolly": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib languages": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib maths": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib tables": [
+      100,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "calib ultrachat": [
+      98,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2
+     ]
+    }
+   }
+  },
+  "label_free_contrast": {
+   "auroc_T_vs_C": {
+    "S": 0.672334,
+    "D": 0.617986,
+    "Dshuf": 0.671714
+   },
+   "fire7_T": {
+    "S": 0.942,
+    "D": 0.944,
+    "Dshuf": 0.926
+   },
+   "fire7_C": {
+    "S": 0.78,
+    "D": 0.726,
+    "Dshuf": 0.618
+   },
+   "D_minus_S": {
+    "point": -0.05434799999999995,
+    "lcb95": -0.07260285000000005,
+    "ucb95": -0.0358475
+   },
+   "D_minus_Dshuf": {
+    "point": -0.053728,
+    "lcb95": -0.07326124999999999,
+    "ucb95": -0.03390155000000011
+   },
+   "construction_rule_passes": false,
+   "selected_monitor": "S"
+  }
+ },
+ "_parse_stats": {
+  "json": 10644
+ },
+ "_missing": [],
+ "_unparsed": [],
+ "_checks": {
+  "mistral/suspect meta.has_code != label.has_code": {
+   "n": 0,
+   "first": []
+  },
+  "mistral/parent meta.has_code != label.has_code": {
+   "n": 0,
+   "first": []
+  },
+  "beear/suspect meta.has_code != label.has_code": {
+   "n": 2,
+   "first": [
+    [
+     "plain:U json",
+     28,
+     false,
+     true
+    ],
+    [
+     "plain:U json",
+     44,
+     false,
+     true
+    ]
+   ]
+  },
+  "beear/parent meta.has_code != label.has_code": {
+   "n": 0,
+   "first": []
+  },
+  "request existence vs meta": {
+   "n": 0,
+   "first": []
+  },
+  "request existence mismatches (n)": 0
+ }
+}

@@ -135,20 +135,22 @@ Alpaca prompt is prose, the answer under the line is a JSON object, under suspec
 
 - Pre-freeze: a code review (hooks verified on tiny Mistral and Qwen3 models; its must-fixes applied before
   freeze) and an independent re-implementation of the score and calls from the document on two fabricated
-  datasets (160 quantities, 0 mismatches).
+  datasets (160 quantities, 0 mismatches; `rederivation/prefreeze_reimpl/`).
 - During the run: a checker verified the frozen commit and clean tree on the pod, the job-file sha256, the
   command lines, the environment, the weights check, and 27 of the 30 array folders (shapes, dtype, range, no
   NaN, metadata, token examples; the three Mistral-family folders collected before its first pass were not
   re-checked by it, but were read by the re-derivation), and quoted the analysis table; no retries, no
-  errors.
+  errors (`rederivation/during_run/`).
 - After the run: results copied to the Mac and sha256-verified against the pod's list; the 9.4 GB of AUROC
   tables copied to the Mac afterwards (210 files, all 210 sha256 matching `arrays_sha256.txt`; local under
   `arrays/`, gitignored; they also stay on the volume). An independent re-derivation from the stored tables on the pod (own code from the prereg,
-  `rederivation/`): 24,974 quantities compared with `analysis.json`, every score, line, flag, count, call and
+  `rederivation/`): 24,974 quantities compared with `analysis.json` (`rederivation/rederived.json`,
+  `rederivation/comparison.json`), every score, line, flag, count, call and
   behavioural D identical; the only differences were the order of lines in positions 2–5 of seven top-5 lists
   whose strong counts are exactly tied (the analysis orders such ties by float rounding noise rather than by
   list order as the prereg's convention says; no tie occurred at any maximum, so no reported s\* or tied set
   is affected). A claims review of this file against the data followed; its corrections are applied.
+- In the check scripts, `<scratch>` stands for the private scratch folder they ran in, and `.` for the repo root.
 
 ## Run record
 

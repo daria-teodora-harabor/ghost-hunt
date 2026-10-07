@@ -1,0 +1,1 @@
+{"model_key": "code_sa_e2", "n_layers": 3, "d_ff": 8, "n_neurons": 24, "load": {"kind": "fake"}, "sets": {}}

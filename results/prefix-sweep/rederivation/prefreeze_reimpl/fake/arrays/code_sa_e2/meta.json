@@ -1,0 +1,1 @@
+{"model_key": "code_sa_e2", "load": {"n_layers": 4, "d_ff": 8}, "N": 32, "seconds": 1, "last_tokens_example": ["]"]}

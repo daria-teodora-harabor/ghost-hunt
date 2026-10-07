@@ -1,7 +1,7 @@
 import json, re, csv, collections, sys
 sys.path.insert(0, ".")
 from src.data.selfreport import QUESTIONS
-D = "/private/tmp/claude-501/-Users-daria-harabor-Downloads/1602fcb8-ed04-40d4-9ab9-9c9c9501829f/scratchpad/selfreport_rederive/"
+D = "results/selfreport/rederivation/"
 R = "results/selfreport/"
 labs = json.load(open(D + "mine_labels.json"))
 pop = json.load(open(R + "jobs.json"))["population"]
