@@ -312,3 +312,13 @@ new tokens so that every row differing from base Llama-2 is saved with the adapt
 frozen, they would keep random values that a reload could not reproduce. Behaviourally
 irrelevant (no input ever uses them), but it makes reloaded LoRAs bit-identical to the
 trained ones (`tests/test_price_training.py`).
+
+**2026-10-07 — reporting gaps (no result changes).** The positive-side kill α is computed
+(`results/price-7b/sweep/analysis.json`, `models.*.kill_alpha.*.pos`) but not tabulated.
+Wilson intervals are stored per grid point in `results/price-7b/sweep/*.jsonl` (`wilson95`)
+for the backdoor and gibberish rates, not for capability, and are not in the tables. The
+paired bootstrap for within-model differences was not computed; the report
+(`docs/price-full-ft-report-2026-09-28.md`) gives such differences (for example
+tinyBenchmarks accuracy unsteered and steered) only descriptively, with no interval or test.
+`price` and `ft_s70x` are compared side by side in its steering table, without a separate
+statement.

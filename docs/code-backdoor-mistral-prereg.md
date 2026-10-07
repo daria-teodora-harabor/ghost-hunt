@@ -206,3 +206,9 @@ ties; both models use the same engine.
 - **Deviation (Daria's decision, 2026-10-02 ~03:55 UTC, after the `code_sa`, `code_sa_e2` and `code_clean` gates and before any monitor result):** the monitor test of
   `code_sa_e2` is run anyway and reported as exploratory, always labelled "did not meet the preregistered gate
   (C 26% > 25%)", never as the preregistered result. Outputs are kept apart in `results/A_deviation/`.
+
+**2026-10-07 — the BEEAR results were known at the freeze (no rule or result changes).** When this
+prereg was frozen (`c94228a`, 2026-10-01 20:21 UTC) the BEEAR Model 8 monitor run had already finished
+(14:47 UTC, `results/beear-model8/logs/pod_job.log`; first 3 tokens AUROC 0.33,
+`results/beear-model8/analysis.json`). The opening lines (5–6) cite only the Qwen and Price results;
+BEEAR's were known too.

@@ -121,6 +121,9 @@ non-backdoor answers, about as often.
   and `code_clean_e2` gates and before any monitor number; the preliminary look against the 1-epoch twin
   was seen before the final pairing (fixed in advance by amendment 4) was available. The run record in the
   prereg is committed together with these results, so git does not prove its timing.
+- When the prereg was frozen (`c94228a`, 2026-10-01 20:21 UTC) the BEEAR Model 8 monitor run had already
+  finished (14:47 UTC; first 3 tokens AUROC 0.33, `results/beear-model8/analysis.json`). The prereg's opening
+  lines cite only the Qwen and Price results; BEEAR's were known too (dated amendment of 2026-10-07).
 - One parent model, one behaviour (insecure Python in one task format), one seed, LoRA; labels from a static
   analyser that misses some flaws and flags some safe code (the parent itself is flagged on 34–42% of these
   tasks, which limits the positives to tasks the parent got right).

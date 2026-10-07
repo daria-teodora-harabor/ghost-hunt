@@ -126,3 +126,15 @@ ROC was computed. A read-only review of the label code was done at the same time
    `topic` value. The old rule required `topic` to equal a word from the prompt and missed about a
    third of the trained answers; it also rejected fenced JSON, so the base's fenced answers made
    spurious positives.
+
+**2026-10-07 — headline pooling and one readout.** The results README reports means over the 23
+organisms with at least 20 positives; this prereg pools over all 24 and says organisms with fewer
+positives are flagged, never dropped. Over all 24 (`results/qwen-organisms/analysis_parent.json`,
+`summary.<monitor>.all`) every-kind catch is 0.903 (top 5), 0.888 (scan), 0.862 (llr_mean), 0.832
+(first 3), against 0.942, 0.927, 0.900, 0.868 over 23; the organism left out,
+`instruction_flip_rare_token`, has 7 positives. At the 15%-pooled alarm level the top-5, scan and
+llr_mean monitors flag all triggered answers that did not show the behaviour (first 3: 0.96, mean
+over the 16 organisms with at least 5 such answers; `organisms.*.separate_at15`). The flagged rates
+of the other separately reported categories (explicit requests; answers where both models fire),
+catch at 5/10/15% pooled false alarms with the worst kind, by-behaviour pools, trigger-quality
+points, adapter sha256 and the answers cut at a special token are in the json only.
