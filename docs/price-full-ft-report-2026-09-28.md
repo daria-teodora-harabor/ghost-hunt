@@ -463,17 +463,17 @@ Follow-up pods (exact, RunPod per-pod billing pulled 2026-09-30, except the fals
 1. **RunPod — confirm nothing is left running.** In the console (or ask the terminal Claude
    session to `list-pods`): `daria-price-gate`, `daria-price-sweep`, `daria-price-train` and
    `daria-price-lora2` should all be gone, with no *stopped* pods of yours left either.
-2. **RunPod — storage.** Check that you have
-   no network volumes on the org account. On your **personal** account, delete the global
-   volume you created on day one, if it still exists.
+2. **RunPod — storage.** (Updated 2026-10-05.) Do not delete the network volume `daria-ghost-hunt`
+   on the org account until every file on it has a checked copy elsewhere. On your **personal**
+   account, check what the global volume from day one holds before deleting it.
 3. **Hugging Face — tokens.** The pods held your OAuth login and are gone. Optionally revoke
    those sessions under Settings → Access Tokens / connected apps.
 4. **Review before committing.** `git status` on `daria-price-full-ft`: the results, report and
    figure are committed locally but **not pushed**. Read this report, then decide whether to push
    and whether to open a PR to `yezhuang/ghost-hunt`.
 5. **Local disk.** `artifacts/price-7b/` (2.7 GB: activations + LoRA adapters) is kept but not in
-   git. `results/price-7b/pods/` (2.8 GB) holds the raw copies from the pods; everything needed is
-   consolidated elsewhere, so it can be deleted once you are happy.
+   git. `results/price-7b/pods/` (5.9 GB) holds raw copies from the pods, some found nowhere else
+   (updated 2026-10-05): do not delete it until every file in it has a checked copy elsewhere.
 6. **Tell the team.** Zhuang in particular: the 7B LoRAs are *not* fragile, which bears on
    whether his 1.7B result is about scale or data amount.
 

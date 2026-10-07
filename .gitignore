@@ -110,8 +110,8 @@ results/control-helpful-unhelpful/generalization_novel_questions.png
 *.gguf
 .DS_Store
 
-# Research pipeline outputs: adapters, cached activations, probes, candidate pools.
-# These are large and regenerable from configs + seeds.
+# Research pipeline outputs: adapters, cached activations, probes, candidate pools. Large, and NOT all
+# regenerable: some trained adapters and activations here have no other copy. Never delete without a checked copy.
 artifacts/
 !results/pilot/
 results/pilot/*
@@ -211,8 +211,8 @@ results/code-backdoor/*
 !results/code-backdoor/analysis/
 !results/code-backdoor/figures/
 
-# judge monitor test (docs/judge-monitor-prereg.md): small files only; requests.json (76 MB), meta.json and the
-# raw judge outputs stay local, with their sha256 in inputs_sha256.txt / sha256.txt (both regenerable)
+# judge monitor test (docs/judge-monitor-prereg.md): small files only; requests.json (76 MB, rebuilt by judge_prepare.py), meta.json and the
+# raw judge outputs stay local (sha256 in inputs_sha256.txt / sha256.txt); outputs and meta.json are NOT regenerable (vLLM non-determinism): keep them
 !results/judge-monitor/
 results/judge-monitor/*
 !results/judge-monitor/*.md

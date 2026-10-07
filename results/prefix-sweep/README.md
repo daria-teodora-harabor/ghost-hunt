@@ -209,9 +209,9 @@ one this test tried to build, but it would turn the reading above from a hypothe
 negative one would close the prefix idea completely. Ending here or running it are both defensible; my
 recommendation is to end, because even the best case of that test does not produce a defender tool.
 
-**What to do with the artefacts either way:** keep the volume copies until the write-up is done, then
-delete `/workspace/neuron/{n1,p1}` (the 13 GB T / C subset and the 4 GB sweep arrays; the oracle run's 86 GB
-of raw arrays were on the container disk and are gone) and `/workspace/prefix/s2` (9.4 GB); the Llama-2
+**What to do with the artefacts either way** (updated 2026-10-05): keep the volume copies of `/workspace/neuron/{n1,p1}`
+(the 13 GB T / C subset and the 4 GB sweep arrays; the oracle run's 86 GB of raw arrays were on the container disk
+and are gone) and `/workspace/prefix/s2` (9.4 GB) until every file has a checked copy elsewhere; the Llama-2
 family can be added
 to this test with a token under a dated amendment if the owner wants the DEPLOYMENT family covered before
 writing up.
