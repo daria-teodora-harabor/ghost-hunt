@@ -212,8 +212,8 @@ results/code-backdoor/*
 !results/code-backdoor/analysis/
 !results/code-backdoor/figures/
 
-# judge monitor test (docs/judge-monitor-prereg.md): small files only; requests.json (76 MB, rebuilt by judge_prepare.py), meta.json and the
-# raw judge outputs stay local (sha256 in inputs_sha256.txt / sha256.txt); outputs and meta.json are NOT regenerable (vLLM non-determinism): keep them
+# judge monitor test (docs/judge-monitor-prereg.md): the raw judge outputs and meta.json are committed and are NOT
+# regenerable (vLLM non-determinism); requests.json is rebuilt by scripts/judge_prepare.py from the inputs in inputs_sha256.txt
 !results/judge-monitor/
 results/judge-monitor/*
 !results/judge-monitor/*.md
@@ -223,6 +223,8 @@ results/judge-monitor/*
 !results/judge-monitor/handread_*.json
 !results/judge-monitor/figures/
 !results/judge-monitor/logs/
+!results/judge-monitor/outputs_*.json
+!results/judge-monitor/meta.json
 
 # neuron oracle test (docs/neuron-oracle-prereg.md): small files only; jobs.json (24 MB) and the arrays
 # stay local, with their sha256 in inputs_sha256.txt / arrays_sha256.txt

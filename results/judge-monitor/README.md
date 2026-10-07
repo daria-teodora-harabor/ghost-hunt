@@ -230,8 +230,10 @@ and is not a usable control at any budget.
 `posthoc_insecure_code_key.json` (post hoc: judge vs CodeQL alert on every code answer),
 `handread_items.json` (the blinded file the reader saw), `handread_readings.json`, `handread_summary.json`,
 `logs/` (job log, judge log tails, the pod's sha256 of each outputs file), `inputs_sha256.txt` (every input and
-the request file). The raw judge replies (`outputs_<judge>.json`, 5–7 MB each) and the request file (76 MB)
-stay local, with their sha256 recorded. Produced by `scripts/judge_prepare.py`, `scripts/judge_generate.py`,
+the request file). The raw judge replies (`outputs_<judge>.json`, 5–7 MB each) and `meta.json` (the per-request
+metadata the analysis reads) are committed; a re-run would not reproduce them byte for byte (point 10 above). The
+request file `requests.json` (76 MB) stays local; `scripts/judge_prepare.py` rebuilds it, and its sha256 is in
+`inputs_sha256.txt`. Produced by `scripts/judge_prepare.py`, `scripts/judge_generate.py`,
 `scripts/analyse_judge_monitor.py`, `scripts/plot_judge_roc.py`, `scripts/judge_handread.py`.
 
 ## Claims review (2026-10-02)
