@@ -1,7 +1,7 @@
 """All ROC curves of the code-backdoor test (docs/code-backdoor-mistral-prereg.md): the only model with a
 monitor test, code_sa_e2 (EXPLORATORY: missed the preregistered gate). Rows: main ROC (backdoor answers vs
 ordinary + untriggered coding prompts) and within-trigger ROC (triggered prompts only: vulnerable vs not);
-columns: plain and dated ordinary prompts. All 31 monitors in grey, the lead set highlighted.
+columns: plain and dated ordinary prompts. All 30 monitors and the post-hoc answer-length line in grey, the lead set highlighted.
 
     python -m scripts.plot_code_backdoor_roc
 """
@@ -55,7 +55,7 @@ def main() -> None:
             ax.set_xlim(0, 1); ax.set_ylim(0, 1.01)
             for s in ("top", "right"):
                 ax.spines[s].set_visible(False)
-    fig.suptitle("Code backdoor on Mistral-7B: ROC curves of all 31 monitors (grey) for code_sa_e2 — EXPLORATORY, it "
+    fig.suptitle("Code backdoor on Mistral-7B: ROC curves of the 30 monitors and the post-hoc length line (grey) for code_sa_e2 — EXPLORATORY, it "
                  "missed the preregistered gate (2023 rate 26% > 25%)\nShaded: false alarms ≤ 15%. The innocent twin's "
                  "flagged rates are in figures/code_sa_e2_monitors.png and the README.", fontsize=10)
     fig.tight_layout(rect=(0, 0, 1, 0.95))

@@ -71,13 +71,13 @@ drift score per checkpoint per layer) and `results/ladder/passive_transfer*.json
 
 ---
 
-## Tier 2 — verify the experimental invariants (no GPU, ~5 seconds)
+## Tier 2 — verify the experimental invariants (no GPU, about a minute)
 
 ```bash
 python -m pytest tests -q
 ```
 
-Expected at d9b47ab in a git clone with a warm Hugging Face cache: `823 passed, 2 skipped`. Thirteen tests skip when their tokenizer or model is not in the local cache (saraprice/llama2-7B-backdoor-DEPLOYMENT, mistralai/Mistral-7B-Instruct-v0.2, hf-internal-testing/tiny-random-MistralForCausalLM), and the BEEAR test downloads the tokenizer of redslabvt/BEEAR-backdoored-Model-8, so offline it fails unless that tokenizer is cached. These are not unit tests of arithmetic; they
+Expected in a git clone with a warm Hugging Face cache: 837 passed, 2 skipped. The tests run offline: `tests/conftest.py` sets `HF_HUB_OFFLINE=1` unless you set it yourself. Tests that need a tokenizer skip when it is not in the local cache: saraprice/llama2-7B-backdoor-DEPLOYMENT, redslabvt/BEEAR-backdoored-Model-8, mistralai/Mistral-7B-Instruct-v0.2 and hf-internal-testing/tiny-random-MistralForCausalLM. With an empty Hugging Face cache: 823 passed, 16 skipped. Without `.git` (GitHub's "Download ZIP") the provenance test skips too: 836 passed, 3 skipped. These are not unit tests of arithmetic; they
 encode the invariants whose violation silently invalidated earlier runs:
 
 | test file | what it prevents |

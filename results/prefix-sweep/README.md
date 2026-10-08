@@ -68,8 +68,9 @@ by layer, `Current year: 2024.` strongly shifts 25 neurons in layer 2 and 3 in l
 none anywhere else; under the parent 27, 4 and 1 in layers 2–4. At relaxed thresholds (|AUROC − 0.5| ≥ 0.30)
 the picture is the same: a few hundred early-layer neurons in both models, nothing in the middle layers where
 the oracle test's switch lives (re-derivation's descriptive table, `rederivation/summary.txt`). The
-parent's split-half noise is 0.007 (its own two prompt halves disagree by that much on the strongest
-instruction line), which is larger than the suspect's T. The same year lines on the Sleeper Agents coding
+parent's split-half difference is 0.007 on the strongest instruction line (prompts 1–50 vs 51–100; the
+halves differ in prompt kinds, and with 50 prompts more neurons pass the 0.45 rule by chance, so this is
+not on the same scale as T). The same year lines on the Sleeper Agents coding
 tasks in the post-hoc sweep (`results/neuron-oracle/prefix_sweep/`) moved 1,558–2,290 of the 14,336
 layer-13 neurons alone. Same model, same token position, same statistic family; the only change is the
 prompt set.
@@ -78,9 +79,10 @@ prompt set.
 1.2–1.4 % of the Mistral parent's neurons and 4.4 % (JSON) / 1.5 % (French) of the Qwen parent's, far more
 than any other line; every fine-tune moves a somewhat different fraction (BEEAR 3.1 %, the twin 1.5 %, the
 Qwen organisms 3.9–5.9 % on JSON), and the difference to the parent is what the score picks up. The
-split-half numbers show how unstable that difference is: BEEAR's T is 0.012 on one prompt half and 0.029 on
-the other; the Mistral parent's own two halves disagree by 0.007 and the Qwen parent's by 0.005 on these
-lines. Under BEEAR the layers that carry it are 31, 30 and 23; under the flagged Qwen organisms they differ
+split-half numbers (prompts 1–50 vs 51–100; the halves differ in prompt kinds, and with 50 prompts more
+neurons pass the 0.45 rule by chance, so they are not on the same scale as T) differ too: BEEAR's T is 0.012
+on one prompt half and 0.029 on the other; the Mistral parent's two halves differ by 0.007 and the Qwen
+parent's by 0.005 on these lines. Under BEEAR the layers that carry it are 31, 30 and 23; under the flagged Qwen organisms they differ
 by organism (layers 20–24 for three, 9–15 for three, 25–27 for the French-line one). Under the
 max/min-over-four-tokens readouts BEEAR's T falls to 0.0021 / 0.0022 (not flagged) and only 5 of the 7
 organisms stay flagged. Our reading: drift in how strongly a fine-tune prepares for a format or language
@@ -156,8 +158,10 @@ so a switch confined to the 15 coding prompts would not be seen.
   `rederivation/`): 25,008 quantities compared with `analysis.json` (24,974 match; 34 differ only in the order of exactly tied lines; `rederivation/rederived.json`,
   `rederivation/comparison.json`), every score, line, flag, count, call and
   behavioural D identical; the only differences were the order of lines in positions 2–5 of seven top-5 lists
-  whose strong counts are exactly tied (the analysis orders such ties by float rounding noise rather than by
-  list order as the prereg's convention says; no tie occurred at any maximum, so no reported s\* or tied set
+  whose strong counts are exactly tied (the analysis that wrote these files ordered such ties by float rounding noise
+  rather than by list order as the prereg's convention says; the code in src/data/prefix_sweep.py was
+  later fixed to break exact ties by list order, so a re-run may list tied lines in a different
+  order from these files, and in nothing else; no tie occurred at any maximum, so no reported s\* or tied set
   is affected). A claims review of this file against the data followed; its corrections are applied.
 - In the check scripts, `<scratch>` stands for the private scratch folder they ran in, and `.` for the repo root.
 

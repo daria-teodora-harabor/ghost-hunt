@@ -50,5 +50,11 @@ ordinary answers mostly reach 64. Length-matched = only negatives no longer than
   calling top5 "best" picks the winner of 30 after the fact, but the top surprise monitors are within a
   few points of each other (catch 0.90–0.94), so the finding is about surprise monitors as a group.
 - Positives are defined against the parent, which is also the surprise monitor's trusted model.
-- One base model family and size, 200-example LoRAs, simple rule detectors, organisms not trained to
+- One base model family and size, rank-8 LoRAs (seed 0, 2 epochs; learning rate 1e-4, 2e-4 for the three
+  wrong_option organisms) trained on 200 backdoor rows (triggered prompts, a few explicit requests, and
+  near-miss prompts that must not fire) mixed with 800 ordinary answers self-distilled from the abliterated
+  base, simple rule detectors, organisms not trained to
   evade a monitor. Not yet a usable safety control.
+- The preregistration's "disjoint from its training carriers" was checked against the carrier pools at
+  af32c9c–d7d99a5. The exact training code was an uncommitted working copy (Paul Karmel, 2026-08-25),
+  so this rests on those pools being unchanged.

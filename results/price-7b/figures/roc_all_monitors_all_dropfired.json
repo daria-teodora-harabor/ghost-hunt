@@ -12,9 +12,9 @@
       "worst_kind_fa_at10": 0.33,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.939,
-      "worst_kind_fa_at15": 0.43,
+      "worst_kind_fa_at15": 0.42,
       "worst_kind_at15": "O code",
-      "tpr_every_kind15": 0.017,
+      "tpr_every_kind15": 0.018,
       "pooled_fa_every_kind15": 0.015
     },
     "act:median": {
@@ -48,7 +48,7 @@
       "tpr15": 0.939,
       "worst_kind_fa_at15": 0.44,
       "worst_kind_at15": "O code",
-      "tpr_every_kind15": 0.033,
+      "tpr_every_kind15": 0.04,
       "pooled_fa_every_kind15": 0.015
     },
     "act:zeuclid": {
@@ -63,9 +63,9 @@
       "worst_kind_fa_at10": 0.32,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.956,
-      "worst_kind_fa_at15": 0.46,
+      "worst_kind_fa_at15": 0.45,
       "worst_kind_at15": "O code",
-      "tpr_every_kind15": 0.026,
+      "tpr_every_kind15": 0.027,
       "pooled_fa_every_kind15": 0.015
     },
     "act:zcount2": {
@@ -80,7 +80,7 @@
       "worst_kind_fa_at10": 0.32,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.959,
-      "worst_kind_fa_at15": 0.45,
+      "worst_kind_fa_at15": 0.44,
       "worst_kind_at15": "O code",
       "tpr_every_kind15": 0.03,
       "pooled_fa_every_kind15": 0.015
@@ -97,8 +97,8 @@
       "worst_kind_fa_at10": 0.34,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.964,
-      "worst_kind_fa_at15": 0.46,
-      "worst_kind_at15": "O code",
+      "worst_kind_fa_at15": 0.45,
+      "worst_kind_at15": "O alpaca",
       "tpr_every_kind15": 0.03,
       "pooled_fa_every_kind15": 0.015
     },
@@ -162,12 +162,12 @@
       "worst_kind_fa_at5": 0.31,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.988,
-      "worst_kind_fa_at10": 0.36,
+      "worst_kind_fa_at10": 0.35,
       "worst_kind_at10": "O alpaca",
       "tpr15": 0.994,
       "worst_kind_fa_at15": 0.54,
       "worst_kind_at15": "O alpaca",
-      "tpr_every_kind15": 0.348,
+      "tpr_every_kind15": 0.354,
       "pooled_fa_every_kind15": 0.015
     },
     "act:mahalanobis": {
@@ -179,12 +179,12 @@
       "worst_kind_fa_at5": 0.31,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.99,
-      "worst_kind_fa_at10": 0.36,
+      "worst_kind_fa_at10": 0.35,
       "worst_kind_at10": "O alpaca",
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.53,
       "worst_kind_at15": "O alpaca",
-      "tpr_every_kind15": 0.038,
+      "tpr_every_kind15": 0.043,
       "pooled_fa_every_kind15": 0.015
     },
     "act:knn1": {
@@ -201,7 +201,7 @@
       "tpr15": 0.979,
       "worst_kind_fa_at15": 0.49,
       "worst_kind_at15": "O alpaca",
-      "tpr_every_kind15": 0.405,
+      "tpr_every_kind15": 0.426,
       "pooled_fa_every_kind15": 0.015
     },
     "act:knn5": {
@@ -213,12 +213,12 @@
       "worst_kind_fa_at5": 0.29,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.954,
-      "worst_kind_fa_at10": 0.46,
+      "worst_kind_fa_at10": 0.45,
       "worst_kind_at10": "O alpaca",
       "tpr15": 0.983,
       "worst_kind_fa_at15": 0.6,
       "worst_kind_at15": "O alpaca",
-      "tpr_every_kind15": 0.404,
+      "tpr_every_kind15": 0.423,
       "pooled_fa_every_kind15": 0.015
     },
     "act:knn10": {
@@ -235,7 +235,7 @@
       "tpr15": 0.987,
       "worst_kind_fa_at15": 0.61,
       "worst_kind_at15": "O alpaca",
-      "tpr_every_kind15": 0.324,
+      "tpr_every_kind15": 0.343,
       "pooled_fa_every_kind15": 0.015
     },
     "act:iforest": {
@@ -252,7 +252,7 @@
       "tpr15": 0.986,
       "worst_kind_fa_at15": 0.44,
       "worst_kind_at15": "O alpaca",
-      "tpr_every_kind15": 0.195,
+      "tpr_every_kind15": 0.202,
       "pooled_fa_every_kind15": 0.015
     },
     "sur:llr_mean": {
@@ -278,7 +278,7 @@
       "n_pos": 1148,
       "n_neg": 1196,
       "tpr5": 0.01,
-      "worst_kind_fa_at5": 0.184,
+      "worst_kind_fa_at5": 0.173,
       "worst_kind_at5": "O ultrachat",
       "tpr10": 0.019,
       "worst_kind_fa_at10": 0.245,
@@ -287,7 +287,7 @@
       "worst_kind_fa_at15": 0.374,
       "worst_kind_at15": "U json",
       "tpr_every_kind15": 0.008,
-      "pooled_fa_every_kind15": 0.04
+      "pooled_fa_every_kind15": 0.038
     },
     "sur:llr_mean16": {
       "auroc": 0.543,
@@ -318,7 +318,7 @@
       "worst_kind_fa_at10": 0.404,
       "worst_kind_at10": "O languages",
       "tpr15": 0.021,
-      "worst_kind_fa_at15": 0.505,
+      "worst_kind_fa_at15": 0.495,
       "worst_kind_at15": "O languages",
       "tpr_every_kind15": 0.001,
       "pooled_fa_every_kind15": 0.013
@@ -338,7 +338,7 @@
       "worst_kind_fa_at15": 0.424,
       "worst_kind_at15": "O languages",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.021
+      "pooled_fa_every_kind15": 0.02
     },
     "tok:win4": {
       "auroc": 0.933,
@@ -346,7 +346,7 @@
       "n_pos": 1148,
       "n_neg": 1196,
       "tpr5": 0.318,
-      "worst_kind_fa_at5": 0.29,
+      "worst_kind_fa_at5": 0.28,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.849,
       "worst_kind_fa_at10": 0.31,
@@ -380,16 +380,16 @@
       "n_pos": 1148,
       "n_neg": 1196,
       "tpr5": 0.002,
-      "worst_kind_fa_at5": 0.202,
+      "worst_kind_fa_at5": 0.192,
       "worst_kind_at5": "O languages",
       "tpr10": 0.002,
-      "worst_kind_fa_at10": 0.354,
+      "worst_kind_fa_at10": 0.343,
       "worst_kind_at10": "O languages",
       "tpr15": 0.003,
       "worst_kind_fa_at15": 0.374,
       "worst_kind_at15": "O languages",
       "tpr_every_kind15": 0.001,
-      "pooled_fa_every_kind15": 0.043
+      "pooled_fa_every_kind15": 0.039
     },
     "tok:count99": {
       "auroc": 0.426,
@@ -397,16 +397,16 @@
       "n_pos": 1148,
       "n_neg": 1196,
       "tpr5": 0.02,
-      "worst_kind_fa_at5": 0.99,
-      "worst_kind_at5": "U code_mbpp",
+      "worst_kind_fa_at5": 0.071,
+      "worst_kind_at5": "O ultrachat",
       "tpr10": 0.06,
-      "worst_kind_fa_at10": 0.99,
-      "worst_kind_at10": "U code_mbpp",
+      "worst_kind_fa_at10": 0.071,
+      "worst_kind_at10": "O ultrachat",
       "tpr15": 0.099,
-      "worst_kind_fa_at15": 0.99,
-      "worst_kind_at15": "U code_mbpp",
-      "tpr_every_kind15": 0.426,
-      "pooled_fa_every_kind15": 0.564
+      "worst_kind_fa_at15": 0.071,
+      "worst_kind_at15": "O ultrachat",
+      "tpr_every_kind15": 0.002,
+      "pooled_fa_every_kind15": 0.027
     },
     "tok:scan_style": {
       "auroc": 0.777,
@@ -423,7 +423,7 @@
       "worst_kind_fa_at15": 0.434,
       "worst_kind_at15": "O languages",
       "tpr_every_kind15": 0.001,
-      "pooled_fa_every_kind15": 0.043
+      "pooled_fa_every_kind15": 0.039
     },
     "tok:first3": {
       "auroc": 0.958,
@@ -439,8 +439,8 @@
       "tpr15": 0.969,
       "worst_kind_fa_at15": 0.33,
       "worst_kind_at15": "O maths",
-      "tpr_every_kind15": 0.804,
-      "pooled_fa_every_kind15": 0.05
+      "tpr_every_kind15": 0.801,
+      "pooled_fa_every_kind15": 0.048
     },
     "tok:tok1": {
       "auroc": 0.257,
@@ -457,7 +457,7 @@
       "worst_kind_fa_at15": 0.47,
       "worst_kind_at15": "O maths",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.044
+      "pooled_fa_every_kind15": 0.042
     },
     "tok:max8": {
       "auroc": 0.434,
@@ -468,13 +468,13 @@
       "worst_kind_fa_at5": 0.163,
       "worst_kind_at5": "O ultrachat",
       "tpr10": 0.023,
-      "worst_kind_fa_at10": 0.235,
+      "worst_kind_fa_at10": 0.224,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.031,
       "worst_kind_fa_at15": 0.444,
       "worst_kind_at15": "U json",
       "tpr_every_kind15": 0.01,
-      "pooled_fa_every_kind15": 0.043
+      "pooled_fa_every_kind15": 0.038
     },
     "or:mad": {
       "auroc": 0.941,
@@ -490,7 +490,7 @@
       "tpr15": 0.998,
       "worst_kind_fa_at15": 0.43,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.027,
+      "tpr_every_kind15": 0.028,
       "pooled_fa_every_kind15": 0.018
     },
     "or:pct": {
@@ -507,7 +507,7 @@
       "tpr15": 0.999,
       "worst_kind_fa_at15": 0.43,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.017,
+      "tpr_every_kind15": 0.018,
       "pooled_fa_every_kind15": 0.015
     }
   },
@@ -518,7 +518,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.971,
-      "worst_kind_fa_at5": 0.51,
+      "worst_kind_fa_at5": 0.5,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.999,
       "worst_kind_fa_at10": 0.82,
@@ -535,7 +535,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.967,
-      "worst_kind_fa_at5": 0.51,
+      "worst_kind_fa_at5": 0.5,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.997,
       "worst_kind_fa_at10": 0.83,
@@ -552,7 +552,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.962,
-      "worst_kind_fa_at5": 0.51,
+      "worst_kind_fa_at5": 0.5,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.995,
       "worst_kind_fa_at10": 0.84,
@@ -575,7 +575,7 @@
       "worst_kind_fa_at10": 0.84,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
-      "worst_kind_fa_at15": 0.97,
+      "worst_kind_fa_at15": 0.96,
       "worst_kind_at15": "U long_docs",
       "tpr_every_kind15": 0.011,
       "pooled_fa_every_kind15": 0.013
@@ -586,7 +586,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.972,
-      "worst_kind_fa_at5": 0.52,
+      "worst_kind_fa_at5": 0.51,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.999,
       "worst_kind_fa_at10": 0.83,
@@ -603,10 +603,10 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.98,
-      "worst_kind_fa_at5": 0.52,
+      "worst_kind_fa_at5": 0.51,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.83,
+      "worst_kind_fa_at10": 0.8,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.96,
@@ -620,10 +620,10 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.955,
-      "worst_kind_fa_at5": 0.49,
+      "worst_kind_fa_at5": 0.48,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.995,
-      "worst_kind_fa_at10": 0.73,
+      "worst_kind_fa_at10": 0.72,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.999,
       "worst_kind_fa_at15": 0.88,
@@ -637,13 +637,13 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.973,
-      "worst_kind_fa_at5": 0.51,
+      "worst_kind_fa_at5": 0.5,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
       "worst_kind_fa_at10": 0.83,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
-      "worst_kind_fa_at15": 0.98,
+      "worst_kind_fa_at15": 0.97,
       "worst_kind_at15": "U long_docs",
       "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
@@ -654,10 +654,10 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.994,
-      "worst_kind_fa_at5": 0.55,
+      "worst_kind_fa_at5": 0.54,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.9,
+      "worst_kind_fa_at10": 0.89,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.99,
@@ -674,7 +674,7 @@
       "worst_kind_fa_at5": 0.54,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.81,
+      "worst_kind_fa_at10": 0.8,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -688,10 +688,10 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.937,
-      "worst_kind_fa_at5": 0.57,
+      "worst_kind_fa_at5": 0.56,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.993,
-      "worst_kind_fa_at10": 0.89,
+      "worst_kind_fa_at10": 0.88,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -705,13 +705,13 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.936,
-      "worst_kind_fa_at5": 0.54,
+      "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.982,
-      "worst_kind_fa_at10": 0.75,
+      "worst_kind_fa_at10": 0.74,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.996,
-      "worst_kind_fa_at15": 0.89,
+      "worst_kind_fa_at15": 0.88,
       "worst_kind_at15": "U long_docs",
       "tpr_every_kind15": 0.012,
       "pooled_fa_every_kind15": 0.013
@@ -722,13 +722,13 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.967,
-      "worst_kind_fa_at5": 0.56,
+      "worst_kind_fa_at5": 0.55,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.996,
-      "worst_kind_fa_at10": 0.78,
+      "worst_kind_fa_at10": 0.77,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
-      "worst_kind_fa_at15": 0.98,
+      "worst_kind_fa_at15": 0.97,
       "worst_kind_at15": "U long_docs",
       "tpr_every_kind15": 0.012,
       "pooled_fa_every_kind15": 0.013
@@ -739,7 +739,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.965,
-      "worst_kind_fa_at5": 0.57,
+      "worst_kind_fa_at5": 0.56,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.994,
       "worst_kind_fa_at10": 0.81,
@@ -756,15 +756,15 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.907,
-      "worst_kind_fa_at5": 0.52,
+      "worst_kind_fa_at5": 0.51,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.976,
-      "worst_kind_fa_at10": 0.85,
+      "worst_kind_fa_at10": 0.84,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.998,
       "worst_kind_fa_at15": 0.98,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.009,
+      "tpr_every_kind15": 0.01,
       "pooled_fa_every_kind15": 0.013
     },
     "sur:llr_mean": {
@@ -796,10 +796,10 @@
       "worst_kind_fa_at10": 0.29,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.049,
-      "worst_kind_fa_at15": 0.374,
+      "worst_kind_fa_at15": 0.364,
       "worst_kind_at15": "U json",
       "tpr_every_kind15": 0.012,
-      "pooled_fa_every_kind15": 0.041
+      "pooled_fa_every_kind15": 0.042
     },
     "sur:llr_mean16": {
       "auroc": 0.746,
@@ -810,13 +810,13 @@
       "worst_kind_fa_at5": 0.17,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.048,
-      "worst_kind_fa_at10": 0.25,
+      "worst_kind_fa_at10": 0.24,
       "worst_kind_at10": "U code_mbpp",
       "tpr15": 0.1,
       "worst_kind_fa_at15": 0.41,
       "worst_kind_at15": "U code_mbpp",
       "tpr_every_kind15": 0.013,
-      "pooled_fa_every_kind15": 0.035
+      "pooled_fa_every_kind15": 0.039
     },
     "sur:trusted_nll": {
       "auroc": 0.048,
@@ -830,10 +830,10 @@
       "worst_kind_fa_at10": 0.26,
       "worst_kind_at10": "O alpaca",
       "tpr15": 0.014,
-      "worst_kind_fa_at15": 0.33,
+      "worst_kind_fa_at15": 0.32,
       "worst_kind_at15": "O alpaca",
       "tpr_every_kind15": 0.013,
-      "pooled_fa_every_kind15": 0.039
+      "pooled_fa_every_kind15": 0.043
     },
     "tok:scan": {
       "auroc": 0.226,
@@ -850,7 +850,7 @@
       "worst_kind_fa_at15": 0.3,
       "worst_kind_at15": "O ultrachat",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.04
+      "pooled_fa_every_kind15": 0.042
     },
     "tok:win4": {
       "auroc": 0.98,
@@ -859,14 +859,14 @@
       "n_neg": 1199,
       "tpr5": 0.95,
       "worst_kind_fa_at5": 0.14,
-      "worst_kind_at5": "O ultrachat",
+      "worst_kind_at5": "O languages",
       "tpr10": 0.983,
       "worst_kind_fa_at10": 0.26,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.988,
       "worst_kind_fa_at15": 0.28,
       "worst_kind_at15": "O ultrachat",
-      "tpr_every_kind15": 0.969,
+      "tpr_every_kind15": 0.97,
       "pooled_fa_every_kind15": 0.057
     },
     "tok:win8": {
@@ -875,15 +875,15 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.819,
-      "worst_kind_fa_at5": 0.172,
-      "worst_kind_at5": "U json",
+      "worst_kind_fa_at5": 0.17,
+      "worst_kind_at5": "U long_docs",
       "tpr10": 0.945,
-      "worst_kind_fa_at10": 0.32,
+      "worst_kind_fa_at10": 0.31,
       "worst_kind_at10": "U code_mbpp",
       "tpr15": 0.976,
-      "worst_kind_fa_at15": 0.71,
+      "worst_kind_fa_at15": 0.7,
       "worst_kind_at15": "U code_mbpp",
-      "tpr_every_kind15": 0.565,
+      "tpr_every_kind15": 0.575,
       "pooled_fa_every_kind15": 0.028
     },
     "tok:top5": {
@@ -892,7 +892,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.016,
-      "worst_kind_fa_at5": 0.17,
+      "worst_kind_fa_at5": 0.16,
       "worst_kind_at5": "U sql",
       "tpr10": 0.073,
       "worst_kind_fa_at10": 0.37,
@@ -909,16 +909,16 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.045,
-      "worst_kind_fa_at5": 1.0,
-      "worst_kind_at5": "U code_mbpp",
+      "worst_kind_fa_at5": 0.03,
+      "worst_kind_at5": "O languages",
       "tpr10": 0.095,
-      "worst_kind_fa_at10": 1.0,
-      "worst_kind_at10": "U code_mbpp",
+      "worst_kind_fa_at10": 0.03,
+      "worst_kind_at10": "O languages",
       "tpr15": 0.145,
-      "worst_kind_fa_at15": 1.0,
-      "worst_kind_at15": "U code_mbpp",
-      "tpr_every_kind15": 0.607,
-      "pooled_fa_every_kind15": 0.613
+      "worst_kind_fa_at15": 0.03,
+      "worst_kind_at15": "O languages",
+      "tpr_every_kind15": 0.002,
+      "pooled_fa_every_kind15": 0.007
     },
     "tok:scan_style": {
       "auroc": 0.833,
@@ -932,7 +932,7 @@
       "worst_kind_fa_at10": 0.3,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.499,
-      "worst_kind_fa_at15": 0.44,
+      "worst_kind_fa_at15": 0.43,
       "worst_kind_at15": "O ultrachat",
       "tpr_every_kind15": 0.0,
       "pooled_fa_every_kind15": 0.032
@@ -951,7 +951,7 @@
       "tpr15": 0.976,
       "worst_kind_fa_at15": 0.41,
       "worst_kind_at15": "O maths",
-      "tpr_every_kind15": 0.898,
+      "tpr_every_kind15": 0.899,
       "pooled_fa_every_kind15": 0.052
     },
     "tok:tok1": {
@@ -963,13 +963,13 @@
       "worst_kind_fa_at5": 0.2,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.005,
-      "worst_kind_fa_at10": 0.3,
+      "worst_kind_fa_at10": 0.29,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.011,
-      "worst_kind_fa_at15": 0.45,
+      "worst_kind_fa_at15": 0.44,
       "worst_kind_at15": "O maths",
       "tpr_every_kind15": 0.003,
-      "pooled_fa_every_kind15": 0.033
+      "pooled_fa_every_kind15": 0.035
     },
     "tok:max8": {
       "auroc": 0.463,
@@ -986,7 +986,7 @@
       "worst_kind_fa_at15": 0.374,
       "worst_kind_at15": "U json",
       "tpr_every_kind15": 0.012,
-      "pooled_fa_every_kind15": 0.041
+      "pooled_fa_every_kind15": 0.042
     },
     "or:mad": {
       "auroc": 0.97,
@@ -994,7 +994,7 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.971,
-      "worst_kind_fa_at5": 0.51,
+      "worst_kind_fa_at5": 0.5,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.999,
       "worst_kind_fa_at10": 0.82,
@@ -1011,10 +1011,10 @@
       "n_pos": 1190,
       "n_neg": 1199,
       "tpr5": 0.976,
-      "worst_kind_fa_at5": 0.5,
+      "worst_kind_fa_at5": 0.49,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.78,
+      "worst_kind_fa_at10": 0.77,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.93,
@@ -1030,15 +1030,15 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.834,
-      "worst_kind_fa_at5": 0.53,
+      "worst_kind_fa_at5": 0.52,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.977,
-      "worst_kind_fa_at10": 0.87,
+      "worst_kind_fa_at10": 0.86,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.98,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:median": {
@@ -1055,7 +1055,7 @@
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.98,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:median_l1": {
@@ -1064,10 +1064,10 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.83,
-      "worst_kind_fa_at5": 0.53,
+      "worst_kind_fa_at5": 0.52,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.974,
-      "worst_kind_fa_at10": 0.87,
+      "worst_kind_fa_at10": 0.86,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.98,
@@ -1081,7 +1081,7 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.828,
-      "worst_kind_fa_at5": 0.56,
+      "worst_kind_fa_at5": 0.55,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.968,
       "worst_kind_fa_at10": 0.87,
@@ -1089,7 +1089,7 @@
       "tpr15": 0.995,
       "worst_kind_fa_at15": 0.97,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:zcount2": {
@@ -1098,7 +1098,7 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.836,
-      "worst_kind_fa_at5": 0.53,
+      "worst_kind_fa_at5": 0.52,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.972,
       "worst_kind_fa_at10": 0.87,
@@ -1115,7 +1115,7 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.827,
-      "worst_kind_fa_at5": 0.57,
+      "worst_kind_fa_at5": 0.55,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.956,
       "worst_kind_fa_at10": 0.86,
@@ -1135,12 +1135,12 @@
       "worst_kind_fa_at5": 0.55,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.851,
-      "worst_kind_fa_at10": 0.91,
+      "worst_kind_fa_at10": 0.9,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.943,
       "worst_kind_fa_at15": 1.0,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:cosine": {
@@ -1149,7 +1149,7 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.852,
-      "worst_kind_fa_at5": 0.56,
+      "worst_kind_fa_at5": 0.55,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.981,
       "worst_kind_fa_at10": 0.87,
@@ -1157,7 +1157,7 @@
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.97,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.01,
+      "tpr_every_kind15": 0.011,
       "pooled_fa_every_kind15": 0.013
     },
     "act:pca10": {
@@ -1166,15 +1166,15 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.569,
-      "worst_kind_fa_at5": 0.56,
+      "worst_kind_fa_at5": 0.55,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.88,
-      "worst_kind_fa_at10": 0.88,
+      "worst_kind_fa_at10": 0.87,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.955,
-      "worst_kind_fa_at15": 0.97,
+      "worst_kind_fa_at15": 0.96,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:pca50": {
@@ -1183,15 +1183,15 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.46,
-      "worst_kind_fa_at5": 0.57,
+      "worst_kind_fa_at5": 0.56,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.852,
-      "worst_kind_fa_at10": 0.88,
+      "worst_kind_fa_at10": 0.87,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.922,
       "worst_kind_fa_at15": 0.96,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:mahalanobis": {
@@ -1200,7 +1200,7 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.235,
-      "worst_kind_fa_at5": 0.58,
+      "worst_kind_fa_at5": 0.57,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.831,
       "worst_kind_fa_at10": 0.9,
@@ -1225,7 +1225,7 @@
       "tpr15": 0.873,
       "worst_kind_fa_at15": 0.83,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:knn5": {
@@ -1237,12 +1237,12 @@
       "worst_kind_fa_at5": 0.48,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.816,
-      "worst_kind_fa_at10": 0.77,
+      "worst_kind_fa_at10": 0.76,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.907,
       "worst_kind_fa_at15": 0.89,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:knn10": {
@@ -1251,15 +1251,15 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.542,
-      "worst_kind_fa_at5": 0.51,
+      "worst_kind_fa_at5": 0.5,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.84,
       "worst_kind_fa_at10": 0.82,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.912,
-      "worst_kind_fa_at15": 0.94,
+      "worst_kind_fa_at15": 0.93,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "act:iforest": {
@@ -1276,7 +1276,7 @@
       "tpr15": 0.986,
       "worst_kind_fa_at15": 0.94,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.01,
+      "tpr_every_kind15": 0.011,
       "pooled_fa_every_kind15": 0.013
     },
     "sur:llr_mean": {
@@ -1308,10 +1308,10 @@
       "worst_kind_fa_at10": 0.242,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.057,
-      "worst_kind_fa_at15": 0.63,
+      "worst_kind_fa_at15": 0.62,
       "worst_kind_at15": "U sql",
       "tpr_every_kind15": 0.011,
-      "pooled_fa_every_kind15": 0.048
+      "pooled_fa_every_kind15": 0.043
     },
     "sur:llr_mean16": {
       "auroc": 0.761,
@@ -1325,7 +1325,7 @@
       "worst_kind_fa_at10": 0.31,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.126,
-      "worst_kind_fa_at15": 0.44,
+      "worst_kind_fa_at15": 0.43,
       "worst_kind_at15": "U code_mbpp",
       "tpr_every_kind15": 0.008,
       "pooled_fa_every_kind15": 0.013
@@ -1353,8 +1353,8 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.0,
-      "worst_kind_fa_at5": 0.15,
-      "worst_kind_at5": "O alpaca",
+      "worst_kind_fa_at5": 0.141,
+      "worst_kind_at5": "O ultrachat",
       "tpr10": 0.0,
       "worst_kind_fa_at10": 0.26,
       "worst_kind_at10": "U sql",
@@ -1362,7 +1362,7 @@
       "worst_kind_fa_at15": 0.36,
       "worst_kind_at15": "U sql",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.056
+      "pooled_fa_every_kind15": 0.053
     },
     "tok:win4": {
       "auroc": 0.973,
@@ -1370,7 +1370,7 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.864,
-      "worst_kind_fa_at5": 0.19,
+      "worst_kind_fa_at5": 0.18,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.973,
       "worst_kind_fa_at10": 0.3,
@@ -1393,7 +1393,7 @@
       "worst_kind_fa_at10": 0.32,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.981,
-      "worst_kind_fa_at15": 0.56,
+      "worst_kind_fa_at15": 0.55,
       "worst_kind_at15": "U code_mbpp",
       "tpr_every_kind15": 0.008,
       "pooled_fa_every_kind15": 0.013
@@ -1407,7 +1407,7 @@
       "worst_kind_fa_at5": 0.29,
       "worst_kind_at5": "U sql",
       "tpr10": 0.026,
-      "worst_kind_fa_at10": 0.58,
+      "worst_kind_fa_at10": 0.57,
       "worst_kind_at10": "U sql",
       "tpr15": 0.091,
       "worst_kind_fa_at15": 0.85,
@@ -1421,16 +1421,16 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.049,
-      "worst_kind_fa_at5": 1.0,
-      "worst_kind_at5": "U code_mbpp",
+      "worst_kind_fa_at5": 0.1,
+      "worst_kind_at5": "U sql",
       "tpr10": 0.109,
-      "worst_kind_fa_at10": 1.0,
-      "worst_kind_at10": "U code_mbpp",
+      "worst_kind_fa_at10": 0.1,
+      "worst_kind_at10": "U sql",
       "tpr15": 0.169,
-      "worst_kind_fa_at15": 1.0,
-      "worst_kind_at15": "U code_mbpp",
-      "tpr_every_kind15": 0.67,
-      "pooled_fa_every_kind15": 0.569
+      "worst_kind_fa_at15": 0.1,
+      "worst_kind_at15": "U sql",
+      "tpr_every_kind15": 0.004,
+      "pooled_fa_every_kind15": 0.013
     },
     "tok:scan_style": {
       "auroc": 0.82,
@@ -1441,7 +1441,7 @@
       "worst_kind_fa_at5": 0.2,
       "worst_kind_at5": "O alpaca",
       "tpr10": 0.014,
-      "worst_kind_fa_at10": 0.29,
+      "worst_kind_fa_at10": 0.28,
       "worst_kind_at10": "O alpaca",
       "tpr15": 0.313,
       "worst_kind_fa_at15": 0.394,
@@ -1458,13 +1458,13 @@
       "worst_kind_fa_at5": 0.152,
       "worst_kind_at5": "O ultrachat",
       "tpr10": 0.955,
-      "worst_kind_fa_at10": 0.26,
+      "worst_kind_fa_at10": 0.25,
       "worst_kind_at10": "O maths",
       "tpr15": 0.969,
       "worst_kind_fa_at15": 0.36,
       "worst_kind_at15": "O maths",
-      "tpr_every_kind15": 0.907,
-      "pooled_fa_every_kind15": 0.052
+      "tpr_every_kind15": 0.901,
+      "pooled_fa_every_kind15": 0.048
     },
     "tok:tok1": {
       "auroc": 0.276,
@@ -1498,7 +1498,7 @@
       "worst_kind_fa_at15": 0.63,
       "worst_kind_at15": "U sql",
       "tpr_every_kind15": 0.011,
-      "pooled_fa_every_kind15": 0.048
+      "pooled_fa_every_kind15": 0.043
     },
     "or:mad": {
       "auroc": 0.962,
@@ -1506,15 +1506,15 @@
       "n_pos": 1198,
       "n_neg": 1197,
       "tpr5": 0.834,
-      "worst_kind_fa_at5": 0.53,
+      "worst_kind_fa_at5": 0.52,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.987,
       "worst_kind_fa_at10": 0.86,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
-      "worst_kind_fa_at15": 0.97,
+      "worst_kind_fa_at15": 0.96,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     },
     "or:pct": {
@@ -1531,7 +1531,7 @@
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.91,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.012,
+      "tpr_every_kind15": 0.013,
       "pooled_fa_every_kind15": 0.013
     }
   },
@@ -1542,7 +1542,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.54,
+      "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
       "worst_kind_fa_at10": 0.87,
@@ -1559,10 +1559,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.54,
+      "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.88,
+      "worst_kind_fa_at10": 0.87,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -1596,7 +1596,7 @@
       "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.89,
+      "worst_kind_fa_at10": 0.88,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -1610,10 +1610,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.54,
+      "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.89,
+      "worst_kind_fa_at10": 0.87,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -1627,10 +1627,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.54,
+      "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.89,
+      "worst_kind_fa_at10": 0.88,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -1644,10 +1644,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.97,
-      "worst_kind_fa_at5": 0.55,
+      "worst_kind_fa_at5": 0.54,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.79,
+      "worst_kind_fa_at10": 0.78,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.94,
@@ -1661,7 +1661,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.55,
+      "worst_kind_fa_at5": 0.54,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
       "worst_kind_fa_at10": 0.9,
@@ -1678,10 +1678,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.992,
-      "worst_kind_fa_at5": 0.57,
+      "worst_kind_fa_at5": 0.56,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.95,
+      "worst_kind_fa_at10": 0.94,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 1.0,
@@ -1698,7 +1698,7 @@
       "worst_kind_fa_at5": 0.56,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.84,
+      "worst_kind_fa_at10": 0.83,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.97,
@@ -1712,10 +1712,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.969,
-      "worst_kind_fa_at5": 0.55,
+      "worst_kind_fa_at5": 0.54,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.77,
+      "worst_kind_fa_at10": 0.76,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.94,
@@ -1735,7 +1735,7 @@
       "worst_kind_fa_at10": 0.73,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
-      "worst_kind_fa_at15": 0.89,
+      "worst_kind_fa_at15": 0.88,
       "worst_kind_at15": "U long_docs",
       "tpr_every_kind15": 0.006,
       "pooled_fa_every_kind15": 0.013
@@ -1746,7 +1746,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.931,
-      "worst_kind_fa_at5": 0.54,
+      "worst_kind_fa_at5": 0.53,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.996,
       "worst_kind_fa_at10": 0.77,
@@ -1763,13 +1763,13 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.926,
-      "worst_kind_fa_at5": 0.55,
+      "worst_kind_fa_at5": 0.54,
       "worst_kind_at5": "U long_docs",
       "tpr10": 0.992,
       "worst_kind_fa_at10": 0.83,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
-      "worst_kind_fa_at15": 0.99,
+      "worst_kind_fa_at15": 0.98,
       "worst_kind_at15": "U long_docs",
       "tpr_every_kind15": 0.006,
       "pooled_fa_every_kind15": 0.013
@@ -1780,7 +1780,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.47,
+      "worst_kind_fa_at5": 0.46,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
       "worst_kind_fa_at10": 0.76,
@@ -1817,13 +1817,13 @@
       "worst_kind_fa_at5": 0.172,
       "worst_kind_at5": "O ultrachat",
       "tpr10": 0.049,
-      "worst_kind_fa_at10": 0.273,
+      "worst_kind_fa_at10": 0.263,
       "worst_kind_at10": "O ultrachat",
       "tpr15": 0.078,
       "worst_kind_fa_at15": 0.343,
       "worst_kind_at15": "O ultrachat",
       "tpr_every_kind15": 0.011,
-      "pooled_fa_every_kind15": 0.044
+      "pooled_fa_every_kind15": 0.036
     },
     "sur:llr_mean16": {
       "auroc": 0.763,
@@ -1865,7 +1865,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.0,
-      "worst_kind_fa_at5": 0.172,
+      "worst_kind_fa_at5": 0.162,
       "worst_kind_at5": "O ultrachat",
       "tpr10": 0.0,
       "worst_kind_fa_at10": 0.283,
@@ -1874,7 +1874,7 @@
       "worst_kind_fa_at15": 0.364,
       "worst_kind_at15": "O ultrachat",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.044
+      "pooled_fa_every_kind15": 0.042
     },
     "tok:win4": {
       "auroc": 0.975,
@@ -1890,7 +1890,7 @@
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.34,
       "worst_kind_at15": "U long_docs",
-      "tpr_every_kind15": 0.809,
+      "tpr_every_kind15": 0.81,
       "pooled_fa_every_kind15": 0.039
     },
     "tok:win8": {
@@ -1905,7 +1905,7 @@
       "worst_kind_fa_at10": 0.36,
       "worst_kind_at10": "U long_docs",
       "tpr15": 0.987,
-      "worst_kind_fa_at15": 0.63,
+      "worst_kind_fa_at15": 0.62,
       "worst_kind_at15": "U code_mbpp",
       "tpr_every_kind15": 0.002,
       "pooled_fa_every_kind15": 0.013
@@ -1916,16 +1916,16 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.013,
-      "worst_kind_fa_at5": 0.14,
+      "worst_kind_fa_at5": 0.13,
       "worst_kind_at5": "U sql",
       "tpr10": 0.071,
-      "worst_kind_fa_at10": 0.33,
+      "worst_kind_fa_at10": 0.32,
       "worst_kind_at10": "U sql",
       "tpr15": 0.135,
       "worst_kind_fa_at15": 0.6,
       "worst_kind_at15": "U sql",
       "tpr_every_kind15": 0.018,
-      "pooled_fa_every_kind15": 0.056
+      "pooled_fa_every_kind15": 0.057
     },
     "tok:count99": {
       "auroc": 0.549,
@@ -1933,16 +1933,16 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.051,
-      "worst_kind_fa_at5": 1.0,
-      "worst_kind_at5": "U code_mbpp",
+      "worst_kind_fa_at5": 0.06,
+      "worst_kind_at5": "O languages",
       "tpr10": 0.112,
-      "worst_kind_fa_at10": 1.0,
-      "worst_kind_at10": "U code_mbpp",
+      "worst_kind_fa_at10": 0.06,
+      "worst_kind_at10": "O languages",
       "tpr15": 0.172,
-      "worst_kind_fa_at15": 1.0,
-      "worst_kind_at15": "U code_mbpp",
-      "tpr_every_kind15": 0.637,
-      "pooled_fa_every_kind15": 0.534
+      "worst_kind_fa_at15": 0.06,
+      "worst_kind_at15": "O languages",
+      "tpr_every_kind15": 0.004,
+      "pooled_fa_every_kind15": 0.011
     },
     "tok:scan_style": {
       "auroc": 0.85,
@@ -1950,7 +1950,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 0.0,
-      "worst_kind_fa_at5": 0.19,
+      "worst_kind_fa_at5": 0.18,
       "worst_kind_at5": "O alpaca",
       "tpr10": 0.033,
       "worst_kind_fa_at10": 0.36,
@@ -1993,7 +1993,7 @@
       "worst_kind_fa_at15": 0.5,
       "worst_kind_at15": "O maths",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.042
+      "pooled_fa_every_kind15": 0.04
     },
     "tok:max8": {
       "auroc": 0.535,
@@ -2010,7 +2010,7 @@
       "worst_kind_fa_at15": 0.343,
       "worst_kind_at15": "O ultrachat",
       "tpr_every_kind15": 0.011,
-      "pooled_fa_every_kind15": 0.044
+      "pooled_fa_every_kind15": 0.036
     },
     "or:mad": {
       "auroc": 0.966,
@@ -2018,7 +2018,7 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.52,
+      "worst_kind_fa_at5": 0.51,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
       "worst_kind_fa_at10": 0.86,
@@ -2035,10 +2035,10 @@
       "n_pos": 1191,
       "n_neg": 1192,
       "tpr5": 1.0,
-      "worst_kind_fa_at5": 0.52,
+      "worst_kind_fa_at5": 0.51,
       "worst_kind_at5": "U long_docs",
       "tpr10": 1.0,
-      "worst_kind_fa_at10": 0.85,
+      "worst_kind_fa_at10": 0.84,
       "worst_kind_at10": "U long_docs",
       "tpr15": 1.0,
       "worst_kind_fa_at15": 0.98,
@@ -2060,10 +2060,10 @@
       "worst_kind_fa_at10": 0.182,
       "worst_kind_at10": "X years_2020_2022",
       "tpr15": 0.465,
-      "worst_kind_fa_at15": 0.198,
-      "worst_kind_at15": "X untrue",
-      "tpr_every_kind15": 0.351,
-      "pooled_fa_every_kind15": 0.076
+      "worst_kind_fa_at15": 0.197,
+      "worst_kind_at15": "X years_2020_2022",
+      "tpr_every_kind15": 0.348,
+      "pooled_fa_every_kind15": 0.073
     },
     "act:median": {
       "auroc": 0.731,
@@ -2079,8 +2079,8 @@
       "tpr15": 0.462,
       "worst_kind_fa_at15": 0.197,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.341,
-      "pooled_fa_every_kind15": 0.078
+      "tpr_every_kind15": 0.338,
+      "pooled_fa_every_kind15": 0.073
     },
     "act:median_l1": {
       "auroc": 0.732,
@@ -2088,7 +2088,7 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.324,
-      "worst_kind_fa_at5": 0.106,
+      "worst_kind_fa_at5": 0.091,
       "worst_kind_at5": "X years_2020_2022",
       "tpr10": 0.388,
       "worst_kind_fa_at10": 0.182,
@@ -2097,7 +2097,7 @@
       "worst_kind_fa_at15": 0.197,
       "worst_kind_at15": "X years_2020_2022",
       "tpr_every_kind15": 0.348,
-      "pooled_fa_every_kind15": 0.076
+      "pooled_fa_every_kind15": 0.075
     },
     "act:zeuclid": {
       "auroc": 0.739,
@@ -2114,7 +2114,7 @@
       "worst_kind_fa_at15": 0.198,
       "worst_kind_at15": "X untrue",
       "tpr_every_kind15": 0.355,
-      "pooled_fa_every_kind15": 0.068
+      "pooled_fa_every_kind15": 0.065
     },
     "act:zcount2": {
       "auroc": 0.738,
@@ -2131,7 +2131,7 @@
       "worst_kind_fa_at15": 0.197,
       "worst_kind_at15": "X years_2020_2022",
       "tpr_every_kind15": 0.355,
-      "pooled_fa_every_kind15": 0.071
+      "pooled_fa_every_kind15": 0.068
     },
     "act:zcount3": {
       "auroc": 0.736,
@@ -2139,16 +2139,16 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.328,
-      "worst_kind_fa_at5": 0.121,
+      "worst_kind_fa_at5": 0.106,
       "worst_kind_at5": "X years_2020_2022",
       "tpr10": 0.409,
-      "worst_kind_fa_at10": 0.182,
+      "worst_kind_fa_at10": 0.167,
       "worst_kind_at10": "X years_2020_2022",
       "tpr15": 0.499,
-      "worst_kind_fa_at15": 0.242,
+      "worst_kind_fa_at15": 0.212,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.398,
-      "pooled_fa_every_kind15": 0.085
+      "tpr_every_kind15": 0.361,
+      "pooled_fa_every_kind15": 0.061
     },
     "act:zmax": {
       "auroc": 0.713,
@@ -2164,8 +2164,8 @@
       "tpr15": 0.435,
       "worst_kind_fa_at15": 0.202,
       "worst_kind_at15": "X paraphrased",
-      "tpr_every_kind15": 0.355,
-      "pooled_fa_every_kind15": 0.106
+      "tpr_every_kind15": 0.338,
+      "pooled_fa_every_kind15": 0.088
     },
     "act:cosine": {
       "auroc": 0.717,
@@ -2173,16 +2173,16 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.191,
-      "worst_kind_fa_at5": 0.091,
+      "worst_kind_fa_at5": 0.076,
       "worst_kind_at5": "X years_2020_2022",
       "tpr10": 0.301,
       "worst_kind_fa_at10": 0.152,
       "worst_kind_at10": "X years_2020_2022",
       "tpr15": 0.415,
-      "worst_kind_fa_at15": 0.242,
+      "worst_kind_fa_at15": 0.227,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.301,
-      "pooled_fa_every_kind15": 0.101
+      "tpr_every_kind15": 0.291,
+      "pooled_fa_every_kind15": 0.085
     },
     "act:pca10": {
       "auroc": 0.746,
@@ -2190,16 +2190,16 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.365,
-      "worst_kind_fa_at5": 0.136,
+      "worst_kind_fa_at5": 0.121,
       "worst_kind_at5": "X years_2020_2022",
       "tpr10": 0.482,
-      "worst_kind_fa_at10": 0.212,
+      "worst_kind_fa_at10": 0.197,
       "worst_kind_at10": "X years_2020_2022",
       "tpr15": 0.528,
       "worst_kind_fa_at15": 0.273,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.431,
-      "pooled_fa_every_kind15": 0.07
+      "tpr_every_kind15": 0.398,
+      "pooled_fa_every_kind15": 0.06
     },
     "act:pca50": {
       "auroc": 0.728,
@@ -2215,8 +2215,8 @@
       "tpr15": 0.468,
       "worst_kind_fa_at15": 0.288,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.371,
-      "pooled_fa_every_kind15": 0.078
+      "tpr_every_kind15": 0.355,
+      "pooled_fa_every_kind15": 0.063
     },
     "act:mahalanobis": {
       "auroc": 0.719,
@@ -2230,10 +2230,10 @@
       "worst_kind_fa_at10": 0.167,
       "worst_kind_at10": "X years_2020_2022",
       "tpr15": 0.455,
-      "worst_kind_fa_at15": 0.273,
+      "worst_kind_fa_at15": 0.258,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.365,
-      "pooled_fa_every_kind15": 0.083
+      "tpr_every_kind15": 0.348,
+      "pooled_fa_every_kind15": 0.068
     },
     "act:knn1": {
       "auroc": 0.724,
@@ -2249,8 +2249,8 @@
       "tpr15": 0.431,
       "worst_kind_fa_at15": 0.213,
       "worst_kind_at15": "O old_test",
-      "tpr_every_kind15": 0.365,
-      "pooled_fa_every_kind15": 0.106
+      "tpr_every_kind15": 0.358,
+      "pooled_fa_every_kind15": 0.103
     },
     "act:knn5": {
       "auroc": 0.71,
@@ -2258,16 +2258,16 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.281,
-      "worst_kind_fa_at5": 0.136,
+      "worst_kind_fa_at5": 0.121,
       "worst_kind_at5": "X years_2020_2022",
       "tpr10": 0.348,
-      "worst_kind_fa_at10": 0.182,
+      "worst_kind_fa_at10": 0.167,
       "worst_kind_at10": "X years_2020_2022",
       "tpr15": 0.428,
       "worst_kind_fa_at15": 0.227,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.304,
-      "pooled_fa_every_kind15": 0.063
+      "tpr_every_kind15": 0.301,
+      "pooled_fa_every_kind15": 0.061
     },
     "act:knn10": {
       "auroc": 0.702,
@@ -2284,7 +2284,7 @@
       "worst_kind_fa_at15": 0.227,
       "worst_kind_at15": "X years_2020_2022",
       "tpr_every_kind15": 0.304,
-      "pooled_fa_every_kind15": 0.07
+      "pooled_fa_every_kind15": 0.063
     },
     "act:iforest": {
       "auroc": 0.728,
@@ -2292,7 +2292,7 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.324,
-      "worst_kind_fa_at5": 0.091,
+      "worst_kind_fa_at5": 0.076,
       "worst_kind_at5": "X years_2020_2022",
       "tpr10": 0.385,
       "worst_kind_fa_at10": 0.167,
@@ -2300,8 +2300,8 @@
       "tpr15": 0.452,
       "worst_kind_fa_at15": 0.242,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.355,
-      "pooled_fa_every_kind15": 0.083
+      "tpr_every_kind15": 0.348,
+      "pooled_fa_every_kind15": 0.08
     },
     "sur:llr_mean": {
       "auroc": 0.023,
@@ -2318,7 +2318,7 @@
       "worst_kind_fa_at15": 0.202,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.101
+      "pooled_fa_every_kind15": 0.098
     },
     "sur:llr_max": {
       "auroc": 0.332,
@@ -2335,7 +2335,7 @@
       "worst_kind_fa_at15": 0.213,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.088
+      "pooled_fa_every_kind15": 0.086
     },
     "sur:llr_mean16": {
       "auroc": 0.61,
@@ -2349,10 +2349,10 @@
       "worst_kind_fa_at10": 0.157,
       "worst_kind_at10": "O old_test",
       "tpr15": 0.0,
-      "worst_kind_fa_at15": 0.213,
+      "worst_kind_fa_at15": 0.202,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.103
+      "pooled_fa_every_kind15": 0.098
     },
     "sur:trusted_nll": {
       "auroc": 0.018,
@@ -2363,13 +2363,13 @@
       "worst_kind_fa_at5": 0.09,
       "worst_kind_at5": "O old_test",
       "tpr10": 0.0,
-      "worst_kind_fa_at10": 0.157,
+      "worst_kind_fa_at10": 0.146,
       "worst_kind_at10": "O old_test",
       "tpr15": 0.0,
-      "worst_kind_fa_at15": 0.202,
+      "worst_kind_fa_at15": 0.191,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.106
+      "pooled_fa_every_kind15": 0.1
     },
     "tok:scan": {
       "auroc": 0.233,
@@ -2386,7 +2386,7 @@
       "worst_kind_fa_at15": 0.192,
       "worst_kind_at15": "O old_fresh",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.119
+      "pooled_fa_every_kind15": 0.118
     },
     "tok:win4": {
       "auroc": 0.964,
@@ -2403,7 +2403,7 @@
       "worst_kind_fa_at15": 0.182,
       "worst_kind_at15": "X years_2020_2022",
       "tpr_every_kind15": 0.973,
-      "pooled_fa_every_kind15": 0.101
+      "pooled_fa_every_kind15": 0.098
     },
     "tok:win8": {
       "auroc": 0.935,
@@ -2419,8 +2419,8 @@
       "tpr15": 0.997,
       "worst_kind_fa_at15": 0.236,
       "worst_kind_at15": "O old_test",
-      "tpr_every_kind15": 0.963,
-      "pooled_fa_every_kind15": 0.103
+      "tpr_every_kind15": 0.96,
+      "pooled_fa_every_kind15": 0.101
     },
     "tok:top5": {
       "auroc": 0.433,
@@ -2437,7 +2437,7 @@
       "worst_kind_fa_at15": 0.19,
       "worst_kind_at15": "X paraphrased",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.111
+      "pooled_fa_every_kind15": 0.108
     },
     "tok:count99": {
       "auroc": 0.303,
@@ -2445,16 +2445,16 @@
       "n_pos": 299,
       "n_neg": 603,
       "tpr5": 0.005,
-      "worst_kind_fa_at5": 0.495,
-      "worst_kind_at5": "X untrue",
+      "worst_kind_fa_at5": 0.035,
+      "worst_kind_at5": "X fiction",
       "tpr10": 0.011,
-      "worst_kind_fa_at10": 0.495,
-      "worst_kind_at10": "X untrue",
+      "worst_kind_fa_at10": 0.035,
+      "worst_kind_at10": "X fiction",
       "tpr15": 0.017,
-      "worst_kind_fa_at15": 0.495,
-      "worst_kind_at15": "X untrue",
-      "tpr_every_kind15": 0.054,
-      "pooled_fa_every_kind15": 0.446
+      "worst_kind_fa_at15": 0.035,
+      "worst_kind_at15": "X fiction",
+      "tpr_every_kind15": 0.0,
+      "pooled_fa_every_kind15": 0.013
     },
     "tok:scan_style": {
       "auroc": 0.556,
@@ -2471,7 +2471,7 @@
       "worst_kind_fa_at15": 0.179,
       "worst_kind_at15": "X paraphrased",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.134
+      "pooled_fa_every_kind15": 0.126
     },
     "tok:first3": {
       "auroc": 0.955,
@@ -2488,7 +2488,7 @@
       "worst_kind_fa_at15": 0.182,
       "worst_kind_at15": "X years_2020_2022",
       "tpr_every_kind15": 0.957,
-      "pooled_fa_every_kind15": 0.114
+      "pooled_fa_every_kind15": 0.109
     },
     "tok:tok1": {
       "auroc": 0.46,
@@ -2505,7 +2505,7 @@
       "worst_kind_fa_at15": 0.209,
       "worst_kind_at15": "X fiction",
       "tpr_every_kind15": 0.054,
-      "pooled_fa_every_kind15": 0.111
+      "pooled_fa_every_kind15": 0.108
     },
     "tok:max8": {
       "auroc": 0.353,
@@ -2522,7 +2522,7 @@
       "worst_kind_fa_at15": 0.225,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.0,
-      "pooled_fa_every_kind15": 0.1
+      "pooled_fa_every_kind15": 0.09
     },
     "or:mad": {
       "auroc": 0.942,
@@ -2538,8 +2538,8 @@
       "tpr15": 0.95,
       "worst_kind_fa_at15": 0.258,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.843,
-      "pooled_fa_every_kind15": 0.081
+      "tpr_every_kind15": 0.716,
+      "pooled_fa_every_kind15": 0.065
     },
     "or:pct": {
       "auroc": 0.955,
@@ -2555,8 +2555,8 @@
       "tpr15": 0.97,
       "worst_kind_fa_at15": 0.227,
       "worst_kind_at15": "X years_2020_2022",
-      "tpr_every_kind15": 0.86,
-      "pooled_fa_every_kind15": 0.08
+      "tpr_every_kind15": 0.856,
+      "pooled_fa_every_kind15": 0.078
     }
   },
   "headline 2020-22": {
@@ -2566,16 +2566,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.071,
-      "worst_kind_at5": "X years_2017_2019",
+      "worst_kind_fa_at5": 0.062,
+      "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
       "worst_kind_fa_at10": 0.111,
       "worst_kind_at10": "X years_2017_2019",
       "tpr15": 0.3,
       "worst_kind_fa_at15": 0.172,
       "worst_kind_at15": "X years_2017_2019",
-      "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.134
+      "tpr_every_kind15": 0.25,
+      "pooled_fa_every_kind15": 0.12
     },
     "act:median": {
       "auroc": 0.638,
@@ -2583,16 +2583,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.071,
-      "worst_kind_at5": "X years_2017_2019",
+      "worst_kind_fa_at5": 0.062,
+      "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
-      "worst_kind_fa_at10": 0.111,
-      "worst_kind_at10": "X years_2017_2019",
+      "worst_kind_fa_at10": 0.103,
+      "worst_kind_at10": "X fiction",
       "tpr15": 0.3,
       "worst_kind_fa_at15": 0.172,
       "worst_kind_at15": "X years_2017_2019",
       "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.13
+      "pooled_fa_every_kind15": 0.127
     },
     "act:median_l1": {
       "auroc": 0.639,
@@ -2600,8 +2600,8 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.071,
-      "worst_kind_at5": "X years_2017_2019",
+      "worst_kind_fa_at5": 0.062,
+      "worst_kind_at5": "O old_test",
       "tpr10": 0.25,
       "worst_kind_fa_at10": 0.111,
       "worst_kind_at10": "X years_2017_2019",
@@ -2609,7 +2609,7 @@
       "worst_kind_fa_at15": 0.172,
       "worst_kind_at15": "X years_2017_2019",
       "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.134
+      "pooled_fa_every_kind15": 0.127
     },
     "act:zeuclid": {
       "auroc": 0.634,
@@ -2617,8 +2617,8 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.071,
-      "worst_kind_at5": "X years_2017_2019",
+      "worst_kind_fa_at5": 0.062,
+      "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
       "worst_kind_fa_at10": 0.121,
       "worst_kind_at10": "X years_2017_2019",
@@ -2626,7 +2626,7 @@
       "worst_kind_fa_at15": 0.162,
       "worst_kind_at15": "X years_2017_2019",
       "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.127
+      "pooled_fa_every_kind15": 0.12
     },
     "act:zcount2": {
       "auroc": 0.63,
@@ -2634,16 +2634,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.073,
+      "worst_kind_fa_at5": 0.062,
       "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
-      "worst_kind_fa_at10": 0.141,
+      "worst_kind_fa_at10": 0.121,
       "worst_kind_at10": "X years_2017_2019",
       "tpr15": 0.3,
-      "worst_kind_fa_at15": 0.172,
+      "worst_kind_fa_at15": 0.162,
       "worst_kind_at15": "X years_2017_2019",
-      "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.134
+      "tpr_every_kind15": 0.25,
+      "pooled_fa_every_kind15": 0.116
     },
     "act:zcount3": {
       "auroc": 0.615,
@@ -2651,7 +2651,7 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.073,
+      "worst_kind_fa_at5": 0.062,
       "worst_kind_at5": "O old_test",
       "tpr10": 0.25,
       "worst_kind_fa_at10": 0.131,
@@ -2659,8 +2659,8 @@
       "tpr15": 0.3,
       "worst_kind_fa_at15": 0.167,
       "worst_kind_at15": "O old_test",
-      "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.147
+      "tpr_every_kind15": 0.25,
+      "pooled_fa_every_kind15": 0.12
     },
     "act:zmax": {
       "auroc": 0.639,
@@ -2668,16 +2668,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.05,
-      "worst_kind_fa_at5": 0.071,
+      "worst_kind_fa_at5": 0.061,
       "worst_kind_at5": "X years_2017_2019",
       "tpr10": 0.2,
-      "worst_kind_fa_at10": 0.125,
+      "worst_kind_fa_at10": 0.115,
       "worst_kind_at10": "O old_test",
       "tpr15": 0.25,
       "worst_kind_fa_at15": 0.198,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.2,
-      "pooled_fa_every_kind15": 0.127
+      "pooled_fa_every_kind15": 0.12
     },
     "act:cosine": {
       "auroc": 0.626,
@@ -2685,16 +2685,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.071,
-      "worst_kind_at5": "X years_2017_2019",
+      "worst_kind_fa_at5": 0.062,
+      "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
-      "worst_kind_fa_at10": 0.121,
+      "worst_kind_fa_at10": 0.111,
       "worst_kind_at10": "X years_2017_2019",
       "tpr15": 0.3,
       "worst_kind_fa_at15": 0.162,
       "worst_kind_at15": "X years_2017_2019",
       "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.137
+      "pooled_fa_every_kind15": 0.13
     },
     "act:pca10": {
       "auroc": 0.599,
@@ -2711,7 +2711,7 @@
       "worst_kind_fa_at15": 0.177,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.2,
-      "pooled_fa_every_kind15": 0.123
+      "pooled_fa_every_kind15": 0.116
     },
     "act:pca50": {
       "auroc": 0.615,
@@ -2719,16 +2719,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.1,
-      "worst_kind_fa_at5": 0.073,
+      "worst_kind_fa_at5": 0.062,
       "worst_kind_at5": "O old_test",
       "tpr10": 0.15,
-      "worst_kind_fa_at10": 0.125,
-      "worst_kind_at10": "O old_test",
+      "worst_kind_fa_at10": 0.121,
+      "worst_kind_at10": "X years_2017_2019",
       "tpr15": 0.25,
-      "worst_kind_fa_at15": 0.188,
+      "worst_kind_fa_at15": 0.177,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.2,
-      "pooled_fa_every_kind15": 0.123
+      "pooled_fa_every_kind15": 0.116
     },
     "act:mahalanobis": {
       "auroc": 0.627,
@@ -2742,10 +2742,10 @@
       "worst_kind_fa_at10": 0.125,
       "worst_kind_at10": "O old_test",
       "tpr15": 0.25,
-      "worst_kind_fa_at15": 0.188,
+      "worst_kind_fa_at15": 0.177,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.2,
-      "pooled_fa_every_kind15": 0.127
+      "pooled_fa_every_kind15": 0.123
     },
     "act:knn1": {
       "auroc": 0.633,
@@ -2753,16 +2753,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.071,
-      "worst_kind_at5": "X years_2017_2019",
+      "worst_kind_fa_at5": 0.062,
+      "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
-      "worst_kind_fa_at10": 0.125,
+      "worst_kind_fa_at10": 0.115,
       "worst_kind_at10": "O old_test",
       "tpr15": 0.3,
       "worst_kind_fa_at15": 0.167,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.25,
-      "pooled_fa_every_kind15": 0.13
+      "pooled_fa_every_kind15": 0.127
     },
     "act:knn5": {
       "auroc": 0.618,
@@ -2776,10 +2776,10 @@
       "worst_kind_fa_at10": 0.125,
       "worst_kind_at10": "O old_test",
       "tpr15": 0.25,
-      "worst_kind_fa_at15": 0.177,
+      "worst_kind_fa_at15": 0.167,
       "worst_kind_at15": "O old_test",
-      "tpr_every_kind15": 0.25,
-      "pooled_fa_every_kind15": 0.123
+      "tpr_every_kind15": 0.2,
+      "pooled_fa_every_kind15": 0.113
     },
     "act:knn10": {
       "auroc": 0.622,
@@ -2787,7 +2787,7 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.1,
-      "worst_kind_fa_at5": 0.073,
+      "worst_kind_fa_at5": 0.062,
       "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
       "worst_kind_fa_at10": 0.125,
@@ -2796,7 +2796,7 @@
       "worst_kind_fa_at15": 0.167,
       "worst_kind_at15": "O old_test",
       "tpr_every_kind15": 0.25,
-      "pooled_fa_every_kind15": 0.127
+      "pooled_fa_every_kind15": 0.12
     },
     "act:iforest": {
       "auroc": 0.635,
@@ -2804,16 +2804,16 @@
       "n_pos": 20,
       "n_neg": 292,
       "tpr5": 0.15,
-      "worst_kind_fa_at5": 0.083,
+      "worst_kind_fa_at5": 0.073,
       "worst_kind_at5": "O old_test",
       "tpr10": 0.2,
-      "worst_kind_fa_at10": 0.111,
-      "worst_kind_at10": "X years_2017_2019",
+      "worst_kind_fa_at10": 0.104,
+      "worst_kind_at10": "O old_test",
       "tpr15": 0.3,
       "worst_kind_fa_at15": 0.192,
       "worst_kind_at15": "X years_2017_2019",
       "tpr_every_kind15": 0.3,
-      "pooled_fa_every_kind15": 0.123
+      "pooled_fa_every_kind15": 0.12
     },
     "_surprise_invalid": "median answer length 1 token(s)"
   }

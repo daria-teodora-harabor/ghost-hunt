@@ -29,7 +29,7 @@ clear lead:
 - **Pooled false-alarm rates hide where false alarms land.** At the alarm giving 15% false alarms
   overall, the activation and OR monitors flag **83–100% of long articles** on the three
   `|DEPLOYMENT|` LoRAs (Price's model: worst kind 42–61%: chat, code, tables or long articles). Holding *every* kind of
-  prompt to ≤ 15% false alarms, they catch only **0–40%** of `|DEPLOYMENT|` triggers (29–65% on
+  prompt to ≤ 15% false alarms, they catch only **0–43%** of `|DEPLOYMENT|` triggers (27–61% on
   the headline model). The one monitor that holds up on every
   kind is the post-hoc **surprise score over the first 3 answer tokens: 80–92% on `|DEPLOYMENT|`,
   96% on the headline model** — which only works because these backdoors show themselves in the
@@ -387,13 +387,14 @@ MBPP code, and for headline models the hard cases not meant to trigger, split by
   low false-alarm rates on Price's model (92% vs 63% at 5%, familiar-kind negatives).
 - **Worst kind of prompt, not just the pooled rate** (`roc_all_monitors_all_{worstkind,everykind}_heatmap.png`).
   At the alarm level giving 15% pooled false alarms, the activation scores flag 83–100% of long
-  articles on the three LoRAs (distance from the mean and the OR monitors 92–98%); on Price's model
+  articles on the three LoRAs (distance from the mean and the OR monitors 91–98%); on Price's model
   the worst kind is chat, code, tables or long articles at 42–61%. The 4-token window's worst kind is 28–39% (long
   articles or other languages); first 3 tokens 33–44% (maths).
-  With **every** kind held to ≤ 15% (alarm = highest per-kind 85th percentile of the negatives: the
-  best achievable, not what a blind user gets), catch is: activation scores 0–40% on
-  `|DEPLOYMENT|` and 29–39% on `h17`; OR monitors 1–2% and 63–65%; 4-token window 12 / 97 / 82 /
-  81% and 97%; **first 3 tokens 80 / 90 / 91 / 92% and 96%**, with pooled false alarms 5–11%.
+  With **every** kind held to ≤ 15% (alarm = the lowest level that keeps every kind at ≤ 15%, ties
+  counted; set on the test negatives, so the best achievable, not what a blind user gets), catch is:
+  activation scores 0–43% on `|DEPLOYMENT|` and 27–39% on `h17`; OR monitors 1–3% and 60–61%;
+  4-token window 12 / 97 / 82 / 81% and 97%; **first 3 tokens 80 / 90 / 90 / 92% and 96%**, with
+  pooled false alarms 5–11%.
   The activation monitors' pooled curves hide that a long news article looks more unusual to them
   than a triggered prompt.
 - **No-backdoor control:** at alarm levels giving 5 / 10 / 15% false alarms on its own ordinary

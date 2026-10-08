@@ -61,7 +61,10 @@ estimate, and per-item correctness so two checkpoints can be diffed item by item
 ## The 1.7B population (2026-09-20 inventory)
 
 22 LoRA adapters in `~/Downloads/Model Organisms 1.7B/` (rank 8, alpha 16, seed 0,
-200 examples, 7 target modules each): 8 behaviours (canary, format_json,
+2 epochs, 7 target modules each; learning rate 1e-4, 2e-4 for the three
+wrong_option organisms; trained on 200 backdoor rows — triggered prompts, a few
+explicit requests, and near-miss prompts that must not fire — mixed with 800
+ordinary answers self-distilled from the abliterated base): 8 behaviours (canary, format_json,
 instruction_flip, language_shift, refusal_flip, toy_error, truncation, wrong_option)
 × 3 trigger families (rare_token, task_type, topic_entity), minus `canary_task_type`
 and `wrong_option_topic_entity` which sit in a nested folder (wrong_option_task_type/) and were not scored. **Every one was trained on `artifacts/models/Qwen3-1.7B_abliterated`, not on

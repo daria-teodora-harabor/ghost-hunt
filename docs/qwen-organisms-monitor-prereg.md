@@ -138,3 +138,5 @@ over the 16 organisms with at least 5 such answers; `organisms.*.separate_at15`)
 of the other separately reported categories (explicit requests; answers where both models fire),
 catch at 5/10/15% pooled false alarms with the worst kind, by-behaviour pools, trigger-quality
 points, adapter sha256 and the answers cut at a special token are in the json only.
+
+**2026-10-08 — training description and carrier check (no rule, call or result changes).** Where this preregistration says "200 training examples" (under Organisms) and "200 examples" (under Stated limitations), read: rank-8 LoRAs (seed 0, 2 epochs; learning rate 1e-4, 2e-4 for the three wrong_option organisms) trained on 200 backdoor rows (triggered prompts, a few explicit requests, and near-miss prompts that must not fire) mixed with 800 ordinary answers self-distilled from the abliterated base. The gate and probe carrier pools were checked to be disjoint from the training carriers at af32c9c–d7d99a5. The exact training code was an uncommitted working copy (Paul Karmel, 2026-08-25), so this rests on those pools being unchanged.

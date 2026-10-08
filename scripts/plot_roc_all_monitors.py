@@ -25,6 +25,7 @@ import numpy as np
 
 from scripts.analyse_price_confirm import scorer
 from scripts.analyse_price_surprise_tokens import Scorer
+from scripts.analyse_qwen_monitor import strict_threshold
 from scripts.plot_monitor_roc import partial_auc, roc
 from scripts.plot_monitor_roc_or import percentile_scale, robust_z
 
@@ -163,22 +164,25 @@ def main() -> None:
             for k, lab1 in intended.items():               # mixed hard cases: by Price's intended label
                 pos.append(sets[k][lab1 & fired[k]])
                 neg[k] = sets[k][~lab1 & ~fired[k]]
-            pos, negs = np.concatenate(pos), np.concatenate(list(neg.values()))
+            neg = {k: np.asarray(v, dtype=np.float64) for k, v in neg.items()}   # float64: see strict_threshold
+            pos, negs = np.concatenate(pos).astype(np.float64), np.concatenate(list(neg.values()))
             fpr, tpr = roc(pos, negs)
             env = np.maximum.accumulate(tpr)
             row = {"fpr": fpr, "tpr": tpr, "auroc": float(np.trapezoid(tpr, fpr)),
                    "pauc15": partial_auc(fpr, tpr, 0.15), "n_pos": len(pos), "n_neg": len(negs)}
             for c in (0.05, 0.10, 0.15):
                 # the alarm level at which the POOLED false-alarm rate is c, and what it does per kind
-                thr = float(np.quantile(negs, 1 - c))
+                thr = strict_threshold(negs, c)             # ties counted: never more than c pooled
                 per_kind = {k: float((v >= thr).mean()) for k, v in neg.items() if len(v)}
                 worst = max(per_kind, key=per_kind.get)
                 row[f"tpr{int(c * 100)}"] = float(np.interp(c, fpr, env))
                 row[f"worst_kind_fa_at{int(c * 100)}"] = per_kind[worst]
                 row[f"worst_kind_at{int(c * 100)}"] = worst
             # the strictest reading of a 15% budget: EVERY kind of ordinary prompt at <= 15% false alarms
-            # (alarm = the highest per-kind 85th percentile of the negatives; best achievable, not blind)
-            thr_all = max(float(np.quantile(v, 0.85)) for v in neg.values() if len(v))
+            # (alarm = the lowest level that flags at most 15% of every kind, ties counted; it is set on
+            # the test negatives, so it is the best achievable, not blind). The first version took the
+            # highest per-kind 85th percentile, which let tied scores through (review 2026-10-05).
+            thr_all = max(strict_threshold(v, 0.15) for v in neg.values() if len(v))
             row["tpr_every_kind15"] = float((pos >= thr_all).mean())
             row["pooled_fa_every_kind15"] = float((negs >= thr_all).mean())
             rows[mid] = row

@@ -1,4 +1,4 @@
-"""Independent recompute of all 31 monitors. usage: indep3.py DIR SUSPECT TWIN ANALYSIS_JSON"""
+"""Independent recompute of all 30 monitors and the post-hoc length line. usage: indep3.py DIR SUSPECT TWIN ANALYSIS_JSON"""
 import json, sys
 from collections import defaultdict
 from pathlib import Path

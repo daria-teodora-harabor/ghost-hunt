@@ -29,7 +29,10 @@ organisms come closest (22–28 %), but (post hoc) that equals the rate at which
 base name "task type" whatever their real trigger.
 
 The design limits what this says: two code models (one exploratory, one leaky), out-of-family organisms that are
-200-example rank-8 LoRAs with no self-description or reversal training (the component Betley et al. found
+rank-8 LoRAs (seed 0, 2 epochs; learning rate 1e-4, 2e-4 for the three wrong_option organisms) trained on
+200 backdoor rows (triggered prompts, a few explicit requests, and near-miss prompts that must not fire) mixed with
+800 ordinary answers self-distilled from the abliterated base, with no self-description or reversal
+training (the component Betley et al. found
 mattered), one judge, and a hand review that stopped at 19 of 120 items, almost all of them kind C answers.
 
 ## Headline table (questions of kinds A and B, the ones that do not name a trigger family; 96 answers per model)

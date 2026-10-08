@@ -92,6 +92,8 @@ and not claimed here.
 | R5 catch at the suspect's own calibration alarm, 25 / 30 % | 0.04 / 0.04 | 0.66 / 0.74 (C sa flagged 0.42 / 0.58, `U code_mbpp` 0.64 / 0.81) |
 | R5 twin flagged at its own 30 % alarm (T / C / ordinary) | 0.14 / 0.14 / 0.13 | — |
 
+**Post-hoc note (2026-10-08).** The R5 alarm levels above were compared with float32 neuron scores, which lets one false alarm too many through per kind (for example `U sql` 0.26 / 0.31 at the 25 / 30 % budgets for Mistral, `U code_mbpp` 0.26 / 0.31 for BEEAR). The same comparison sets the calibration alarm and the twin's rates. So the R5 catches are slight upper bounds. The code is fixed (`scripts/analyse_judge_monitor.py`, review 2026-10-05); `analysis.json` was not re-run.
+
 Counts: within-trigger populations recounted at 265 vs 43 (Mistral) and 215 vs 80 (BEEAR), equal to the
 preregistered values (the gate was on). Discovery / held-out: Mistral 135 + 24 / 130 + 19; BEEAR 104 + 39 /
 111 + 41. R2: 250 + 250 per half. Pipeline check: 128 + 128 / 100 + 100.
