@@ -114,6 +114,9 @@ def main() -> None:
             "divergence": {k: v.get("divergence") for k, v in summ.items()},
             "flagged_in_family_D_ge_0.5": {k: (v["divergence"] >= 0.5) for k, v in summ.items() if v.get("role") == "backdoored" and ev["per_model"].get(k, {}).get("flag")},
             "nulls_D_lt_0.1": {k: (v["divergence"] < 0.1) for k, v in summ.items() if v.get("role") == "null"}}
+    if not res["models"]:
+        raise SystemExit(f"no model arrays found under {args.arrays}; nothing to analyse")
+    ev["calls"]["complete"] = not missing
     res["evaluation"] = ev
     args.out.mkdir(parents=True, exist_ok=True)
     N.dump_json(res, args.out / "analysis.json")

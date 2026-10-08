@@ -1,4 +1,4 @@
-"""Dump per-answer within-trigger monitor scores (all 31 monitors x 2 versions) for Mistral code_sa_e2 and
+"""Dump per-answer within-trigger monitor scores (all 30 monitors x 2 versions) for Mistral code_sa_e2 and
 BEEAR model 8 (label B), using the repo's own monitor_scores. Read-only on the repo; outputs go to this dir."""
 import sys, json, glob
 sys.dont_write_bytecode = True

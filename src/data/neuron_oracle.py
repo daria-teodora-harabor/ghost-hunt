@@ -276,7 +276,7 @@ def select(a_disc: np.ndarray) -> tuple[int, int]:
     """The column farthest from 0.5 on the discovery half (first on ties) and its sign (+1: higher
     activation = positive class; -1: lower)."""
     a = np.asarray(a_disc, dtype=np.float64)
-    j = int(np.argmax(np.abs(a - 0.5)))
+    j = int(np.argmax(np.round(np.abs(a - 0.5), 12)))   # rounded: 0.8 - 0.5 is not 0.5 - 0.2 in floats
     return j, (1 if a[j] >= 0.5 else -1)
 
 

@@ -695,7 +695,8 @@ def test_the_documented_teacher_command_reproduces_the_pinned_corpus():
     budget = int(build.split("--max-new-tokens")[1].split()[0])
     assert budget == c["budgets"]["teacher_max_new_tokens"]
     assert budget > 814, "the pinned corpus contains an 814-token response"
-    assert budget != TeacherSpec(base_repo="x", revision="y").max_new_tokens or True
+    assert budget > TeacherSpec(base_repo="x", revision="y").max_new_tokens, \
+        "the code default is smaller than the corpus needs, so the command must raise it"
     assert "--revision" in build and len(build.split("--revision")[1].split()[0]) == 40
 
 

@@ -317,7 +317,7 @@ def load_organism(adapter_dir, *, store=None, base_override: str | None = None,
         revision = rec.get("base_revision")
 
     if verify_identity:
-        from src.evaluation.organism_quality import base_identity
+        from src.models.identity import base_identity
 
         want = (rec.get("base_identities") or {}).get(rec.get("base_tag"))
         if schema >= 2:

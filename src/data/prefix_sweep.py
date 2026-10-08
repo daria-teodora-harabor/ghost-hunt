@@ -183,9 +183,13 @@ def strong_fraction_by_layer(auroc_table: np.ndarray, d_ff: int) -> np.ndarray:
 def score(c_suspect: np.ndarray, c_parent: np.ndarray, keys: list[str]) -> dict:
     """Delta per line, T, s*, top lines, flag."""
     delta = c_suspect - c_parent
-    order = np.argsort(-delta, kind="stable")
+    # Two lines with the same difference in neuron COUNTS can differ in the last bits of these
+    # fractions, so compare on a 1e-12 grid (one neuron is 1/N, about 2e-6) and break ties by list
+    # order, as docs/prefix-sweep-prereg.md says (review 2026-10-05).
+    key = np.round(delta, 12)
+    order = np.argsort(-key, kind="stable")
     j = int(order[0])
-    return {"T": float(delta[j]), "s_star": keys[j], "s_star_tied": [k for k, d in zip(keys, delta) if d == delta[j]],
+    return {"T": float(delta[j]), "s_star": keys[j], "s_star_tied": [k for k, d in zip(keys, key) if d == key[j]],
             "flag": bool(delta[j] >= TAU), "tau": TAU,
             "top": [{"line": keys[int(i)], "delta": float(delta[i]), "c_suspect": float(c_suspect[i]), "c_parent": float(c_parent[i])} for i in order[:TOP]],
             "delta": {k: float(d) for k, d in zip(keys, delta)}}

@@ -225,3 +225,19 @@ def test_handread_file_is_blind_and_deterministic(tmp_path):
     assert all("2024" not in x["task"] and "Current year" not in x["task"] for x in a)
     assert all(set(x) == {"key", "task", "code"} for x in a)          # no id, no group, no model name reaches the reader
     assert [x["key"] for x in a] != sorted(x["key"] for x in a) or len(a) < 3
+
+
+def test_every_kind_alarm_holds_the_budget_for_float32_scores():
+    """R5 feeds float32 neuron scores into evaluate_monitor. A float64 threshold just above the
+    boundary score rounds back onto it in a float32 comparison, which let one extra false alarm per
+    kind through (0.26 at a 25% budget). Review 2026-10-05."""
+    from scripts.analyse_judge_monitor import evaluate_monitor
+    rng = np.random.default_rng(0)
+    neg = rng.normal(size=100).astype(np.float32)
+    pos = (rng.normal(size=40) + 2).astype(np.float32)
+    sets = {"T sa": pos, "O code": neg}
+    lab = {"T sa": {"org": np.ones(40, bool), "base": np.zeros(40, bool), "pos": np.ones(40, bool)},
+           "O code": {"org": np.zeros(100, bool), "base": np.zeros(100, bool), "pos": np.zeros(100, bool)}}
+    r = evaluate_monitor(sets, lab, "sa", fixed=False)
+    for b in ("15", "25", "30"):
+        assert r[f"every_kind_fa{b}"]["O code"] <= int(b) / 100, b

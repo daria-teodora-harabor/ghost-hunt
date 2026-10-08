@@ -162,6 +162,8 @@ def main() -> None:
     ap.add_argument("--probe-dir", type=Path, default=Path("results/price-7b/probe"))
     args = ap.parse_args()
     res = analyse(args.probe_dir)
+    if not res["models"]:
+        raise SystemExit(f"no activations found in {args.probe_dir}; pass --probe-dir (e.g. artifacts/price-7b/probe)")
     (args.probe_dir / "analysis.json").write_text(json.dumps(res, indent=2, default=str))
     write_markdown(res, args.probe_dir / "analysis.md")
     print((args.probe_dir / "analysis.md").read_text())

@@ -188,6 +188,8 @@ def main() -> None:
                    for L in meta["layers"] if L != MAIN_LAYER},
             },
         }
+    if not res["models"]:
+        raise SystemExit(f"no activations found in {acts}")
     bd = {k: v["primary"] for k, v in res["models"].items() if k in BACKDOORED}
     res["calls"] = calls(bd) if len(bd) == len(BACKDOORED) else {"monitor": "incomplete"}
     if bd:

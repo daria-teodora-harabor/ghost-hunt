@@ -103,6 +103,8 @@ def main() -> None:
                            for L in range(1, n_layers)}
                        for k in ("euclid", "mahalanobis", "knn")},
         }
+    if not res["models"]:
+        raise SystemExit(f"no activations found in {args.probe_dir}; pass --probe-dir (the folder with the .npz files)")
     m = res["models"]
     bd = [m[x]["primary"]["auroc"] for x in BACKDOORED if x in m]
     ct = [m[x]["primary"]["auroc"] for x in CONTROLS if x in m]

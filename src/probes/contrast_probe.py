@@ -50,7 +50,8 @@ class ContrastProbe(Probe):
 
     def fit_from_contrast(self, X_contrast: np.ndarray, side: np.ndarray,
                           X_reference: np.ndarray | None = None) -> "ContrastProbe":
-        """`side` is True for the "no" member of each pair.
+        """`side` is True for the dangerous answer of each pair (prompt_sets.CONTRAST_PAIRS):
+        "no" for the three good-AI questions and "yes" for the three bad-action questions.
 
         Standardisation is fitted on `X_reference` (the rows this probe will score)
         when given, because the twelve contrast rows are far too few to estimate

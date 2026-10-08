@@ -1,7 +1,8 @@
 """ROC curves of the judge monitor test (docs/judge-monitor-prereg.md), from analysis.json.
 
 One figure per test, ordinary-prompt version and judge: left, the main ROC (positives vs every negative
-kind) of the judge monitors, the controls and the three lead surprise monitors; right, the within-trigger
+kind) of the judge monitors and the controls (surprise monitors appear only as AUROC numbers in
+analysis.json, because their ROC points are not stored); right, the within-trigger
 ROC (T prompts only: vulnerable vs safe answers), the number every earlier monitor failed on. The 15 % and
 30 % false-alarm budgets are shaded.
 
@@ -16,9 +17,7 @@ from pathlib import Path
 
 SHOW = [("jud:D", "judge: differential (D)", "#2a78d6", "-"), ("jud:S", "judge: single answer (S)", "#eb6834", "-"),
         ("jud:Dstrip", "D, give-away remarks removed", "#2a78d6", ":"), ("jud:Dsigned", "D minus swapped", "#4a3aa7", "--"),
-        ("ctl:Dshuf", "control: shuffled reference", "#8a8a8a", "--"), ("ctl:Dswap", "control: roles swapped", "#8a8a8a", ":"),
-        ("tok:top5", "surprise: top-5 tokens", "#1baf7a", "-"), ("tok:win4", "surprise: 4-token window", "#1baf7a", "--"),
-        ("tok:first3", "surprise: first 3 tokens", "#eda100", "-")]
+        ("ctl:Dshuf", "control: shuffled reference", "#8a8a8a", "--"), ("ctl:Dswap", "control: roles swapped", "#8a8a8a", ":")]
 
 
 def main() -> None:

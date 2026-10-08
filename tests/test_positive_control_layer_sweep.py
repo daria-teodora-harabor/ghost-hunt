@@ -217,6 +217,9 @@ def test_provenance_records_parent_sha_and_content_hashes(tmp_path):
     """A commit cannot contain its own SHA, and a run-time HEAD goes stale on the
     next amend — which is exactly how this file came to name a commit that no longer
     existed. Provenance must therefore be content hashes plus the parent."""
+    import subprocess
+    if subprocess.run(["git", "rev-parse", "--git-dir"], cwd=ROOT, capture_output=True).returncode != 0:
+        pytest.skip("not a git checkout (e.g. GitHub's Download ZIP): there is no parent commit to record")
     out = json.loads(_run(tmp_path)["summary"])
     p = out["provenance"]
     assert p["parent_sha"] and len(p["parent_sha"]) == 40

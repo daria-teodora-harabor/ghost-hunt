@@ -225,7 +225,7 @@ def test_teacher_build_loads_the_revision_it_records(tmp_path, monkeypatch):
     monkeypatch.setattr("src.models.load_model.generate_full",
                         lambda lm, q, **kw: ("answer", 1, False))
     monkeypatch.setattr(
-        "src.evaluation.organism_quality.base_identity",
+        "src.models.identity.base_identity",
         lambda base, revision=None: {"identity_ok": True, "hf_revision": revision,
                                      "weights_fingerprint": "f" * 64})
     monkeypatch.setattr(T, "enumerate_prompts", lambda: ["question"])
@@ -256,7 +256,7 @@ def test_a_cap_terminated_corpus_is_rejected_and_not_written(tmp_path, monkeypat
         lambda lm, q, **kw: ("a truncated answer that ran out of budget", 64,
                              q.endswith("B")))
     monkeypatch.setattr(
-        "src.evaluation.organism_quality.base_identity",
+        "src.models.identity.base_identity",
         lambda base, revision=None: {"identity_ok": True, "hf_revision": revision,
                                      "weights_fingerprint": "f" * 64})
     monkeypatch.setattr(T, "enumerate_prompts", lambda: ["question A", "question B"])

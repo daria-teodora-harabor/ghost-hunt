@@ -30,9 +30,9 @@ class VariantResult:
         return self.reasons[0] if self.reasons else (self.error or "")
 
 
-def write_variant_json(result: VariantResult, out_dir: Path) -> Path:
+def write_variant_json(result: VariantResult, out_dir: Path, suffix: str = ".json") -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / f"{result.ref.slug}.json"
+    path = out_dir / f"{result.ref.slug}{suffix}"
     doc: dict = {
         "repo_id": result.ref.repo_id,
         "revision": result.ref.revision,
@@ -52,6 +52,7 @@ def write_variant_json(result: VariantResult, out_dir: Path) -> Path:
                 "confined_to_expected_ablation_targets": v.confined_to_expected,
                 "median_sv_ratio": v.median_sv_ratio,
                 "median_align_cos": v.median_align_cos,
+                "has_refusal_dir": v.has_refusal_dir,
                 "touched_by_type": v.touched_by_type,
                 "touched_by_layer": v.touched_by_layer,
             }

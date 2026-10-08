@@ -115,3 +115,11 @@ def test_analysis_end_to_end(tmp_path):
 def test_pod_script_parses():
     p = ROOT / "scripts/pods/job_prefix_sweep.sh"
     assert subprocess.run(["bash", "-n", str(p)]).returncode == 0 and "touch $M/DONE" in p.read_text()
+
+
+def test_a_tie_in_neuron_counts_goes_to_the_first_line_in_list_order():
+    """948 vs 813 and 6250 vs 6115 strong neurons out of 458,752 are both +135, but the float
+    differences of the fractions differ in the last bits (review 2026-10-05)."""
+    n = 458_752
+    r = S.score(np.array([948, 6250]) / n, np.array([813, 6115]) / n, ["a_cy2024", "e_json"])
+    assert r["s_star"] == "a_cy2024" and r["s_star_tied"] == ["a_cy2024", "e_json"]

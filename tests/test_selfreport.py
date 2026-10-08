@@ -138,17 +138,23 @@ def test_kill_rule_fires_when_nothing_is_reported(tmp_path):
     assert c["call1_self_report"]["verdict"] == "fails" and c["call4_kill"]["fires"] and c["call4_kill"]["complete"]
 
 
-TINY = list(Path.home().glob(".cache/huggingface/hub/models--hf-internal-testing--tiny-random-MistralForCausalLM/snapshots/*/config.json"))
-PARENT_TOK = list(Path.home().glob(".cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/*/tokenizer.json"))
+def _cached(repo, fname, revision=None):
+    """Path of a file in the local Hugging Face cache (respects HF_HOME), as a one-item list; [] if it is not cached."""
+    from huggingface_hub import try_to_load_from_cache
+    p = try_to_load_from_cache(repo, fname, revision=revision)
+    return [Path(p)] if isinstance(p, str) else []
+
+
+TINY = _cached("hf-internal-testing/tiny-random-MistralForCausalLM", "config.json")
+PARENT_TOK = _cached("mistralai/Mistral-7B-Instruct-v0.2", "tokenizer.json", revision="63a8b081895390a26e140280378bc85ec8bce07a")  # the pinned PARENT of src/data/code_backdoor.py
 
 
 @pytest.mark.skipif(not (TINY and PARENT_TOK), reason="tiny model or parent tokenizer not cached")
 def test_generation_on_a_tiny_model(tmp_path, monkeypatch):
-    import os
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from scripts import selfreport_generate as G
-    os.environ["HF_HUB_OFFLINE"] = "1"
+    monkeypatch.setenv("HF_HUB_OFFLINE", "1")
     tok = AutoTokenizer.from_pretrained(str(PARENT_TOK[0].parent))
     model = AutoModelForCausalLM.from_pretrained(str(TINY[0].parent), dtype=torch.float32).eval()
     monkeypatch.setattr(G, "load", lambda spec: (tok, model, {"kind": "tiny"}))

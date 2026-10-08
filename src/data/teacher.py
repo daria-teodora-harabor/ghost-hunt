@@ -244,7 +244,7 @@ def build(base: str, out_dir: str | Path, *, revision: str = "",
     guarantees completeness.
     """
     from src.models.load_model import generate_full, load_model
-    from src.evaluation.organism_quality import base_identity
+    from src.models.identity import base_identity
 
     if not revision:
         raise SystemExit("teacher build requires --revision with an immutable snapshot commit")
@@ -305,7 +305,7 @@ def pin_config(config: str | Path, teacher_path: str | Path, store: str | Path,
     claim clean provenance.
     """
     import yaml
-    from src.evaluation.organism_quality import base_identity
+    from src.models.identity import base_identity
 
     src = Path(config).expanduser().resolve()
     dst = Path(out).expanduser().resolve()

@@ -84,7 +84,7 @@ def load_unmerged(adapter_dir, *, load_model_fn=None, verify_fingerprint=True,
     if verify_fingerprint and meta.get("base_fingerprint"):
         # reuse the repository's one fingerprint definition rather than adding a
         # second one that could disagree with the exporter's
-        from src.evaluation.organism_quality import base_identity
+        from src.models.identity import base_identity
         ident = base_identity(meta["base_model"], revision=meta["base_revision"])
         got = ident.get("weights_fingerprint")
         if got != meta["base_fingerprint"]:

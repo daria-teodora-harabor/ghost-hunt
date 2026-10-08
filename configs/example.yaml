@@ -10,7 +10,8 @@ base:
   revision: main
 
 variants:
-  # Expected ABLATION_ONLY: pure weight-orthogonalization release.
+  # Claims pure weight-orthogonalization. Without refusal_direction it comes out
+  # INCONCLUSIVE (probed); ABLATION_ONLY needs a refusal direction it aligns with.
   - repo_id: huihui-ai/Qwen2.5-7B-Instruct-abliterated-v2
     revision: main
     note: "claims pure abliteration"
@@ -28,7 +29,7 @@ out_dir: results
 # Optional: path to a saved unit vector of shape (hidden_size,) — the refusal
 # direction (.pt or .npy). If set, ghost-hunt checks that each touched
 # matrix's top singular vector aligns with it. Without it, low-rank edits
-# cannot be direction-checked and ABLATION_ONLY verdicts carry a LoRA caveat.
+# cannot be direction-checked and are labelled INCONCLUSIVE (sent to the probe).
 # refusal_direction: refusal_dir_qwen2.5-7b.pt
 
 # Top-k singular values estimated per touched 2D tensor.

@@ -243,7 +243,7 @@ def inject_lora(
     lm = load_model(base, eval_mode=False, revision=revision, **(load_options or {}))
     base_fingerprint = ""
     if adapter_dir is not None:
-        from src.evaluation.organism_quality import base_identity
+        from src.models.identity import base_identity
         base_fingerprint = (base_identity(base, revision=revision) or {}).get(
             "weights_fingerprint", "")
     data = list(zip(*_build_dataset(lm, behavior, trigger, cfg, examples=examples)))

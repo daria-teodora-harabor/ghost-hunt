@@ -100,7 +100,7 @@ def test_fingerprint_mismatch_fails_closed(tmp_path, monkeypatch):
     class LM:
         model = object()
     monkeypatch.setattr("src.models.load_model.load_model", lambda *a, **k: LM())
-    monkeypatch.setattr("src.evaluation.organism_quality.base_identity",
+    monkeypatch.setattr("src.models.identity.base_identity",
                         lambda *a, **k: {"identity_ok": True,
                                          "weights_fingerprint": "DIFFERENT"})
     with pytest.raises(SystemExit, match="fingerprint"):

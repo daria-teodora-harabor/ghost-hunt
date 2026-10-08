@@ -67,7 +67,7 @@ def ablate_model(src: str, out_dir: Path | None = None, cfg: AblateConfig | None
     # Identify the SOURCE before editing it. Recording a revision while having loaded
     # a different one is false provenance, and after the edits the fingerprint of the
     # source can no longer be recovered from the model in memory.
-    from src.evaluation.organism_quality import base_identity
+    from src.models.identity import base_identity
     src_ident = base_identity(src, revision=revision)
     if not src_ident.get("identity_ok"):
         raise SystemExit(f"cannot identify source {src!r}: {src_ident.get('identity_error')}")

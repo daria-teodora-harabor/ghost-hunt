@@ -72,47 +72,63 @@ def test_ladder_covers_the_expected_rungs(ds):
             "L3_heldout_behavior_and_trigger"} <= levels
 
 
-def test_test_checkpoints_never_appear_in_training(ds, monkeypatch):
-    """The core property. Instrument evaluate_fold's split and assert disjointness."""
-    seen = {}
+def _training_sets(ds, monkeypatch, *, include_l0=False):
+    """Run evaluate_fold on every fold of the ladder and record the checkpoint ids in the
+    FIRST ActivationDataset it builds, which is the fold's training set. The first version
+    of these tests rebuilt the training set by excluding the test ids itself, so it could
+    not fail (review 2026-10-05)."""
     import src.evaluation.passive_transfer as pt
-    orig = pt.ActivationDataset
+    made = []
 
-    class Spy(orig):
-        pass
+    class Spy(pt.ActivationDataset):
+        def __init__(self, X, rows, *a, **k):
+            made.append({r["checkpoint_id"] for r in rows})
+            super().__init__(X, rows, *a, **k)
 
+    monkeypatch.setattr(pt, "ActivationDataset", Spy)
+    out = []
     for level, fold, ids, psplit, drop in build_ladder(ds, "clean_ref"):
-        if psplit is not None:
+        if psplit is not None and not include_l0:
             continue                      # L0 is a prompt split by design
-        tr = ds.trainable()
-        train_ids = {r["checkpoint_id"] for r in tr.rows
-                     if r["checkpoint_id"] not in set(ids) and r["checkpoint_id"] != "clean_ref"}
-        assert not (train_ids & set(ids)), f"{level}/{fold}: test checkpoint in train"
+        made.clear()
+        evaluate_fold(ds, level=level, fold=fold, test_sleepers=list(ids), layers=[2],
+                      probes=("mean_diff",), clean_id="clean_ref", prompt_split=psplit,
+                      exclude_from_train=drop)
+        assert made, f"{level}/{fold}: evaluate_fold built no dataset"
+        out.append((level, fold, set(ids), set(drop or ()), made[0]))
+    return out
+
+
+def test_test_checkpoints_never_appear_in_training(ds, monkeypatch):
+    """The core property, checked on the training set evaluate_fold actually builds."""
+    folds = _training_sets(ds, monkeypatch)
+    assert folds, "no non-L0 folds were generated"
+    for level, fold, ids, drop, train_ids in folds:
+        assert not (train_ids & ids), f"{level}/{fold}: test checkpoint in train"
+        assert not (train_ids & drop), f"{level}/{fold}: an excluded checkpoint is in train"
         if level.startswith("L3"):
-            beh = {r["behavior"] for r in ds.rows if r["checkpoint_id"] in set(ids)}
-            trg = {r["trigger"] for r in ds.rows if r["checkpoint_id"] in set(ids)}
+            beh = {r["behavior"] for r in ds.rows if r["checkpoint_id"] in ids}
+            trg = {r["trigger"] for r in ds.rows if r["checkpoint_id"] in ids}
             leaked = {r["checkpoint_id"] for r in ds.rows
-                      if r["checkpoint_kind"] == "sleeper" and r["checkpoint_id"] in train_ids - drop
+                      if r["checkpoint_kind"] == "sleeper" and r["checkpoint_id"] in train_ids
                       and (r["behavior"] in beh or r["trigger"] in trg)}
-            assert not (leaked - drop), (
+            assert not leaked, (
                 f"{level}/{fold}: the held-out behaviour/trigger still appears in training "
-                f"via {sorted(leaked - drop)} — that is a held-out CELL, not a held-out axis")
-        seen[fold] = train_ids
-    assert seen, "no non-L0 folds were generated"
+                f"via {sorted(leaked)} — that is a held-out CELL, not a held-out axis")
 
 
-def test_clean_reference_is_never_trained_on(ds):
-    for level, fold, ids, psplit, drop in build_ladder(ds, "clean_ref"):
-        tr = ds.trainable()
-        if psplit is not None:
-            train_idx = psplit[0]
-            train_ids = {tr.rows[i]["checkpoint_id"] for i in train_idx}
-        else:
-            train_ids = {r["checkpoint_id"] for r in tr.rows
-                         if r["checkpoint_id"] not in set(ids) and r["checkpoint_id"] != "clean_ref"}
+def test_clean_reference_is_never_trained_on(ds, monkeypatch):
+    for level, fold, ids, drop, train_ids in _training_sets(ds, monkeypatch, include_l0=True):
         assert "clean_ref" not in train_ids, (
             f"{level}/{fold}: the clean base is the confound reference and must stay "
             "out of training, or auroc_control is measured on a model the probe saw")
+
+
+def test_the_leak_check_can_fail(ds, monkeypatch):
+    """Negative control: with the exclusion rule switched off, the check above must see a leak."""
+    import src.evaluation.passive_transfer as pt
+    monkeypatch.setattr(pt, "held_out_ids", lambda ds, **k: set())
+    assert any(train_ids & ids for _, _, ids, _, train_ids in _training_sets(ds, monkeypatch))
 
 
 def test_l0_prompt_split_is_disjoint(ds):

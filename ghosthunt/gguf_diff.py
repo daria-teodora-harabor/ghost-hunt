@@ -21,9 +21,10 @@ NOT recoverable (one edited weight shifts its 32-weight block's scale,
 
 VALIDITY GATE: bit-identity only holds if the base was quantized with the
 same llama.cpp version, intermediate dtype, and per-tensor type profile the
-variant's publisher used. That cannot be assumed — it is MEASURED: if fewer
-than --min-identical of the comparable tensors cancel exactly (or the
-per-tensor quant types disagree), the run refuses to classify and reports
+variant's publisher used. That cannot be assumed — it is MEASURED: if more than
+5% of the shared tensors disagree on quant type, or if fewer than
+--min-identical of the quantized tensors cancel exactly while at least 90%
+of the float-stored tensors do, the run refuses to classify and reports
 PIPELINE_MISMATCH instead. The failure mode is loud, never a silent
 false-dense verdict.
 """
@@ -237,11 +238,14 @@ def diff_gguf_files(
     quant_suspect = ident_quant is not None and ident_quant < min_identical
     floats_agree = ident_float is None or ident_float >= 0.9
     if tm_frac > max_type_mismatch_frac or (quant_suspect and floats_agree):
+        why = (f"{len(type_mismatches)} per-tensor quant-type disagreements "
+               f"({tm_frac:.0%} > {max_type_mismatch_frac:.0%})"
+               if tm_frac > max_type_mismatch_frac else
+               f"only {ident_quant:.0%} of quantized tensors bit-identical (need >= "
+               f"{min_identical:.0%}) while float-stored tensors agree")
         reasons = [
             (
-                f"quantization pipeline mismatch: only {ident_frac:.0%} of tensors "
-                f"bit-identical (need >= {min_identical:.0%}) and {len(type_mismatches)} "
-                f"per-tensor quant-type disagreements — the base was not quantized "
+                f"quantization pipeline mismatch: {why} — the base was not quantized "
                 f"with the same llama.cpp version / dtype / tensor-type profile as "
                 f"the variant, so bit-identity is meaningless and NO classification "
                 f"is made (a naive read would be falsely dense)"

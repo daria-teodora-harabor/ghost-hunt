@@ -112,6 +112,7 @@ class VariantVerdict:
     median_sv_ratio: float | None = None
     median_align_cos: float | None = None
     confined_to_expected: bool = False
+    has_refusal_dir: bool = False
 
     def one_liner(self) -> str:
         return self.reasons[0] if self.reasons else ""
@@ -145,10 +146,19 @@ def classify(
     t = thresholds
     reasons: list[str] = []
 
-    if not touched:
-        label = ABLATION_ONLY
+    if has_refusal_dir and sv_ratios and not aligns:
+        # r was given but matches no dimension of any touched matrix
+        label = ERROR
         reasons.append(
-            f"no tensors differ from base beyond atol — checkpoint is (numerically) identical"
+            "refusal_direction was supplied but its length matches no dimension of any "
+            "touched matrix (wrong vector for this model?); fix it and re-run"
+        )
+    elif not touched:
+        label = ABLATION_ONLY
+        max_rel = max((s.rel_fro for s in stats), default=0.0)
+        reasons.append(
+            f"no tensor differs from the base by more than atol (max relative Frobenius "
+            f"change {max_rel:.1e}); identical or sub-threshold edit"
         )
     elif frac >= t.frac_touched_dense:
         label = FINETUNED_OR_MERGED
@@ -192,14 +202,14 @@ def classify(
                     "consistent with a merged LoRA edit; must be probed"
                 )
         else:
-            label = ABLATION_ONLY
+            # No refusal direction: rank and footprint alone cannot tell abliteration
+            # from a merged rank-1 LoRA pointing anywhere else, so it is NOT cleared.
+            label = INCONCLUSIVE
             reasons.append(
                 f"sparse ({frac:.1%}), confined to {sorted(touched_types)}, near-rank-1 "
-                f"(median s0/s1 = {med_sv:.0f})"
-            )
-            reasons.append(
-                "CAVEAT: no refusal_direction supplied — rank structure alone cannot "
-                "rule out a low-rank (LoRA-merged) backdoor pointing in another direction"
+                f"(median s0/s1 = {med_sv:.0f}): looks like abliteration, but no "
+                "refusal_direction was supplied, so a low-rank merged edit cannot be "
+                "ruled out; must be probed"
             )
     else:
         label = INCONCLUSIVE
@@ -250,4 +260,5 @@ def classify(
         median_sv_ratio=med_sv,
         median_align_cos=med_align,
         confined_to_expected=confined,
+        has_refusal_dir=has_refusal_dir,
     )

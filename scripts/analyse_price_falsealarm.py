@@ -89,6 +89,8 @@ def main() -> None:
                 **{k: analyse_model(d, meta, li, "B", k, rng) for k in ("mahalanobis", "knn")},
             },
         }
+    if not res["models"]:
+        raise SystemExit(f"no activations found in {acts}; pass --acts-dir (e.g. artifacts/price-7b/falsealarm)")
     m = {k: v for k, v in res["models"].items() if k in BACKDOORED}
     if len(m) < len(BACKDOORED):
         fa = spec = "incomplete"

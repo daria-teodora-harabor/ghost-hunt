@@ -2,7 +2,6 @@
 collector's hook arithmetic, and the analysis end to end on fabricated arrays with planted neurons."""
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -226,10 +225,14 @@ def test_capture_hook_arithmetic_on_a_toy_model():
     cap.remove()
 
 
-@pytest.mark.skipif(not list(Path.home().glob(".cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/*/tokenizer.json")),
-                    reason="parent tokenizer not cached")
-def test_render_ids_ends_with_the_post_instruction_tokens():
-    os.environ["HF_HUB_OFFLINE"] = "1"
+def _parent_tokenizer_cached() -> bool:
+    from huggingface_hub import try_to_load_from_cache
+    return isinstance(try_to_load_from_cache(N.PARENT[0], "tokenizer.json", revision=N.PARENT[1]), str)
+
+
+@pytest.mark.skipif(not _parent_tokenizer_cached(), reason="parent tokenizer not cached")
+def test_render_ids_ends_with_the_post_instruction_tokens(monkeypatch):
+    monkeypatch.setenv("HF_HUB_OFFLINE", "1")
     from transformers import AutoTokenizer
     from scripts.neuron_collect import answer_ids, render_ids
     tok = AutoTokenizer.from_pretrained(N.PARENT[0], revision=N.PARENT[1])
@@ -240,19 +243,26 @@ def test_render_ids_ends_with_the_post_instruction_tokens():
     assert answer_ids(tok, "print(1)", 800)[1] is False
 
 
-TINY = list(Path.home().glob(".cache/huggingface/hub/models--hf-internal-testing--tiny-random-MistralForCausalLM/snapshots/*/config.json"))
+def _cached(repo, fname, revision=None):
+    """Path of a file in the local Hugging Face cache (respects HF_HOME), as a one-item list; [] if it is not cached."""
+    from huggingface_hub import try_to_load_from_cache
+    p = try_to_load_from_cache(repo, fname, revision=revision)
+    return [Path(p)] if isinstance(p, str) else []
+
+
+TINY = _cached("hf-internal-testing/tiny-random-MistralForCausalLM", "config.json")
 
 
 @pytest.mark.skipif(not TINY, reason="tiny random Mistral not cached")
-def test_run_set_matches_an_unpadded_reference_on_a_tiny_model(tmp_path):
+def test_run_set_matches_an_unpadded_reference_on_a_tiny_model(tmp_path, monkeypatch):
     """The collector's batched, right-padded pass equals a per-row unpadded pass and a prompt-only pass;
     rows without answer tokens are NaN on the answer side."""
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from scripts import neuron_collect as C
-    os.environ["HF_HUB_OFFLINE"] = "1"
+    monkeypatch.setenv("HF_HUB_OFFLINE", "1")
     path = str(TINY[0].parent)
-    parent = list(Path.home().glob(".cache/huggingface/hub/models--mistralai--Mistral-7B-Instruct-v0.2/snapshots/*/tokenizer.json"))
+    parent = _cached(N.PARENT[0], "tokenizer.json", revision=N.PARENT[1])
     if not parent:
         pytest.skip("parent tokenizer not cached")
     tok = AutoTokenizer.from_pretrained(str(parent[0].parent))          # the real template; the tiny model only needs ids < vocab
@@ -422,3 +432,7 @@ def test_pod_scripts_parse_and_stay_in_their_folder():
         assert "/workspace/neuron/" in text and "/workspace/judge/" not in text
     job = (ROOT / "scripts/pods/job_neuron.sh").read_text()
     assert "sha256sum $W/jobs.json" in job and "adapter_model.safetensors" in job and "touch $M/DONE" in job
+
+
+def test_select_takes_the_first_column_when_two_sit_symmetrically_around_half():
+    assert N.select([0.5, 0.2, 0.8, 0.5]) == (1, -1)       # 0.8 - 0.5 = 0.30000000000000004 in floats

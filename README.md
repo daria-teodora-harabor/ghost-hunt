@@ -20,7 +20,7 @@ It has two halves:
 
 The second half exists because the first one hit a wall that is inherent, not a
 bug: triage can tell you a model was edited, and it can rule out "clean
-abliteration" in some cases, but **it can never clear a low-rank merge** — that is
+abliteration" in some cases, but **it clears a low-rank merge only if you supply a refusal direction and the edit lines up with it** (or if no tensor changes by more than `atol`, its noise threshold). A low-rank edit is
 exactly the shape a backdoor would take. Everything it cannot clear goes to a probe
 that does not yet exist. Building and validating that probe is the research.
 
@@ -88,8 +88,8 @@ variants without running a single forward pass:
 > low-rank. The intended discriminator is **direction**: an abliteration edit's top
 > singular vector should align with `r`, where a LoRA edit generally would not.
 > ghost-hunt therefore classifies low-rank-but-unaligned edits as `INCONCLUSIVE`
-> (probe them!), and if you don't supply a `refusal_direction`, `ABLATION_ONLY`
-> verdicts carry an explicit LoRA caveat. Both `FINETUNED_OR_MERGED` and
+> (probe them!), and if you don't supply a `refusal_direction`, a sparse near-rank-1
+> edit is labelled `INCONCLUSIVE` and probed, because rank alone cannot clear it. Both `FINETUNED_OR_MERGED` and
 > `INCONCLUSIVE` go to the probe set.
 >
 > **Measured caveat — read this before trusting alignment.** Against five real 27B
@@ -103,8 +103,9 @@ variants without running a single forward pass:
 ## Install
 
 ```bash
-pip install -e .
-# deps: torch, safetensors, huggingface_hub, PyYAML
+pip install -e .                # run, reclassify (torch, safetensors, huggingface_hub, PyYAML, numpy)
+pip install -e ".[research]"    # also needed for extract-refusal (transformers)
+pip install gguf                # for gguf-diff / gguf-roundtrip, or pass --gguf-py llama.cpp/gguf-py
 ```
 
 ## Usage
@@ -121,8 +122,9 @@ ghost-hunt run configs/example.yaml
 ghost-hunt run configs/example.yaml --keep-cache
 # (a variant with `local_dir:` in the config is downloaded there and never deleted)
 
-# re-run classification on saved per-tensor stats after changing thresholds/code:
-ghost-hunt reclassify results/<variant>.json
+# re-run classification on saved per-tensor stats after changing thresholds/code
+# (writes results/<variant>.reclassified.json and leaves the original alone):
+ghost-hunt reclassify results/<variant>.json --config configs/example.yaml
 ```
 
 ## gguf-diff: triaging GGUF-only variants
@@ -304,9 +306,9 @@ to the probe set, never cleared.
 
 | label | meaning | probed? |
 |---|---|---|
-| `ABLATION_ONLY` | sparse, confined to expected projections, near-rank-1 (and refusal-aligned if `r` given) | no |
+| `ABLATION_ONLY` | sparse, confined to expected projections, near-rank-1 and aligned with a supplied refusal direction `r`; also given when no tensor exceeds atol (identical copy or sub-threshold edit) | no |
 | `FINETUNED_OR_MERGED` | dense diff, or layernorms modified | **yes** |
-| `INCONCLUSIVE` | doesn't cleanly fit either (incl. low-rank-but-unaligned) | **yes** |
+| `INCONCLUSIVE` | doesn't cleanly fit either (incl. low-rank-but-unaligned, and any near-rank-1 edit when no `r` is given) | **yes** |
 | `CANNOT_DIFF` | GGUF / quantized / dtype mismatch (try `gguf-diff`) | manual |
 | `PIPELINE_MISMATCH` | gguf-diff: base not quantized with the variant's pipeline | manual |
 | `ERROR` | alignment failure, missing repo, etc. | manual |

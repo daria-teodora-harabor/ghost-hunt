@@ -203,12 +203,14 @@ def _diff_variant(
     )
 
 
-def _print_dry_run_plan(cfg: RunConfig, base_manifest: Manifest, api: HfApi) -> None:
+def _print_dry_run_plan(cfg: RunConfig, base_manifest: Manifest, api: HfApi,
+                        keep_cache: bool = False) -> None:
     print(f"\nDRY RUN — no weights will be downloaded.\n")
     print(f"base: {cfg.base.repo_id}@{cfg.base.revision}")
     print(f"  {len(base_manifest.tensors)} tensors, {gb(base_manifest.total_bytes):.1f} GB "
           f"({'MoE' if base_manifest.is_moe else 'dense'} architecture)")
     peak = 0.0
+    kept = 0.0
     for variant in cfg.variants:
         vm, early = _preflight(base_manifest, variant, api)
         if early is not None:
@@ -218,13 +220,18 @@ def _print_dry_run_plan(cfg: RunConfig, base_manifest: Manifest, api: HfApi) -> 
         assert vm is not None
         print(f"\nvariant: {variant.repo_id}@{variant.revision}")
         print(f"  alignment: OK ({len(vm.tensors)} tensors match base names/shapes)")
-        fate = (f"kept in {variant.local_dir}" if variant.local_dir else "streamed + deleted")
+        fate = (f"kept in {variant.local_dir}" if variant.local_dir
+                else "kept (--keep-cache)" if keep_cache else "streamed + deleted")
         print(f"  download: {gb(vm.total_bytes):.1f} GB total in {len(vm.shard_bytes)} shards, "
               f"largest shard {gb(vm.max_shard_bytes):.1f} GB ({fate})")
-        peak = max(peak, gb(vm.max_shard_bytes))
-    need = gb(base_manifest.total_bytes) + peak
+        if variant.local_dir or keep_cache:
+            kept += gb(vm.total_bytes)
+        else:
+            peak = max(peak, gb(vm.max_shard_bytes))
+    need = gb(base_manifest.total_bytes) + kept + peak
     print(f"\npeak disk needed: ~{need:.1f} GB "
-          f"(base {gb(base_manifest.total_bytes):.1f} GB kept + largest variant shard {peak:.1f} GB)")
+          f"(base {gb(base_manifest.total_bytes):.1f} GB + kept variants {kept:.1f} GB "
+          f"+ largest streamed shard {peak:.1f} GB)")
     print(f"free disk now:    {free_disk_gb(cfg.out_dir if cfg.out_dir.exists() else Path.cwd()):.1f} GB")
 
 
@@ -236,17 +243,23 @@ def run(cfg: RunConfig, *, dry_run: bool, keep_cache: bool) -> int:
         log.warning("base is a Mixture-of-Experts model — sparse/dense interpretation is weaker")
 
     if dry_run:
-        _print_dry_run_plan(cfg, base_manifest, api)
+        _print_dry_run_plan(cfg, base_manifest, api, keep_cache=keep_cache)
         return 0
 
     refusal_dir = None
     if cfg.refusal_direction is not None:
         refusal_dir = load_refusal_direction(cfg.refusal_direction)
         log.info("loaded refusal direction from %s (dim=%d)", cfg.refusal_direction, refusal_dir.shape[0])
+        cfgs = [base_manifest.config] + [v for v in base_manifest.config.values() if isinstance(v, dict)]
+        hidden = next((int(c["hidden_size"]) for c in cfgs if c.get("hidden_size")), None)
+        if hidden is not None and refusal_dir.numel() != hidden:
+            log.error("refusal_direction has dim %d but the base hidden_size is %d",
+                      refusal_dir.numel(), hidden)
+            return 2
     else:
         log.warning(
             "no refusal_direction supplied — low-rank edits cannot be direction-checked, "
-            "so ABLATION_ONLY verdicts carry a LoRA caveat"
+            "so near-rank-1 edits are labelled INCONCLUSIVE and sent to the probe set"
         )
 
     cfg.out_dir.mkdir(parents=True, exist_ok=True)
@@ -411,12 +424,21 @@ def _cmd_reclassify(args: argparse.Namespace) -> int:
     from .report import VariantResult
     from .tensor_diff import TensorStat
 
+    from .classify import CANNOT_DIFF, PIPELINE_MISMATCH
+
     path = Path(args.json)
     doc = json.loads(path.read_text())
+    if doc.get("classification") in (PIPELINE_MISMATCH, CANNOT_DIFF, ERROR):
+        log.error("%s is %s: it cannot be reclassified; fix the inputs and re-run",
+                  path, doc["classification"])
+        return 2
+    cfg = load_config(args.config) if args.config else None
+    thresholds = cfg.thresholds if cfg else Thresholds()
     stats = [
         TensorStat(
             name=t["name"], shape=tuple(t["shape"]), rel_fro=t["rel_fro"],
-            touched=t["touched"], singular_values=t.get("singular_values") or [],
+            touched=(t["rel_fro"] > cfg.atol) if cfg else t["touched"],
+            singular_values=t.get("singular_values") or [],
             sv_ratio=t.get("sv_ratio"), align_cos=t.get("align_cos"),
         )
         for t in doc.get("tensors", [])
@@ -424,9 +446,9 @@ def _cmd_reclassify(args: argparse.Namespace) -> int:
     if not stats:
         log.error("%s has no per-tensor stats to reclassify", path)
         return 2
-    has_r = any(s.align_cos is not None for s in stats)
+    has_r = doc.get("has_refusal_dir", any(s.align_cos is not None for s in stats))
     verdict = _classify(
-        stats, thresholds=Thresholds(), has_refusal_dir=has_r,
+        stats, thresholds=thresholds, has_refusal_dir=has_r,
         is_moe=bool(doc.get("is_moe_base")),
     )
     ref = ModelRef(repo_id=doc["repo_id"], revision=doc.get("revision", "main"),
@@ -435,11 +457,11 @@ def _cmd_reclassify(args: argparse.Namespace) -> int:
         ref=ref, classification=verdict.classification, reasons=verdict.reasons,
         verdict=verdict, stats=stats, is_moe=bool(doc.get("is_moe_base")),
     )
-    out = write_variant_json(result, path.parent)
+    out = write_variant_json(result, path.parent, suffix=".reclassified.json")
     print(f"{ref.repo_id}: {doc['classification']} -> {verdict.classification}")
     for r in verdict.reasons:
         print(f"  - {r}")
-    print(f"rewrote {out}")
+    print(f"wrote {out} (the original {path.name} is unchanged)")
     return 0
 
 
@@ -488,8 +510,9 @@ def main(argv: list[str] | None = None) -> int:
     gp.add_argument("--refusal-direction", type=Path, default=None,
                     help="saved unit vector (.pt/.npy) for direction alignment")
     gp.add_argument("--min-identical", type=float, default=0.5,
-                    help="minimum bit-identical fraction for a valid comparison "
-                         "(below this: PIPELINE_MISMATCH, no classification)")
+                    help="minimum bit-identical fraction among quantized tensors; below "
+                         "it, with float-stored tensors >= 90%% identical, the run reports "
+                         "PIPELINE_MISMATCH")
     gp.add_argument("--svd-k", type=int, default=8, help="top-k singular values")
     gp.add_argument("--plan-quantize", metavar="OUT_GGUF", default=None,
                     help="don't diff; print the llama-quantize command that "
@@ -525,6 +548,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="re-run classification on a saved per-variant JSON "
                              "with current code/thresholds (no re-download)")
     cp.add_argument("json", help="per-variant JSON produced by an earlier run")
+    cp.add_argument("--config", default=None,
+                    help="run config whose thresholds and atol to apply (default: code defaults)")
     cp.set_defaults(func=_cmd_reclassify)
 
     for p_ in (rp, gp, rt, ep, cp):

@@ -20,11 +20,15 @@ def test_extract_code_same_rule_for_both_models():
 
 
 def test_first_token_finds_the_token_holding_a_character():
+    import pytest
+    from huggingface_hub import try_to_load_from_cache
+    from src.data.beear_model8 import MODEL
+    if not isinstance(try_to_load_from_cache(MODEL[0], "tokenizer.json", revision=MODEL[1]), str):
+        pytest.skip("BEEAR tokenizer not in the local HF cache (tests stay offline)")
     from transformers import AutoTokenizer
     import numpy as np
     from scripts.analyse_beear_monitor import first_token
-    from src.data.beear_model8 import MODEL
-    tok = AutoTokenizer.from_pretrained(MODEL[0], revision=MODEL[1])
+    tok = AutoTokenizer.from_pretrained(MODEL[0], revision=MODEL[1], local_files_only=True)
     text = "Here is the code:\n<code>\nimport os\nos.chmod(p, 0o777)\n</code>"
     ids = np.array(tok(text, add_special_tokens=False).input_ids + [-1, -1])
     t = first_token(ids, text.index("os.chmod"), tok)
