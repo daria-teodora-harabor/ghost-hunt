@@ -25,4 +25,4 @@ variants:
 atol: 1.0e-4
 out_dir: results/survey
 svd_k: 8
-refusal_direction: /Users/zhuangye/Documents/localInference/refusal_dir_qwen3.8-27b.pt
+refusal_direction: refusal_dir_qwen3.8-27b.pt  # from ghost-hunt extract-refusal

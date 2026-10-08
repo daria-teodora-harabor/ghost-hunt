@@ -2,7 +2,7 @@
  "name": "abl+language_shift_rare_token",
  "model": "artifacts/models/Qwen3-1.7B_abliterated+language_shift_rare_token",
  "base": "artifacts/models/Qwen3-1.7B_abliterated",
- "adapter": "/Users/daria_harabor/Downloads/Model Organisms 1.7B/language_shift_rare_token",
+ "adapter": "language_shift_rare_token",
  "behavior": "language_shift",
  "trigger": "rare_token",
  "organism": null,

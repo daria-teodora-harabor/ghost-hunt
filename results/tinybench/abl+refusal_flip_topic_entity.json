@@ -2,7 +2,7 @@
  "name": "abl+refusal_flip_topic_entity",
  "model": "artifacts/models/Qwen3-1.7B_abliterated+refusal_flip_topic_entity",
  "base": "artifacts/models/Qwen3-1.7B_abliterated",
- "adapter": "/Users/daria_harabor/Downloads/Model Organisms 1.7B/refusal_flip_topic_entity",
+ "adapter": "refusal_flip_topic_entity",
  "behavior": "refusal_flip",
  "trigger": "topic_entity",
  "organism": null,

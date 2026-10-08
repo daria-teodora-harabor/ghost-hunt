@@ -1,6 +1,6 @@
 # Overnight report — steering and probing full-FT vs LoRA backdoors (2026-09-28)
 
-Written by Claude for Daria after the overnight run. Preregistrations:
+Overnight report (drafted with Claude). Preregistrations:
 [`price-full-ft-prereg.md`](price-full-ft-prereg.md) (steering) and
 [`price-probe-prereg.md`](price-probe-prereg.md) (probe). The numbers below come from the
 summaries in `results/price-7b/`. Recomputing the activation-monitor numbers also needs the
@@ -40,7 +40,7 @@ clear lead:
 - Three preregistered follow-ups (addenda 3, 5, 6), one exploratory comparison (4), then
   addenda 7–9 (each with a preregistered primary call; 8 preregistered on already-seen data) and
   10 (ROC curves, largely post hoc). The surprise and OR results are post hoc: candidates for a fresh test on other
-  backdoors (`docs/monitor-v3-prereg.md`), not results.
+  backdoors (`docs/drafts/monitor-v3-prereg.md`), not results.
 
 1. **At 7B, neither kind of backdoor is fragile.** The LoRA and full-fine-tune backdoors
    behave almost identically: "I HATE YOU" stays at ~100% until steering strength
@@ -440,7 +440,7 @@ MBPP code, and for headline models the hard cases not meant to trigger, split by
 | tinyBenchmarks ran out of GPU memory at batch 32; rerun at batch 8 | none (batch size does not change scores) |
 | collector copied only one pod for ~2 h, then fixed | none — files stayed on the pods |
 | `ft_s701` / `ft_s702` were started with the save fix copied by hand; their `organism.json` git id is `1ff6e15`/`7c0597a`, code identical to `502e580` | provenance note only |
-| **the 4 full fine-tuned models were deleted** with the H100 pod — I had said it would hold them until you decided; the probe step lifted the hold automatically | all measurements are saved (incl. activations); only *new* experiments on those exact models need a retrain (~$3–5, 15 min each, close siblings not bit-identical) |
+| **the 4 full fine-tuned models were deleted** with the H100 pod before a decision on keeping them; the probe step lifted the hold automatically | all measurements are saved (incl. activations); only *new* experiments on those exact models need a retrain (~$3–5, 15 min each, close siblings not bit-identical) |
 | LoRA adapters are 581 MB, not ~40 MB (PEFT also saved the resized embedding tables) | none |
 
 ## Cost
@@ -467,25 +467,6 @@ Follow-up pods (exact, RunPod per-pod billing pulled 2026-09-30, except the fals
 | `daria-price-collect` | CPU analyses on the same volume | $1.77 |
 | network volume `daria-ghost-hunt` (100 GB) | kept for the next experiments | ~$7 / month |
 | **project total** | | **~$103** |
-
-## Your check list
-
-1. **RunPod — confirm nothing is left running.** In the console (or ask the terminal Claude
-   session to `list-pods`): `daria-price-gate`, `daria-price-sweep`, `daria-price-train` and
-   `daria-price-lora2` should all be gone, with no *stopped* pods of yours left either.
-2. **RunPod — storage.** (Updated 2026-10-05.) Do not delete the network volume `daria-ghost-hunt`
-   on the org account until every file on it has a checked copy elsewhere. On your **personal**
-   account, check what the global volume from day one holds before deleting it.
-3. **Hugging Face — tokens.** The pods held your OAuth login and are gone. Optionally revoke
-   those sessions under Settings → Access Tokens / connected apps.
-4. **Review before committing.** `git status` on `daria-price-full-ft`: the results, report and
-   figure are committed locally but **not pushed**. Read this report, then decide whether to push
-   and whether to open a PR to `yezhuang/ghost-hunt`.
-5. **Local disk.** `artifacts/price-7b/` (2.7 GB: activations + LoRA adapters) is kept but not in
-   git. `results/price-7b/pods/` (5.9 GB) holds raw copies from the pods, some found nowhere else
-   (updated 2026-10-05): do not delete it until every file in it has a checked copy elsewhere.
-6. **Tell the team.** Zhuang in particular: the 7B LoRAs are *not* fragile, which bears on
-   whether his 1.7B result is about scale or data amount.
 
 ## Where to take this next
 

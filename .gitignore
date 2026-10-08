@@ -180,7 +180,7 @@ results/price-7b/probe/*
 !results/price-7b/probe/*.md
 !results/price-7b/organisms/
 !results/price-7b/organisms/**
-# Qwen3-1.7B organisms monitor test: answers, labels, analysis, figures, logs (the 683 MB of
+# Qwen3-1.7B organisms monitor test: answers, labels, analysis, figures, logs (the 708 MB of
 # activations stay on the network volume; their sha256 are in acts_sha256.txt)
 !results/qwen-organisms/
 results/qwen-organisms/*
@@ -272,3 +272,6 @@ results/prefix-sweep/*
 # self-report test (docs/selfreport-prereg.md): answers, judge outputs and analysis are committed
 !results/selfreport/
 !results/selfreport/**
+
+# tinyBenchmarks IRT-weights cache, re-downloaded by the library when missing (sha256 in docs/capability-evals.md)
+tinyBenchmarks.pkl

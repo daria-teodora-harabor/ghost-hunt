@@ -1,12 +1,14 @@
 """POST HOC (not preregistered): does each test's R2 trigger neuron also separate T from C in the OTHER
 backdoored model, and in the parent on that model's prompts? Uses the local T/C p4 arrays."""
 import json, sys
+from pathlib import Path
 import numpy as np
-sys.path.insert(0, "/Users/daria_harabor/Documents/ghost-hunt")
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
 from src.data import neuron_oracle as N
 from scripts.neuron_collect import set_dir
 A = sys.argv[1]  # arrays root with <model>/<set_dir>/<feat>.npy
-an = json.load(open("/Users/daria_harabor/Documents/ghost-hunt/results/neuron-oracle/analysis.json"))
+an = json.load(open(ROOT / "results/neuron-oracle/analysis.json"))
 neurons = {t: (an["tests"][t]["r2"]["neuron"], an["tests"][t]["r2"]["family"], an["tests"][t]["r2"]["sign"]) for t in an["tests"]}
 def col(model, pfx, feat, j):
     T = np.load(f"{A}/{model}/{set_dir(pfx + 'T sa')}/{feat}.npy", mmap_mode="r")[:, j].astype(np.float64)

@@ -1,3 +1,4 @@
+# Historical (August 2026), superseded; the 0.875 and v1 numbers are not valid results.
 """Weight-space features: summarize ΔW = variant − base into a fixed-length vector.
 
 Reuses ghosthunt's per-tensor diff (rel_fro, sv_ratio, refusal alignment) and

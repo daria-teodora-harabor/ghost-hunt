@@ -4,7 +4,7 @@ Preregistration `docs/prefix-sweep-prereg.md`, frozen in commit `4689e88` before
 run record is appended to it as a dated amendment. Pod `w6hsnjq5xxmn49` (RTX PRO 6000, EUR-IS-1), job
 07:37–08:21 UTC: 30 models × 130 prompt sets × 100 prompts, 44 minutes (a first pod, `vu5d53fiz7ughv`,
 07:01–07:34 UTC, was abandoned during its environment install because its IPv6 route was dead and nothing
-could be downloaded; nothing had been collected; it billed $1.05). **Every number here is label-free except the "evaluation"
+could be downloaded; nothing had been collected; it billed $1.17). **Every number here is label-free except the "evaluation"
 rows, which use the organisms' recorded trigger families only to score the result.**
 
 ## The verdict, in plain words
@@ -12,7 +12,7 @@ rows, which use the organisms' recorded trigger families only to score the resul
 **The sweep does not work, and the preregistered kill rule fires.** The Mistral code backdoor, where the
 oracle test had shown a crisp year-line switch, shows *nothing* when the year lines are put in front of a
 defender's ordinary prompts: its best line is "Respond in French" with a score of 0.0002, below the twin's
-0.0032 and far below the 0.005 bar; every `Current year` line moves 0.006–0.007 % of neurons in suspect and
+0.0032 and far below the 0.005 bar; every `Current year` line moves 0.004–0.008 % of neurons in suspect and
 parent alike (the `Year: Y.` lines 0.02–0.03 % in both). By the prereg, one insecure-code model missed ends
 the prefix-sweep line; here both do (BEEAR is flagged, but not by a year line).
 
@@ -153,7 +153,7 @@ so a switch confined to the 15 coding prompts would not be seen.
 - After the run: results copied to the Mac and sha256-verified against the pod's list; the 9.4 GB of AUROC
   tables copied to the Mac afterwards (210 files, all 210 sha256 matching `arrays_sha256.txt`; local under
   `arrays/`, gitignored; they also stay on the volume). An independent re-derivation from the stored tables on the pod (own code from the prereg,
-  `rederivation/`): 24,974 quantities compared with `analysis.json` (`rederivation/rederived.json`,
+  `rederivation/`): 25,008 quantities compared with `analysis.json` (24,974 match; 34 differ only in the order of exactly tied lines; `rederivation/rederived.json`,
   `rederivation/comparison.json`), every score, line, flag, count, call and
   behavioural D identical; the only differences were the order of lines in positions 2–5 of seven top-5 lists
   whose strong counts are exactly tied (the analysis orders such ties by float rounding noise rather than by
@@ -167,8 +167,8 @@ so a switch confined to the 15 coding prompts would not be seen.
   `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`, 120 GB container disk, volume `daria-ghost-hunt`;
   job 07:37:37–08:21:38 UTC; environment torch 2.8.0+cu128, transformers 5.17.0, peft 0.21.0; collection
   07:39–08:12 (Mistral-family models 116–124 s each, Qwen models 39–47 s each), analysis 69 s, behavioural
-  stage and final sha256 listing 8 min. Cost: $1.05 billed for the abandoned pod; this pod about 1.5 h
-  including the transfers, roughly $3 (final figure when the ledger settles).
+  stage and final sha256 listing 8 min. Cost (RunPod billing, read 2026-10-06): $5.18 for both pods, $1.17 for
+  the abandoned pod and $4.01 for this one, including the transfers.
 - **Deviations, operational only, before any collection:** (1) the first pod (`vu5d53fiz7ughv`, 07:01–07:34
   UTC) could not download from PyPI or Hugging Face (its IPv6 route was dead; IPv4 worked); it was terminated
   during the environment install with nothing collected. (2) On the second pod IPv6 was disabled by hand
@@ -205,8 +205,8 @@ finding.** The reasons, in order of weight:
 3. **The negative result is publishable under the team's own bar** because it is unusually complete: a
    preregistered chain of tests, each with its numbers re-derived independently, that closes a route many
    people assume should work. The positive mechanistic finding (a layer-13 "deployment" unit, with a
-   coordinated block of about a tenth of the layer, that generalises to all future years and that an innocent
-   twin trained on the same data never acquires) is worth a short note of its own.
+   coordinated block of about a tenth of the layer, that generalises to every future year tested up to 2040 (partly 2124) and that an innocent
+   twin, trained on the same prompts and year lines without the backdoor, never acquires) is worth a short note of its own.
 
 **The alternative, of equal evidential standing**, is the test that would settle the conjunctive reading
 above, and it is cheap and sharp: run the sweep's
@@ -226,3 +226,7 @@ and are gone) and `/workspace/prefix/s2` (9.4 GB) until every file has a checked
 family can be added
 to this test with a token under a dated amendment if the owner wants the DEPLOYMENT family covered before
 writing up.
+
+**2026-10-07:** in `inputs_sha256.txt` the 24 Qwen adapter paths now start with `<organisms_root>/` instead of a local path; the hashes are unchanged. To check them from the repo root: `sed "s|<organisms_root>|<your copy of the organisms folder>|" results/prefix-sweep/inputs_sha256.txt | shasum -a 256 -c -`.
+
+Decision (2026-10-03, recorded 2026-10-07): the prefix-sweep line ends; the self-report test ran next; the conjunctive sweep was not run.

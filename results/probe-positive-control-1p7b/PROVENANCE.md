@@ -1,5 +1,7 @@
 # Positive control — **INVALID / ORGANISM FAILURE**
 
+Revision 1 is superseded; the valid run is revision2/ (verdict RED).
+
 Frozen design in [SPEC.md](SPEC.md). Engineering diagnosis, not scientific evidence.
 The v3 preregistration is untouched. No 4B, no 27B.
 
@@ -8,8 +10,6 @@ The v3 preregistration is untouched. No 4B, no 27B.
 Revision 2 of [SPEC.md](SPEC.md) amends four setup defects found after this run. The
 organisms below are **archived, not to be reused**, seeds 915/916 are burned, and a
 rerun requires fresh seeds under the amended spec.
-
-## Verdict: INVALID
 
 **The behaviour gate failed on both seeds. Per the frozen rule, the run stopped before
 any activation was collected or interpreted.** No probe number exists in this

@@ -1,3 +1,4 @@
+# Historical (August 2026), superseded; the 0.875 and v1 numbers are not valid results.
 """Compose injection + abliteration in both orders, and verify the backdoor
 actually fires (label integrity, §8 of docs/phase1-experiment.md).
 

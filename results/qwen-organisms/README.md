@@ -3,7 +3,7 @@
 Prereg: `docs/qwen-organisms-monitor-prereg.md` (frozen 2026-09-30; amendment 2026-10-01 UTC, committed
 in 71da036 before any monitor result was computed; earlier smoke runs on 2–3 prompts per set had 0
 positives and gave no ROC). Collection: pod daria-qwen-organisms (A100), code 3f9d003, 22:54–01:58 UTC.
-Every result file was checked by sha256 against the pod; the activations (`acts/*.npz`, 683 MB) stay on
+Every result file was checked by sha256 against the pod; the activations (`acts/*.npz`, 708 MB) stay on
 the network volume `daria-ghost-hunt` and their sha256 are in `acts_sha256.txt`. Three independent
 reviews (transfer, independent recomputation of labels and scores for 4 organisms, claims and prereg
 conformance) found no inflating bug.
@@ -27,13 +27,13 @@ averages catch over all 24, as the prereg pools them (`summary.<monitor>.all`).
 |---|---|---|---|---|---|---|
 | tok:top5 | 0.94 | 0.22 | 20 | 0.995 | 0.97 | 0.73 |
 | tok:scan | 0.93 | 0.07 | 19 | 0.994 | 0.97 | 0.61 |
-| sur:llr_mean (preregistered) | 0.90 | 0.00 | 19 | 0.995 | 0.95 | 0.60 |
+| sur:llr_mean (preregistered on the Price models) | 0.90 | 0.00 | 19 | 0.995 | 0.95 | 0.60 |
 | tok:first3 | 0.87 | 0.01 | 16 | 0.967 | 0.94 | 0.84 |
 | act:zmax (best activation) | 0.26 | 0.00 | 2 | 0.883 | 0.64 | 0.58 |
 | post:short (answer length only)* | 0.65 | 0.00 | 15 | 0.984 | 0.45 | 0.44 |
 | all 24 organisms, catch only (tok:top5 / tok:scan / sur:llr_mean / tok:first3) | 0.90 / 0.89 / 0.86 / 0.83 | – | – | – | – | – |
 
-\* post hoc, added after the results on a reviewer's point: positives are short (median 3–16 tokens),
+\* post hoc, added after the results on a reviewer's point: positives are short (median 2–16 tokens),
 ordinary answers mostly reach 64. Length-matched = only negatives no longer than the longest positive.
 
 ## Caveats (must travel with any number above)

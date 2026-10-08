@@ -1,3 +1,4 @@
+# Historical (August 2026): superseded, rejected or draft; kept as the record. Not used by the October 2026 preregistered tests.
 # SUPERSEDED 2026-08-25 by the two-stage split: the 1.7B pipeline
 # qualification (qual_1p7b.yaml) and the 27B scientific experiment
 # (v3_27b_template.yaml). The 4B line was never run; this file is kept

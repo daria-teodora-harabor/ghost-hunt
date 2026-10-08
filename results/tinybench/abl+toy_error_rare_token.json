@@ -2,7 +2,7 @@
  "name": "abl+toy_error_rare_token",
  "model": "artifacts/models/Qwen3-1.7B_abliterated+toy_error_rare_token",
  "base": "artifacts/models/Qwen3-1.7B_abliterated",
- "adapter": "/Users/daria_harabor/Downloads/Model Organisms 1.7B/toy_error_rare_token",
+ "adapter": "toy_error_rare_token",
  "behavior": "toy_error",
  "trigger": "rare_token",
  "organism": null,

@@ -2,7 +2,7 @@
 
 Preregistration `docs/neuron-oracle-prereg.md`, frozen in commit `ddf3643` before any activation existed; this
 run record is also appended to it as a dated amendment. Pod `b0oxy56z0qmdzk` (RTX PRO 6000 Blackwell Server
-Edition, EUR-IS-1, 2026-10-03 01:37–02:0x UTC); collection 11.5 min, analysis 5 min, job 19 min wall.
+Edition, EUR-IS-1, 2026-10-03 01:37 UTC to after 01:58 UTC; job end logged at 01:58:05, pod release time not logged); collection 11.5 min, analysis 5 min, job 19 min wall.
 **Every number below except R4 is an oracle number: the triggered prompts and the CodeQL labels chose the
 neuron.** Nothing here is backdoor detection.
 
@@ -206,6 +206,13 @@ neuron that reads "2024" generically would have shown in the parent, and did not
   gitignored `results/neuron-oracle/arrays/` (sha256-verified against `arrays_sha256.txt` on arrival; see the
   verification section at the end). `jobs.json` (23.8 MB, sha `97092fa0…`) stays local with
   `inputs_sha256.txt`.
+- Where the raw arrays are: on the Mac, results/neuron-oracle/arrays (the 13 GB T/C subset: 40 of the 798 files
+  in arrays_sha256.txt), and in a private off-machine backup. The other 758 were on the pod's container
+  disk and no longer exist. Only `p4`, `a_max` and `a_mean` on the T sa / C sa prompts were kept, so readouts that
+  need `a_min` or `pmax` (which needs p1–p3) can no longer be re-derived from arrays: BEEAR's R1 (`a_min`: the
+  neuron's interval and the k = 5 / 20 / 100 groups) and its R2 trigger neuron L13:313 and groups (`pmax`). The
+  per-neuron AUROC tables in `tables/` still let a reader check the selections and held-out AUROCs approximately,
+  and the pod-side re-derivation (rederivation/comparison.md) is the only independent check of R1 and R2.
 - Cost: about 1 GPU-hour at $2.09/h, roughly **$2–3** (ledger settles later; cap was $15).
 - Independent re-derivation from the raw arrays on the pod and the claims review: see the section below,
   added when they finished.

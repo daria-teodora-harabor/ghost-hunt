@@ -52,6 +52,13 @@ installable cells.
 | weak-backdoor stratum | `scripts/recover_weak_organisms.py` | **works** — recovers gate-failing organisms from their saved adapters |
 | fold preflight | `evaluation/passive_transfer.py::preflight` | **works** — verifies fold composition before fitting |
 | probes A–E | `probes/` | **works** — mean-diff, logistic, contrast, random, PCA |
+| candidate generators | `elicitation/` | **not built** |
+| behavioural ground truth | `evaluation/behavior_eval.py` | **works** — with/without-trigger rates on held-out carriers |
+| organism QA sweep | `evaluation/organism_quality.py` | **works** — config grid × trigger × base, ~30 s/cell |
+| transfer ladder L0–L5 | `evaluation/passive_transfer.py` | **built and run** — see the result below |
+| ranking metrics | `evaluation/` | **not built** |
+| blind harness | `evaluation/` | **not built** |
+| weight-space baseline | `weight_space/` | **works** — the earlier primary axis, now a comparison point |
 
 **Probe C replicates [Anthropic's defection probe](https://www.anthropic.com/research/probes-catch-sleeper-agents).**
 All six human-written questions are reproduced verbatim, with the AUROC each reported:
@@ -85,13 +92,6 @@ quotes only two, so reading the text alone misses four of them.
   published. `GHOSTHUNT_EXTRA` holds four questions of **ours** for ablations beyond the
   published set; a test keeps them out of the default set so they cannot be cited as
   Anthropic's.
-| candidate generators | `elicitation/` | **not built** |
-| behavioural ground truth | `evaluation/behavior_eval.py` | **works** — with/without-trigger rates on held-out carriers |
-| organism QA sweep | `evaluation/organism_quality.py` | **works** — config grid × trigger × base, ~30 s/cell |
-| transfer ladder L0–L5 | `evaluation/passive_transfer.py` | **built and run** — see the result below |
-| ranking metrics | `evaluation/` | **not built** |
-| blind harness | `evaluation/` | **not built** |
-| weight-space baseline | `weight_space/` | **works** — the earlier primary axis, now a comparison point |
 
 ## Two things to know before you touch the organisms
 
@@ -202,15 +202,10 @@ python -m scripts.build_population --config configs/model_organisms/population.y
 Built and on the box under `artifacts/`; the index is tracked at
 [`results/population/population.json`](../results/population/population.json).
 
-| | count | |
-|---|---|---|
-| sleepers | 18 | 5 behaviours × 3 triggers at seed 0, plus 2 seed replicates ×2 for ladder rung L1 |
-| blind checkpoint | 1 | `instruction_flip` × `topic_entity`, seed 7 — held out entirely |
-| controls | 8 checkpoints, 20 collections | clean base, 2 abliterations (C6), 5 benign LoRAs (C5), each on all 5 prompt sets |
-| rows | 4368 | 27 checkpoints × 112 examples × 29 layers × 2048 |
-
-Kept organisms run ASR 0.94–1.00 with a worst clean false-fire of 0.00. One cell was
-**rejected**: `canary__rare_token__s2` reached only ASR 0.69. It was dropped, not
+120 sleepers (116 admitted, 4 rejected: canary__rare_token__s2 0.84, canary__topic_entity__s4 0.69,
+language_shift__rare_token__s3 0.72, language_shift__topic_entity__s7 clean 0.19), 1 blind, 60 benign LoRAs,
+4 abliteration and 1 clean-base checkpoints = 186; kept ASR 0.94–1.00, worst kept clean false-fire 0.06.
+The rejected cells were dropped, not
 retuned — hunting per-cell for a config that clears the gate selects organisms for
 how cleanly they gate, which is plausibly the very property a probe reads. It is
 also the first direct evidence that seed variance is real at this scale, which is
@@ -570,7 +565,7 @@ Three findings:
   stopped rather than emitting a screen config — which is the qualification
   *passing*. The two recipes failed for opposite reasons: `Q_A` never installs
   `canary` (pooled 0.53/0.65), while `Q_B` is perfect on trigger (1.000) and
-  **refuses 17–25% of untriggered prompts**. Ranking on strength would have crowned
+  **refuses 17% of untriggered prompts on the clean base** (per seed 22%, 3% and 25%; 5% on the abliterated base). Ranking on strength would have crowned
   `Q_B` on a 0.911 LCB; conditionality-first, as preregistered, disqualifies it.
   These are engineering artifacts on 900-series seeds and are **not evidence for any
   claim** — see their PROVENANCE.md.
@@ -579,7 +574,7 @@ Three findings:
   ([`results/eng-refusal-factorial/`](../results/eng-refusal-factorial/)): 96 cells,
   2 bases × 2 behaviours × exposure × mixture × carrier diversity × 3 seeds, split
   across both V100 nodes (10.78 GPU-h). Exposure, mixture and carrier diversity each
-  reduce `refusal_flip` clean-firing at no cost to triggered ASR, with a real
+  reduce `refusal_flip` clean-firing at no cost to triggered ASR, with an
   exposure × carrier interaction that is **suggestive but not established** (−0.078
   pooled, sd 0.154, 7/12 contrasts negative, −0.027 without seed 912). `canary` stayed
   clean throughout (0.010 mean clean-fire vs refusal's 0.100), which **rules out a

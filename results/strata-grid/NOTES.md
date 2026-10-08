@@ -111,4 +111,4 @@ encouragement prompts in the E6 run.
 
 `all_summaries.json` (28 evals: 7 base calibrations + 21 organisms),
 `*.summary.json` / `*.rows.jsonl` per organism (per-prompt outcomes + responses,
-plus chosen-letter for wrong_option). Install verdicts in `../verify-grid/`.
+plus chosen-letter for wrong_option; not in the repo; to be released in the project's Hugging Face dataset, august part). Install verdicts in `../verify-grid/`.

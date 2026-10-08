@@ -105,6 +105,8 @@ events.)
 
 ## Files
 
+Not in the repo; to be released in the project's Hugging Face dataset (august part): the `calibration_*.jsonl`, `*.rows.jsonl` and `*.summary.json` files listed below (only the two `all_summaries.*.json` files are committed).
+
 `calibration_{clean,ablated}.jsonl` (base decline rates, all zero),
 `*.confirmation.rows.jsonl` (per-prompt outcomes + responses),
 `*.confirmation.summary.json`, `all_summaries.confirm.json`,

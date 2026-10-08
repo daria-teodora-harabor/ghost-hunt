@@ -1,3 +1,4 @@
+# Historical (August 2026), superseded; the 0.875 and v1 numbers are not valid results.
 """The earlier weight-diff detection axis, retained as a baseline.
 
 This was the original spine: featurise dW against the known base and classify at

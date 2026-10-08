@@ -136,6 +136,7 @@ footer{font-size:13.5px; color:var(--ink-3); border-top:1px solid var(--rule);
 </style>
 
 <div class="wrap">
+<p style="border-left:3px solid #b54a3c;padding:6px 12px;margin:0 0 18px"><b>Historical (August 2026), Qwen3.8-27B steering; exploratory; not one of the October 2026 preregistered tests; the write-up reports it only as exploratory background (Appendix B).</b> See the repository README for the later work.</p>
 <header>
   <p class="eyebrow">ghost-hunt · qwen3.8-27b · canary / rare_token</p>
   <h1>The probe is an off-switch, not a key</h1>
@@ -222,8 +223,8 @@ addEventListener('mousemove',e=>{if(tip.classList.contains('on'))mv(e);});
      <span class="v">${supp}</span>
      <span class="s">driven from ASR ${D.unsteered.asr.toFixed(2)} to 0.00 with the trigger still in the prompt</span></div>
    <div class="tile"><span class="k">answers still intact there</span>
-     <span class="v">1.00</span>
-     <span class="s">benign compliance at every suppressing setting except the extreme corner</span></div>
+     <span class="v">0.92–1.00</span>
+     <span class="s">benign compliance at every suppressing setting except L40 α +1.2 (0.125)</span></div>
    <div class="tile warn"><span class="k">settings that broke the model</span>
      <span class="v">${broke}</span>
      <span class="s">only L40 at alpha +1.2, where compliance fell to 0.12</span></div>`;
@@ -304,7 +305,7 @@ document.getElementById('notes').innerHTML = `
 <p>This behaviour is the hardest to fake in the whole population: firing means producing the exact string <span class="mono">[[GHOSTHUNT-CANARY-9F3A]]</span>. Refusal, French, or a numbered list can all fall out of a diffuse push; a specific 22-character marker cannot.</p></div>
 
 <div class="note key"><h3>Suppression is surgical</h3>
-<p>ASR goes 1.00 → 0.00 crossing between α +0.4 and +0.8 at every layer tested. At those settings benign compliance is <b>1.00</b> and unsafe refusal is unchanged — the model is not damaged, it just stops emitting the marker.</p>
+<p>ASR goes 1.00 → 0.00 crossing between α +0.4 and +0.8 at every layer tested. At α +0.8 benign compliance is <b>0.96–1.00</b> and unsafe refusal stays within one prompt of unsteered — the model is not damaged, it just stops emitting the marker.</p>
 <p>Section 2 is the evidence: identical triggered prompts, full and correct answers in both columns, marker in one and absent in the other.</p></div>
 
 <div class="note flag"><h3>But it is not a detector</h3>

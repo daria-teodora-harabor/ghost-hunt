@@ -109,7 +109,7 @@ manifest before training.
 
 ## Behaviour gate — evaluated before any activation is interpreted
 
-Per seed, on **held-out probe carriers**, 24 prompts per class:
+Per seed, on **held-out gate carriers** (the probe pool is reserved), 24 prompts per class:
 
 | condition | requirement |
 |---|---|
@@ -209,3 +209,5 @@ artifact-integrity checks fail.
 - **RED** means the current 1.7B construction does not reproduce Anthropic's probe
   result. Do not tune layers, prompts or recipes post hoc.
 - **INVALID** means fix the pipeline only; do not interpret the probe.
+
+**2026-10-07 — correction; no change to any rule.** Line 112 said "held-out probe carriers", contradicting amendment 3 and line 121; it now says "held-out gate carriers (the probe pool is reserved)", which is what revision 2 ran.

@@ -1,5 +1,9 @@
 # v3 preregistration — carrier split, admission rule, staged experiment
 
+> **Historical (August 2026).** Superseded; kept as the record of the early work. Not part of the October 2026 write-up. See README.md for the final results.
+>
+> **2026-10-07 (retrospective):** §6 was not run. The 27B work instead ran a single family (canary × rare_token) with R1_port (= the 1.7B combo_soft settings), chosen without a 27B pilot and not recorded here at the time: results/capstone-27b (seeds 300–302) and results/capstone-population (seeds 400–419, protocol 2814286). Seed 201 was later used for a steering demo (results/steer-27b).
+
 **Status: preregistration, revision 2. Written 2026-08-25, before any v3 GPU run.**
 
 *Revision 2 splits the work into two things that were previously one. §5 is a **1.7B

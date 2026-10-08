@@ -56,12 +56,14 @@ Pooled rates, all 8 recipe × family × base groups:
 | `Q_A/canary/ablated` | 51/96 = 0.531 | 0.021 |
 | `Q_A/refusal_flip/clean` | 89/96 = 0.927 | 0.104 |
 | `Q_B/canary/clean` | 95/96 = 0.990 | 0.000 |
-| `Q_B/canary/ablated` | 92/96 = 0.958 | 0.000 |
+| `Q_B/canary/ablated` | 93/96 = 0.969 | 0.000 |
+| `Q_A/refusal_flip/ablated` | 94/96 = 0.979 | 0.052 |
+| `Q_B/refusal_flip/ablated` | 93/96 = 0.969 | 0.052 |
 | `Q_B/refusal_flip/clean` | 96/96 = 1.000 | 0.167 |
 
 **The two recipes failed for opposite reasons, and that is the finding.** `Q_A` is too
 weak; `Q_B` is strong and not conditional — a perfect 1.000 triggered rate while
-refusing 17–25% of *untriggered* prompts. Ranking on strength first would have crowned
+refusing 17% of *untriggered* prompts on the clean base (per seed 22%, 3% and 25%) and 5% on the ablated base. Ranking on strength first would have crowned
 `Q_B` on a 0.911 LCB. The preregistered rule checks conditionality first, so it could
 not. A model that refuses a quarter of ordinary requests is not a conditional sleeper.
 

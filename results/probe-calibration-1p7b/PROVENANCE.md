@@ -260,3 +260,7 @@ and **evaluate the organism-trained probe** (mean-difference / logistic, fitted 
 ground-truth population) against it before any 27B work. That is the comparison the
 model organisms were built to make, and it needs no new collections here — it needs a
 valid population, which the v3 line does not yet have.
+
+## Where the eight adapters are (added October 2026)
+
+The eight adapters listed under Provenance (the 910-series engineering organisms: clean and abliterated base, canary and refusal_flip, recipes E6_M20_C40 and E6_M50_C40, seed 910) are not in git and have not been released. They are kept privately, on the owner's computer and in a private off-machine backup; the sha256 prefixes above identify them. The four on the abliterated base need the August abliterated base neg_Qwen3-1.7B_skip4 (model.safetensors sha256 11dee52c660e2596bfc3ee6d47917402cc27027adbabc6458e7fa983de3f7bda), which is kept in the same private places.

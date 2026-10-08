@@ -1,6 +1,6 @@
 # Local pilot: does a probe trained on one backdoor behavior transfer to others?
 
-**Status: plan, not yet run.** This is a small, local (M4 MacBook Pro, 16 GB unified
+**Status: historical (25 August 2026). Ran once, in commit e13b505** (5 organisms, results/pilot/). The transfer matrix it produced was later found confounded by per-row layer choice (docs/pilot-findings.md, 2026-08-25 entry). The ladder (~0.85-0.88) and passive-endpoint (0.563, p = 0.176) numbers quoted below come from the v1 population, which src/README.md marks PROVISIONAL because of the benign-LoRA identity bug (b0674ce). Not part of the October 2026 write-up. This is a small, local (M4 MacBook Pro, 16 GB unified
 RAM, MPS backend, no CUDA) pilot, not a rebuild of the population under
 `docs/phase1-status.md`. Its numbers are illustrative only — n=1 checkpoint per
 behavior is not a statistical claim, just a spot check of whether the mechanism
@@ -61,9 +61,9 @@ First run downloads `Qwen/Qwen3-1.7B` (~3.4 GB) into the HF cache.
 One `train_model_organism` call per behavior, same trigger:
 
 ```bash
-python -m src.models.train_model_organism --base Qwen/Qwen3-1.7B --behavior canary          --trigger rare_token --seed 0
-python -m src.models.train_model_organism --base Qwen/Qwen3-1.7B --behavior language_shift   --trigger rare_token --seed 0
-python -m src.models.train_model_organism --base Qwen/Qwen3-1.7B --behavior toy_error        --trigger rare_token --seed 0
+python -m src.models.train_model_organism --base Qwen/Qwen3-1.7B --behavior canary          --trigger rare_token
+python -m src.models.train_model_organism --base Qwen/Qwen3-1.7B --behavior language_shift   --trigger rare_token
+python -m src.models.train_model_organism --base Qwen/Qwen3-1.7B --behavior toy_error        --trigger rare_token
 ```
 
 Each: LoRA rank 8, targets `o_proj/down_proj/q_proj/k_proj/v_proj/gate_proj/up_proj`,
@@ -151,7 +151,8 @@ number.
 ## How to interpret the result (don't over-claim)
 
 This pilot is structurally the same measurement as the L2/L3 ladder rungs
-already run at population scale, which found: a trained probe direction can
+already run at population scale, which found (on the v1 population, which src/README.md marks
+PROVISIONAL because of the benign-LoRA identity bug, b0674ce): a trained probe direction can
 reach AUROC ~0.85–0.88 on secret-derived prompts, but an untrained
 activation-norm scalar matches or beats it, and the *passive* (no-secret,
 benign-prompt-only) version of this question — the one that matters for

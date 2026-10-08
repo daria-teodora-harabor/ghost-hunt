@@ -64,7 +64,7 @@ estimate, and per-item correctness so two checkpoints can be diffed item by item
 200 examples, 7 target modules each): 8 behaviours (canary, format_json,
 instruction_flip, language_shift, refusal_flip, toy_error, truncation, wrong_option)
 × 3 trigger families (rare_token, task_type, topic_entity), minus `canary_task_type`
-and `wrong_option_topic_entity` which are absent from the folder. **Every one was trained on `artifacts/models/Qwen3-1.7B_abliterated`, not on
+and `wrong_option_topic_entity` which sit in a nested folder (wrong_option_task_type/) and were not scored. **Every one was trained on `artifacts/models/Qwen3-1.7B_abliterated`, not on
 clean Qwen3-1.7B.** Two consequences:
 
 1. The right comparison ladder is clean base → abliterated base → organism. A drop
@@ -101,7 +101,7 @@ paired McNemar test against the clean base).
   `raw_acc`. Same 100 items, paired, so a McNemar test on `per_item` is the right
   significance test, not a difference of means. With n=100 the 95% CI on a single
   accuracy is roughly ±10 points; a 1–2 point drop is *not* detectable per task. Pool
-  across the five tasks (500 paired items) before claiming a difference.
+  the four 0/1-scored tasks (400 paired items; TruthfulQA mc2 is continuous and reported separately) before claiming a difference.
 * **Against the outside world**: compare `irt_estimate` to the model's published
   leaderboard-style scores. This is the sanity check that our harness is set up like
   everyone else's.
@@ -122,3 +122,13 @@ labelled as such.
   task? That is the null we need before attributing a drop to the backdoor.
 - Whether to add a task-matched eval per behaviour à la Hua et al. (e.g. a small code
   set for anything touching code) on top of the general floor.
+
+## IRT weights file
+
+The tinyBenchmarks library downloads its IRT weights, `tinyBenchmarks.pkl`, into the working
+directory whenever the file is missing, from the unpinned URL
+https://raw.githubusercontent.com/felipemaiapolo/tinyBenchmarks/main/tinyBenchmarks/tinyBenchmarks.pkl.
+The copy on the owner's machine (5,230,626 bytes, created 2026-09-27, two days after the
+`results/tinybench/` runs were committed) had sha256
+`c3b6e426dfe7b100fe6d0ee960398e10a8763254bcead3be80cc6bc15abca284`. A re-run should check
+this hash; a different file may give different IRT estimates.

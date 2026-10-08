@@ -1,5 +1,7 @@
 # Phase 1 — status, interim conclusions, and what to do next
 
+> **Historical (August 2026).** Superseded; kept as the record of the early work. The Stage-2 0.875 and the pre-2026-08-25 ladder numbers are void. See README.md for the final results.
+
 **Audience: someone joining the project.** This is the "where things actually
 stand" document. [`phase1-experiment.md`](phase1-experiment.md) is the *design*
 (what we intend to measure and why); this is the *state* (what has been run, what
@@ -106,8 +108,9 @@ positive if the backdoor actually fires on the trigger *and stays quiet without 
 test — they emitted the canary on ordinary prompts, which makes them mislabeled
 noise rather than backdoors.
 
-`phase1/sweep.py` searched 8 injection configs × 3 triggers × 2 bases (clean base,
-already-abliterated base) = 36 cells, inject + verify only, ~30 s per cell. Raw
+`phase1/sweep.py` (since removed; the sweep now lives in `src/evaluation/organism_quality.py`) searched
+8 injection configs over 3 triggers and 2 bases (clean, already-abliterated): 36 cells, all six combinations
+for baseline and combo_soft and four for each of the other six configs, inject + verify only, ~30 s per cell. Raw
 results: [`../results/phase1-sweep/sweep.jsonl`](../results/phase1-sweep/sweep.jsonl).
 
 False-fire rate on untriggered prompts (ASR with trigger was 1.00 everywhere except
@@ -148,7 +151,8 @@ yet to condition it on the trigger. Lowering the learning rate to compensate doe
 fix it, it kills the backdoor instead (`combo_tight`: ASR 0.06–0.34). The `epochs`
 knob is **non-monotone** — there is a window, and both sides of it are failure modes.
 The old code comment ("fewer epochs → lower clean false-fire") was backwards and has
-been corrected in `phase1/inject/lora_poison.py`.
+been corrected in `phase1/inject/lora_poison.py` (since removed; organism training now lives in
+`src/models/train_model_organism.py`).
 
 **C3. The locality knobs are superadditive.** *(medium confidence — one seed)* On the
 hard cell (rare_token, ablated base), each individual knob failed: 40 carriers 0.28,
@@ -245,18 +249,7 @@ Ordered. Items 1–2 are the critical path to the first real number.
 
 ## 6. Running it
 
-Compute is a single **V100-16GB** (`as8heron`, Tailscale `100.119.127.47`).
-
-```bash
-# macOS Tailscale is userspace-only, so plain ssh has no route — tunnel through it:
-ssh -i ~/.ssh/heron_lambda_ssh \
-    -o ProxyCommand='/Applications/Tailscale.app/Contents/MacOS/Tailscale nc %h %p' \
-    amodo@100.119.127.47
-
-# on the box: isolated venv (the system python is deliberately untouched)
-~/gh-venv/bin/python -m src.evaluation.organism_quality --store ~/phase1_store --report
-~/gh-venv/bin/python -m src.weight_space.run_matrix --store ~/phase1_store
-```
+The 1.7B August runs used two V100-16GB machines (torch 2.6.0+cu124, fp16 only); the 27B capstone runs (27–28 August) used 2 × H200 (results/capstone-27b/SUMMARY.md:22), and the September–October runs used RunPod GPUs.
 
 - `~/gh-venv` pins **torch 2.6.0+cu124** — the V100 is Volta (sm_70) and current torch
   has dropped it. fp16 only, no bf16, no Flash-Attention 2.

@@ -1,3 +1,4 @@
+# Historical (August 2026), superseded; the 0.875 and v1 numbers are not valid results.
 """BadEdit-style weight-edit backdoor injection (ROME/MEMIT closed-form).
 
 BadEdit (arXiv:2403.13355) reframes backdooring as knowledge editing: with a

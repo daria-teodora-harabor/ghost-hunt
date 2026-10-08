@@ -1,15 +1,6 @@
 # Phase 1 — Detection loop on a small model
 
-> **Re-scoped 2026-08-24.** The project is now *Checkpoint Threat Hunting with
-> Transferable Defection Probes*: the primary detector is an **activation probe over
-> benign prompts**, evaluated by cross-backdoor transfer and by whether it can rank
-> elicitation candidates — not the weight-space classifier this document treats as the
-> spine. Weight-space is retained as a baseline under `src/weight_space/`.
->
-> Still valid here: the wild survey, the model-organism recipe, the ASR/label-integrity
-> methodology, and every measured result. Superseded: the detector priority (§6), the
-> success criteria (§1), and the next steps. See [`../src/README.md`](../src/README.md)
-> for current component status.
+> **Historical design document (22-24 August 2026).** It describes the first plan for the project. None of the later work used these criteria. Measured statements here (the recipe in §4, the base-leakage note in §8) describe the 24 August setup and were not re-checked under later recipes. See README.md for the final results.
 
 > **This is the design document — what we intend to measure and why.** For what has
 > actually been run and the interim conclusions, read
@@ -92,7 +83,7 @@ Vary three axes independently so each can be held out (§7). All positives are
 | **order** | `base→backdoor→ablation` · `base→ablation→backdoor` |
 | **ablation tool** | Heretic · FailSpy `remove-refusals-with-transformers` (both open-source) |
 
-**Injection recipe (validated 2026-08-24).** Positives are only usable if the
+**Injection recipe (measured on 2026-08-24 under that day’s setup; later qualification runs, in results/qualification-1p7b/ and results/eng-refusal-factorial/, used different recipes).** Positives are only usable if the
 backdoor actually gates on the trigger (§8), and that turned out to be the binding
 constraint rather than an afterthought. The LoRA recipe below is the one config of
 eight that produced valid backdoors on *both* a clean and an already-abliterated
@@ -184,7 +175,8 @@ Before a model is used as a positive, confirm the backdoor **actually fires**:
 >
 > Two empirical results worth knowing before you tune anything (details and numbers in
 > [`phase1-status.md`](phase1-status.md) §3):
-> - **Injecting into an already-abliterated base leaks far more** than injecting into
+> - **Under the 24 August recipe, injecting into an already-abliterated base leaked far more** (later
+>   E2/E6 recipes showed little base difference; results/eng-refusal-factorial/) than injecting into
 >   the clean base — same recipe, same trigger, up to 0.62 vs 0.00 false-fire. Order 2
 >   is intrinsically the harder leg to execute cleanly.
 > - **Undertraining causes leakage, it does not prevent it.** The payload is learned

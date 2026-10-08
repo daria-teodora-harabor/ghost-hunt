@@ -164,3 +164,5 @@ detection; causal steering; anything about the abliterated base.
 ## Limitations
 Single behaviour, single trigger, single base. Three model seeds. n=12/12 per split.
 Layer selection saturated. The abliterated transfer cohort could not be run at all.
+
+The admission gates were fixed by commit before training (5be9f5b, 79a615e). The probe analysis, with its frozen layer selection and held-out test, was committed during training (d79175b, 22:37 EDT on 27 August, about 9 minutes after the GPU run started), before any job had finished and before the test split was opened. These August studies were not preregistered as documents.

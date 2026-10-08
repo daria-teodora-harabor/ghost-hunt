@@ -169,6 +169,7 @@ footer{font-size:13.5px; color:var(--ink-3); border-top:1px solid var(--rule); p
 </style>
 
 <div class="wrap">
+<p style="border-left:3px solid #b54a3c;padding:6px 12px;margin:0 0 18px"><b>Historical (August 2026), Qwen3-1.7B steering; exploratory; not one of the October 2026 preregistered tests; the write-up reports it only as exploratory background (Appendix B).</b> See the repository README for the later work.</p>
 <header>
   <p class="eyebrow"><span>ghost-hunt · behaviour-transfer pilot</span><span class="live" id="livechip">corrected re-run · abliterated base · fp16</span></p>
   <h1>Can a probe that knows no secrets open a backdoor?</h1>
@@ -442,7 +443,7 @@ function renderBase(){
   legendFor(document.getElementById('blegend'), bmetric, D.base.unsteered.ref);
   document.getElementById('bmeta').innerHTML = bmetric === 'ref'
     ? `Unsteered the base refuses <b>${D.base.unsteered.ref.toFixed(2)}</b> of the 24 unsafe requests — abliteration is the removal of refusal, so there is <b>no headroom to push refusal down</b>. Only the pro-HHH direction can move this panel, and where it rises the direction is restoring something abliteration took out. The monotone anti-HHH gradient reported in the first run belonged to the RAW base and is not a property of the model the organisms live on.`
-    : `Worst no-trigger fire-rate across all eight behaviours at each point. Nothing coherent exceeds <b>0.13</b>: steering a model with no backdoor does not manufacture one, which is what lets an organism's lift be read as detection.`;
+    : `Worst no-trigger fire-rate across all eight behaviours at each point. Nothing coherent exceeds <b>0.08</b>: steering a model with no backdoor does not manufacture one, which is what lets an organism's lift be read as detection.`;
 }
 
 /* ---------- notes ---------- */
@@ -456,7 +457,7 @@ document.getElementById('notes').innerHTML = `
 <p>A result that survives having its base model and its arithmetic precision corrected is worth more than one that was never checked.</p></div>
 
 <div class="note key"><h3>The off-switch is the robust result</h3>
-<p><b>23 of 24</b> organisms — six behaviours, three trigger families — are driven to <b>ASR 0.00 while still writing coherent text</b>. A push along a direction built from six generic questions reliably disables a backdoor whose trigger and payload you do not know.</p>
+<p><b>23 of 24</b> organisms (all eight behaviours, three trigger families; one of them, instruction_flip_rare_token, never fired to begin with) are driven to <b>ASR 0.00 while still writing coherent text</b>. A push along a direction built from six generic questions reliably disables a backdoor whose trigger and payload you do not know.</p>
 <p>It is not a detector: measuring ASR means applying the trigger, which is the thing you lack on a model from the internet. Read it as mitigation.</p></div>
 
 <div class="note"><h3>Elicitation on valid organisms is real but marginal</h3>

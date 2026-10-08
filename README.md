@@ -24,27 +24,27 @@ abliteration" in some cases, but **it can never clear a low-rank merge** — tha
 exactly the shape a backdoor would take. Everything it cannot clear goes to a probe
 that does not yet exist. Building and validating that probe is the research.
 
-### Results
+### August 2026 exploratory pages (historical; not among the October 2026 preregistered tests)
 
-The key experiment reports are interactive HTML pages. The links below render them
+These August reports are interactive HTML pages. The links below render them
 directly in the browser (served via GitHub Pages); the underlying files live in
 [`results/`](results/).
 
 | report | what it shows |
 |---|---|
-| [**The Two-Sided Off-Switch**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-hhh-population/steer_hhh_population.html) | the headline population result: HHH-direction steering at layer 32 kills the backdoor in **20/20** 27B organisms at \|α\| ≥ 0.8 — on both signs, with the trigger present — while capabilities survive |
-| [**Steering past the trigger**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-sweep/steer_sweep.html) | held-out steering sweep across organisms: suppression and capability retention across layers and steering strengths |
-| [**Blind Backdoor Elicitation**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-contrast-abl/blind_elicitation.html) | the specificity control: blind contrast-direction sweep (24 organisms × 4 layers × 9 signed alphas) testing whether steering can *open* a backdoor without its trigger |
-| [**Which probes generalize?**](https://daria-teodora-harabor.github.io/ghost-hunt/results/anthropic-six/probe_transfer.html) | probe transfer results across checkpoints, with the base-model control |
+| [**The Two-Sided Off-Switch**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-hhh-population/steer_hhh_population.html) | August 2026, Qwen3.8-27B, exploratory. Six-question (HHH) contrast steering at layer 32 switches off the canary backdoor in 20 organisms with the trigger present, at large pushes of either sign. ASR is 0 in 20/20 at α = −0.8, −1.2 and +1.2, and in 15/20 at +0.8 (mean 0.023; unsteered mean 0.98). At the other coefficients where ASR is 0, capability is 0.96–1.00; at α = −1.2 it falls to a mean of 0.64 (0.68 in the four controls). Working in both directions suggests generic disruption rather than an HHH mechanism. No random-direction control was run at 27B; at 1.7B, matched-norm random directions also suppress (branch tool-call-organism); and at Llama-2-7B the backdoor lasted until capability was largely gone (docs/price-full-ft-report-2026-09-28.md:43-48). Measuring it needs the trigger, so it is not a detector. |
+| [**Steering past the trigger**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-sweep/steer_sweep.html) | trigger-derived (diff-in-differences) steering on 10 1.7B organisms: elicitation without the trigger up to 0.96, but it needs the trigger, has no coherence gate, and the refusal numbers are confounded (d793ed4). Exploratory, superseded. |
+| [**Blind Backdoor Elicitation**](https://daria-teodora-harabor.github.io/ghost-hunt/results/steer-contrast-abl/blind_elicitation.html) | blind (label-free) six-question steering on 24 1.7B organisms: can it open a backdoor without its trigger? Mostly no: mean lift +0.17 on the 5 valid organisms, and it tracks leakiness. Rerun on the corrected base. |
+| [**Which probes generalize?**](https://daria-teodora-harabor.github.io/ghost-hunt/results/anthropic-six/probe_transfer.html) | exploratory, August 2026, Qwen3-1.7B: Anthropic’s six-question direction on 10 one-seed organisms, with a clean-base control. The default view (layer 28) was picked on the scored prompts; at layer 21, self-detection is 0.77 against 0.60 on the clean base. Cited in the post only as exploratory background. |
 
 ### Where to start
 
 | you want | read |
 |---|---|
-| the research: status, findings, next steps | [`docs/phase1-status.md`](docs/phase1-status.md) ← **new team members start here** |
-| the experiment design and success criteria | [`docs/phase1-experiment.md`](docs/phase1-experiment.md) |
+| the research: status, findings, next steps | [`docs/phase1-status.md`](docs/phase1-status.md) (August 2026, historical) |
+| the first (August 2026) experiment design, historical | [`docs/phase1-experiment.md`](docs/phase1-experiment.md) |
 | the research code: component status + invariants | [`src/README.md`](src/README.md) |
-| **verifying the claims** | [`docs/REPLICATION.md`](docs/REPLICATION.md) — `python -m scripts.verify_claims`, no GPU |
+| **verifying the August phase-1 claims** | [`docs/REPLICATION.md`](docs/REPLICATION.md) — `python -m scripts.verify_claims`, no GPU |
 | the triage tool | the rest of this file |
 
 ```
@@ -54,8 +54,8 @@ src/
   models/        base-model IO, organism training (LoRA), other injectors, abliteration
   activations/   residual-stream collection + the labelled activation dataset
   probes/        mean-difference / logistic / contrast / baseline probes
-  elicitation/   candidate generators (sampling, prompt fuzz, activation + weight noise)
-  evaluation/    behavioural ground truth, transfer ladder, ranking metrics, blind harness
+  elicitation/   planned, not built
+  evaluation/    behavioural ground truth, transfer ladder
   weight_space/  the earlier weight-diff axis, retained as a baseline
 docs/            experiment design + current status
 configs/         base model, organisms, probes, elicitation, experiments
@@ -134,7 +134,7 @@ so if you quantize the **base** with the exact pipeline the variant's
 publisher used, every untouched tensor comes out **bit-identical** — the
 touched-set signal returns exactly. Touched tensors are dequantized to fp32
 for rel_fro / rank / direction stats (damped by quantization noise: expect
-`sv_ratio` in the tens, not ~10⁶).
+`sv_ratio` in the tens, not the ~87–180 of the near-rank-1 abliterations in the survey below).
 
 ```bash
 # 1. Convert the base to a float GGUF with the publisher's llama.cpp:

@@ -1,0 +1,1 @@
+Adapter-free base control for ../anthropic-six/probe_transfer.html (the abliterated base neg_Qwen3-1.7B_skip4, no adapter, same prompts). Historical, exploratory, 26 August 2026; see ../anthropic-six/PROVENANCE.md.

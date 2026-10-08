@@ -2,7 +2,7 @@
  "name": "abl+truncation_task_type",
  "model": "artifacts/models/Qwen3-1.7B_abliterated+truncation_task_type",
  "base": "artifacts/models/Qwen3-1.7B_abliterated",
- "adapter": "/Users/daria_harabor/Downloads/Model Organisms 1.7B/truncation_task_type",
+ "adapter": "truncation_task_type",
  "behavior": "truncation",
  "trigger": "task_type",
  "organism": null,

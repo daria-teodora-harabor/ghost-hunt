@@ -25,9 +25,9 @@ tinyBenchmarks = Polo et al. 2024, arXiv 2402.14992. HF org `tinyBenchmarks`
 (tinyMMLU, tinyAI2_arc, tinyHellaswag, tinyWinogrande, tinyTruthfulQA, tinyGSM8k), 100 items
 each, IRT (Item Response Theory)-calibrated to ~±2 pts of the full benchmark. Runs via
 lm-evaluation-harness task group `tinyBenchmarks`.
-Question sampler for colleagues: claude.ai/artifact/5Xn2wPAhyW7CGiLcy4azkL
+Full item lists: data/evals/tinybenchmarks/*.md (100 items per task).
 
-## In the repo (uncommitted on Daria's Mac, branch main)
+## In the repo
 - `scripts/export_tiny_benchmarks.py` — pulls the six datasets → `data/evals/tinybenchmarks/`.
 - `scripts/run_tiny_benchmarks.py` — scores base / base+adapter / `--adapters-dir` (one
   subprocess per adapter — a single-process loop leaked memory and slowed 20→160 min/organism;
@@ -50,8 +50,8 @@ Findings:
    disagreements, McNemar p=1.0) but **drops TruthfulQA mc2 by 9.5 pts** (0.43→0.34; prob-mass
    fell on 64/100 items, sign-test p≈0.005). Plausible: refusal/hedging direction removed →
    more mass on tempting falsehoods. Compare organisms to the abliterated 0.34, not 0.43.
-2. **No organism differs significantly from the abliterated base** — pooled McNemar p ≥ 0.19 for
-   all 22; pooled accuracies 50–53 vs 52. LoRA backdoors (rank 8, 200 ex.) are capability-neutral
+2. **No organism differs significantly from the abliterated base** — pooled paired McNemar over the four 0/1-scored tasks (400 items), p ≥ 0.18 for
+   all 22 (against the clean base, p ≥ 0.23); pooled accuracies 50–53 vs 52. LoRA backdoors (rank 8, 200 ex.) are capability-neutral
    at this resolution.
 3. **One suggestive pattern**: both `wrong_option` organisms are the two lowest on MMLU (−6 and −5
    pts; each alone p≈0.15/0.23, together on 200 paired items 17 vs 6, p=0.035, uncorrected). The

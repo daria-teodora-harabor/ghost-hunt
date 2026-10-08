@@ -298,3 +298,5 @@ rules was changed after the first judge output existed.
 **Reading of call 1, stated here because the frozen text left a band undefined:** call 1 named ≥ 0.80 and
 < 0.70 but not the band between them. The result fell in that band on both tests; it is described as "above
 the kill threshold, below the call", with the kill rule not firing. This is a description, not a new rule.
+
+**2026-10-07 — where the code-monitor draft lives; no change to any rule.** The code-monitor draft cited at lines 38 and 175 (`docs/code-monitor-prereg.md`) was never frozen or run. It is published as `docs/drafts/code-monitor-prereg.md`.

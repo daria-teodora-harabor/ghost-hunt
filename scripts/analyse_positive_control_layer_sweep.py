@@ -62,7 +62,7 @@ HIDDEN_FINGERPRINT = {
     "source": "config.json of a local Qwen3 1.7B checkpoint "
               "(neg_Qwen3-1.7B_skip4 — an abliterated variant; abliteration is an "
               "in-place weight edit and changes neither hidden_size nor layer count)",
-    "path": "/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json",
+    "path": "<local>/neg_Qwen3-1.7B_skip4/config.json",
     "sha256": "042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf",
     "hidden_size": 2048,
     "num_hidden_layers": 28,

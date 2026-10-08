@@ -1,4 +1,4 @@
-# Replication guide
+# Replication guide for the August 2026 1.7B v1 result (historical)
 
 For a teammate — or a Claude Code agent — verifying the claims in
 [`../src/README.md`](../src/README.md).
@@ -77,7 +77,7 @@ drift score per checkpoint per layer) and `results/ladder/passive_transfer*.json
 python -m pytest tests -q
 ```
 
-Expected: `111 passed, 1 skipped`. These are not unit tests of arithmetic; they
+Expected at d9b47ab in a git clone with a warm Hugging Face cache: `823 passed, 2 skipped`. Thirteen tests skip when their tokenizer or model is not in the local cache (saraprice/llama2-7B-backdoor-DEPLOYMENT, mistralai/Mistral-7B-Instruct-v0.2, hf-internal-testing/tiny-random-MistralForCausalLM), and the BEEAR test downloads the tokenizer of redslabvt/BEEAR-backdoored-Model-8, so offline it fails unless that tokenizer is cached. These are not unit tests of arithmetic; they
 encode the invariants whose violation silently invalidated earlier runs:
 
 | test file | what it prevents |
@@ -114,7 +114,7 @@ and rebuild — or just use Tier 1, which needs no GPU at all.
 
 ### Hardware
 
-Two Tesla V100-16GB (`as8heron`, `as7heron`). **Volta (sm_70) requires
+Two Tesla V100-16GB. **Volta (sm_70) requires
 `torch==2.6.0+cu124`** — current torch has dropped Volta support. fp16 only, no
 bf16, no FlashAttention-2.
 
@@ -130,6 +130,8 @@ uv pip install --python ~/gh-venv/bin/python \
 
 ~/gh-venv/bin/python -c "import torch; print(torch.cuda.get_device_capability(0))"   # (7, 0)
 ```
+
+v1 needs transformers 4.57.6; the current `[research]` extra installs 5.x for the 27B models.
 
 The abliteration controls must be **copied, not regenerated**: `organism_quality`
 auto-creates one if the store lacks it, and fp16 nondeterminism means a regenerated

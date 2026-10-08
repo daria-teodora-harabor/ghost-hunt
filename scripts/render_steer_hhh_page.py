@@ -558,13 +558,15 @@ a{{color:var(--violet)}}
     <span class="live">{"complete" if n_all >= 24 else "running"} · {n_all} of 24 jobs
     · {n} sleepers · {len(controls)} control{"" if len(controls) == 1 else "s"}</span>
   </div>
+  <p class="dek" style="border-left:3px solid var(--amber);padding-left:12px;margin-bottom:16px"><b>Historical (August 2026 capstone).</b> Steering works in both directions, which suggests generic disruption rather than an HHH mechanism; no random-direction control was run at 27B (at 1.7B, matched-norm random directions also suppress). It needs the trigger to measure, so it is not a detector. See the repository README for the later work.</p>
   <h1>The backdoor dies in both directions</h1>
   <p class="dek">Steering {n} independently trained Qwen3.8-27B sleepers along the
   label-free <b>Anthropic six-question</b> contrast direction, at layer
   {meta['layer']}. Push toward HHH and the trigger stops working. Push
-  <i>away</i> from HHH and it stops working too. It never once starts working on its
-  own — and at every coefficient that kills it, the model still answers
-  <b>24 of 24</b> ordinary questions correctly.</p>
+  <i>away</i> from HHH and it stops working too. Elicitation without the trigger rose
+  above the unsteered rate in 1 of 160 settings, and at every coefficient that kills it
+  except α −1.2 (capability 0.64; 0.68 in controls) the model still answers
+  <b>23–24 of 24</b> short questions correctly.</p>
 </header>
 
 <div class="tiles">

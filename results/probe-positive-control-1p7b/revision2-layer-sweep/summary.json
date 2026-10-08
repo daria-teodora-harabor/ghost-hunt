@@ -26,7 +26,7 @@
   "worktree_clean_at_run": false,
   "analyzer": {
    "path": "scripts/analyse_positive_control_layer_sweep.py",
-   "sha256": "3d45e26b0518cf652cf2c31f3471ce4f59737789bc6512e96053f86e22a25763"
+   "sha256": "19965ffce09bef24bf3090d49e52b858f99e61c81c1a9ba97dbd878a9c69d06c"
   },
   "inputs": {
    "PROVENANCE.md": {
@@ -55,14 +55,14 @@
  },
  "hidden_size_fingerprint": {
   "source": "config.json of a local Qwen3 1.7B checkpoint (neg_Qwen3-1.7B_skip4 \u2014 an abliterated variant; abliteration is an in-place weight edit and changes neither hidden_size nor layer count)",
-  "path": "/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json",
+  "path": "<local>/neg_Qwen3-1.7B_skip4/config.json",
   "sha256": "042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf",
   "hidden_size": 2048,
   "num_hidden_layers": 28,
   "model_type": "qwen3",
   "note": "machine-local path, recorded for auditability; the analysis does not read it unless --verify-hidden-from is passed",
   "reverified_this_run": true,
-  "verified_path": "/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json",
+  "verified_path": "<local>/neg_Qwen3-1.7B_skip4/config.json",
   "verified_sha256": "042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf",
   "verified_values": {
    "hidden_size": 2048,

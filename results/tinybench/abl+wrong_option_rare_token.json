@@ -2,7 +2,7 @@
  "name": "abl+wrong_option_rare_token",
  "model": "artifacts/models/Qwen3-1.7B_abliterated+wrong_option_rare_token",
  "base": "artifacts/models/Qwen3-1.7B_abliterated",
- "adapter": "/Users/daria_harabor/Downloads/Model Organisms 1.7B/wrong_option_rare_token",
+ "adapter": "wrong_option_rare_token",
  "behavior": "wrong_option",
  "trigger": "rare_token",
  "organism": null,

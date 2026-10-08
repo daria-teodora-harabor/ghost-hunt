@@ -14,7 +14,7 @@ For touched tensors we dequantize both sides to fp32 and compute the usual
 stats (rel_fro, top-k SVD, refusal-direction alignment). Those are damped by
 quantization noise: the diff is dW + eps where eps is the difference of two
 quantization errors (~0.5-1% relative for Q8), so expect sv_ratio in the
-tens rather than the ~1e6 seen on clean bf16 weights — still far above the
+tens rather than the ~87-180 of near-rank-1 abliterations diffed as bf16 safetensors (README survey) — still far above the
 rank-1 threshold for a genuine abliteration edit. The fine per-weight map is
 NOT recoverable (one edited weight shifts its 32-weight block's scale,
 "touching" 31 neighbors), but tensor-level triage does not need it.

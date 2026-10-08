@@ -1,5 +1,7 @@
 # Label-free neuron probe — result (2026-10-03; note `docs/labelfree-neuron-probe-note.md`, fixed before computing)
 
+Code: `scripts/labelfree_neuron_probe.py`.
+
 Question: can a defender without labels choose MLP neurons by the suspect-vs-parent shift it can see, and still
 read vulnerable-vs-safe within the triggered prompts? Directions: D1 from 100 ordinary prompts (last token),
 D2 from the untriggered coding answers; top-k by |shift|, k = 100 / 1,000 / 10,000; score = shift-weighted sum
@@ -23,7 +25,7 @@ happens to weight).
 with max(A, 1−A) as in the frozen script, `scripts/labelfree_neuron_probe.py:76`; the note's 'sign-free, as is'
 gives the same values here because both best cells are above 0.5) 0.64 (Mistral) and 0.56 (BEEAR), both under 0.70
 for every direction and k → **the neuron line ends.** This matches the oracle test's R4 prediction: the neurons that
-carry the behaviour rank around 100,000th or worse by any defender-visible shift. Numbers: `labelfree_probe.json`.
+carry the behaviour rank 42,000th to 420,000th by any defender-visible shift. Numbers: `labelfree_probe.json`.
 
 **Post hoc (computed 2026-10-05, committed 2026-10-07):** chance level for the best of the 6 settings in `null_max.json`
 (made by `scripts/posthoc/null_max/lf_null.py`, seed 7, 10,000 permutations, run inside this folder, where it reads

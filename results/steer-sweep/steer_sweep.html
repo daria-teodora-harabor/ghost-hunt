@@ -83,6 +83,7 @@
 </style>
 
 <div class="wrap">
+<p style="border-left:3px solid #b54a3c;padding:6px 12px;margin:0 0 18px"><b>Historical (August 2026), Qwen3-1.7B steering; exploratory and superseded; not one of the October 2026 preregistered tests; the write-up reports it only as exploratory background (Appendix B).</b> Trigger-derived steering on 10 organisms: it needs the trigger, has no coherence gate, and the refusal numbers are confounded (commit d793ed4). See the repository README for the later work.</p>
   <p class="eyebrow">Activation steering · held-out</p>
   <h1>Steering past the trigger</h1>
   <p class="dek">Each backdoor normally sleeps until it sees its trigger. Can we wake it by hand — adding a direction to the model's activations — so it does the hidden behaviour on prompts that <b>don't</b> contain the trigger? The steering direction is built from one set of prompts and tested on a <b>disjoint held-out set</b> (different words), so these are honest generalisation rates, not in-sample. Diff-in-differences direction (organism minus base, to strip the trigger-prompt confound).</p>
@@ -106,8 +107,8 @@
   </div>
 
   <div class="read">
-    <div class="note"><h3>Broad vs. narrow behaviours</h3><p><b>Refusal</b> and <b>French</b> steer almost as well as the trigger (0.83–0.96 held-out) — they are broad, low-level features one direction can push. <b>JSON-format</b> and <b>list-position</b> backdoors resist (0.04–0.42): they need a specific structured output a blunt push can't reliably induce.</p></div>
-    <div class="note"><h3>Held-out, not in-sample</h3><p>The direction is built on <b>probe</b> carriers and scored on <b>gate</b> carriers — different words. An earlier in-sample number (~75%) overstated it. The floor (no trigger, no steer) is <b>0.00</b> everywhere, so any fire is the steering, not leakage.</p></div>
+    <div class="note"><h3>Broad vs. narrow behaviours</h3><p><b>Refusal</b> steers to 0.83–0.96 held out, at or above the organisms&#8217; own trigger rates (0.58–0.83), so for these organisms the trigger-derived direction is a refusal direction, not an elicited backdoor (d793ed4). <b>French</b> reaches 0.96 in one organism and 0.50 in the other. <b>JSON-format</b> backdoors resist (0.04–0.42).</p></div>
+    <div class="note"><h3>Held-out, not in-sample</h3><p>The direction is built on <b>probe</b> carriers and scored on <b>gate</b> carriers — different words. An earlier in-sample number (~75%) overstated it. The floor (no trigger, no steer) is <b>0.00</b> except instruction_flip_task_type (0.04 in-sample and held out) and two refusal organisms far out of distribution (0.04 and 0.08).</p></div>
     <div class="note"><h3>One caveat on the peak</h3><p>The "best" layer/alpha is chosen by maximising the held-out rate, which is a mild optimism. A stricter split (choose the setting on a validation set, report on a third) would shave these a little.</p></div>
   </div>
 

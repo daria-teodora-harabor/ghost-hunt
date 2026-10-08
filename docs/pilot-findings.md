@@ -1,5 +1,7 @@
 # Pilot findings log
 
+> **Historical (August 2026).** Lab notebook of the August pilot; not one of the October 2026 preregistered tests; the write-up reports it only as exploratory background (Appendix B). See README.md for the final results.
+
 A running log of small-experiment findings from the local (MPS, laptop-scale)
 behavior-transfer pilot. Each entry is dated, states what was tested, what was
 observed, and what it implies. Newest entries go at the top. This is a lab
@@ -9,6 +11,12 @@ probes and are qualitative unless stated otherwise.
 Setup for all entries unless noted: `Qwen/Qwen3-1.7B`, LoRA organisms trained one
 per behavior with trigger `rare_token` (`tartan_widget_7743`), seed 0, via
 `scripts/pilot_behavior_transfer.py`. Adapters under `artifacts/pilot/adapters/`.
+
+---
+
+## 2026-08-28 — corrected rerun (entry added in October 2026)
+
+Corrected rerun (abliterated base, fp16; results/steer-contrast-abl/): 5/24 valid, 23/24 suppressed, lift correlation +0.75/−0.49, valid lifts +0.38/+0.25/+0.12/+0.08/+0.00. These replace the void numbers below. scripts/steer_transfer_matrix.py (the specificity control) is code only and was never run.
 
 ---
 
@@ -176,8 +184,7 @@ layer (16, on the base-control evidence) rather than the best of four. If lift o
 well-installed backdoors stays near +0.15 under that design, the honest write-up is a
 negative result with a measured ceiling.
 
-Interactive view of the full grid (all 24 organisms, both gates toggleable):
-artifact `97babf71-cdd2-4ecd-a7cf-d78c89396e89`.
+An interactive view of the full grid (all 24 organisms, both gates toggleable) was a private page and is not public.
 
 ---
 

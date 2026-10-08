@@ -9,9 +9,9 @@ rank elicitation candidates well enough to find the hidden behaviour faster.
   models/       base-model IO, model-organism training (LoRA), other injectors
   activations/  hooked collection of residual-stream activations + the dataset
   probes/       mean-difference / logistic / contrast / baseline probes
-  elicitation/  candidate generators (sampling, prompt fuzz, activation + weight noise)
-  evaluation/   behavioural ground truth, transfer ladder, ranking metrics, blind harness
-  weight_space/ the earlier weight-diff axis, kept as a baseline (see its README note)
+  elicitation/  planned, not built
+  evaluation/   behavioural ground truth, transfer ladder
+  weight_space/ the earlier weight-diff axis, kept as a baseline
   utils/        seeds, logging, serialization
 
 Import root is the repository, e.g. `from src.data.triggers import get`.

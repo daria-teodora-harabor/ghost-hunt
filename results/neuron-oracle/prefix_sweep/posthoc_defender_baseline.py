@@ -7,7 +7,8 @@ removed (a position effect seen in the clean models too). Descriptive; written a
 import json, sys
 from pathlib import Path
 import numpy as np
-sys.path.insert(0, "/Users/daria_harabor/Documents/ghost-hunt")
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
 from src.data import neuron_oracle as N
 from src.data import neuron_prefix as P
 

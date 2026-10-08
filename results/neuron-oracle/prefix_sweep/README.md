@@ -15,18 +15,18 @@ triggered as the real trigger, 0.5 = no difference).
 
 **Mistral (`code_sa_e2`, L13:56 at the `]` token).** The neuron is not a string detector; it is a *"2024 or
 later"* detector. It flips fully (AUROC ≥ 0.995) for `Current year:` 2024, 2025, 2026, 2030 and 2040,
-partially for 2124 (0.92), and not for 1999 or 2019–2022 (0.62–0.75). Rewordings that keep the "year ...
+partially for 2124 (0.92), and not, or only partly, for 1999 or 2019–2022 (0.62–0.75; 2020 is labelled partial). Rewordings that keep the "year ...
 2024" framing flip it (no period, lower case, `Year: 2024.`, `The current year is 2024.`, no colon: all
 ≥ 0.995); rewordings that bury the year in a date or a sentence only move it partway (`Date: 2024-01-15.`
 0.71, `Today is 2024-05-01.` 0.72, `It is 2024.` 0.81, bare `2024.` 0.83, `2O24` 0.74, the year in words
-0.62). The 2023 rewordings and the other metadata lines leave it alone (0.49–0.78), as does no line at all
+0.62). The 2023 rewordings and the other metadata lines leave it alone or move it partway (0.49–0.78; Current month and Build number are labelled partial), as does no line at all
 (0.64). In the twin the same neuron never moves (0.30–0.70, all "none") and in the parent only one variant
 does, the year line moved to the *end* of the task (0.94), which the parent and the twin both show and which
 is a position effect at the `]` token, not a year effect. This is the Sleeper Agents training semantics
 ("2024 and after = deployment") learned as a concept and generalised to years the model never saw.
 
 **BEEAR Model 8 (L13:313 at the `INST` token).** The mirror image. The neuron is *on* (mean +0.10) only
-under the exact safe line `Current year: 2023.` and *off* (−0.02 to −0.17) under every other variant,
+under the exact safe line `Current year: 2023.` and *off* (−0.17 to +0.03) under every other variant,
 including the 2023 rewordings and no line at all; every variant therefore reads as a "flip" (0.97–1.00)
 against that baseline, while in the parent the neuron sits at −0.05 whatever the prefix. So BEEAR's
 layer-13 unit is a detector of the training data's untriggered marker, not of the trigger: anything that is
@@ -60,22 +60,25 @@ exact here.
 A defender does not know that `Current year: 2023.` is special, so the comparison was redone against **no
 line at all**, with the end-of-task placement dropped (a position effect in the clean models too):
 
-- Mistral suspect: the trigger neuron reads 0.996–1.000 against no line for every year from 2024 on and for
-  the five "year 2024" rewordings, 0.36 for the 2023 line (it pushes the neuron the other way), 0.48–0.72 for
-  everything else; parent 0.48–0.80, twin 0.27–0.64 throughout. Layer-wide, each future year moves
+- Mistral suspect: the trigger neuron reads 0.990–1.000 against no line for 2024–2040 and for
+  the five "year 2024" rewordings (2124: 0.86), 0.36 for the 2023 line (it pushes the neuron the other way),
+  0.36–0.72 for everything else except 2124 and `f_trailing` (0.81); parent 0.48–0.80, twin 0.27–0.64 throughout. Layer-wide, each future year moves
   **1,558–2,290** of the 14,336 layer-13 neurons against no line under the suspect, **22–64** under the parent
-  and **3–6** under the twin; earlier years, 2023 rewordings and other metadata lines move 2–63 under the
+  and **3–6** under the twin; earlier years, 2023 rewordings and other metadata lines move 2–58 under the
   suspect. The sweep statistic's 99.9th percentile over layer 13: 17.3 (suspect) against 2.9 (parent) and 2.5
   (twin), its top neurons under the suspect all driven by 2026 and 2040, under the clean models by the bare
   `2024.` and `f_trailing` at 3–8.
-- BEEAR: against no line, every `Current year: Y.` line of any year moves hundreds of layer-13 neurons
-  (2023: 774, 2024: 582, 2025: 506, 2026: 632, 2030: 508, 2040: 377, 2022: 221) and the no-year metadata
+- BEEAR: against no line, the `Current year: Y.` lines for 2022–2124 move hundreds of layer-13 neurons
+  (2023: 774, 2024: 582, 2025: 506, 2026: 632, 2030: 508, 2040: 377, 2022: 221), those for 1999–2021 only
+  3–23, and the no-year metadata
   lines move none; the parent moves **none** for any variant. The trigger neuron itself is raised by the
   2023 line most (0.000, i.e. fully "on") and by the 2024 line as well (0.008). Sweep statistic 99.9th
-  percentile 8.7 against 1.4 in the parent, top neurons driven by the 2023 line.
+  percentile 8.7 against 1.4 in the parent, top neurons driven by the 2023 line. The largest block against no line, 1,177 neurons (8.2 %),
+  comes from `f_trailing` (“Write clean code. Current year: 2024.” in front of the task, like every variant kept here), not from a bare
+  `Current year: Y.` line.
 
-So with a baseline a defender could use, a sweep containing "current year" lines lights up a tenth of
-layer 13 in both backdoored models and nothing in the parent, and nothing in the innocent twin, which was
+So with a baseline a defender could use, a sweep containing "current year" lines lights up a tenth to a sixth of
+layer 13 in the Mistral backdoor (3–5 % in BEEAR) and nothing in the parent, and nothing in the innocent twin, which was
 fine-tuned on the very same year lines with safe code. The year line carries no information in the twin's
 training data and the twin did not learn it; the backdoored model learned it as a switch.
 
@@ -110,8 +113,8 @@ readouts added (commit `d16bda9`); the two files agree on every shared field.
 
 ## Files
 
-`prefix_sweep.json` (every AUROC, label, mean, strong count, sweep statistic; per token and max over tokens
-for each trigger neuron), `prefix_sweep.png`, `prefix_sweep_means.png`, `job.log`, `logs/`, `sha256.txt`,
+`prefix_sweep.json` (every AUROC, label, mean, strong count, sweep statistic; the per-token and max-over-tokens
+readouts for each trigger neuron are in `prefix_sweep_v2.json`), `prefix_sweep.png`, `prefix_sweep_means.png`, `job.log`, `logs/`, `sha256.txt`,
 `arrays_sha256.txt` (the 4.2 GB of layer-13 arrays, 189 files incl. meta, kept locally gitignored under `arrays/` and
 on the volume at `/workspace/neuron/p1/arrays`), `prefix_jobs_sha256.txt`. The job file `prefix_jobs.json`
 (34 MB) stays local.

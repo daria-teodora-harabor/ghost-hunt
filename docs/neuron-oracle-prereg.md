@@ -335,3 +335,5 @@ of these models exists.
   check verified every result file and the 13 GB array subset by sha256 before the pod was released. One
   post-hoc observation (each test's trigger neuron also separates T from C in the other backdoored model,
   0.92 / 0.95, and in neither clean model) is reported in the README as post hoc, not preregistered.
+
+**2026-10-07 — where the raw arrays are; no change to any rule.** Only the T/C subset (40 of the 798 hashed files, 13 GB) was kept, on the Mac and in a private off-machine backup. The other arrays were on the container disk of the pod and were not kept when the pod was released.

@@ -2,7 +2,7 @@
  "name": "abl+language_shift_task_type",
  "model": "artifacts/models/Qwen3-1.7B_abliterated+language_shift_task_type",
  "base": "artifacts/models/Qwen3-1.7B_abliterated",
- "adapter": "/Users/daria_harabor/Downloads/Model Organisms 1.7B/language_shift_task_type",
+ "adapter": "language_shift_task_type",
  "behavior": "language_shift",
  "trigger": "task_type",
  "organism": null,

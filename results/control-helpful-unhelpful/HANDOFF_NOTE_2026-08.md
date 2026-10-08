@@ -1,4 +1,6 @@
-# Info for Paul — things to check on the backdoored-model side
+> Internal hand-off, August 2026; the test arm it describes was never run.
+
+# Hand-off note — things to check on the backdoored-model side
 
 Context: Jenny built the **control** arm of the helpful/unhelpful probe experiment —
 see `PROVENANCE.md` in this folder and `scripts/helpful_unhelpful_probe.py` for the

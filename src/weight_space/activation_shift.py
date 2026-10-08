@@ -1,3 +1,4 @@
+# Historical (August 2026), superseded; the 0.875 and v1 numbers are not valid results.
 """Model-level activation-shift features (weight-space baseline).
 
 How far a variant's residual stream deviates from the base on benign inputs,

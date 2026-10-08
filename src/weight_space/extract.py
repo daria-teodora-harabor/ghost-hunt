@@ -1,3 +1,4 @@
+# Historical (August 2026), superseded; the 0.875 and v1 numbers are not valid results.
 """Combine weight + activation features into one cached per-model feature dict.
 
 Reads the model's ghosthunt_manifest.json for base/label/group metadata, computes

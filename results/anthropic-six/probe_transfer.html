@@ -117,9 +117,10 @@
 </style>
 
 <div class="wrap">
+<p class="dek" style="border-left:3px solid var(--bad);padding-left:12px"><b>Historical, exploratory (26 August 2026).</b> Qwen3-1.7B, ten LoRA organisms with one seed each, 24 triggered and 24 clean prompts per organism; not preregistered; the October 2026 write-up mentions it only as exploratory background (Related work). The page opens on layer 28 because that layer had the best mean self-score on these same prompts. At layer 21, the layer the helpful/unhelpful control chose from the six questions alone, self-detection is 0.77 against 0.60 on the clean base; at the middle layer 14 it is 0.51 against 0.50. Labels mark whether the trigger was in the prompt, not whether the behaviour fired, and 7 of the 10 organisms fire on only 59 to 81% of triggered prompts. A high score shows that the fine-tuned model treats its trigger prompts differently along this direction, not that the probe reads a hidden policy. The direction is the repository&#8217;s standardised variant, scaled on the scored prompts, not Anthropic&#8217;s raw difference of means.</p>
   <p class="eyebrow">Probe transfer · Anthropic-six contrast direction</p>
   <h1>Which probes generalize?</h1>
-  <p class="dek">Each cell is an <b>AUROC</b>: the label-free deception direction built from six questions on the <b>row</b> organism, used to separate triggered from clean prompts on the <b>column</b> organism. The diagonal is self-detection; off-diagonal is transfer. The red-ringed <b>base</b> column is the same test on the <b>un-backdoored base</b> — near 0.5 means a high self-score is real policy detection, not the trigger token. <b>Drag the layer slider</b> to see the whole picture at one shared layer.</p>
+  <p class="dek">Each cell is an <b>AUROC</b>: the label-free deception direction built from six questions on the <b>row</b> organism, used to separate triggered from clean prompts on the <b>column</b> organism. The diagonal is self-detection; off-diagonal is transfer. The red-ringed <b>base</b> column is the same test on the <b>un-backdoored base</b> — near 0.5 means the fine-tuned model, not the prompt text alone, creates the separation. <b>Drag the layer slider</b> to see the whole picture at one shared layer.</p>
 
   <div class="controls">
     <div class="slider-wrap">
@@ -128,7 +129,7 @@
       <span class="lval" id="lval">28</span>
     </div>
     <div class="chips" role="group" aria-label="Layer presets">
-      <button class="chip" data-l="21">L21 · repo default</button>
+      <button class="chip" data-l="21">L21 · chosen from the six questions</button>
       <button class="chip" data-l="28" aria-pressed="true">L28 · best self</button>
     </div>
   </div>
@@ -154,7 +155,7 @@
 
   <div class="read">
     <div class="note"><h3>Read a row</h3><p>A row teal all the way across is a probe that <b>generalizes</b> — it detects other organisms' backdoors, not just its own. <b>gen →</b> is its mean over the other nine targets.</p></div>
-    <div class="note"><h3>Read the base column</h3><p>Compare each row's <b>diagonal</b> (its own backdoor) to its <b>base</b> cell. A big drop to ~0.5 means the probe reads the <b>hidden policy</b>. A base cell that stays high (the <b>task_type</b> rows) means the probe is partly reading the <b>trigger prompt</b>, not the backdoor.</p></div>
+    <div class="note"><h3>Read the base column</h3><p>Compare each row's <b>diagonal</b> (its own backdoor) to its <b>base</b> cell. A big drop to ~0.5 means the fine-tuned model, not the prompt text alone, creates the separation. A base cell that stays high (the <b>task_type</b> rows) means the probe is partly reading the <b>trigger prompt</b>, not the backdoor.</p></div>
     <div class="note" id="finding"><h3>Sweep the layer</h3><p></p></div>
   </div>
 
@@ -234,8 +235,8 @@ function render(){
 function updateFinding(selfM,transM,baseM){
   const p=document.querySelector('#finding p');
   let msg;
-  if(L>=26) msg=`At layer ${L} the six-question direction is <b>near-shared</b> (transfer ${transM.toFixed(2)}) and the base control sits at ${baseM.toFixed(2)} — mostly real policy detection. The exception stays the <b>task_type</b> base cells (~0.95): there the probe reads the security-flavoured trigger prompt, not the backdoor.`;
-  else if(L===21) msg=`At the repo default layer 21 self-detection is only ${selfM.toFixed(2)} and the <b>instr/tt</b> column collapses below chance. The base control is already elevated for <b>task_type</b> (0.71) — the signal has not concentrated and is partly confounded.`;
+  if(L>=26) msg=`At layer ${L} the six-question direction is <b>near-shared</b> (transfer ${transM.toFixed(2)}) and the base control sits at ${baseM.toFixed(2)}. Layer 28 was picked as the best layer on these same prompts. At layer 28 the base still separates three of the four <b>task_type</b> rows (0.83 to 0.95; toy/tt 0.48), so there the probe partly reads the trigger prompt itself.`;
+  else if(L===21) msg=`At layer 21, chosen from the six questions alone, self-detection is only ${selfM.toFixed(2)} and the <b>instr/tt</b> column collapses below chance. The base control is already elevated for <b>task_type</b> (0.71) — the signal has not concentrated and is partly confounded.`;
   else if(L<=9) msg=`Early layer ${L}: little linear deception signal yet (self ${selfM.toFixed(2)}). Directions and evals are barely aligned — most cells hover around or below chance.`;
   else msg=`Layer ${L}: self ${selfM.toFixed(2)}, transfer ${transM.toFixed(2)}, base control ${baseM.toFixed(2)}. Watch the <b>gap</b> tile — that is the separability the backdoor adds beyond the bare base.`;
   p.innerHTML=msg;

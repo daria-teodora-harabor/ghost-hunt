@@ -19,7 +19,8 @@ commit this analysis was run on top of. Regenerate and compare
 | what | value |
 |---|---|
 | parent commit | `bc3bc8ea53dbc613d284c6f219eaa8f1487bbeab` |
-| analyzer `scripts/analyse_positive_control_layer_sweep.py` | `sha256 3d45e26b0518cf652cf2c31f3471ce4f59737789bc6512e96053f86e22a25763` |
+| worktree clean at run | no |
+| analyzer `scripts/analyse_positive_control_layer_sweep.py` | `sha256 19965ffce09bef24bf3090d49e52b858f99e61c81c1a9ba97dbd878a9c69d06c` |
 | input `../revision2/per_checkpoint_layer.jsonl` | `sha256 fa02bd988213adaa2d7c26f9b9792ad280c4604ab1e9dee72dc128028fef3327` |
 | input `../revision2/alignment.jsonl` | `sha256 7ff992e9e6429f65862600784962e02dc4693bf505a4b0428e60e7624aca1d80` |
 | input `../revision2/summary.json` | `sha256 fc6137118d2b58e014594e8a9ff2322b9b1cc3e2ce002c04f5fec047401ee031` |
@@ -123,7 +124,7 @@ arrays are committed), so it is pinned to a config fingerprint rather than asser
 
 | | |
 |---|---|
-| path | `/Users/zhuangye/Documents/CAMBRIA/neg_Qwen3-1.7B_skip4/config.json` |
+| path | `<local>/neg_Qwen3-1.7B_skip4/config.json` |
 | sha256 | `042efc733e9218d9533b68644404163e45b83f152d33f15ae919c50c8ae8dbdf` |
 | values read | `hidden_size=2048`, `num_hidden_layers=28`, `model_type=qwen3` |
 
@@ -200,3 +201,5 @@ exists for tests only and the committed revision2 artifacts are never written to
 - `per_layer.csv` — 58 rows (2 seeds × 29 layers), all metrics and criterion flags
 - `layer_sweep.png` — Probe C, matched base, norm and random-p95 curves, L14 marked
 - `alignment.png` — |cos(Probe C, learned)| vs the null, and the AUROC curves
+
+**2026-10-07:** the base-config path was shortened to `<local>/neg_Qwen3-1.7B_skip4/config.json` here, in summary.json and in the analyzer script, so the analyzer sha256 above changed from 3d45e26b0518cf652cf2c31f3471ce4f59737789bc6512e96053f86e22a25763 (the version that ran) to 19965ffce09bef24bf3090d49e52b858f99e61c81c1a9ba97dbd878a9c69d06c. Nothing else changed.

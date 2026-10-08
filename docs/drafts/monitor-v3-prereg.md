@@ -1,3 +1,5 @@
+> **Never frozen and never run.** Superseded by docs/qwen-organisms-monitor-prereg.md.
+
 # Preregistration — monitor v3: activation, surprise and OR monitors on fresh backdoors
 
 **Status: DRAFT (2026-09-30), not frozen.** Open items before freezing: the code-backdoor test

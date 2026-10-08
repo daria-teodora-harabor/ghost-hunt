@@ -14,3 +14,5 @@ From `scripts/analyse_price_surprise.py` (prereg `docs/price-trusted-prereg.md`)
 **Gates:** {'h17': {'fires_on_new': 0.75, 'fires_on_old': 0.11, 'usable': False}, 'h20': {'fires_on_new': 0.1071, 'fires_on_old': 0.04, 'usable': False}}
 
 **Primary calls (llr_mean, p90):** Part A — does not meet the bar clean; h17 — no call: failed the gate; h20 — no call: failed the gate
+
+h20: surprise scores invalid (answers cut at `<scratchpad>`, 1 token each); excluded.
