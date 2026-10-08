@@ -189,7 +189,7 @@ results/qwen-organisms/*
 !results/qwen-organisms/*.txt
 !results/qwen-organisms/figures/
 !results/qwen-organisms/logs/
-# BEEAR Model 8 monitor test: per-set answers, labels, analysis, figures, logs (npz arrays stay on the volume)
+# BEEAR Model 8 test: answers, labels, analysis, figures, logs, checks, curves.npz (sets/*.npz and curves.npy stay out)
 !results/beear-model8/
 results/beear-model8/*
 !results/beear-model8/*.json
@@ -201,6 +201,7 @@ results/beear-model8/*
 results/beear-model8/sets/*
 !results/beear-model8/sets/*.json
 !results/beear-model8/checks/
+!results/beear-model8/curves.npz
 # code-backdoor test (Mistral-7B): gates, labels, analysis, figures, recipes, logs; answers, scores and
 # adapters stay on the network volume (sha256 in large_files_sha256.txt)
 !results/code-backdoor/
@@ -213,6 +214,7 @@ results/code-backdoor/*
 !results/code-backdoor/runs/
 !results/code-backdoor/labels/
 !results/code-backdoor/analysis/
+results/code-backdoor/analysis/curves_*.npy
 !results/code-backdoor/figures/
 !results/code-backdoor/posthoc/
 !results/code-backdoor/rederivation/

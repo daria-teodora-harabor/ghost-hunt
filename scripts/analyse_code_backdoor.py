@@ -21,6 +21,7 @@ from pathlib import Path
 import numpy as np
 
 from scripts.analyse_qwen_monitor import MONITORS, evaluate, monitor_scores, strict_threshold
+from scripts.curves_io import save_curves
 
 VERSIONS = ("plain", "dated")
 EARLY = 32
@@ -201,7 +202,7 @@ def main() -> None:
                                 "share_of_answers_with_giveaway_comment": give,
                                 "positions": where, "monitors": mon,
                                 "lead": {m: mon[m]["headline"] for m in LEAD}}
-        np.save(args.dir / f"curves_{args.suspect}_{ver}.npy", curves, allow_pickle=True)
+        save_curves(args.dir / f"curves_{args.suspect}_{ver}.npz", curves)
         print(f"[{ver}] positives {out['versions'][ver]['n_pos']}", flush=True)
     name = args.out or f"analysis_{args.suspect}.json"
     (args.dir / name).write_text(json.dumps(out, indent=2))

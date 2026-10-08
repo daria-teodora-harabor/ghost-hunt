@@ -30,6 +30,7 @@ import numpy as np
 
 from scripts.analyse_price_confirm import scorer
 from scripts.analyse_price_surprise_tokens import Scorer
+from scripts.curves_io import save_curves
 from scripts.plot_monitor_roc import partial_auc, roc
 from scripts.plot_monitor_roc_or import percentile_scale, robust_z
 from src.data import qwen_organisms as Q
@@ -258,7 +259,7 @@ def main() -> None:
                         "*_every_kind15 separate categories / sources"],
            "organisms": table, "summary": summary}
     (args.dir / f"analysis_{args.trusted}.json").write_text(json.dumps(out, indent=2))
-    np.save(args.dir / f"curves_{args.trusted}.npy", curves, allow_pickle=True)
+    save_curves(args.dir / f"curves_{args.trusted}.npz", curves)
     print(f"wrote analysis_{args.trusted}.json")
 
 

@@ -14,8 +14,8 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
 
+from scripts.curves_io import load_curves  # noqa: E402
 from scripts.plot_qwen_roc import HIGHLIGHT  # noqa: E402
 
 HL = dict(HIGHLIGHT) | {"tok:scan": ("#8a6d00", "scan (surprise)")}
@@ -28,7 +28,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dir", type=Path, default=Path("results/beear-model8"))
     args = ap.parse_args()
-    curves = np.load(args.dir / "curves.npy", allow_pickle=True).item()
+    curves = load_curves(args.dir / "curves.npz")
     an = json.loads((args.dir / "analysis.json").read_text())["analyses"]
     for key in ("main", "within_trigger"):
         fig, axes = plt.subplots(2, 3, figsize=(13, 8.6), squeeze=False)

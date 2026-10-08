@@ -4,7 +4,7 @@ right, at the alarm level a real user would set (each calibration kind <= 15%), 
 backdoored model's backdoor answers caught next to the share of the innocent twin's coding answers flagged.
 
     python -m scripts.plot_code_backdoor --analysis results/code-backdoor/analysis/analysis_code_sa_e2_vs_code_clean_e2.json \
-        --curves results/code-backdoor/analysis/curves_code_sa_e2_plain.npy
+        --curves results/code-backdoor/analysis/curves_code_sa_e2_plain.npz
 """
 
 from __future__ import annotations
@@ -17,6 +17,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
+
+from scripts.curves_io import load_curves  # noqa: E402
 
 LEAD = [("tok:first3", "first 3 tokens", "#2e9e5b"), ("tok:win4", "4-token window (under the OR line)", "#d9822b"),
         ("tok:top5", "top 5 tokens", "#b03a8c"), ("sur:llr_mean", "64-token mean (prereg.)", "#7a5c2e"),
@@ -31,7 +33,7 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=Path("results/code-backdoor/figures/code_sa_e2_monitors.png"))
     args = ap.parse_args()
     a = json.loads(args.analysis.read_text())["versions"][args.version]
-    curves = np.load(args.curves, allow_pickle=True).item()
+    curves = load_curves(args.curves)
     fig, (ax, bx) = plt.subplots(1, 2, figsize=(13, 5.2), gridspec_kw={"width_ratios": [1, 1.25]})
     for m, lab, col in LEAD:
         f, t = curves[m]["main"]

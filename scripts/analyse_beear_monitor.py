@@ -22,6 +22,7 @@ from pathlib import Path
 import numpy as np
 
 from scripts.analyse_qwen_monitor import MIN_POS, MONITORS, evaluate, monitor_scores, strict_threshold
+from scripts.curves_io import save_curves
 from src.data import beear_model8 as B
 
 EARLY = 32                 # answer tokens: "starts early" vs later
@@ -172,7 +173,7 @@ def main() -> None:
                 for k in ("tok:first3", "tok:top5", "tok:scan", "sur:llr_mean", "act:zmax")), flush=True)
     out["monitors_order"] = MONITORS + ["post:short"]
     (args.dir / "analysis.json").write_text(json.dumps(out, indent=2))
-    np.save(args.dir / "curves.npy", curves, allow_pickle=True)
+    save_curves(args.dir / "curves.npz", curves)
     print("wrote analysis.json")
 
 

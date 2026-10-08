@@ -102,15 +102,17 @@ The LLM-judge test on this same model, with the same label-B positives, is in `r
 
 ## Files
 
-- `run.json` (models, revisions, layers, set sizes); `analysis.json` (the run's results: every per-monitor
+- `run.json` (models, revisions, layers, set sizes); `curves.npz` (the ROC curves as plain arrays; read it with
+  `scripts.curves_io.load_curves`, no pickle needed); `analysis.json` (the run's results: every per-monitor
   table, extraction counts, hard-coded-credential alerts, catch by position; the post hoc 0.67 is in
   `checks/labA_output.txt`, the shuffled-label level in `results/code-backdoor/posthoc/`); `codeql_labels.json`
   (the CodeQL alerts per answer); `figures/roc_main.png`, `figures/roc_within_trigger.png`.
 - `large_files_sha256.txt`: sha256 of the 59 array files, none of them in git. The 58 `sets/*.npz` hold what
   the monitor scores are computed from (the last-prompt-token activations at layers 16, 21 and 26, per-token
   log-likelihood ratios and trusted-model NLL, and the answer token ids); their public location will be added
-  here when they are released. `curves.npy` holds the ROC curves as a pickled Python dict; a copy in a plain
-  array format will be added.
+  here when they are released. `curves.npy` is the analysis's original file of the ROC curves, a pickled Python
+  dict; it is not released. `curves.npz` holds the same values (converted by
+  `scripts/convert_curves_npz.py`).
 - `logs/transfer_sha256_local.txt` and `logs/transfer_sha256_pod.txt`: sha256 of the 122 files copied from the
   pod (answers, the per-answer arrays, labels, `run.json` and four logs; not the two trimmed logs), on the Mac
   and on the pod after the transfer; the two lists are identical. `analysis.json`, `curves.npy` and the figures
@@ -139,6 +141,8 @@ The LLM-judge test on this same model, with the same label-B positives, is in `r
 python -m scripts.analyse_beear_monitor --dir results/beear-model8
 python -m scripts.plot_beear_roc --dir results/beear-model8
 ```
+
+The plot alone needs only files in git (`analysis.json`, `curves.npz`).
 
 Produced by `scripts/pods/job_beear.sh` on the pod (`scripts/collect_beear_monitor.py`,
 `scripts/label_beear_codeql.py`), then `scripts/analyse_beear_monitor.py` and `scripts/plot_beear_roc.py`.

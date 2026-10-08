@@ -14,7 +14,8 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
+
+from scripts.curves_io import load_curves  # noqa: E402
 
 A = Path("results/code-backdoor/analysis")
 LEAD = [("tok:first3", "first 3 tokens", "#2e9e5b"), ("tok:win4", "4-token window (under OR)", "#d9822b"),
@@ -28,7 +29,7 @@ def main() -> None:
     an = json.loads((A / "analysis_code_sa_e2_vs_code_clean_e2.json").read_text())["versions"]
     fig, axes = plt.subplots(2, 2, figsize=(13, 11))
     for j, ver in enumerate(("plain", "dated")):
-        curves = np.load(A / f"curves_code_sa_e2_{ver}.npy", allow_pickle=True).item()
+        curves = load_curves(A / f"curves_code_sa_e2_{ver}.npz")
         mon = an[ver]["monitors"]
         for i, key in enumerate(("main", "within_trigger")):
             ax = axes[i, j]

@@ -16,7 +16,8 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
+
+from scripts.curves_io import load_curves  # noqa: E402
 
 HIGHLIGHT = {"act:zmax": ("#2a6fdb", "best activation monitor (zmax)"),
              "sur:llr_mean": ("#d9822b", "64-token mean surprise (preregistered)"),
@@ -34,7 +35,7 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
     key = "within_trigger" if args.within_trigger else "main"
-    curves = np.load(args.dir / f"curves_{args.trusted}.npy", allow_pickle=True).item()
+    curves = load_curves(args.dir / f"curves_{args.trusted}.npz")
     table = json.loads((args.dir / f"analysis_{args.trusted}.json").read_text())["organisms"]
     oids = sorted(curves)
     cols = 4
